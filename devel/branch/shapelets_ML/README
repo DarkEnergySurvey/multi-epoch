@@ -1,0 +1,19 @@
+In the root directory of the shapelets distribution:
+
+    ./configure
+    make
+    make install
+
+The main executable "measure_stars" and the python script measure_stars.py will
+be copied into the ../bin directory, which in the des framework is
+pipeline/development/bin.  See the documentation for these functions for usage
+info.
+
+The C++ code and python scripts have essentially the same inputs.  The C++ code
+is written as a standard unix utility, so the exit code is used to describe the
+result of the processing.  Because any exit code other than 0 crashes the
+scripts used later (why on earth?) the python script was written as a wrapper
+to catch the exit code and write it to an "exitlog" file.  Also from python
+gnuplot is called to make a size-magnitude diagram.
+
+Please report the exit code when available for debugging purposes.

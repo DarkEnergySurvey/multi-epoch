@@ -1,0 +1,34 @@
+   <target name="Stage_pubexit" description="Publish an event upon Exit">
+     <esequence>
+
+     <print line=" - Stage_pubexit The compute host is $G{host}"/>
+
+        <edeclare name="content_end"  string="Begin test"/>
+        <econdblock type="else-if">
+          <econdtask>
+            <eeval>
+             <statement>
+                <ecompare string="${platform}">
+                   <predicate string="TG" comparator="EQUALS"/>
+                </ecompare>
+             </statement>
+            </eeval>
+              <esequence>
+                <eassign name="content_end"    string="End Processing ccd ${ccd.num} data on $G{host} for nite ${nite}"/>
+              </esequence>
+          </econdtask>
+              <esequence>
+                <eassign name="content_end"    string="End Processing ccd ${ccd.num} data for nite ${nite}"/>
+              </esequence>
+        </econdblock>
+
+
+         <publish>
+            <event ensembleid="${ensemble.id}" workflowid="${jid}"
+                   nodeid="$R{content_end}" currentState="1">
+                  <property name="message" value="$R{content_end}"/>
+            </event>
+         </publish>
+
+     </esequence>
+   </target>

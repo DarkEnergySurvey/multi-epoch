@@ -1,0 +1,93 @@
+<html>
+  <head>
+    <meta content="text/html; charset=iso-8859-1" http-equiv="Content-Type">
+    <title>4Suite API Documentation: Ft.Lib.DistExt.GenerateL10n</title>
+    <link href="modules.css" type="text/css" rel="stylesheet">
+  </head>
+  <body>
+    <div class="universal-header"><span class="universal-header-prefix">&nbsp;&nbsp;&nbsp;</span>&nbsp;<span class="universal-header-prefix">&nbsp;&nbsp;</span>&nbsp;<span class="universal-header-prefix">&nbsp;</span>&nbsp;<a href="../index.html">4Suite<sup>&trade;</sup> API Documentation</a></div>
+    <h1><span class="glyph-arrow">&#9658;</span> Module <span class="this-name"><a href="Ft.html" title="Ft">Ft</a>.<a href="Ft.Lib.html" title="Ft.Lib">Lib</a>.<a href="Ft.Lib.DistExt.html" title="Ft.Lib.DistExt">DistExt</a>.GenerateL10n</span></h1>
+    <div class="summary-section">
+      <table cellpadding="0" cellspacing="0">
+        <tbody>
+          <tr>
+            <td valign="top">
+              <div class="summary-header">Classes:</div>
+              <div class="summary-list"><span class="class-name"><a href="#Extractor">Extractor</a></span>, <span class="class-name"><a href="#GenerateL10n">GenerateL10n</a></span></div>
+            </td>
+            <td width="7" valign="middle"></td>
+            <td width="1" valign="middle" bgcolor="#C5C5C5"></td>
+            <td width="7" valign="middle"></td>
+            <td valign="top">
+              <div class="summary-header">Globals:</div>
+              <div class="summary-list"><span class="global-name"><a href="#POT_HEADER">POT_HEADER</a></span></div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="section">
+      <h2>Classes</h2>
+      <dl class="classes">
+        <dt class="classdef"><a name="Extractor"></a>class <span class="class-name">Extractor</span></dt>
+        <dd class="classdesc">
+          <h3>Methods</h3>
+          <dl class="methods">
+            <dt class="methoddef"><a name="Extractor-__call__"><span class="method-name">__call__</span></a>(<span class="argument-name">self</span>, <span class="argument-name">ttype</span>, <span class="argument-name">tstring</span>, <span class="argument-name">stup</span>, <span class="argument-name">etup</span>, <span class="argument-name">line</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dt class="methoddef"><a name="Extractor-__init__"><span class="method-name">__init__</span></a>(<span class="argument-name">self</span>, <span class="argument-name">excludedStrings</span><span class="argument-default">=None</span>, <span class="argument-name">keywords</span><span class="argument-default">=None</span>, <span class="argument-name">docstrings</span><span class="argument-default">=0</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dt class="methoddef"><a name="Extractor-get_messages"><span class="method-name">get_messages</span></a>(<span class="argument-name">self</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dt class="methoddef"><a name="Extractor-process"><span class="method-name">process</span></a>(<span class="argument-name">self</span>, <span class="argument-name">filename</span>)</dt>
+            <dd class="methoddesc"></dd>
+          </dl>
+        </dd>
+        <dt class="classdef"><a name="GenerateL10n"></a>class <span class="class-name">GenerateL10n</span><span class="bases">(<span class="class-name"><span class="undocumented">distutils.cmd.Command</span></span>)</span></dt>
+        <dd class="classdesc">
+          <h3>Methods</h3>
+          <dl class="methods">
+            <dt class="methoddef"><a name="GenerateL10n-extract_messages"><span class="method-name">extract_messages</span></a>(<span class="argument-name">self</span>, <span class="argument-name">filenames</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dt class="methoddef"><a name="GenerateL10n-finalize_options"><span class="method-name">finalize_options</span></a>(<span class="argument-name">self</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dd class="overrides"><b>Overrides: </b><span class="inherited-name">finalize_options</span> from class <span class="class-name"><span class="undocumented">Command</span></span></dd>
+            <dt class="methoddef"><a name="GenerateL10n-get_outputs"><span class="method-name">get_outputs</span></a>(<span class="argument-name">self</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dt class="methoddef"><a name="GenerateL10n-get_pot_filename"><span class="method-name">get_pot_filename</span></a>(<span class="argument-name">self</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dt class="methoddef"><a name="GenerateL10n-get_sources"><span class="method-name">get_sources</span></a>(<span class="argument-name">self</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dt class="methoddef"><a name="GenerateL10n-initialize_options"><span class="method-name">initialize_options</span></a>(<span class="argument-name">self</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dd class="overrides"><b>Overrides: </b><span class="inherited-name">initialize_options</span> from class <span class="class-name"><span class="undocumented">Command</span></span></dd>
+            <dt class="methoddef"><a name="GenerateL10n-run"><span class="method-name">run</span></a>(<span class="argument-name">self</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dd class="overrides"><b>Overrides: </b><span class="inherited-name">run</span> from class <span class="class-name"><span class="undocumented">Command</span></span></dd>
+            <dt class="methoddef"><a name="GenerateL10n-write_catalog"><span class="method-name">write_catalog</span></a>(<span class="argument-name">self</span>, <span class="argument-name">messages</span>)</dt>
+            <dd class="methoddesc"></dd>
+          </dl>
+          <h3>Methods inherited from class <span class="undocumented">distutils.cmd.Command</span></h3>
+          <div class="inherited"><span class="inherited-name">__getattr__</span>, <span class="inherited-name">__init__</span>, <span class="inherited-name">announce</span>, <span class="inherited-name">copy_file</span>, <span class="inherited-name">copy_tree</span>, <span class="inherited-name">debug_print</span>, <span class="inherited-name">dump_options</span>, <span class="inherited-name">ensure_dirname</span>, <span class="inherited-name">ensure_filename</span>, <span class="inherited-name">ensure_finalized</span>, <span class="inherited-name">ensure_string</span>, <span class="inherited-name">ensure_string_list</span>, <span class="inherited-name">execute</span>, <span class="inherited-name">get_command_name</span>, <span class="inherited-name">get_finalized_command</span>, <span class="inherited-name">get_sub_commands</span>, <span class="inherited-name">make_archive</span>, <span class="inherited-name">make_file</span>, <span class="inherited-name">mkpath</span>, <span class="inherited-name">move_file</span>, <span class="inherited-name">reinitialize_command</span>, <span class="inherited-name">run_command</span>, <span class="inherited-name">set_undefined_options</span>, <span class="inherited-name">spawn</span>, <span class="inherited-name">warn</span></div>
+          <h3>Members</h3>
+          <dl class="members">
+            <dt class="memberdef"><a name="boolean_options"><span class="member-name">boolean_options</span></a> = ['force']</dt>
+            <dt class="memberdef"><a name="command_name"><span class="member-name">command_name</span></a> = 'generate_l10n'</dt>
+            <dt class="memberdef"><a name="description"><span class="member-name">description</span></a> = 'extract translatable strings from source'</dt>
+            <dt class="memberdef"><a name="user_options"><span class="member-name">user_options</span></a> = [('force', 'f', 'force locale generatation (overwrite existing files)')]</dt>
+          </dl>
+          <h3>Members inherited from class <span class="undocumented">distutils.cmd.Command</span></h3>
+          <div class="inherited"><span class="inherited-name">sub_commands</span></div>
+        </dd>
+      </dl>
+    </div>
+    <div class="section">
+      <h2>Globals</h2>
+      <dl class="globals">
+        <dt class="globaldef"><a name="POT_HEADER"><span class="global-name">POT_HEADER</span></a> = '# %(name)s LANGUAGE message catalog\n# Copyright ...ING\\n"\n"Generated-By: %(module)s %(version)s\\n"\n\n'</dt>
+        <dd class="globaldesc"></dd>
+      </dl>
+    </div>
+    <div class="universal-footer">Last modified on 2006-08-17 13:09:42</div>
+  </body>
+</html>

@@ -1,0 +1,93 @@
+#!/usr/bin/env perl
+########################################################################
+#  $Id$
+#
+#  $Rev::                                  $:  # Revision of last commit.
+#  $LastChangedBy::                        $:  # Author of last commit. 
+#  $LastChangedDate::                      $:  # Date of last commit.
+#
+#  Authors: 
+#         Michelle Gower (mgower@ncsa.uiuc.edu)
+#         Darren Adams (dadams@ncsa.uiuc.edu)
+#
+#  Developed at: 
+#  The National Center for Supercomputing Applications (NCSA).
+#
+#  Copyright (C) 2007 Board of Trustees of the University of Illinois. 
+#  All rights reserved.
+#
+#  DESCRIPTION:
+#
+#######################################################################
+
+use strict;
+use warnings;
+
+use Getopt::Long;
+use FindBin;
+use lib "$FindBin::Bin/../lib";
+use DES::utils::misc;
+use DES::utils::email;
+use DES::utils::hist;
+use DES::utils::posttasks;
+use DES::desconfig;
+
+my ($ConfigFile, $Config, $ExitCode, $Version, $ClusterID);
+
+&Getopt::Long::Configure( 'noignorecase', 'no_autoabbrev');
+Getopt::Long::GetOptions(
+   'version|v' => \$Version
+);
+
+my $DebugFH;
+open $DebugFH, "> checkanalysis.out";
+local *STDOUT = $DebugFH;
+local *STDERR = $DebugFH;
+
+my $DESHome = getHome();
+if ($DESHome !~ /\S/) {
+   print "Error: Can't determine DESHome\n";
+   close $DebugFH;
+   exit $FAILURE;
+}
+
+if (defined($Version)) {
+  printVersion();
+  exit $FAILURE;
+}
+
+if (scalar(@ARGV) == 2) {
+  $ConfigFile = $ARGV[0];
+  $ClusterID = $ARGV[1];
+}
+else {
+  print "Usage: descheckanalysis [-version] configfile clusterid\n";
+  close $DebugFH;
+  exit $FAILURE;
+}
+
+debug("checkanalysis", "Begin");
+
+# read sysinfo file
+$Config = new DES::desconfig;
+$Config->readConfig($ConfigFile, 0, $DebugFH);
+
+$ExitCode = $SUCCESS;
+
+logEvent($Config, "analysis", "j", "mngr", "posttask", $ExitCode);
+logEvent($Config, "analysis", "c", "mngr", "pretask");
+$ClusterID = sprintf("%d", $ClusterID);
+logEvent($Config, "analysis", "c", "mngr", "cid", $ClusterID);
+
+my $Msg1 = "Analysis is complete";
+my $Nite = $Config->getValueReq("nite");
+my $RunID = $Config->getValueReq("runid");
+my $Msg2 = `$DESHome/bin/desstat -l $Nite $RunID 2>&1`;
+sendEmail($Config, undef, "analysis", $ExitCode, $Msg1, $Msg2);
+
+debug("checkanalysis", "ExitCode = '$ExitCode'");
+debug("checkanalysis", "End");
+close $DebugFH;
+posttasks($Config, "analysis", "c", "mngr", $ExitCode);
+
+exit $ExitCode;

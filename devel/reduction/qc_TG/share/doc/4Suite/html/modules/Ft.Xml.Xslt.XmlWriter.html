@@ -1,0 +1,163 @@
+<html>
+  <head>
+    <meta content="text/html; charset=iso-8859-1" http-equiv="Content-Type">
+    <title>4Suite API Documentation: Ft.Xml.Xslt.XmlWriter</title>
+    <link href="modules.css" type="text/css" rel="stylesheet">
+  </head>
+  <body>
+    <div class="universal-header"><span class="universal-header-prefix">&nbsp;&nbsp;&nbsp;</span>&nbsp;<span class="universal-header-prefix">&nbsp;&nbsp;</span>&nbsp;<span class="universal-header-prefix">&nbsp;</span>&nbsp;<a href="../index.html">4Suite<sup>&trade;</sup> API Documentation</a></div>
+    <h1><span class="glyph-arrow">&#9658;</span> Module <span class="this-name"><a href="Ft.html" title="Ft">Ft</a>.<a href="Ft.Xml.html" title="Ft.Xml">Xml</a>.<a href="Ft.Xml.Xslt.html" title="Ft.Xml.Xslt">Xslt</a>.XmlWriter</span></h1>
+    <div class="abstract">XML writer for XSLT output</div>
+    <pre class="description">Copyright 2005 Fourthought, Inc. (USA).
+Detailed license and copyright information: http://4suite.org/COPYRIGHT
+Project home, documentation, distributions: http://4suite.org/</pre>
+    <div class="summary-section">
+      <table cellpadding="0" cellspacing="0">
+        <tbody>
+          <tr>
+            <td valign="top">
+              <div class="summary-header">Classes:</div>
+              <div class="summary-list"><span class="class-name"><a href="#CdataSectionXmlWriter">CdataSectionXmlWriter</a></span>, <span class="class-name"><a href="#XmlWriter">XmlWriter</a></span></div>
+            </td>
+            <td width="7" valign="middle"></td>
+            <td width="1" valign="middle" bgcolor="#C5C5C5"></td>
+            <td width="7" valign="middle"></td>
+            <td valign="top">
+              <div class="summary-header">Globals:</div>
+              <div class="summary-list"><span class="global-name"><a href="#DEFAULT_GENERATED_PREFIX">DEFAULT_GENERATED_PREFIX</a></span>, <span class="global-name"><a href="#EMPTY_NAMESPACE">EMPTY_NAMESPACE</a></span>, <span class="global-name"><a href="#EMPTY_PREFIX">EMPTY_PREFIX</a></span>, <span class="global-name"><a href="#XMLNS_NAMESPACE">XMLNS_NAMESPACE</a></span>, <span class="global-name"><a href="#XML_NAMESPACE">XML_NAMESPACE</a></span></div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="section">
+      <h2>Classes</h2>
+      <dl class="classes">
+        <dt class="classdef"><a name="CdataSectionXmlWriter"></a>class <span class="class-name">CdataSectionXmlWriter</span><span class="bases">(<span class="class-name"><a href="Ft.Xml.Xslt.XmlWriter.html#XmlWriter">XmlWriter</a></span>)</span></dt>
+        <dd class="classdesc">
+          <div class="abstract">Converts character data to CDATA sections if the character data
+occurs within an element defined as outputting CDATA sections.</div>
+          <h3>Methods</h3>
+          <dl class="methods">
+            <dt class="methoddef"><a name="CdataSectionXmlWriter-__init__"><span class="method-name">__init__</span></a>(<span class="argument-name">self</span>, <span class="argument-name">outputParams</span>, <span class="argument-name">stream</span>)</dt>
+            <dd class="methoddesc">
+              <div class="abstract">outputParams - instance of Ft.Xml.Xslt.OutputParameters.OutputParameters
+stream - a stream that takes a byte stream (not a unicode object)</div>
+            </dd>
+            <dd class="overrides"><b>Overrides: </b><span class="inherited-name"><a href="Ft.Xml.Xslt.XmlWriter.html#XmlWriter-__init__">__init__</a></span> from class <span class="class-name"><a href="Ft.Xml.Xslt.XmlWriter.html#XmlWriter">XmlWriter</a></span></dd>
+            <dt class="methoddef"><a name="CdataSectionXmlWriter-endElement"><span class="method-name">endElement</span></a>(<span class="argument-name">self</span>, <span class="argument-name">tagName</span>, <span class="argument-name">namespace</span><span class="argument-default">=None</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dd class="overrides"><b>Overrides: </b><span class="inherited-name"><a href="Ft.Xml.Xslt.XmlWriter.html#XmlWriter-endElement">endElement</a></span> from class <span class="class-name"><a href="Ft.Xml.Xslt.XmlWriter.html#XmlWriter">XmlWriter</a></span></dd>
+            <dt class="methoddef"><a name="CdataSectionXmlWriter-startElement"><span class="method-name">startElement</span></a>(<span class="argument-name">self</span>, <span class="argument-name">tagName</span>, <span class="argument-name">namespace</span><span class="argument-default">=None</span>, <span class="argument-name">extraNss</span><span class="argument-default">=None</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dd class="overrides"><b>Overrides: </b><span class="inherited-name"><a href="Ft.Xml.Xslt.XmlWriter.html#XmlWriter-startElement">startElement</a></span> from class <span class="class-name"><a href="Ft.Xml.Xslt.XmlWriter.html#XmlWriter">XmlWriter</a></span></dd>
+            <dt class="methoddef"><a name="CdataSectionXmlWriter-text"><span class="method-name">text</span></a>(<span class="argument-name">self</span>, <span class="argument-name">text</span>, <span class="argument-name">escapeOutput</span><span class="argument-default">=True</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dd class="overrides"><b>Overrides: </b><span class="inherited-name"><a href="Ft.Xml.Xslt.XmlWriter.html#XmlWriter-text">text</a></span> from class <span class="class-name"><a href="Ft.Xml.Xslt.XmlWriter.html#XmlWriter">XmlWriter</a></span></dd>
+          </dl>
+          <h3>Methods inherited from class <a href="Ft.Xml.Xslt.XmlWriter.html#XmlWriter">XmlWriter</a></h3>
+          <div class="inherited"><span class="inherited-name"><a href="Ft.Xml.Xslt.XmlWriter.html#XmlWriter-attribute">attribute</a></span>, <span class="inherited-name"><a href="Ft.Xml.Xslt.XmlWriter.html#XmlWriter-changePrefix">changePrefix</a></span>, <span class="inherited-name"><a href="Ft.Xml.Xslt.XmlWriter.html#XmlWriter-comment">comment</a></span>, <span class="inherited-name"><a href="Ft.Xml.Xslt.XmlWriter.html#XmlWriter-endDocument">endDocument</a></span>, <span class="inherited-name"><a href="Ft.Xml.Xslt.XmlWriter.html#XmlWriter-getStream">getStream</a></span>, <span class="inherited-name"><a href="Ft.Xml.Xslt.XmlWriter.html#XmlWriter-matchesGeneratedPrefix">matchesGeneratedPrefix</a></span>, <span class="inherited-name"><a href="Ft.Xml.Xslt.XmlWriter.html#XmlWriter-namespace">namespace</a></span>, <span class="inherited-name"><a href="Ft.Xml.Xslt.XmlWriter.html#XmlWriter-processingInstruction">processingInstruction</a></span>, <span class="inherited-name"><a href="Ft.Xml.Xslt.XmlWriter.html#XmlWriter-startDocument">startDocument</a></span></div>
+          <h3>Methods inherited from class <a href="Ft.Xml.Xslt.NullWriter.html#NullWriter">Ft.Xml.Xslt.NullWriter.NullWriter</a></h3>
+          <div class="inherited"><span class="inherited-name"><a href="Ft.Xml.Xslt.NullWriter.html#NullWriter-copyNodes">copyNodes</a></span>, <span class="inherited-name"><a href="Ft.Xml.Xslt.NullWriter.html#NullWriter-getMediaType">getMediaType</a></span>, <span class="inherited-name"><a href="Ft.Xml.Xslt.NullWriter.html#NullWriter-getResult">getResult</a></span></div>
+          <h3>Members inherited from class <a href="Ft.Xml.Xslt.XmlWriter.html#XmlWriter">XmlWriter</a></h3>
+          <div class="inherited"><span class="inherited-name"><a href="Ft.Xml.Xslt.XmlWriter.html#XmlWriter-GENERATED_PREFIX">GENERATED_PREFIX</a></span></div>
+        </dd>
+        <dt class="classdef"><a name="XmlWriter"></a>class <span class="class-name">XmlWriter</span><span class="bases">(<span class="class-name"><a href="Ft.Xml.Xslt.NullWriter.html#NullWriter">Ft.Xml.Xslt.NullWriter.NullWriter</a></span>)</span></dt>
+        <dd class="classdesc">
+          <div class="abstract">Takes events such as those generated by an XSLT processor and
+invokes a serializer to produce XML.</div>
+          <h3>Methods</h3>
+          <dl class="methods">
+            <dt class="methoddef"><a name="XmlWriter-__init__"><span class="method-name">__init__</span></a>(<span class="argument-name">self</span>, <span class="argument-name">outputParams</span>, <span class="argument-name">stream</span>)</dt>
+            <dd class="methoddesc">
+              <div class="abstract">outputParams - instance of Ft.Xml.Xslt.OutputParameters.OutputParameters
+stream - a stream that takes a byte stream (not a unicode object)</div>
+            </dd>
+            <dd class="overrides"><b>Overrides: </b><span class="inherited-name"><a href="Ft.Xml.Xslt.NullWriter.html#NullWriter-__init__">__init__</a></span> from class <span class="class-name"><a href="Ft.Xml.Xslt.NullWriter.html#NullWriter">NullWriter</a></span></dd>
+            <dt class="methoddef"><a name="XmlWriter-attribute"><span class="method-name">attribute</span></a>(<span class="argument-name">self</span>, <span class="argument-name">name</span>, <span class="argument-name">value</span>, <span class="argument-name">namespace</span><span class="argument-default">=None</span>)</dt>
+            <dd class="methoddesc">
+              <div class="abstract">add an attribute to an element</div>
+              <pre class="description">name - the qualified name of the attribute
+value - the attribute value: must be Unicode
+namespace - must be Unicode or Ft.Xml.EMPTY_NAMESPACE (the default)
+
+Strives for "sanity".  For brilliant definition thereof, c.f. Joe English
+http://lists.xml.org/archives/xml-dev/200204/msg00170.html
+Uses terminology from that article
+See also discussions starting
+http://lists.fourthought.com/pipermail/4suite-dev/2003-March/001294.html
+http://lists.fourthought.com/pipermail/4suite-dev/2003-March/001283.html
+
+Note: attribute output is computed as invoked.
+This means that the ugly case
+
+attribute(u"foo", u"bar", "http://some-ns/")
+attribute(u"x:foo", u"baz", "http://some-ns/")
+
+will result in the ugly
+  xmlns:org.4suite.4xslt.ns0="http://some-ns/"
+  org.4suite.4xslt.ns0:foo="baz"
+
+The user can easily correct this by reversing the
+order of the calls</pre>
+            </dd>
+            <dd class="overrides"><b>Overrides: </b><span class="inherited-name"><a href="Ft.Xml.Xslt.NullWriter.html#NullWriter-attribute">attribute</a></span> from class <span class="class-name"><a href="Ft.Xml.Xslt.NullWriter.html#NullWriter">NullWriter</a></span></dd>
+            <dt class="methoddef"><a name="XmlWriter-changePrefix"><span class="method-name">changePrefix</span></a>(<span class="argument-name">self</span>, <span class="argument-name">namespace</span>, <span class="argument-name">forbidEmpty</span><span class="argument-default">=False</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dt class="methoddef"><a name="XmlWriter-comment"><span class="method-name">comment</span></a>(<span class="argument-name">self</span>, <span class="argument-name">body</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dd class="overrides"><b>Overrides: </b><span class="inherited-name"><a href="Ft.Xml.Xslt.NullWriter.html#NullWriter-comment">comment</a></span> from class <span class="class-name"><a href="Ft.Xml.Xslt.NullWriter.html#NullWriter">NullWriter</a></span></dd>
+            <dt class="methoddef"><a name="XmlWriter-endDocument"><span class="method-name">endDocument</span></a>(<span class="argument-name">self</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dd class="overrides"><b>Overrides: </b><span class="inherited-name"><a href="Ft.Xml.Xslt.NullWriter.html#NullWriter-endDocument">endDocument</a></span> from class <span class="class-name"><a href="Ft.Xml.Xslt.NullWriter.html#NullWriter">NullWriter</a></span></dd>
+            <dt class="methoddef"><a name="XmlWriter-endElement"><span class="method-name">endElement</span></a>(<span class="argument-name">self</span>, <span class="argument-name">tagName</span>, <span class="argument-name">namespace</span><span class="argument-default">=None</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dd class="overrides"><b>Overrides: </b><span class="inherited-name"><a href="Ft.Xml.Xslt.NullWriter.html#NullWriter-endElement">endElement</a></span> from class <span class="class-name"><a href="Ft.Xml.Xslt.NullWriter.html#NullWriter">NullWriter</a></span></dd>
+            <dt class="methoddef"><a name="XmlWriter-getStream"><span class="method-name">getStream</span></a>(<span class="argument-name">self</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dd class="overrides"><b>Overrides: </b><span class="inherited-name"><a href="Ft.Xml.Xslt.NullWriter.html#NullWriter-getStream">getStream</a></span> from class <span class="class-name"><a href="Ft.Xml.Xslt.NullWriter.html#NullWriter">NullWriter</a></span></dd>
+            <dt class="methoddef"><a name="XmlWriter-matchesGeneratedPrefix"><span class="method-name">matchesGeneratedPrefix</span></a>(<span class="argument-name">self</span>, <span class="argument-name">prefix</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dt class="methoddef"><a name="XmlWriter-namespace"><span class="method-name">namespace</span></a>(<span class="argument-name">self</span>, <span class="argument-name">prefix</span>, <span class="argument-name">namespace</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dd class="overrides"><b>Overrides: </b><span class="inherited-name"><a href="Ft.Xml.Xslt.NullWriter.html#NullWriter-namespace">namespace</a></span> from class <span class="class-name"><a href="Ft.Xml.Xslt.NullWriter.html#NullWriter">NullWriter</a></span></dd>
+            <dt class="methoddef"><a name="XmlWriter-processingInstruction"><span class="method-name">processingInstruction</span></a>(<span class="argument-name">self</span>, <span class="argument-name">target</span>, <span class="argument-name">data</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dd class="overrides"><b>Overrides: </b><span class="inherited-name"><a href="Ft.Xml.Xslt.NullWriter.html#NullWriter-processingInstruction">processingInstruction</a></span> from class <span class="class-name"><a href="Ft.Xml.Xslt.NullWriter.html#NullWriter">NullWriter</a></span></dd>
+            <dt class="methoddef"><a name="XmlWriter-startDocument"><span class="method-name">startDocument</span></a>(<span class="argument-name">self</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dd class="overrides"><b>Overrides: </b><span class="inherited-name"><a href="Ft.Xml.Xslt.NullWriter.html#NullWriter-startDocument">startDocument</a></span> from class <span class="class-name"><a href="Ft.Xml.Xslt.NullWriter.html#NullWriter">NullWriter</a></span></dd>
+            <dt class="methoddef"><a name="XmlWriter-startElement"><span class="method-name">startElement</span></a>(<span class="argument-name">self</span>, <span class="argument-name">tagName</span>, <span class="argument-name">namespace</span><span class="argument-default">=None</span>, <span class="argument-name">extraNss</span><span class="argument-default">=None</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dd class="overrides"><b>Overrides: </b><span class="inherited-name"><a href="Ft.Xml.Xslt.NullWriter.html#NullWriter-startElement">startElement</a></span> from class <span class="class-name"><a href="Ft.Xml.Xslt.NullWriter.html#NullWriter">NullWriter</a></span></dd>
+            <dt class="methoddef"><a name="XmlWriter-text"><span class="method-name">text</span></a>(<span class="argument-name">self</span>, <span class="argument-name">text</span>, <span class="argument-name">escapeOutput</span><span class="argument-default">=True</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dd class="overrides"><b>Overrides: </b><span class="inherited-name"><a href="Ft.Xml.Xslt.NullWriter.html#NullWriter-text">text</a></span> from class <span class="class-name"><a href="Ft.Xml.Xslt.NullWriter.html#NullWriter">NullWriter</a></span></dd>
+          </dl>
+          <h3>Methods inherited from class <a href="Ft.Xml.Xslt.NullWriter.html#NullWriter">Ft.Xml.Xslt.NullWriter.NullWriter</a></h3>
+          <div class="inherited"><span class="inherited-name"><a href="Ft.Xml.Xslt.NullWriter.html#NullWriter-copyNodes">copyNodes</a></span>, <span class="inherited-name"><a href="Ft.Xml.Xslt.NullWriter.html#NullWriter-getMediaType">getMediaType</a></span>, <span class="inherited-name"><a href="Ft.Xml.Xslt.NullWriter.html#NullWriter-getResult">getResult</a></span></div>
+          <h3>Members</h3>
+          <dl class="members">
+            <dt class="memberdef"><a name="GENERATED_PREFIX"><span class="member-name">GENERATED_PREFIX</span></a> = u'org.4suite.4xslt.ns%s'</dt>
+          </dl>
+        </dd>
+      </dl>
+    </div>
+    <div class="section">
+      <h2>Globals</h2>
+      <dl class="globals">
+        <dt class="globaldef"><a name="DEFAULT_GENERATED_PREFIX"><span class="global-name">DEFAULT_GENERATED_PREFIX</span></a> = u'org.4suite.4xslt.ns'</dt>
+        <dd class="globaldesc"></dd>
+        <dt class="globaldef"><a name="EMPTY_NAMESPACE"><span class="global-name">EMPTY_NAMESPACE</span></a> = None</dt>
+        <dd class="globaldesc"></dd>
+        <dt class="globaldef"><a name="EMPTY_PREFIX"><span class="global-name">EMPTY_PREFIX</span></a> = None</dt>
+        <dd class="globaldesc"></dd>
+        <dt class="globaldef"><a name="XMLNS_NAMESPACE"><span class="global-name">XMLNS_NAMESPACE</span></a> = u'http://www.w3.org/2000/xmlns/'</dt>
+        <dd class="globaldesc"></dd>
+        <dt class="globaldef"><a name="XML_NAMESPACE"><span class="global-name">XML_NAMESPACE</span></a> = u'http://www.w3.org/XML/1998/namespace'</dt>
+        <dd class="globaldesc"></dd>
+      </dl>
+    </div>
+    <div class="universal-footer">Last modified on 2006-04-28 13:54:50</div>
+  </body>
+</html>

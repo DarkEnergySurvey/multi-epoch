@@ -1,0 +1,160 @@
+<html>
+  <head>
+    <meta content="text/html; charset=iso-8859-1" http-equiv="Content-Type">
+    <title>4Suite API Documentation: Ft.Xml.XUpdate</title>
+    <link href="modules.css" type="text/css" rel="stylesheet">
+  </head>
+  <body>
+    <div class="universal-header"><span class="universal-header-prefix">&nbsp;&nbsp;&nbsp;</span>&nbsp;<span class="universal-header-prefix">&nbsp;&nbsp;</span>&nbsp;<span class="universal-header-prefix">&nbsp;</span>&nbsp;<a href="../index.html">4Suite<sup>&trade;</sup> API Documentation</a></div>
+    <h1><span class="glyph-arrow">&#9658;</span> Module <span class="this-name"><a href="Ft.html" title="Ft">Ft</a>.<a href="Ft.Xml.html" title="Ft.Xml">Xml</a>.XUpdate</span></h1>
+    <div class="abstract">XUpdate request processing</div>
+    <pre class="description">XUpdate is specified (poorly) at
+http://xmldb-org.sourceforge.net/xupdate/xupdate-wd.html
+
+Copyright 2005 Fourthought, Inc. (USA).
+Detailed license and copyright information: http://4suite.org/COPYRIGHT
+Project home, documentation, distributions: http://4suite.org/</pre>
+    <div class="summary-section">
+      <table cellpadding="0" cellspacing="0">
+        <tbody>
+          <tr>
+            <td valign="top">
+              <div class="summary-header">Classes:</div>
+              <div class="summary-list"><span class="class-name"><a href="#Processor">Processor</a></span>, <span class="class-name"><a href="#Reader">Reader</a></span>, <span class="class-name"><a href="#StringWriter">StringWriter</a></span>, <span class="class-name"><a href="#XUpdateException">XUpdateException</a></span></div>
+            </td>
+            <td width="7" valign="middle"></td>
+            <td width="1" valign="middle" bgcolor="#C5C5C5"></td>
+            <td width="7" valign="middle"></td>
+            <td valign="top">
+              <div class="summary-header">Functions:</div>
+              <div class="summary-list"><span class="function-name"><a href="#ApplyXUpdate">ApplyXUpdate</a></span></div>
+            </td>
+            <td width="7" valign="middle"></td>
+            <td width="1" valign="middle" bgcolor="#C5C5C5"></td>
+            <td width="7" valign="middle"></td>
+            <td valign="top">
+              <div class="summary-header">Globals:</div>
+              <div class="summary-list"><span class="global-name"><a href="#SUPPORTED_VERSIONS">SUPPORTED_VERSIONS</a></span>, <span class="global-name"><a href="#XUPDATE_NS">XUPDATE_NS</a></span>, <span class="global-name"><a href="#g_errorMessages">g_errorMessages</a></span></div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="section">
+      <h2>Classes</h2>
+      <dl class="classes">
+        <dt class="classdef"><a name="Processor"></a>class <span class="class-name">Processor</span></dt>
+        <dd class="classdesc">
+          <h3>Methods</h3>
+          <dl class="methods">
+            <dt class="methoddef"><a name="Processor-__init__"><span class="method-name">__init__</span></a>(<span class="argument-name">self</span>, <span class="argument-name">reader</span><span class="argument-default">=None</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dt class="methoddef"><a name="Processor-evaluateExpression"><span class="method-name">evaluateExpression</span></a>(<span class="argument-name">self</span>, <span class="argument-name">context</span>, <span class="argument-name">expression</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dt class="methoddef"><a name="Processor-execute"><span class="method-name">execute</span></a>(<span class="argument-name">self</span>, <span class="argument-name">node</span>, <span class="argument-name">xupdate</span>, <span class="argument-name">variables</span><span class="argument-default">=None</span>, <span class="argument-name">processorNss</span><span class="argument-default">=None</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dt class="methoddef"><a name="Processor-output"><span class="method-name">output</span></a>(<span class="argument-name">self</span>)</dt>
+            <dd class="methoddesc">
+              <div class="abstract">Returns the current output writer</div>
+            </dd>
+            <dt class="methoddef"><a name="Processor-parseAVT"><span class="method-name">parseAVT</span></a>(<span class="argument-name">self</span>, <span class="argument-name">avt</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dt class="methoddef"><a name="Processor-popResult"><span class="method-name">popResult</span></a>(<span class="argument-name">self</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dt class="methoddef"><a name="Processor-pushDomResult"><span class="method-name">pushDomResult</span></a>(<span class="argument-name">self</span>, <span class="argument-name">ownerDocument</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dt class="methoddef"><a name="Processor-pushStringResult"><span class="method-name">pushStringResult</span></a>(<span class="argument-name">self</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dt class="methoddef"><a name="Processor-visit"><span class="method-name">visit</span></a>(<span class="argument-name">self</span>, <span class="argument-name">context</span>, <span class="argument-name">node</span>, <span class="argument-name">preserveSpace</span>)</dt>
+            <dd class="methoddesc"></dd>
+          </dl>
+        </dd>
+        <dt class="classdef"><a name="Reader"></a>class <span class="class-name">Reader</span><span class="bases">(<span class="class-name"><a href="Ft.Xml.Domlette.html#NonvalidatingReaderBase">Ft.Xml.Domlette.NonvalidatingReaderBase</a></span>)</span></dt>
+        <dd class="classdesc">
+          <div class="abstract">A reader of XUpdate documents. Must contain a fromSrc() method
+that takes an Ft.Xml.InputSource and returns a Domlette document.
+It does not need to detect XUpdate syntax errors.</div>
+          <h3>Methods</h3>
+          <dl class="methods">
+            <dt class="methoddef"><a name="Reader-fromSrc"><span class="method-name">fromSrc</span></a> = <a href="#Reader-parse">parse</a>(<span class="argument-name">self</span>, <span class="argument-name">inputSource</span>)</dt>
+            <dd class="methoddesc">
+              <div class="abstract">Reads XML from an Ft.Xml.Inputsource.InputSource, and
+returns a Domlette document node.</div>
+            </dd>
+          </dl>
+          <h3>Methods inherited from class <a href="Ft.Xml.Domlette.html#NonvalidatingReaderBase">Ft.Xml.Domlette.NonvalidatingReaderBase</a></h3>
+          <div class="inherited"><span class="inherited-name"><a href="Ft.Xml.Domlette.html#NonvalidatingReaderBase-__init__">__init__</a></span></div>
+          <h3>Methods inherited from class <a href="Ft.Xml.Domlette.html#_Reader">Ft.Xml.Domlette._Reader</a></h3>
+          <div class="inherited"><span class="inherited-name"><a href="Ft.Xml.Domlette.html#_Reader-parse">parse</a></span>, <span class="inherited-name"><a href="Ft.Xml.Domlette.html#_Reader-parseStream">parseStream</a></span>, <span class="inherited-name"><a href="Ft.Xml.Domlette.html#_Reader-parseString">parseString</a></span>, <span class="inherited-name"><a href="Ft.Xml.Domlette.html#_Reader-parseUri">parseUri</a></span></div>
+        </dd>
+        <dt class="classdef"><a name="StringWriter"></a>class <span class="class-name">StringWriter</span><span class="bases">(<span class="class-name"><a href="Ft.Xml.Xslt.NullWriter.html#NullWriter">Ft.Xml.Xslt.NullWriter.NullWriter</a></span>)</span></dt>
+        <dd class="classdesc">
+          <h3>Methods</h3>
+          <dl class="methods">
+            <dt class="methoddef"><a name="StringWriter-__init__"><span class="method-name">__init__</span></a>(<span class="argument-name">self</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dd class="overrides"><b>Overrides: </b><span class="inherited-name"><a href="Ft.Xml.Xslt.NullWriter.html#NullWriter-__init__">__init__</a></span> from class <span class="class-name"><a href="Ft.Xml.Xslt.NullWriter.html#NullWriter">NullWriter</a></span></dd>
+            <dt class="methoddef"><a name="StringWriter-getResult"><span class="method-name">getResult</span></a>(<span class="argument-name">self</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dd class="overrides"><b>Overrides: </b><span class="inherited-name"><a href="Ft.Xml.Xslt.NullWriter.html#NullWriter-getResult">getResult</a></span> from class <span class="class-name"><a href="Ft.Xml.Xslt.NullWriter.html#NullWriter">NullWriter</a></span></dd>
+            <dt class="methoddef"><a name="StringWriter-text"><span class="method-name">text</span></a>(<span class="argument-name">self</span>, <span class="argument-name">data</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dd class="overrides"><b>Overrides: </b><span class="inherited-name"><a href="Ft.Xml.Xslt.NullWriter.html#NullWriter-text">text</a></span> from class <span class="class-name"><a href="Ft.Xml.Xslt.NullWriter.html#NullWriter">NullWriter</a></span></dd>
+          </dl>
+          <h3>Methods inherited from class <a href="Ft.Xml.Xslt.NullWriter.html#NullWriter">Ft.Xml.Xslt.NullWriter.NullWriter</a></h3>
+          <div class="inherited"><span class="inherited-name"><a href="Ft.Xml.Xslt.NullWriter.html#NullWriter-attribute">attribute</a></span>, <span class="inherited-name"><a href="Ft.Xml.Xslt.NullWriter.html#NullWriter-comment">comment</a></span>, <span class="inherited-name"><a href="Ft.Xml.Xslt.NullWriter.html#NullWriter-copyNodes">copyNodes</a></span>, <span class="inherited-name"><a href="Ft.Xml.Xslt.NullWriter.html#NullWriter-endDocument">endDocument</a></span>, <span class="inherited-name"><a href="Ft.Xml.Xslt.NullWriter.html#NullWriter-endElement">endElement</a></span>, <span class="inherited-name"><a href="Ft.Xml.Xslt.NullWriter.html#NullWriter-getMediaType">getMediaType</a></span>, <span class="inherited-name"><a href="Ft.Xml.Xslt.NullWriter.html#NullWriter-getStream">getStream</a></span>, <span class="inherited-name"><a href="Ft.Xml.Xslt.NullWriter.html#NullWriter-namespace">namespace</a></span>, <span class="inherited-name"><a href="Ft.Xml.Xslt.NullWriter.html#NullWriter-processingInstruction">processingInstruction</a></span>, <span class="inherited-name"><a href="Ft.Xml.Xslt.NullWriter.html#NullWriter-startDocument">startDocument</a></span>, <span class="inherited-name"><a href="Ft.Xml.Xslt.NullWriter.html#NullWriter-startElement">startElement</a></span></div>
+        </dd>
+        <dt class="classdef"><a name="XUpdateException"></a>class <span class="class-name">XUpdateException</span><span class="bases">(<span class="class-name"><a href="Ft.html#FtException">Ft.FtException</a></span>)</span></dt>
+        <dd class="classdesc">
+          <div class="abstract">Exception class for errors specific to XUpdate processing</div>
+          <h3>Methods</h3>
+          <dl class="methods">
+            <dt class="methoddef"><a name="XUpdateException-__init__"><span class="method-name">__init__</span></a>(<span class="argument-name">self</span>, <span class="argument-name">errorCode</span>, <span class="argument-name">*args</span>, <span class="argument-name">**kwargs</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dd class="overrides"><b>Overrides: </b><span class="inherited-name"><a href="Ft.html#FtException-__init__">__init__</a></span> from class <span class="class-name"><a href="Ft.html#FtException">FtException</a></span></dd>
+          </dl>
+          <h3>Methods inherited from class <a href="Ft.html#FtException">Ft.FtException</a></h3>
+          <div class="inherited"><span class="inherited-name"><a href="Ft.html#FtException-__getattr__">__getattr__</a></span>, <span class="inherited-name"><a href="Ft.html#FtException-__repr__">__repr__</a></span>, <span class="inherited-name"><a href="Ft.html#FtException-__str__">__str__</a></span></div>
+          <h3>Methods inherited from class <span class="undocumented">Exception</span></h3>
+          <div class="inherited"><span class="inherited-name">__getitem__</span></div>
+          <h3>Members</h3>
+          <dl class="members">
+            <dt class="memberdef"><a name="INVALID_DOM_NODE"><span class="member-name">INVALID_DOM_NODE</span></a> = 100</dt>
+            <dt class="memberdef"><a name="INVALID_SELECT"><span class="member-name">INVALID_SELECT</span></a> = 13</dt>
+            <dt class="memberdef"><a name="NO_SELECT"><span class="member-name">NO_SELECT</span></a> = 11</dt>
+            <dt class="memberdef"><a name="NO_TEST"><span class="member-name">NO_TEST</span></a> = 12</dt>
+            <dt class="memberdef"><a name="NO_VERSION"><span class="member-name">NO_VERSION</span></a> = 10</dt>
+            <dt class="memberdef"><a name="SYNTAX_ERROR"><span class="member-name">SYNTAX_ERROR</span></a> = 1</dt>
+            <dt class="memberdef"><a name="UNKNOWN_NODE_TYPE"><span class="member-name">UNKNOWN_NODE_TYPE</span></a> = 101</dt>
+            <dt class="memberdef"><a name="UNRECOGNIZED_INSTRUCTION"><span class="member-name">UNRECOGNIZED_INSTRUCTION</span></a> = 2</dt>
+            <dt class="memberdef"><a name="UNSUPPORTED_VERSION"><span class="member-name">UNSUPPORTED_VERSION</span></a> = 14</dt>
+          </dl>
+        </dd>
+      </dl>
+    </div>
+    <div class="section">
+      <h2>Functions</h2>
+      <dl class="functions">
+        <dt class="functiondef"><a name="ApplyXUpdate"><span class="function-name">ApplyXUpdate</span></a>(<span class="argument-name">doc</span>, <span class="argument-name">xup</span>)</dt>
+        <dd class="functiondesc">
+          <div class="abstract">Takes 2 InputSources, one for the source document and one for the
+XUpdate instructions.  It returns a DOM node representing the result
+of applying the XUpdate to the source document (the document is
+modified in-place).</div>
+        </dd>
+      </dl>
+    </div>
+    <div class="section">
+      <h2>Globals</h2>
+      <dl class="globals">
+        <dt class="globaldef"><a name="SUPPORTED_VERSIONS"><span class="global-name">SUPPORTED_VERSIONS</span></a> = ('1.0',)</dt>
+        <dd class="globaldesc"></dd>
+        <dt class="globaldef"><a name="XUPDATE_NS"><span class="global-name">XUPDATE_NS</span></a> = 'http://www.xmldb.org/xupdate'</dt>
+        <dd class="globaldesc"></dd>
+        <dt class="globaldef"><a name="g_errorMessages"><span class="global-name">g_errorMessages</span></a> = {1: 'Syntax error in expression %(expr)r: %(err)s', 2: 'Unrecognized instruction in XUpdate namespace: %(name)r', 10: 'Missing required version attribute', 11: 'Missing required select attribute', 12: 'Missing required "test" attribute', 13: 'select expression "%(expr)s" must evaluate to a non-empty node-set', 14: 'XUpdate version %(version)s unsupported by this implementation', 100: 'Invalid DOM node %(node)r', 101: 'Unknown node type %(nodetype)r'}</dt>
+        <dd class="globaldesc"></dd>
+      </dl>
+    </div>
+    <div class="universal-footer">Last modified on 2005-08-30 18:52:10</div>
+  </body>
+</html>

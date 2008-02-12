@@ -1,0 +1,56 @@
+<html>
+  <head>
+    <meta content="text/html; charset=iso-8859-1" http-equiv="Content-Type">
+    <title>4Suite API Documentation: Ft.Lib.DistExt.ModuleFinder</title>
+    <link href="modules.css" type="text/css" rel="stylesheet">
+  </head>
+  <body>
+    <div class="universal-header"><span class="universal-header-prefix">&nbsp;&nbsp;&nbsp;</span>&nbsp;<span class="universal-header-prefix">&nbsp;&nbsp;</span>&nbsp;<span class="universal-header-prefix">&nbsp;</span>&nbsp;<a href="../index.html">4Suite<sup>&trade;</sup> API Documentation</a></div>
+    <h1><span class="glyph-arrow">&#9658;</span> Module <span class="this-name"><a href="Ft.html" title="Ft">Ft</a>.<a href="Ft.Lib.html" title="Ft.Lib">Lib</a>.<a href="Ft.Lib.DistExt.html" title="Ft.Lib.DistExt">DistExt</a>.ModuleFinder</span></h1>
+    <div class="abstract">Utilities to help applications using modulefinder get all of the modules
+and data files used throughout 4Suite.</div>
+    <pre class="description">Copyright 2006 Fourthought, Inc. (USA).
+Detailed license and copyright information: http://4suite.org/COPYRIGHT
+Project home, documentation, distributions: http://4suite.org/</pre>
+    <div class="summary-section">
+      <table cellpadding="0" cellspacing="0">
+        <tbody>
+          <tr>
+            <td valign="top">
+              <div class="summary-header">Functions:</div>
+              <div class="summary-list"><span class="function-name"><a href="#AddHiddenModules">AddHiddenModules</a></span>, <span class="function-name"><a href="#GetModuleIncludes">GetModuleIncludes</a></span></div>
+            </td>
+            <td width="7" valign="middle"></td>
+            <td width="1" valign="middle" bgcolor="#C5C5C5"></td>
+            <td width="7" valign="middle"></td>
+            <td valign="top">
+              <div class="summary-header">Globals:</div>
+              <div class="summary-list"><span class="global-name"><a href="#DATA_FILES">DATA_FILES</a></span>, <span class="global-name"><a href="#HIDDEN_IMPORTS">HIDDEN_IMPORTS</a></span>, <span class="global-name"><a href="#name">name</a></span></div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="section">
+      <h2>Functions</h2>
+      <dl class="functions">
+        <dt class="functiondef"><a name="AddHiddenModules"><span class="function-name">AddHiddenModules</span></a>(<span class="argument-name">finder</span>)</dt>
+        <dd class="functiondesc"></dd>
+        <dt class="functiondef"><a name="GetModuleIncludes"><span class="function-name">GetModuleIncludes</span></a>(<span class="argument-name">modules</span>)</dt>
+        <dd class="functiondesc"></dd>
+      </dl>
+    </div>
+    <div class="section">
+      <h2>Globals</h2>
+      <dl class="globals">
+        <dt class="globaldef"><a name="DATA_FILES"><span class="global-name">DATA_FILES</span></a> = {'Ft.Lib.DistExt.BuildDocs': ['$data/Data/Stylesheets/docbook_html.xslt', '$data/Data/Stylesheets/docbook_html.css', '$data/Data/Stylesheets/sdocbook_html.xslt', '$data/Data/Stylesheets/sdocbook_html.css', '$data/Data/Stylesheets/modules_html.xslt', '$data/Data/Stylesheets/modules.css', '$data/Data/Stylesheets/extensions_html.xslt', '$data/Data/Stylesheets/extensions.xslt', '$data/Data/Stylesheets/commandline_html.xslt', '$data/Data/Stylesheets/commandline.xslt'], 'Ft.Lib.DistExt.BuildScripts': ['$lib/Ft/Lib/DistExt/stubmain.exe'], 'Ft.Xml.Catalog': ['$data/default.cat', '$data/Schemata/catalog.dtd', '$data/Schemata/sdocbook.dtd', '$data/Schemata/xbel-1.0.dtd', '$data/Schemata/xhtml1-strict.dtd', '$data/Schemata/xhtml1-transitional.dtd', '$data/Schemata/xhtml-lat1.ent', '$data/Schemata/xhtml-special.ent', '$data/Schemata/xhtml-symbol.ent', '$data/Schemata/xsa.dtd']}</dt>
+        <dd class="globaldesc"></dd>
+        <dt class="globaldef"><a name="HIDDEN_IMPORTS"><span class="global-name">HIDDEN_IMPORTS</span></a> = {'Ft.Lib.DistExt.Dist': ['Ft.Lib.DistExt.BDistRpm', 'Ft.Lib.DistExt.InstallL10n', 'Ft.Lib.DistExt.BuildDocs', 'Ft.Lib.DistExt.SDist', 'Ft.Lib.DistExt.GenerateL10n', 'Ft.Lib.DistExt.BuildL10n', 'Ft.Lib.DistExt.BuildExt', 'Ft.Lib.DistExt.BuildPy', 'Ft.Lib.DistExt.InstallDevel', 'Ft.Lib.DistExt.GenerateBisonGen', 'Ft.Lib.DistExt.Build', 'Ft.Lib.DistExt.Config', 'Ft.Lib.DistExt.InstallLocalState', 'Ft.Lib.DistExt.InstallScripts', 'Ft.Lib.DistExt.Install', 'Ft.Lib.DistExt.BDist', 'Ft.Lib.DistExt.InstallEggInfo', 'Ft.Lib.DistExt.BuildScripts', 'Ft.Lib.DistExt.Generate', 'Ft.Lib.DistExt.InstallData', ...], 'Ft.Ods.Parsers.OqlParserc': ['re'], 'Ft.Rdf.Parsers.Versa.VersaParserc': ['cmd', 'Ft.Rdf.Parsers.Versa.ResourceExpressions', 'Ft.Rdf.Parsers.Versa.BooleanExpressions', 'Ft.Rdf.Parsers.Versa.Traversal', 'Ft.Rdf.Parsers.Versa.Literals', 'Ft.Rdf.Parsers.Versa.DataTypes', 'Ft.Rdf.Parsers.Versa.NamedExpressions', 'Ft.Lib.boolean'], 'Ft.Xml.Lib.cStringWriter': ['cStringIO'], 'Ft.Xml.ThirdParty.Xvif.iframe': ['Ft.Xml.ThirdParty.Xvif.iFrameRNG', 'Ft.Xml.ThirdParty.Xvif.iFrameXSLT', 'Ft.Xml.ThirdParty.Xvif.iFrameTypes', 'Ft.Xml.ThirdParty.Xvif.iFrameRegFrag'], 'Ft.Xml.ThirdParty.Xvif.rng': ['Ft.Xml.ThirdParty.Xvif.rngCoreTypeLib', 'Ft.Xml.ThirdParty.Xvif.wxsTypeLib'], 'Ft.Xml.XPath.XPathParserc': ['cmd', 'Ft.Xml.XPath.ParsedAbsoluteLocationPath', 'Ft.Xml.XPath.ParsedRelativeLocationPath', 'Ft.Xml.XPath.ParsedPredicateList', 'Ft.Xml.XPath.ParsedStep', 'Ft.Xml.XPath.ParsedAxisSpecifier', 'Ft.Xml.XPath.ParsedNodeTest', 'Ft.Xml.XPath.ParsedAbbreviatedAbsoluteLocationPath', 'Ft.Xml.XPath.ParsedAbbreviatedRelativeLocationPath', 'Ft.Xml.XPath.ParsedExpr'], 'Ft.Xml.XPath._conversions': ['Ft.Lib.boolean', 'Ft.Lib.number'], 'Ft.Xml.XPointer.XPointerParserc': ['cmd', 'Ft.Xml.XPointer.XPointer'], 'Ft.Xml.XPointer.XPtrExprParserc': ['cmd', 'Ft.Xml.XPath.ParsedAbsoluteLocationPath', 'Ft.Xml.XPath.ParsedRelativeLocationPath', 'Ft.Xml.XPath.ParsedPredicateList', 'Ft.Xml.XPath.ParsedStep', 'Ft.Xml.XPath.ParsedAxisSpecifier', 'Ft.Xml.XPath.ParsedNodeTest', 'Ft.Xml.XPath.ParsedAbbreviatedAbsoluteLocationPath', 'Ft.Xml.XPath.ParsedAbbreviatedRelativeLocationPath', 'Ft.Xml.XPath.ParsedExpr'], ...}</dt>
+        <dd class="globaldesc"></dd>
+        <dt class="globaldef"><a name="name"><span class="global-name">name</span></a> = 'BDistInno'</dt>
+        <dd class="globaldesc"></dd>
+      </dl>
+    </div>
+    <div class="universal-footer">Last modified on 2006-11-25 16:33:28</div>
+  </body>
+</html>

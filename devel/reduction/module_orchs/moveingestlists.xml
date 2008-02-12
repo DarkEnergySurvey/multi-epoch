@@ -1,0 +1,49 @@
+   <target name="Stage_moveingestlists" description="Move image lists to teragrid">
+    <property file="${mypath}/module_orchs/moveingestlists.properties"/>
+
+    <esequence>
+
+        <publish>
+           <event ensembleid="${ensemble.id}"
+                 workflowid="Main"
+                 nodeid="Begin Stage_moveingestlists"
+                 currentState="0">
+                  <property name="message" value="Begin Stage_moveingestlists"/>
+           </event>
+        </publish>
+
+     <print line=" - Begin Stage_moveingestlists"/>
+
+              <print line=" -- Running Stage_moveingestlists - GridFTP image lists and scripts ... "/>
+
+              <edeclare name="locallogdir"  string="${ingest.dir}/log"/>
+              <edeclare name="targetlogdir" string="${targetprot}://${tgrid_server_${site}}${tgrid_homepath_${site}}/../raw/${nite}"/>
+              <uricopy from="$R{locallogdir}" to="$R{targetlogdir}">
+              </uricopy>    
+
+              <print line=" -- GridFTP bin ... "/>
+              <edeclare name="localbindir"  string="${mypath}/bin_${platform}"/>
+              <edeclare name="targetbindir" string="${targetprot}://${tgrid_server_${site}}${tgrid_homepath_${site}}/../raw/${nite}/bin"/>
+              <uricopy from="$R{localbindir}" to="$R{targetbindir}">
+              </uricopy>    
+
+              <print line=" -- GridFTP etc ... "/>
+              <edeclare name="localetcdir"  string="${mypath}/etc"/>
+              <edeclare name="targetetcdir" string="${targetprot}://${tgrid_server_${site}}${tgrid_homepath_${site}}/../raw/${nite}"/>
+              <uricopy from="$R{localetcdir}" to="$R{targetetcdir}">
+              </uricopy>    
+
+     <print line=" - Stage_moveingestlists done"/>
+     <print line="  "/>
+
+        <publish>
+           <event ensembleid="${ensemble.id}"
+                 workflowid="Main"
+                 nodeid="End Stage_moveingestlists"
+                 currentState="0">
+                  <property name="message" value="End Stage_moveingestlists"/>
+           </event>
+        </publish>
+
+    </esequence>
+   </target>

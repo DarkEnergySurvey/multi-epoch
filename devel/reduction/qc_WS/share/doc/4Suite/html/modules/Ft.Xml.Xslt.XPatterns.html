@@ -1,0 +1,135 @@
+<html>
+  <head>
+    <meta content="text/html; charset=iso-8859-1" http-equiv="Content-Type">
+    <title>4Suite API Documentation: Ft.Xml.Xslt.XPatterns</title>
+    <link href="modules.css" type="text/css" rel="stylesheet">
+  </head>
+  <body>
+    <div class="universal-header"><span class="universal-header-prefix">&nbsp;&nbsp;&nbsp;</span>&nbsp;<span class="universal-header-prefix">&nbsp;&nbsp;</span>&nbsp;<span class="universal-header-prefix">&nbsp;</span>&nbsp;<a href="../index.html">4Suite<sup>&trade;</sup> API Documentation</a></div>
+    <h1><span class="glyph-arrow">&#9658;</span> Module <span class="this-name"><a href="Ft.html" title="Ft">Ft</a>.<a href="Ft.Xml.html" title="Ft.Xml">Xml</a>.<a href="Ft.Xml.Xslt.html" title="Ft.Xml.Xslt">Xslt</a>.XPatterns</span></h1>
+    <div class="abstract">Implement Patterns according to the XSLT spec</div>
+    <pre class="description">Copyright 1999-2004 Fourthought, Inc. (USA).
+Detailed license and copyright information: http://4suite.org/COPYRIGHT
+Project home, documentation, distributions: http://4suite.org/</pre>
+    <div class="summary-section">
+      <table cellpadding="0" cellspacing="0">
+        <tbody>
+          <tr>
+            <td valign="top">
+              <div class="summary-header">Classes:</div>
+              <div class="summary-list"><span class="class-name"><a href="#DocumentNodeTest">DocumentNodeTest</a></span>, <span class="class-name"><a href="#IdKeyNodeTest">IdKeyNodeTest</a></span>, <span class="class-name"><a href="#Pattern">Pattern</a></span>, <span class="class-name"><a href="#Patterns">Patterns</a></span>, <span class="class-name"><a href="#PredicatedNodeTest">PredicatedNodeTest</a></span></div>
+            </td>
+            <td width="7" valign="middle"></td>
+            <td bgcolor="#C5C5C5" valign="middle" width="1"></td>
+            <td width="7" valign="middle"></td>
+            <td valign="top">
+              <div class="summary-header">Globals:</div>
+              <div class="summary-list"><span class="global-name"><a href="#AttributeAxis">AttributeAxis</a></span>, <span class="global-name"><a href="#ChildAxis">ChildAxis</a></span></div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="section">
+      <h2>Classes</h2>
+      <dl class="classes">
+        <dt class="classdef"><a name="DocumentNodeTest"></a>class <span class="class-name">DocumentNodeTest</span></dt>
+        <dd class="classdesc">
+          <h3>Methods</h3>
+          <dl class="methods">
+            <dt class="methoddef"><a name="DocumentNodeTest-__init__"><span class="method-name">__init__</span></a>(<span class="argument-name">self</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dt class="methoddef"><a name="DocumentNodeTest-__repr__"><span class="method-name">__repr__</span></a>(<span class="argument-name">self</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dt class="methoddef"><a name="DocumentNodeTest-__str__"><span class="method-name">__str__</span></a>(<span class="argument-name">self</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dt class="methoddef"><a name="DocumentNodeTest-getQuickKey"><span class="method-name">getQuickKey</span></a>(<span class="argument-name">self</span>, <span class="argument-name">namespaces</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dt class="methoddef"><a name="DocumentNodeTest-match"><span class="method-name">match</span></a>(<span class="argument-name">self</span>, <span class="argument-name">context</span>, <span class="argument-name">node</span>, <span class="argument-name">principalType</span>)</dt>
+            <dd class="methoddesc"></dd>
+          </dl>
+        </dd>
+        <dt class="classdef"><a name="IdKeyNodeTest"></a>class <span class="class-name">IdKeyNodeTest</span></dt>
+        <dd class="classdesc">
+          <h3>Methods</h3>
+          <dl class="methods">
+            <dt class="methoddef"><a name="IdKeyNodeTest-__init__"><span class="method-name">__init__</span></a>(<span class="argument-name">self</span>, <span class="argument-name">idOrKey</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dt class="methoddef"><a name="IdKeyNodeTest-__repr__"><span class="method-name">__repr__</span></a>(<span class="argument-name">self</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dt class="methoddef"><a name="IdKeyNodeTest-__str__"><span class="method-name">__str__</span></a>(<span class="argument-name">self</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dt class="methoddef"><a name="IdKeyNodeTest-getQuickKey"><span class="method-name">getQuickKey</span></a>(<span class="argument-name">self</span>, <span class="argument-name">namespaces</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dt class="methoddef"><a name="IdKeyNodeTest-match"><span class="method-name">match</span></a>(<span class="argument-name">self</span>, <span class="argument-name">context</span>, <span class="argument-name">node</span>, <span class="argument-name">principalType</span>)</dt>
+            <dd class="methoddesc"></dd>
+          </dl>
+        </dd>
+        <dt class="classdef"><a name="Pattern"></a>class <span class="class-name">Pattern</span></dt>
+        <dd class="classdesc">
+          <h3>Methods</h3>
+          <dl class="methods">
+            <dt class="methoddef"><a name="Pattern-__init__"><span class="method-name">__init__</span></a>(<span class="argument-name">self</span>, <span class="argument-name">steps</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dt class="methoddef"><a name="Pattern-__repr__"><span class="method-name">__repr__</span></a>(<span class="argument-name">self</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dt class="methoddef"><a name="Pattern-__str__"><span class="method-name">__str__</span></a>(<span class="argument-name">self</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dt class="methoddef"><a name="Pattern-getQuickKey"><span class="method-name">getQuickKey</span></a>(<span class="argument-name">self</span>, <span class="argument-name">namespaces</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dt class="methoddef"><a name="Pattern-getShortcut"><span class="method-name">getShortcut</span></a>(<span class="argument-name">self</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dt class="methoddef"><a name="Pattern-match"><span class="method-name">match</span></a>(<span class="argument-name">self</span>, <span class="argument-name">context</span>, <span class="argument-name">node</span>, <span class="argument-name">dummy</span><span class="argument-default">=None</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dt class="methoddef"><a name="Pattern-pprint"><span class="method-name">pprint</span></a>(<span class="argument-name">self</span>, <span class="argument-name">indent</span><span class="argument-default">=''</span>)</dt>
+            <dd class="methoddesc"></dd>
+          </dl>
+        </dd>
+        <dt class="classdef"><a name="Patterns"></a>class <span class="class-name">Patterns</span></dt>
+        <dd class="classdesc">
+          <h3>Methods</h3>
+          <dl class="methods">
+            <dt class="methoddef"><a name="Patterns-__init__"><span class="method-name">__init__</span></a>(<span class="argument-name">self</span>, <span class="argument-name">patterns</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dt class="methoddef"><a name="Patterns-__repr__"><span class="method-name">__repr__</span></a>(<span class="argument-name">self</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dt class="methoddef"><a name="Patterns-__str__"><span class="method-name">__str__</span></a>(<span class="argument-name">self</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dt class="methoddef"><a name="Patterns-getShortcuts"><span class="method-name">getShortcuts</span></a>(<span class="argument-name">self</span>, <span class="argument-name">namespaces</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dt class="methoddef"><a name="Patterns-match"><span class="method-name">match</span></a>(<span class="argument-name">self</span>, <span class="argument-name">context</span>, <span class="argument-name">node</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dt class="methoddef"><a name="Patterns-pprint"><span class="method-name">pprint</span></a>(<span class="argument-name">self</span>, <span class="argument-name">indent</span><span class="argument-default">=''</span>)</dt>
+            <dd class="methoddesc"></dd>
+          </dl>
+        </dd>
+        <dt class="classdef"><a name="PredicatedNodeTest"></a>class <span class="class-name">PredicatedNodeTest</span></dt>
+        <dd class="classdesc">
+          <h3>Methods</h3>
+          <dl class="methods">
+            <dt class="methoddef"><a name="PredicatedNodeTest-__init__"><span class="method-name">__init__</span></a>(<span class="argument-name">self</span>, <span class="argument-name">nodeTest</span>, <span class="argument-name">predicateList</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dt class="methoddef"><a name="PredicatedNodeTest-__repr__"><span class="method-name">__repr__</span></a>(<span class="argument-name">self</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dt class="methoddef"><a name="PredicatedNodeTest-__str__"><span class="method-name">__str__</span></a>(<span class="argument-name">self</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dt class="methoddef"><a name="PredicatedNodeTest-getQuickKey"><span class="method-name">getQuickKey</span></a>(<span class="argument-name">self</span>, <span class="argument-name">namespaces</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dt class="methoddef"><a name="PredicatedNodeTest-match"><span class="method-name">match</span></a>(<span class="argument-name">self</span>, <span class="argument-name">context</span>, <span class="argument-name">node</span>, <span class="argument-name">principalType</span>)</dt>
+            <dd class="methoddesc"></dd>
+          </dl>
+        </dd>
+      </dl>
+    </div>
+    <div class="section">
+      <h2>Globals</h2>
+      <dl class="globals">
+        <dt class="globaldef"><a name="AttributeAxis"><span class="global-name">AttributeAxis</span></a> = 2</dt>
+        <dd class="globaldesc"></dd>
+        <dt class="globaldef"><a name="ChildAxis"><span class="global-name">ChildAxis</span></a> = 1</dt>
+        <dd class="globaldesc"></dd>
+      </dl>
+    </div>
+    <div class="universal-footer">Last modified on 2005-04-18 16:47:00</div>
+  </body>
+</html>

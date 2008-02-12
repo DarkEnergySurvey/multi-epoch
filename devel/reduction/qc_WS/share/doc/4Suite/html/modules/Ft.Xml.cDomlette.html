@@ -1,0 +1,641 @@
+<html>
+  <head>
+    <meta content="text/html; charset=iso-8859-1" http-equiv="Content-Type">
+    <title>4Suite API Documentation: Ft.Xml.cDomlette</title>
+    <link href="modules.css" type="text/css" rel="stylesheet">
+  </head>
+  <body>
+    <div class="universal-header"><span class="universal-header-prefix">&nbsp;&nbsp;&nbsp;</span>&nbsp;<span class="universal-header-prefix">&nbsp;&nbsp;</span>&nbsp;<span class="universal-header-prefix">&nbsp;</span>&nbsp;<a href="../index.html">4Suite<sup>&trade;</sup> API Documentation</a></div>
+    <h1><span class="glyph-arrow">&#9658;</span> Module <span class="this-name"><a href="Ft.html" title="Ft">Ft</a>.<a href="Ft.Xml.html" title="Ft.Xml">Xml</a>.cDomlette</span></h1>
+    <div class="abstract">cDomlette implementation: a very fast DOM-like library tailored for use in XPath/XSLT</div>
+    <pre class="description">Copyright 2005 Fourthought, Inc. (USA).
+Detailed license and copyright information: http://4suite.org/COPYRIGHT
+Project home, documentation, distributions: http://4suite.org/</pre>
+    <div class="summary-section">
+      <table cellpadding="0" cellspacing="0">
+        <tbody>
+          <tr>
+            <td valign="top">
+              <div class="summary-header">Classes:</div>
+              <div class="summary-list"><span class="class-name"><a href="#Attr">Attr</a></span>, <span class="class-name"><a href="#CharacterData">CharacterData</a></span>, <span class="class-name"><a href="#Comment">Comment</a></span>, <span class="class-name"><a href="#DOMImplementation">DOMImplementation</a></span>, <span class="class-name"><a href="#Document">Document</a></span>, <span class="class-name"><a href="#DocumentFragment">DocumentFragment</a></span>, <span class="class-name"><a href="#Element">Element</a></span>, <span class="class-name"><a href="#Node">Node</a></span>, <span class="class-name"><a href="#ProcessingInstruction">ProcessingInstruction</a></span>, <span class="class-name"><a href="#Text">Text</a></span>, <span class="class-name"><a href="#XPathNamespace">XPathNamespace</a></span></div>
+            </td>
+            <td width="7" valign="middle"></td>
+            <td bgcolor="#C5C5C5" valign="middle" width="1"></td>
+            <td width="7" valign="middle"></td>
+            <td valign="top">
+              <div class="summary-header">Functions:</div>
+              <div class="summary-list"><span class="function-name"><a href="#GetAllNs">GetAllNs</a></span>, <span class="function-name"><a href="#NonvalParse">NonvalParse</a></span>, <span class="function-name"><a href="#Parse">Parse</a></span>, <span class="function-name"><a href="#SeekNss">SeekNss</a></span>, <span class="function-name"><a href="#ValParse">ValParse</a></span></div>
+            </td>
+            <td width="7" valign="middle"></td>
+            <td bgcolor="#C5C5C5" valign="middle" width="1"></td>
+            <td width="7" valign="middle"></td>
+            <td valign="top">
+              <div class="summary-header">Globals:</div>
+              <div class="summary-list"><span class="global-name"><a href="#implementation">implementation</a></span></div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="section">
+      <h2>Classes</h2>
+      <dl class="classes">
+        <dt class="classdef"><a name="Attr"></a>class <span class="class-name">Attr</span><span class="bases">(<span class="class-name"><a href="Ft.Xml.cDomlette.html#Node">Node</a></span>)</span></dt>
+        <dd class="classdesc">
+          <div class="abstract">Attr(ownerDocument, namespaceURI, qualifiedName) -&gt; Attr object</div>
+          <pre class="description">The Attr interface represents an attribute in an Element object.</pre>
+          <h3>Methods</h3>
+          <dl class="methods">
+            <dt class="methoddef"><a name="Attr-__new__"><span class="method-name">__new__</span></a>(<span class="argument-name">...</span>)</dt>
+            <dd class="methoddesc">
+              <div class="abstract">T.__new__(S, ...) -&gt; a new object with type S, a subtype of T</div>
+            </dd>
+            <dd class="overrides"><b>Overrides: </b><span class="inherited-name"><a href="Ft.Xml.cDomlette.html#Node-__new__">__new__</a></span> from class <span class="class-name"><a href="Ft.Xml.cDomlette.html#Node">Node</a></span></dd>
+            <dt class="methoddef"><a name="Attr-__repr__"><span class="method-name">__repr__</span></a>(<span class="argument-name">...</span>)</dt>
+            <dd class="methoddesc">
+              <div class="abstract">x.__repr__() &lt;==&gt; repr(x)</div>
+            </dd>
+          </dl>
+          <h3>Methods inherited from class <a href="Ft.Xml.cDomlette.html#Node">Node</a></h3>
+          <div class="inherited"><span class="inherited-name"><a href="Ft.Xml.cDomlette.html#Node-__eq__">__eq__</a></span>, <span class="inherited-name"><a href="Ft.Xml.cDomlette.html#Node-__ge__">__ge__</a></span>, <span class="inherited-name"><a href="Ft.Xml.cDomlette.html#Node-__gt__">__gt__</a></span>, <span class="inherited-name"><a href="Ft.Xml.cDomlette.html#Node-__hash__">__hash__</a></span>, <span class="inherited-name"><a href="Ft.Xml.cDomlette.html#Node-__iter__">__iter__</a></span>, <span class="inherited-name"><a href="Ft.Xml.cDomlette.html#Node-__le__">__le__</a></span>, <span class="inherited-name"><a href="Ft.Xml.cDomlette.html#Node-__lt__">__lt__</a></span>, <span class="inherited-name"><a href="Ft.Xml.cDomlette.html#Node-__ne__">__ne__</a></span>, <span class="inherited-name"><a href="Ft.Xml.cDomlette.html#Node-appendChild">appendChild</a></span>, <span class="inherited-name"><a href="Ft.Xml.cDomlette.html#Node-cloneNode">cloneNode</a></span>, <span class="inherited-name"><a href="Ft.Xml.cDomlette.html#Node-hasChildNodes">hasChildNodes</a></span>, <span class="inherited-name"><a href="Ft.Xml.cDomlette.html#Node-insertBefore">insertBefore</a></span>, <span class="inherited-name"><a href="Ft.Xml.cDomlette.html#Node-isSameNode">isSameNode</a></span>, <span class="inherited-name"><a href="Ft.Xml.cDomlette.html#Node-normalize">normalize</a></span>, <span class="inherited-name"><a href="Ft.Xml.cDomlette.html#Node-removeChild">removeChild</a></span>, <span class="inherited-name"><a href="Ft.Xml.cDomlette.html#Node-replaceChild">replaceChild</a></span>, <span class="inherited-name"><a href="Ft.Xml.cDomlette.html#Node-xpath">xpath</a></span></div>
+          <h3>Methods inherited from class <span class="undocumented">object</span></h3>
+          <div class="inherited"><span class="inherited-name">__delattr__</span>, <span class="inherited-name">__getattribute__</span>, <span class="inherited-name">__init__</span>, <span class="inherited-name">__reduce__</span>, <span class="inherited-name">__reduce_ex__</span>, <span class="inherited-name">__setattr__</span>, <span class="inherited-name">__str__</span></div>
+          <h3>Members</h3>
+          <dl class="members">
+            <dt class="memberdef"><a name="localName"><span class="member-name">localName</span></a> = &lt;member 'localName' of 'Ft.Xml.cDomlette.Attr' objects&gt;</dt>
+            <dt class="memberdef"><a name="name"><span class="member-name">name</span></a> = &lt;member 'name' of 'Ft.Xml.cDomlette.Attr' objects&gt;</dt>
+            <dt class="memberdef"><a name="namespaceURI"><span class="member-name">namespaceURI</span></a> = &lt;member 'namespaceURI' of 'Ft.Xml.cDomlette.Attr' objects&gt;</dt>
+            <dt class="memberdef"><a name="nextSibling"><span class="member-name">nextSibling</span></a> = None</dt>
+            <dt class="memberdef"><a name="nodeName"><span class="member-name">nodeName</span></a> = &lt;member 'nodeName' of 'Ft.Xml.cDomlette.Attr' objects&gt;</dt>
+            <dt class="memberdef"><a name="nodeType"><span class="member-name">nodeType</span></a> = 2</dt>
+            <dt class="memberdef"><a name="nodeValue"><span class="member-name">nodeValue</span></a> = &lt;attribute 'nodeValue' of 'Ft.Xml.cDomlette.Attr' objects&gt;</dt>
+            <dt class="memberdef"><a name="ownerElement"><span class="member-name">ownerElement</span></a> = &lt;member 'ownerElement' of 'Ft.Xml.cDomlette.Attr' objects&gt;</dt>
+            <dt class="memberdef"><a name="prefix"><span class="member-name">prefix</span></a> = &lt;attribute 'prefix' of 'Ft.Xml.cDomlette.Attr' objects&gt;</dt>
+            <dt class="memberdef"><a name="previousSibling"><span class="member-name">previousSibling</span></a> = None</dt>
+            <dt class="memberdef"><a name="specified"><span class="member-name">specified</span></a> = 1</dt>
+            <dt class="memberdef"><a name="value"><span class="member-name">value</span></a> = &lt;attribute 'value' of 'Ft.Xml.cDomlette.Attr' objects&gt;</dt>
+          </dl>
+          <h3>Members inherited from class <a href="Ft.Xml.cDomlette.html#Node">Node</a></h3>
+          <div class="inherited"><span class="inherited-name"><a href="Ft.Xml.cDomlette.html#Node-attributes">attributes</a></span>, <span class="inherited-name"><a href="Ft.Xml.cDomlette.html#Node-baseURI">baseURI</a></span>, <span class="inherited-name"><a href="Ft.Xml.cDomlette.html#Node-childNodes">childNodes</a></span>, <span class="inherited-name"><a href="Ft.Xml.cDomlette.html#Node-firstChild">firstChild</a></span>, <span class="inherited-name"><a href="Ft.Xml.cDomlette.html#Node-lastChild">lastChild</a></span>, <span class="inherited-name"><a href="Ft.Xml.cDomlette.html#Node-ownerDocument">ownerDocument</a></span>, <span class="inherited-name"><a href="Ft.Xml.cDomlette.html#Node-parentNode">parentNode</a></span>, <span class="inherited-name"><a href="Ft.Xml.cDomlette.html#Node-rootNode">rootNode</a></span>, <span class="inherited-name"><a href="Ft.Xml.cDomlette.html#Node-xmlBase">xmlBase</a></span>, <span class="inherited-name"><a href="Ft.Xml.cDomlette.html#Node-xpathAttributes">xpathAttributes</a></span>, <span class="inherited-name"><a href="Ft.Xml.cDomlette.html#Node-xpathNamespaces">xpathNamespaces</a></span></div>
+          <h3>Members inherited from class <span class="undocumented">object</span></h3>
+          <div class="inherited"><span class="inherited-name">__class__</span></div>
+          <h3>Members inherited from class <span class="undocumented">xml.dom.Node</span></h3>
+          <div class="inherited"><span class="inherited-name">ATTRIBUTE_NODE</span>, <span class="inherited-name">CDATA_SECTION_NODE</span>, <span class="inherited-name">COMMENT_NODE</span>, <span class="inherited-name">DOCUMENT_FRAGMENT_NODE</span>, <span class="inherited-name">DOCUMENT_NODE</span>, <span class="inherited-name">DOCUMENT_TYPE_NODE</span>, <span class="inherited-name">ELEMENT_NODE</span>, <span class="inherited-name">ENTITY_NODE</span>, <span class="inherited-name">ENTITY_REFERENCE_NODE</span>, <span class="inherited-name">NOTATION_NODE</span>, <span class="inherited-name">PROCESSING_INSTRUCTION_NODE</span>, <span class="inherited-name">TEXT_NODE</span>, <span class="inherited-name">TREE_POSITION_ANCESTOR</span>, <span class="inherited-name">TREE_POSITION_DESCENDENT</span>, <span class="inherited-name">TREE_POSITION_DISCONNECTED</span>, <span class="inherited-name">TREE_POSITION_EQUIVALENT</span>, <span class="inherited-name">TREE_POSITION_FOLLOWING</span>, <span class="inherited-name">TREE_POSITION_PRECEDING</span>, <span class="inherited-name">TREE_POSITION_SAME_NODE</span></div>
+        </dd>
+        <dt class="classdef"><a name="CharacterData"></a>class <span class="class-name">CharacterData</span><span class="bases">(<span class="class-name"><a href="Ft.Xml.cDomlette.html#Node">Node</a></span>)</span></dt>
+        <dd class="classdesc">
+          <div class="abstract">CharacterData(ownerDocument, data) -&gt; CharacterData object</div>
+          <pre class="description">This interface represents a block of XML character data.</pre>
+          <h3>Methods</h3>
+          <dl class="methods">
+            <dt class="methoddef"><a name="CharacterData-__new__"><span class="method-name">__new__</span></a>(<span class="argument-name">...</span>)</dt>
+            <dd class="methoddesc">
+              <div class="abstract">T.__new__(S, ...) -&gt; a new object with type S, a subtype of T</div>
+            </dd>
+            <dd class="overrides"><b>Overrides: </b><span class="inherited-name"><a href="Ft.Xml.cDomlette.html#Node-__new__">__new__</a></span> from class <span class="class-name"><a href="Ft.Xml.cDomlette.html#Node">Node</a></span></dd>
+            <dt class="methoddef"><a name="CharacterData-__repr__"><span class="method-name">__repr__</span></a>(<span class="argument-name">...</span>)</dt>
+            <dd class="methoddesc">
+              <div class="abstract">x.__repr__() &lt;==&gt; repr(x)</div>
+            </dd>
+            <dt class="methoddef"><a name="CharacterData-appendData"><span class="method-name">appendData</span></a>(<span class="argument-name">...</span>)</dt>
+            <dd class="methoddesc">
+              <div class="abstract">Append the string to the end of the character data of the node.</div>
+            </dd>
+            <dt class="methoddef"><a name="CharacterData-deleteData"><span class="method-name">deleteData</span></a>(<span class="argument-name">...</span>)</dt>
+            <dd class="methoddesc">
+              <div class="abstract">Remove a range of unicode units from the node.</div>
+            </dd>
+            <dt class="methoddef"><a name="CharacterData-insertData"><span class="method-name">insertData</span></a>(<span class="argument-name">...</span>)</dt>
+            <dd class="methoddesc">
+              <div class="abstract">Insert a string at the specified unicode unit offset.</div>
+            </dd>
+            <dt class="methoddef"><a name="CharacterData-replaceData"><span class="method-name">replaceData</span></a>(<span class="argument-name">...</span>)</dt>
+            <dd class="methoddesc">
+              <div class="abstract">Replace the characters starting at the specified unicode unit offset with
+the specified string.</div>
+            </dd>
+            <dt class="methoddef"><a name="CharacterData-substringData"><span class="method-name">substringData</span></a>(<span class="argument-name">...</span>)</dt>
+            <dd class="methoddesc">
+              <div class="abstract">Extracts a range of data from the node.</div>
+            </dd>
+          </dl>
+          <h3>Methods inherited from class <a href="Ft.Xml.cDomlette.html#Node">Node</a></h3>
+          <div class="inherited"><span class="inherited-name"><a href="Ft.Xml.cDomlette.html#Node-__eq__">__eq__</a></span>, <span class="inherited-name"><a href="Ft.Xml.cDomlette.html#Node-__ge__">__ge__</a></span>, <span class="inherited-name"><a href="Ft.Xml.cDomlette.html#Node-__gt__">__gt__</a></span>, <span class="inherited-name"><a href="Ft.Xml.cDomlette.html#Node-__hash__">__hash__</a></span>, <span class="inherited-name"><a href="Ft.Xml.cDomlette.html#Node-__iter__">__iter__</a></span>, <span class="inherited-name"><a href="Ft.Xml.cDomlette.html#Node-__le__">__le__</a></span>, <span class="inherited-name"><a href="Ft.Xml.cDomlette.html#Node-__lt__">__lt__</a></span>, <span class="inherited-name"><a href="Ft.Xml.cDomlette.html#Node-__ne__">__ne__</a></span>, <span class="inherited-name"><a href="Ft.Xml.cDomlette.html#Node-appendChild">appendChild</a></span>, <span class="inherited-name"><a href="Ft.Xml.cDomlette.html#Node-cloneNode">cloneNode</a></span>, <span class="inherited-name"><a href="Ft.Xml.cDomlette.html#Node-hasChildNodes">hasChildNodes</a></span>, <span class="inherited-name"><a href="Ft.Xml.cDomlette.html#Node-insertBefore">insertBefore</a></span>, <span class="inherited-name"><a href="Ft.Xml.cDomlette.html#Node-isSameNode">isSameNode</a></span>, <span class="inherited-name"><a href="Ft.Xml.cDomlette.html#Node-normalize">normalize</a></span>, <span class="inherited-name"><a href="Ft.Xml.cDomlette.html#Node-removeChild">removeChild</a></span>, <span class="inherited-name"><a href="Ft.Xml.cDomlette.html#Node-replaceChild">replaceChild</a></span>, <span class="inherited-name"><a href="Ft.Xml.cDomlette.html#Node-xpath">xpath</a></span></div>
+          <h3>Methods inherited from class <span class="undocumented">object</span></h3>
+          <div class="inherited"><span class="inherited-name">__delattr__</span>, <span class="inherited-name">__getattribute__</span>, <span class="inherited-name">__init__</span>, <span class="inherited-name">__reduce__</span>, <span class="inherited-name">__reduce_ex__</span>, <span class="inherited-name">__setattr__</span>, <span class="inherited-name">__str__</span></div>
+          <h3>Members</h3>
+          <dl class="members">
+            <dt class="memberdef"><a name="data"><span class="member-name">data</span></a> = &lt;attribute 'data' of 'Ft.Xml.cDomlette.CharacterData' objects&gt;</dt>
+            <dt class="memberdef"><a name="length"><span class="member-name">length</span></a> = &lt;attribute 'length' of 'Ft.Xml.cDomlette.CharacterData' objects&gt;</dt>
+            <dt class="memberdef"><a name="nodeValue"><span class="member-name">nodeValue</span></a> = &lt;attribute 'nodeValue' of 'Ft.Xml.cDomlette.CharacterData' objects&gt;</dt>
+          </dl>
+          <h3>Members inherited from class <a href="Ft.Xml.cDomlette.html#Node">Node</a></h3>
+          <div class="inherited"><span class="inherited-name"><a href="Ft.Xml.cDomlette.html#Node-attributes">attributes</a></span>, <span class="inherited-name"><a href="Ft.Xml.cDomlette.html#Node-baseURI">baseURI</a></span>, <span class="inherited-name"><a href="Ft.Xml.cDomlette.html#Node-childNodes">childNodes</a></span>, <span class="inherited-name"><a href="Ft.Xml.cDomlette.html#Node-firstChild">firstChild</a></span>, <span class="inherited-name"><a href="Ft.Xml.cDomlette.html#Node-lastChild">lastChild</a></span>, <span class="inherited-name"><a href="Ft.Xml.cDomlette.html#Node-localName">localName</a></span>, <span class="inherited-name"><a href="Ft.Xml.cDomlette.html#Node-namespaceURI">namespaceURI</a></span>, <span class="inherited-name"><a href="Ft.Xml.cDomlette.html#Node-nextSibling">nextSibling</a></span>, <span class="inherited-name"><a href="Ft.Xml.cDomlette.html#Node-ownerDocument">ownerDocument</a></span>, <span class="inherited-name"><a href="Ft.Xml.cDomlette.html#Node-parentNode">parentNode</a></span>, <span class="inherited-name"><a href="Ft.Xml.cDomlette.html#Node-prefix">prefix</a></span>, <span class="inherited-name"><a href="Ft.Xml.cDomlette.html#Node-previousSibling">previousSibling</a></span>, <span class="inherited-name"><a href="Ft.Xml.cDomlette.html#Node-rootNode">rootNode</a></span>, <span class="inherited-name"><a href="Ft.Xml.cDomlette.html#Node-xmlBase">xmlBase</a></span>, <span class="inherited-name"><a href="Ft.Xml.cDomlette.html#Node-xpathAttributes">xpathAttributes</a></span>, <span class="inherited-name"><a href="Ft.Xml.cDomlette.html#Node-xpathNamespaces">xpathNamespaces</a></span></div>
+          <h3>Members inherited from class <span class="undocumented">object</span></h3>
+          <div class="inherited"><span class="inherited-name">__class__</span></div>
+          <h3>Members inherited from class <span class="undocumented">xml.dom.Node</span></h3>
+          <div class="inherited"><span class="inherited-name">ATTRIBUTE_NODE</span>, <span class="inherited-name">CDATA_SECTION_NODE</span>, <span class="inherited-name">COMMENT_NODE</span>, <span class="inherited-name">DOCUMENT_FRAGMENT_NODE</span>, <span class="inherited-name">DOCUMENT_NODE</span>, <span class="inherited-name">DOCUMENT_TYPE_NODE</span>, <span class="inherited-name">ELEMENT_NODE</span>, <span class="inherited-name">ENTITY_NODE</span>, <span class="inherited-name">ENTITY_REFERENCE_NODE</span>, <span class="inherited-name">NOTATION_NODE</span>, <span class="inherited-name">PROCESSING_INSTRUCTION_NODE</span>, <span class="inherited-name">TEXT_NODE</span>, <span class="inherited-name">TREE_POSITION_ANCESTOR</span>, <span class="inherited-name">TREE_POSITION_DESCENDENT</span>, <span class="inherited-name">TREE_POSITION_DISCONNECTED</span>, <span class="inherited-name">TREE_POSITION_EQUIVALENT</span>, <span class="inherited-name">TREE_POSITION_FOLLOWING</span>, <span class="inherited-name">TREE_POSITION_PRECEDING</span>, <span class="inherited-name">TREE_POSITION_SAME_NODE</span></div>
+        </dd>
+        <dt class="classdef"><a name="Comment"></a>class <span class="class-name">Comment</span><span class="bases">(<span class="class-name"><a href="Ft.Xml.cDomlette.html#CharacterData">CharacterData</a></span>)</span></dt>
+        <dd class="classdesc">
+          <div class="abstract">Comment(ownerDocument, data) -&gt; Comment object</div>
+          <pre class="description">This interface represents the content of a comment, i.e., all the characters
+between the starting '&lt;!--' and ending '--&gt;'.</pre>
+          <h3>Methods inherited from class <a href="Ft.Xml.cDomlette.html#CharacterData">CharacterData</a></h3>
+          <div class="inherited"><span class="inherited-name"><a href="Ft.Xml.cDomlette.html#CharacterData-__new__">__new__</a></span>, <span class="inherited-name"><a href="Ft.Xml.cDomlette.html#CharacterData-__repr__">__repr__</a></span>, <span class="inherited-name"><a href="Ft.Xml.cDomlette.html#CharacterData-appendData">appendData</a></span>, <span class="inherited-name"><a href="Ft.Xml.cDomlette.html#CharacterData-deleteData">deleteData</a></span>, <span class="inherited-name"><a href="Ft.Xml.cDomlette.html#CharacterData-insertData">insertData</a></span>, <span class="inherited-name"><a href="Ft.Xml.cDomlette.html#CharacterData-replaceData">replaceData</a></span>, <span class="inherited-name"><a href="Ft.Xml.cDomlette.html#CharacterData-substringData">substringData</a></span></div>
+          <h3>Methods inherited from class <a href="Ft.Xml.cDomlette.html#Node">Node</a></h3>
+          <div class="inherited"><span class="inherited-name"><a href="Ft.Xml.cDomlette.html#Node-__eq__">__eq__</a></span>, <span class="inherited-name"><a href="Ft.Xml.cDomlette.html#Node-__ge__">__ge__</a></span>, <span class="inherited-name"><a href="Ft.Xml.cDomlette.html#Node-__gt__">__gt__</a></span>, <span class="inherited-name"><a href="Ft.Xml.cDomlette.html#Node-__hash__">__hash__</a></span>, <span class="inherited-name"><a href="Ft.Xml.cDomlette.html#Node-__iter__">__iter__</a></span>, <span class="inherited-name"><a href="Ft.Xml.cDomlette.html#Node-__le__">__le__</a></span>, <span class="inherited-name"><a href="Ft.Xml.cDomlette.html#Node-__lt__">__lt__</a></span>, <span class="inherited-name"><a href="Ft.Xml.cDomlette.html#Node-__ne__">__ne__</a></span>, <span class="inherited-name"><a href="Ft.Xml.cDomlette.html#Node-appendChild">appendChild</a></span>, <span class="inherited-name"><a href="Ft.Xml.cDomlette.html#Node-cloneNode">cloneNode</a></span>, <span class="inherited-name"><a href="Ft.Xml.cDomlette.html#Node-hasChildNodes">hasChildNodes</a></span>, <span class="inherited-name"><a href="Ft.Xml.cDomlette.html#Node-insertBefore">insertBefore</a></span>, <span class="inherited-name"><a href="Ft.Xml.cDomlette.html#Node-isSameNode">isSameNode</a></span>, <span class="inherited-name"><a href="Ft.Xml.cDomlette.html#Node-normalize">normalize</a></span>, <span class="inherited-name"><a href="Ft.Xml.cDomlette.html#Node-removeChild">removeChild</a></span>, <span class="inherited-name"><a href="Ft.Xml.cDomlette.html#Node-replaceChild">replaceChild</a></span>, <span class="inherited-name"><a href="Ft.Xml.cDomlette.html#Node-xpath">xpath</a></span></div>
+          <h3>Methods inherited from class <span class="undocumented">object</span></h3>
+          <div class="inherited"><span class="inherited-name">__delattr__</span>, <span class="inherited-name">__getattribute__</span>, <span class="inherited-name">__init__</span>, <span class="inherited-name">__reduce__</span>, <span class="inherited-name">__reduce_ex__</span>, <span class="inherited-name">__setattr__</span>, <span class="inherited-name">__str__</span></div>
+          <h3>Members</h3>
+          <dl class="members">
+            <dt class="memberdef"><a name="nodeName"><span class="member-name">nodeName</span></a> = u'#comment'</dt>
+            <dt class="memberdef"><a name="nodeType"><span class="member-name">nodeType</span></a> = 8</dt>
+          </dl>
+          <h3>Members inherited from class <a href="Ft.Xml.cDomlette.html#CharacterData">CharacterData</a></h3>
+          <div class="inherited"><span class="inherited-name"><a href="Ft.Xml.cDomlette.html#CharacterData-data">data</a></span>, <span class="inherited-name"><a href="Ft.Xml.cDomlette.html#CharacterData-length">length</a></span>, <span class="inherited-name"><a href="Ft.Xml.cDomlette.html#CharacterData-nodeValue">nodeValue</a></span></div>
+          <h3>Members inherited from class <a href="Ft.Xml.cDomlette.html#Node">Node</a></h3>
+          <div class="inherited"><span class="inherited-name"><a href="Ft.Xml.cDomlette.html#Node-attributes">attributes</a></span>, <span class="inherited-name"><a href="Ft.Xml.cDomlette.html#Node-baseURI">baseURI</a></span>, <span class="inherited-name"><a href="Ft.Xml.cDomlette.html#Node-childNodes">childNodes</a></span>, <span class="inherited-name"><a href="Ft.Xml.cDomlette.html#Node-firstChild">firstChild</a></span>, <span class="inherited-name"><a href="Ft.Xml.cDomlette.html#Node-lastChild">lastChild</a></span>, <span class="inherited-name"><a href="Ft.Xml.cDomlette.html#Node-localName">localName</a></span>, <span class="inherited-name"><a href="Ft.Xml.cDomlette.html#Node-namespaceURI">namespaceURI</a></span>, <span class="inherited-name"><a href="Ft.Xml.cDomlette.html#Node-nextSibling">nextSibling</a></span>, <span class="inherited-name"><a href="Ft.Xml.cDomlette.html#Node-ownerDocument">ownerDocument</a></span>, <span class="inherited-name"><a href="Ft.Xml.cDomlette.html#Node-parentNode">parentNode</a></span>, <span class="inherited-name"><a href="Ft.Xml.cDomlette.html#Node-prefix">prefix</a></span>, <span class="inherited-name"><a href="Ft.Xml.cDomlette.html#Node-previousSibling">previousSibling</a></span>, <span class="inherited-name"><a href="Ft.Xml.cDomlette.html#Node-rootNode">rootNode</a></span>, <span class="inherited-name"><a href="Ft.Xml.cDomlette.html#Node-xmlBase">xmlBase</a></span>, <span class="inherited-name"><a href="Ft.Xml.cDomlette.html#Node-xpathAttributes">xpathAttributes</a></span>, <span class="inherited-name"><a href="Ft.Xml.cDomlette.html#Node-xpathNamespaces">xpathNamespaces</a></span></div>
+          <h3>Members inherited from class <span class="undocumented">object</span></h3>
+          <div class="inherited"><span class="inherited-name">__class__</span></div>
+          <h3>Members inherited from class <span class="undocumented">xml.dom.Node</span></h3>
+          <div class="inherited"><span class="inherited-name">ATTRIBUTE_NODE</span>, <span class="inherited-name">CDATA_SECTION_NODE</span>, <span class="inherited-name">COMMENT_NODE</span>, <span class="inherited-name">DOCUMENT_FRAGMENT_NODE</span>, <span class="inherited-name">DOCUMENT_NODE</span>, <span class="inherited-name">DOCUMENT_TYPE_NODE</span>, <span class="inherited-name">ELEMENT_NODE</span>, <span class="inherited-name">ENTITY_NODE</span>, <span class="inherited-name">ENTITY_REFERENCE_NODE</span>, <span class="inherited-name">NOTATION_NODE</span>, <span class="inherited-name">PROCESSING_INSTRUCTION_NODE</span>, <span class="inherited-name">TEXT_NODE</span>, <span class="inherited-name">TREE_POSITION_ANCESTOR</span>, <span class="inherited-name">TREE_POSITION_DESCENDENT</span>, <span class="inherited-name">TREE_POSITION_DISCONNECTED</span>, <span class="inherited-name">TREE_POSITION_EQUIVALENT</span>, <span class="inherited-name">TREE_POSITION_FOLLOWING</span>, <span class="inherited-name">TREE_POSITION_PRECEDING</span>, <span class="inherited-name">TREE_POSITION_SAME_NODE</span></div>
+        </dd>
+        <dt class="classdef"><a name="DOMImplementation"></a>class <span class="class-name">DOMImplementation</span><span class="bases">(<span class="class-name"><span class="undocumented">object</span></span>)</span></dt>
+        <dd class="classdesc">
+          <div class="abstract">The DOMImplementation interface provides a number of methods for performing
+operations that are independent of any particular instance of the document
+object model.</div>
+          <h3>Methods</h3>
+          <dl class="methods">
+            <dt class="methoddef"><a name="DOMImplementation-__repr__"><span class="method-name">__repr__</span></a>(<span class="argument-name">...</span>)</dt>
+            <dd class="methoddesc">
+              <div class="abstract">x.__repr__() &lt;==&gt; repr(x)</div>
+            </dd>
+            <dt class="methoddef"><a name="DOMImplementation-createDocument"><span class="method-name">createDocument</span></a>(<span class="argument-name">...</span>)</dt>
+            <dd class="methoddesc">
+              <div class="abstract">Creates a Document object of the specified type with its document element.</div>
+            </dd>
+            <dt class="methoddef"><a name="DOMImplementation-createRootNode"><span class="method-name">createRootNode</span></a>(<span class="argument-name">...</span>)</dt>
+            <dd class="methoddesc">
+              <div class="abstract">Creates a Document object with the specified documentURI.</div>
+            </dd>
+            <dt class="methoddef"><a name="DOMImplementation-hasFeature"><span class="method-name">hasFeature</span></a>(<span class="argument-name">...</span>)</dt>
+            <dd class="methoddesc">
+              <div class="abstract">Test if the DOM implementation implements a specific feature.</div>
+            </dd>
+          </dl>
+          <h3>Methods inherited from class <span class="undocumented">object</span></h3>
+          <div class="inherited"><span class="inherited-name">__delattr__</span>, <span class="inherited-name">__getattribute__</span>, <span class="inherited-name">__hash__</span>, <span class="inherited-name">__init__</span>, <span class="inherited-name">__new__</span>, <span class="inherited-name">__reduce__</span>, <span class="inherited-name">__reduce_ex__</span>, <span class="inherited-name">__setattr__</span>, <span class="inherited-name">__str__</span></div>
+          <h3>Members inherited from class <span class="undocumented">object</span></h3>
+          <div class="inherited"><span class="inherited-name">__class__</span></div>
+        </dd>
+        <dt class="classdef"><a name="Document"></a>class <span class="class-name">Document</span><span class="bases">(<span class="class-name"><a href="Ft.Xml.cDomlette.html#Node">Node</a></span>)</span></dt>
+        <dd class="classdesc">
+          <div class="abstract">Document([documentURI]) -&gt; Document object</div>
+          <pre class="description">The Document interface represents the entire XML document. Conceptually,
+it is the root of the document tree, and provides the primary access to the
+document's data.</pre>
+          <h3>Methods</h3>
+          <dl class="methods">
+            <dt class="methoddef"><a name="Document-__new__"><span class="method-name">__new__</span></a>(<span class="argument-name">...</span>)</dt>
+            <dd class="methoddesc">
+              <div class="abstract">T.__new__(S, ...) -&gt; a new object with type S, a subtype of T</div>
+            </dd>
+            <dd class="overrides"><b>Overrides: </b><span class="inherited-name"><a href="Ft.Xml.cDomlette.html#Node-__new__">__new__</a></span> from class <span class="class-name"><a href="Ft.Xml.cDomlette.html#Node">Node</a></span></dd>
+            <dt class="methoddef"><a name="Document-__repr__"><span class="method-name">__repr__</span></a>(<span class="argument-name">...</span>)</dt>
+            <dd class="methoddesc">
+              <div class="abstract">x.__repr__() &lt;==&gt; repr(x)</div>
+            </dd>
+            <dt class="methoddef"><a name="Document-createAttributeNS"><span class="method-name">createAttributeNS</span></a>(<span class="argument-name">...</span>)</dt>
+            <dd class="methoddesc">
+              <div class="abstract">createAttributeNS(namespaceURI, qualifiedName) -&gt; new Attribute</div>
+              <pre class="description">Creates an attribute of the given qualified name and namespace URI.</pre>
+            </dd>
+            <dt class="methoddef"><a name="Document-createComment"><span class="method-name">createComment</span></a>(<span class="argument-name">...</span>)</dt>
+            <dd class="methoddesc">
+              <div class="abstract">createComment(data) -&gt; new Comment</div>
+              <pre class="description">Creates a Comment node given the specified string.</pre>
+            </dd>
+            <dt class="methoddef"><a name="Document-createDocumentFragment"><span class="method-name">createDocumentFragment</span></a>(<span class="argument-name">...</span>)</dt>
+            <dd class="methoddesc">
+              <div class="abstract">createDocumentFragment() -&gt; new DocumentFragment</div>
+              <pre class="description">Creates an empty DocumentFragment object.</pre>
+            </dd>
+            <dt class="methoddef"><a name="Document-createElementNS"><span class="method-name">createElementNS</span></a>(<span class="argument-name">...</span>)</dt>
+            <dd class="methoddesc">
+              <div class="abstract">createElementNS(namespaceURI, qualifiedName) -&gt; new Element</div>
+              <pre class="description">Creates an element of the given qualified name and namespace URI.</pre>
+            </dd>
+            <dt class="methoddef"><a name="Document-createProcessingInstruction"><span class="method-name">createProcessingInstruction</span></a>(<span class="argument-name">...</span>)</dt>
+            <dd class="methoddesc">
+              <div class="abstract">createProcessingInstruction(target, data) -&gt; new ProcessingInstruction</div>
+              <pre class="description">Creates a ProcessingInstruction node given the specified name and data
+strings.</pre>
+            </dd>
+            <dt class="methoddef"><a name="Document-createTextNode"><span class="method-name">createTextNode</span></a>(<span class="argument-name">...</span>)</dt>
+            <dd class="methoddesc">
+              <div class="abstract">createTextNode(data) -&gt; new Text</div>
+              <pre class="description">Creates a Text node given the specified string.</pre>
+            </dd>
+            <dt class="methoddef"><a name="Document-getElementById"><span class="method-name">getElementById</span></a>(<span class="argument-name">...</span>)</dt>
+            <dd class="methoddesc">
+              <div class="abstract">getElementById(elementId) -&gt; Element</div>
+              <pre class="description">Returns the Element whose ID is given by elementId. If no such element
+exists, returns None. If more than one element has this ID, the first in
+the document is returned.</pre>
+            </dd>
+            <dt class="methoddef"><a name="Document-importNode"><span class="method-name">importNode</span></a>(<span class="argument-name">...</span>)</dt>
+            <dd class="methoddesc">
+              <div class="abstract">importNode(importedNode, deep) -&gt; Node</div>
+              <pre class="description">Imports a node from another document to this document. The returned node
+has no parent; (parentNode is None). The source node is not altered or
+removed from the original document; this method creates a new copy of the
+source node.</pre>
+            </dd>
+          </dl>
+          <h3>Methods inherited from class <a href="Ft.Xml.cDomlette.html#Node">Node</a></h3>
+          <div class="inherited"><span class="inherited-name"><a href="Ft.Xml.cDomlette.html#Node-__eq__">__eq__</a></span>, <span class="inherited-name"><a href="Ft.Xml.cDomlette.html#Node-__ge__">__ge__</a></span>, <span class="inherited-name"><a href="Ft.Xml.cDomlette.html#Node-__gt__">__gt__</a></span>, <span class="inherited-name"><a href="Ft.Xml.cDomlette.html#Node-__hash__">__hash__</a></span>, <span class="inherited-name"><a href="Ft.Xml.cDomlette.html#Node-__iter__">__iter__</a></span>, <span class="inherited-name"><a href="Ft.Xml.cDomlette.html#Node-__le__">__le__</a></span>, <span class="inherited-name"><a href="Ft.Xml.cDomlette.html#Node-__lt__">__lt__</a></span>, <span class="inherited-name"><a href="Ft.Xml.cDomlette.html#Node-__ne__">__ne__</a></span>, <span class="inherited-name"><a href="Ft.Xml.cDomlette.html#Node-appendChild">appendChild</a></span>, <span class="inherited-name"><a href="Ft.Xml.cDomlette.html#Node-cloneNode">cloneNode</a></span>, <span class="inherited-name"><a href="Ft.Xml.cDomlette.html#Node-hasChildNodes">hasChildNodes</a></span>, <span class="inherited-name"><a href="Ft.Xml.cDomlette.html#Node-insertBefore">insertBefore</a></span>, <span class="inherited-name"><a href="Ft.Xml.cDomlette.html#Node-isSameNode">isSameNode</a></span>, <span class="inherited-name"><a href="Ft.Xml.cDomlette.html#Node-normalize">normalize</a></span>, <span class="inherited-name"><a href="Ft.Xml.cDomlette.html#Node-removeChild">removeChild</a></span>, <span class="inherited-name"><a href="Ft.Xml.cDomlette.html#Node-replaceChild">replaceChild</a></span>, <span class="inherited-name"><a href="Ft.Xml.cDomlette.html#Node-xpath">xpath</a></span></div>
+          <h3>Methods inherited from class <span class="undocumented">object</span></h3>
+          <div class="inherited"><span class="inherited-name">__delattr__</span>, <span class="inherited-name">__getattribute__</span>, <span class="inherited-name">__init__</span>, <span class="inherited-name">__reduce__</span>, <span class="inherited-name">__reduce_ex__</span>, <span class="inherited-name">__setattr__</span>, <span class="inherited-name">__str__</span></div>
+          <h3>Members</h3>
+          <dl class="members">
+            <dt class="memberdef"><a name="doctype"><span class="member-name">doctype</span></a> = None</dt>
+            <dt class="memberdef"><a name="documentElement"><span class="member-name">documentElement</span></a> = &lt;attribute 'documentElement' of 'Ft.Xml.cDomlette.Document' objects&gt;</dt>
+            <dt class="memberdef"><a name="documentURI"><span class="member-name">documentURI</span></a> = &lt;attribute 'documentURI' of 'Ft.Xml.cDomlette.Document' objects&gt;</dt>
+            <dt class="memberdef"><a name="implementation"><span class="member-name">implementation</span></a> = &lt;DOMImplementation&gt;</dt>
+            <dt class="memberdef"><a name="nodeName"><span class="member-name">nodeName</span></a> = u'#document'</dt>
+            <dt class="memberdef"><a name="nodeType"><span class="member-name">nodeType</span></a> = 9</dt>
+            <dt class="memberdef"><a name="ownerDocument"><span class="member-name">ownerDocument</span></a> = None</dt>
+            <dt class="memberdef"><a name="publicId"><span class="member-name">publicId</span></a> = &lt;attribute 'publicId' of 'Ft.Xml.cDomlette.Document' objects&gt;</dt>
+            <dt class="memberdef"><a name="refUri"><span class="member-name">refUri</span></a> = &lt;member 'refUri' of 'Ft.Xml.cDomlette.Document' objects&gt;</dt>
+            <dt class="memberdef"><a name="rootNode"><span class="member-name">rootNode</span></a> = &lt;attribute 'rootNode' of 'Ft.Xml.cDomlette.Document' objects&gt;</dt>
+            <dt class="memberdef"><a name="systemId"><span class="member-name">systemId</span></a> = &lt;attribute 'systemId' of 'Ft.Xml.cDomlette.Document' objects&gt;</dt>
+            <dt class="memberdef"><a name="unparsedEntities"><span class="member-name">unparsedEntities</span></a> = &lt;member 'unparsedEntities' of 'Ft.Xml.cDomlette.Document' objects&gt;</dt>
+            <dt class="memberdef"><a name="xmlBase"><span class="member-name">xmlBase</span></a> = &lt;member 'xmlBase' of 'Ft.Xml.cDomlette.Document' objects&gt;</dt>
+          </dl>
+          <h3>Members inherited from class <a href="Ft.Xml.cDomlette.html#Node">Node</a></h3>
+          <div class="inherited"><span class="inherited-name"><a href="Ft.Xml.cDomlette.html#Node-attributes">attributes</a></span>, <span class="inherited-name"><a href="Ft.Xml.cDomlette.html#Node-baseURI">baseURI</a></span>, <span class="inherited-name"><a href="Ft.Xml.cDomlette.html#Node-childNodes">childNodes</a></span>, <span class="inherited-name"><a href="Ft.Xml.cDomlette.html#Node-firstChild">firstChild</a></span>, <span class="inherited-name"><a href="Ft.Xml.cDomlette.html#Node-lastChild">lastChild</a></span>, <span class="inherited-name"><a href="Ft.Xml.cDomlette.html#Node-localName">localName</a></span>, <span class="inherited-name"><a href="Ft.Xml.cDomlette.html#Node-namespaceURI">namespaceURI</a></span>, <span class="inherited-name"><a href="Ft.Xml.cDomlette.html#Node-nextSibling">nextSibling</a></span>, <span class="inherited-name"><a href="Ft.Xml.cDomlette.html#Node-nodeValue">nodeValue</a></span>, <span class="inherited-name"><a href="Ft.Xml.cDomlette.html#Node-parentNode">parentNode</a></span>, <span class="inherited-name"><a href="Ft.Xml.cDomlette.html#Node-prefix">prefix</a></span>, <span class="inherited-name"><a href="Ft.Xml.cDomlette.html#Node-previousSibling">previousSibling</a></span>, <span class="inherited-name"><a href="Ft.Xml.cDomlette.html#Node-xpathAttributes">xpathAttributes</a></span>, <span class="inherited-name"><a href="Ft.Xml.cDomlette.html#Node-xpathNamespaces">xpathNamespaces</a></span></div>
+          <h3>Members inherited from class <span class="undocumented">object</span></h3>
+          <div class="inherited"><span class="inherited-name">__class__</span></div>
+          <h3>Members inherited from class <span class="undocumented">xml.dom.Node</span></h3>
+          <div class="inherited"><span class="inherited-name">ATTRIBUTE_NODE</span>, <span class="inherited-name">CDATA_SECTION_NODE</span>, <span class="inherited-name">COMMENT_NODE</span>, <span class="inherited-name">DOCUMENT_FRAGMENT_NODE</span>, <span class="inherited-name">DOCUMENT_NODE</span>, <span class="inherited-name">DOCUMENT_TYPE_NODE</span>, <span class="inherited-name">ELEMENT_NODE</span>, <span class="inherited-name">ENTITY_NODE</span>, <span class="inherited-name">ENTITY_REFERENCE_NODE</span>, <span class="inherited-name">NOTATION_NODE</span>, <span class="inherited-name">PROCESSING_INSTRUCTION_NODE</span>, <span class="inherited-name">TEXT_NODE</span>, <span class="inherited-name">TREE_POSITION_ANCESTOR</span>, <span class="inherited-name">TREE_POSITION_DESCENDENT</span>, <span class="inherited-name">TREE_POSITION_DISCONNECTED</span>, <span class="inherited-name">TREE_POSITION_EQUIVALENT</span>, <span class="inherited-name">TREE_POSITION_FOLLOWING</span>, <span class="inherited-name">TREE_POSITION_PRECEDING</span>, <span class="inherited-name">TREE_POSITION_SAME_NODE</span></div>
+        </dd>
+        <dt class="classdef"><a name="DocumentFragment"></a>class <span class="class-name">DocumentFragment</span><span class="bases">(<span class="class-name"><a href="Ft.Xml.cDomlette.html#Node">Node</a></span>)</span></dt>
+        <dd class="classdesc">
+          <div class="abstract">DocumentFragment(ownerDocument) -&gt; DocumentFragment object</div>
+          <pre class="description">DocumentFragment is a "lightweight" or "minimal" Document object.</pre>
+          <h3>Methods</h3>
+          <dl class="methods">
+            <dt class="methoddef"><a name="DocumentFragment-__new__"><span class="method-name">__new__</span></a>(<span class="argument-name">...</span>)</dt>
+            <dd class="methoddesc">
+              <div class="abstract">T.__new__(S, ...) -&gt; a new object with type S, a subtype of T</div>
+            </dd>
+            <dd class="overrides"><b>Overrides: </b><span class="inherited-name"><a href="Ft.Xml.cDomlette.html#Node-__new__">__new__</a></span> from class <span class="class-name"><a href="Ft.Xml.cDomlette.html#Node">Node</a></span></dd>
+            <dt class="methoddef"><a name="DocumentFragment-__repr__"><span class="method-name">__repr__</span></a>(<span class="argument-name">...</span>)</dt>
+            <dd class="methoddesc">
+              <div class="abstract">x.__repr__() &lt;==&gt; repr(x)</div>
+            </dd>
+          </dl>
+          <h3>Methods inherited from class <a href="Ft.Xml.cDomlette.html#Node">Node</a></h3>
+          <div class="inherited"><span class="inherited-name"><a href="Ft.Xml.cDomlette.html#Node-__eq__">__eq__</a></span>, <span class="inherited-name"><a href="Ft.Xml.cDomlette.html#Node-__ge__">__ge__</a></span>, <span class="inherited-name"><a href="Ft.Xml.cDomlette.html#Node-__gt__">__gt__</a></span>, <span class="inherited-name"><a href="Ft.Xml.cDomlette.html#Node-__hash__">__hash__</a></span>, <span class="inherited-name"><a href="Ft.Xml.cDomlette.html#Node-__iter__">__iter__</a></span>, <span class="inherited-name"><a href="Ft.Xml.cDomlette.html#Node-__le__">__le__</a></span>, <span class="inherited-name"><a href="Ft.Xml.cDomlette.html#Node-__lt__">__lt__</a></span>, <span class="inherited-name"><a href="Ft.Xml.cDomlette.html#Node-__ne__">__ne__</a></span>, <span class="inherited-name"><a href="Ft.Xml.cDomlette.html#Node-appendChild">appendChild</a></span>, <span class="inherited-name"><a href="Ft.Xml.cDomlette.html#Node-cloneNode">cloneNode</a></span>, <span class="inherited-name"><a href="Ft.Xml.cDomlette.html#Node-hasChildNodes">hasChildNodes</a></span>, <span class="inherited-name"><a href="Ft.Xml.cDomlette.html#Node-insertBefore">insertBefore</a></span>, <span class="inherited-name"><a href="Ft.Xml.cDomlette.html#Node-isSameNode">isSameNode</a></span>, <span class="inherited-name"><a href="Ft.Xml.cDomlette.html#Node-normalize">normalize</a></span>, <span class="inherited-name"><a href="Ft.Xml.cDomlette.html#Node-removeChild">removeChild</a></span>, <span class="inherited-name"><a href="Ft.Xml.cDomlette.html#Node-replaceChild">replaceChild</a></span>, <span class="inherited-name"><a href="Ft.Xml.cDomlette.html#Node-xpath">xpath</a></span></div>
+          <h3>Methods inherited from class <span class="undocumented">object</span></h3>
+          <div class="inherited"><span class="inherited-name">__delattr__</span>, <span class="inherited-name">__getattribute__</span>, <span class="inherited-name">__init__</span>, <span class="inherited-name">__reduce__</span>, <span class="inherited-name">__reduce_ex__</span>, <span class="inherited-name">__setattr__</span>, <span class="inherited-name">__str__</span></div>
+          <h3>Members</h3>
+          <dl class="members">
+            <dt class="memberdef"><a name="nodeName"><span class="member-name">nodeName</span></a> = u'#document-fragment'</dt>
+            <dt class="memberdef"><a name="nodeType"><span class="member-name">nodeType</span></a> = 11</dt>
+          </dl>
+          <h3>Members inherited from class <a href="Ft.Xml.cDomlette.html#Node">Node</a></h3>
+          <div class="inherited"><span class="inherited-name"><a href="Ft.Xml.cDomlette.html#Node-attributes">attributes</a></span>, <span class="inherited-name"><a href="Ft.Xml.cDomlette.html#Node-baseURI">baseURI</a></span>, <span class="inherited-name"><a href="Ft.Xml.cDomlette.html#Node-childNodes">childNodes</a></span>, <span class="inherited-name"><a href="Ft.Xml.cDomlette.html#Node-firstChild">firstChild</a></span>, <span class="inherited-name"><a href="Ft.Xml.cDomlette.html#Node-lastChild">lastChild</a></span>, <span class="inherited-name"><a href="Ft.Xml.cDomlette.html#Node-localName">localName</a></span>, <span class="inherited-name"><a href="Ft.Xml.cDomlette.html#Node-namespaceURI">namespaceURI</a></span>, <span class="inherited-name"><a href="Ft.Xml.cDomlette.html#Node-nextSibling">nextSibling</a></span>, <span class="inherited-name"><a href="Ft.Xml.cDomlette.html#Node-nodeValue">nodeValue</a></span>, <span class="inherited-name"><a href="Ft.Xml.cDomlette.html#Node-ownerDocument">ownerDocument</a></span>, <span class="inherited-name"><a href="Ft.Xml.cDomlette.html#Node-parentNode">parentNode</a></span>, <span class="inherited-name"><a href="Ft.Xml.cDomlette.html#Node-prefix">prefix</a></span>, <span class="inherited-name"><a href="Ft.Xml.cDomlette.html#Node-previousSibling">previousSibling</a></span>, <span class="inherited-name"><a href="Ft.Xml.cDomlette.html#Node-rootNode">rootNode</a></span>, <span class="inherited-name"><a href="Ft.Xml.cDomlette.html#Node-xmlBase">xmlBase</a></span>, <span class="inherited-name"><a href="Ft.Xml.cDomlette.html#Node-xpathAttributes">xpathAttributes</a></span>, <span class="inherited-name"><a href="Ft.Xml.cDomlette.html#Node-xpathNamespaces">xpathNamespaces</a></span></div>
+          <h3>Members inherited from class <span class="undocumented">object</span></h3>
+          <div class="inherited"><span class="inherited-name">__class__</span></div>
+          <h3>Members inherited from class <span class="undocumented">xml.dom.Node</span></h3>
+          <div class="inherited"><span class="inherited-name">ATTRIBUTE_NODE</span>, <span class="inherited-name">CDATA_SECTION_NODE</span>, <span class="inherited-name">COMMENT_NODE</span>, <span class="inherited-name">DOCUMENT_FRAGMENT_NODE</span>, <span class="inherited-name">DOCUMENT_NODE</span>, <span class="inherited-name">DOCUMENT_TYPE_NODE</span>, <span class="inherited-name">ELEMENT_NODE</span>, <span class="inherited-name">ENTITY_NODE</span>, <span class="inherited-name">ENTITY_REFERENCE_NODE</span>, <span class="inherited-name">NOTATION_NODE</span>, <span class="inherited-name">PROCESSING_INSTRUCTION_NODE</span>, <span class="inherited-name">TEXT_NODE</span>, <span class="inherited-name">TREE_POSITION_ANCESTOR</span>, <span class="inherited-name">TREE_POSITION_DESCENDENT</span>, <span class="inherited-name">TREE_POSITION_DISCONNECTED</span>, <span class="inherited-name">TREE_POSITION_EQUIVALENT</span>, <span class="inherited-name">TREE_POSITION_FOLLOWING</span>, <span class="inherited-name">TREE_POSITION_PRECEDING</span>, <span class="inherited-name">TREE_POSITION_SAME_NODE</span></div>
+        </dd>
+        <dt class="classdef"><a name="Element"></a>class <span class="class-name">Element</span><span class="bases">(<span class="class-name"><a href="Ft.Xml.cDomlette.html#Node">Node</a></span>)</span></dt>
+        <dd class="classdesc">
+          <div class="abstract">Element(ownerDocument, namespaceURI, qualifiedName) -&gt; Element object</div>
+          <pre class="description">The Element interface represents an element in an XML document.</pre>
+          <h3>Methods</h3>
+          <dl class="methods">
+            <dt class="methoddef"><a name="Element-__new__"><span class="method-name">__new__</span></a>(<span class="argument-name">...</span>)</dt>
+            <dd class="methoddesc">
+              <div class="abstract">T.__new__(S, ...) -&gt; a new object with type S, a subtype of T</div>
+            </dd>
+            <dd class="overrides"><b>Overrides: </b><span class="inherited-name"><a href="Ft.Xml.cDomlette.html#Node-__new__">__new__</a></span> from class <span class="class-name"><a href="Ft.Xml.cDomlette.html#Node">Node</a></span></dd>
+            <dt class="methoddef"><a name="Element-__repr__"><span class="method-name">__repr__</span></a>(<span class="argument-name">...</span>)</dt>
+            <dd class="methoddesc">
+              <div class="abstract">x.__repr__() &lt;==&gt; repr(x)</div>
+            </dd>
+            <dt class="methoddef"><a name="Element-getAttributeNS"><span class="method-name">getAttributeNS</span></a>(<span class="argument-name">...</span>)</dt>
+            <dd class="methoddesc">
+              <div class="abstract">Retrieves an attribute value by local name and namespace URI.</div>
+            </dd>
+            <dt class="methoddef"><a name="Element-getAttributeNodeNS"><span class="method-name">getAttributeNodeNS</span></a>(<span class="argument-name">...</span>)</dt>
+            <dd class="methoddesc">
+              <div class="abstract">Retrieves an Attr node by local name and namespace URI.</div>
+            </dd>
+            <dt class="methoddef"><a name="Element-hasAttributeNS"><span class="method-name">hasAttributeNS</span></a>(<span class="argument-name">...</span>)</dt>
+            <dd class="methoddesc">
+              <div class="abstract">Returns True when an attribute with a given local name and namespace URI
+is specified on this element or has a default value, False otherwise.</div>
+            </dd>
+            <dt class="methoddef"><a name="Element-removeAttributeNS"><span class="method-name">removeAttributeNS</span></a>(<span class="argument-name">...</span>)</dt>
+            <dd class="methoddesc">
+              <div class="abstract">Removes an attribute by local name and namespace URI.</div>
+            </dd>
+            <dt class="methoddef"><a name="Element-removeAttributeNode"><span class="method-name">removeAttributeNode</span></a>(<span class="argument-name">...</span>)</dt>
+            <dd class="methoddesc">
+              <div class="abstract">Removes the specified attribute node.</div>
+            </dd>
+            <dt class="methoddef"><a name="Element-setAttributeNS"><span class="method-name">setAttributeNS</span></a>(<span class="argument-name">...</span>)</dt>
+            <dd class="methoddesc">
+              <div class="abstract">Adds a new attribute.  If an attribute with the same local name and
+namespace URI is already present on the element, its prefix is changed
+to be the prefix part of the qualifiedName, and its value is changed to
+be the value parameter.</div>
+            </dd>
+            <dt class="methoddef"><a name="Element-setAttributeNodeNS"><span class="method-name">setAttributeNodeNS</span></a>(<span class="argument-name">...</span>)</dt>
+            <dd class="methoddesc">
+              <div class="abstract">Adds a new attribute. If an attribute with that local name and that
+namespace URI is already present in the element, it is replaced by the
+new one. Replacing an attribute node by itself has no effect.</div>
+            </dd>
+          </dl>
+          <h3>Methods inherited from class <a href="Ft.Xml.cDomlette.html#Node">Node</a></h3>
+          <div class="inherited"><span class="inherited-name"><a href="Ft.Xml.cDomlette.html#Node-__eq__">__eq__</a></span>, <span class="inherited-name"><a href="Ft.Xml.cDomlette.html#Node-__ge__">__ge__</a></span>, <span class="inherited-name"><a href="Ft.Xml.cDomlette.html#Node-__gt__">__gt__</a></span>, <span class="inherited-name"><a href="Ft.Xml.cDomlette.html#Node-__hash__">__hash__</a></span>, <span class="inherited-name"><a href="Ft.Xml.cDomlette.html#Node-__iter__">__iter__</a></span>, <span class="inherited-name"><a href="Ft.Xml.cDomlette.html#Node-__le__">__le__</a></span>, <span class="inherited-name"><a href="Ft.Xml.cDomlette.html#Node-__lt__">__lt__</a></span>, <span class="inherited-name"><a href="Ft.Xml.cDomlette.html#Node-__ne__">__ne__</a></span>, <span class="inherited-name"><a href="Ft.Xml.cDomlette.html#Node-appendChild">appendChild</a></span>, <span class="inherited-name"><a href="Ft.Xml.cDomlette.html#Node-cloneNode">cloneNode</a></span>, <span class="inherited-name"><a href="Ft.Xml.cDomlette.html#Node-hasChildNodes">hasChildNodes</a></span>, <span class="inherited-name"><a href="Ft.Xml.cDomlette.html#Node-insertBefore">insertBefore</a></span>, <span class="inherited-name"><a href="Ft.Xml.cDomlette.html#Node-isSameNode">isSameNode</a></span>, <span class="inherited-name"><a href="Ft.Xml.cDomlette.html#Node-normalize">normalize</a></span>, <span class="inherited-name"><a href="Ft.Xml.cDomlette.html#Node-removeChild">removeChild</a></span>, <span class="inherited-name"><a href="Ft.Xml.cDomlette.html#Node-replaceChild">replaceChild</a></span>, <span class="inherited-name"><a href="Ft.Xml.cDomlette.html#Node-xpath">xpath</a></span></div>
+          <h3>Methods inherited from class <span class="undocumented">object</span></h3>
+          <div class="inherited"><span class="inherited-name">__delattr__</span>, <span class="inherited-name">__getattribute__</span>, <span class="inherited-name">__init__</span>, <span class="inherited-name">__reduce__</span>, <span class="inherited-name">__reduce_ex__</span>, <span class="inherited-name">__setattr__</span>, <span class="inherited-name">__str__</span></div>
+          <h3>Members</h3>
+          <dl class="members">
+            <dt class="memberdef"><a name="attributes"><span class="member-name">attributes</span></a> = &lt;attribute 'attributes' of 'Ft.Xml.cDomlette.Element' objects&gt;</dt>
+            <dt class="memberdef"><a name="localName"><span class="member-name">localName</span></a> = &lt;member 'localName' of 'Ft.Xml.cDomlette.Element' objects&gt;</dt>
+            <dt class="memberdef"><a name="namespaceURI"><span class="member-name">namespaceURI</span></a> = &lt;member 'namespaceURI' of 'Ft.Xml.cDomlette.Element' objects&gt;</dt>
+            <dt class="memberdef"><a name="nodeName"><span class="member-name">nodeName</span></a> = &lt;member 'nodeName' of 'Ft.Xml.cDomlette.Element' objects&gt;</dt>
+            <dt class="memberdef"><a name="nodeType"><span class="member-name">nodeType</span></a> = 1</dt>
+            <dt class="memberdef"><a name="prefix"><span class="member-name">prefix</span></a> = &lt;attribute 'prefix' of 'Ft.Xml.cDomlette.Element' objects&gt;</dt>
+            <dt class="memberdef"><a name="tagName"><span class="member-name">tagName</span></a> = &lt;member 'tagName' of 'Ft.Xml.cDomlette.Element' objects&gt;</dt>
+            <dt class="memberdef"><a name="xpathAttributes"><span class="member-name">xpathAttributes</span></a> = &lt;attribute 'xpathAttributes' of 'Ft.Xml.cDomlette.Element' objects&gt;</dt>
+            <dt class="memberdef"><a name="xpathNamespaces"><span class="member-name">xpathNamespaces</span></a> = &lt;attribute 'xpathNamespaces' of 'Ft.Xml.cDomlette.Element' objects&gt;</dt>
+          </dl>
+          <h3>Members inherited from class <a href="Ft.Xml.cDomlette.html#Node">Node</a></h3>
+          <div class="inherited"><span class="inherited-name"><a href="Ft.Xml.cDomlette.html#Node-baseURI">baseURI</a></span>, <span class="inherited-name"><a href="Ft.Xml.cDomlette.html#Node-childNodes">childNodes</a></span>, <span class="inherited-name"><a href="Ft.Xml.cDomlette.html#Node-firstChild">firstChild</a></span>, <span class="inherited-name"><a href="Ft.Xml.cDomlette.html#Node-lastChild">lastChild</a></span>, <span class="inherited-name"><a href="Ft.Xml.cDomlette.html#Node-nextSibling">nextSibling</a></span>, <span class="inherited-name"><a href="Ft.Xml.cDomlette.html#Node-nodeValue">nodeValue</a></span>, <span class="inherited-name"><a href="Ft.Xml.cDomlette.html#Node-ownerDocument">ownerDocument</a></span>, <span class="inherited-name"><a href="Ft.Xml.cDomlette.html#Node-parentNode">parentNode</a></span>, <span class="inherited-name"><a href="Ft.Xml.cDomlette.html#Node-previousSibling">previousSibling</a></span>, <span class="inherited-name"><a href="Ft.Xml.cDomlette.html#Node-rootNode">rootNode</a></span>, <span class="inherited-name"><a href="Ft.Xml.cDomlette.html#Node-xmlBase">xmlBase</a></span></div>
+          <h3>Members inherited from class <span class="undocumented">object</span></h3>
+          <div class="inherited"><span class="inherited-name">__class__</span></div>
+          <h3>Members inherited from class <span class="undocumented">xml.dom.Node</span></h3>
+          <div class="inherited"><span class="inherited-name">ATTRIBUTE_NODE</span>, <span class="inherited-name">CDATA_SECTION_NODE</span>, <span class="inherited-name">COMMENT_NODE</span>, <span class="inherited-name">DOCUMENT_FRAGMENT_NODE</span>, <span class="inherited-name">DOCUMENT_NODE</span>, <span class="inherited-name">DOCUMENT_TYPE_NODE</span>, <span class="inherited-name">ELEMENT_NODE</span>, <span class="inherited-name">ENTITY_NODE</span>, <span class="inherited-name">ENTITY_REFERENCE_NODE</span>, <span class="inherited-name">NOTATION_NODE</span>, <span class="inherited-name">PROCESSING_INSTRUCTION_NODE</span>, <span class="inherited-name">TEXT_NODE</span>, <span class="inherited-name">TREE_POSITION_ANCESTOR</span>, <span class="inherited-name">TREE_POSITION_DESCENDENT</span>, <span class="inherited-name">TREE_POSITION_DISCONNECTED</span>, <span class="inherited-name">TREE_POSITION_EQUIVALENT</span>, <span class="inherited-name">TREE_POSITION_FOLLOWING</span>, <span class="inherited-name">TREE_POSITION_PRECEDING</span>, <span class="inherited-name">TREE_POSITION_SAME_NODE</span></div>
+        </dd>
+        <dt class="classdef"><a name="Node"></a>class <span class="class-name">Node</span><span class="bases">(<span class="class-name"><span class="undocumented">object</span></span>, <span class="class-name"><span class="undocumented">xml.dom.Node</span></span>)</span></dt>
+        <dd class="classdesc">
+          <div class="abstract">The Node type is the primary datatype for the entire Document Object Model.</div>
+          <h3>Methods</h3>
+          <dl class="methods">
+            <dt class="methoddef"><a name="Node-__eq__"><span class="method-name">__eq__</span></a>(<span class="argument-name">...</span>)</dt>
+            <dd class="methoddesc">
+              <div class="abstract">x.__eq__(y) &lt;==&gt; x==y</div>
+            </dd>
+            <dt class="methoddef"><a name="Node-__ge__"><span class="method-name">__ge__</span></a>(<span class="argument-name">...</span>)</dt>
+            <dd class="methoddesc">
+              <div class="abstract">x.__ge__(y) &lt;==&gt; x&gt;=y</div>
+            </dd>
+            <dt class="methoddef"><a name="Node-__gt__"><span class="method-name">__gt__</span></a>(<span class="argument-name">...</span>)</dt>
+            <dd class="methoddesc">
+              <div class="abstract">x.__gt__(y) &lt;==&gt; x&gt;y</div>
+            </dd>
+            <dt class="methoddef"><a name="Node-__hash__"><span class="method-name">__hash__</span></a>(<span class="argument-name">...</span>)</dt>
+            <dd class="methoddesc">
+              <div class="abstract">x.__hash__() &lt;==&gt; hash(x)</div>
+            </dd>
+            <dt class="methoddef"><a name="Node-__iter__"><span class="method-name">__iter__</span></a>(<span class="argument-name">...</span>)</dt>
+            <dd class="methoddesc">
+              <div class="abstract">x.__iter__() &lt;==&gt; iter(x)</div>
+            </dd>
+            <dt class="methoddef"><a name="Node-__le__"><span class="method-name">__le__</span></a>(<span class="argument-name">...</span>)</dt>
+            <dd class="methoddesc">
+              <div class="abstract">x.__le__(y) &lt;==&gt; x&lt;=y</div>
+            </dd>
+            <dt class="methoddef"><a name="Node-__lt__"><span class="method-name">__lt__</span></a>(<span class="argument-name">...</span>)</dt>
+            <dd class="methoddesc">
+              <div class="abstract">x.__lt__(y) &lt;==&gt; x&lt;y</div>
+            </dd>
+            <dt class="methoddef"><a name="Node-__ne__"><span class="method-name">__ne__</span></a>(<span class="argument-name">...</span>)</dt>
+            <dd class="methoddesc">
+              <div class="abstract">x.__ne__(y) &lt;==&gt; x!=y</div>
+            </dd>
+            <dt class="methoddef"><a name="Node-__repr__"><span class="method-name">__repr__</span></a>(<span class="argument-name">...</span>)</dt>
+            <dd class="methoddesc">
+              <div class="abstract">x.__repr__() &lt;==&gt; repr(x)</div>
+            </dd>
+            <dt class="methoddef"><a name="Node-appendChild"><span class="method-name">appendChild</span></a>(<span class="argument-name">...</span>)</dt>
+            <dd class="methoddesc">
+              <div class="abstract">Adds the node newChild to the end of the list of children of this node.</div>
+            </dd>
+            <dt class="methoddef"><a name="Node-cloneNode"><span class="method-name">cloneNode</span></a>(<span class="argument-name">...</span>)</dt>
+            <dd class="methoddesc">
+              <div class="abstract">Returns a duplicate of this node, i.e., serves as a generic copy
+constructor for nodes.</div>
+            </dd>
+            <dt class="methoddef"><a name="Node-hasChildNodes"><span class="method-name">hasChildNodes</span></a>(<span class="argument-name">...</span>)</dt>
+            <dd class="methoddesc">
+              <div class="abstract">Returns whether this node has any children.</div>
+            </dd>
+            <dt class="methoddef"><a name="Node-insertBefore"><span class="method-name">insertBefore</span></a>(<span class="argument-name">...</span>)</dt>
+            <dd class="methoddesc">
+              <div class="abstract">Inserts the node newChild before the existing child node refChild.</div>
+            </dd>
+            <dt class="methoddef"><a name="Node-isSameNode"><span class="method-name">isSameNode</span></a>(<span class="argument-name">...</span>)</dt>
+            <dd class="methoddesc">
+              <div class="abstract">Returns whether this node is the same node as the given one. (DOM Level 3)</div>
+            </dd>
+            <dt class="methoddef"><a name="Node-normalize"><span class="method-name">normalize</span></a>(<span class="argument-name">...</span>)</dt>
+            <dd class="methoddesc">
+              <div class="abstract">Puts all Text nodes in the full depth of the sub-tree underneath this Node,
+including attribute nodes, into a "normal" form where only structure
+(e.g., elements, comments, processing instructions, CDATA sections, and
+entity references) separates Text nodes, i.e., there are neither adjacent
+Text nodes nor empty Text nodes.</div>
+            </dd>
+            <dt class="methoddef"><a name="Node-removeChild"><span class="method-name">removeChild</span></a>(<span class="argument-name">...</span>)</dt>
+            <dd class="methoddesc">
+              <div class="abstract">Removes the child node indicated by oldChild from the list of children, and
+returns it.</div>
+            </dd>
+            <dt class="methoddef"><a name="Node-replaceChild"><span class="method-name">replaceChild</span></a>(<span class="argument-name">...</span>)</dt>
+            <dd class="methoddesc">
+              <div class="abstract">Replaces the child node oldChild with newChild in the list of children, and
+returns the oldChild node.</div>
+            </dd>
+            <dt class="methoddef"><a name="Node-xpath"><span class="method-name">xpath</span></a>(<span class="argument-name">...</span>)</dt>
+            <dd class="methoddesc">
+              <div class="abstract">Evaluates an XPath expression string using this node as context.</div>
+            </dd>
+          </dl>
+          <h3>Methods inherited from class <span class="undocumented">object</span></h3>
+          <div class="inherited"><span class="inherited-name">__delattr__</span>, <span class="inherited-name">__getattribute__</span>, <span class="inherited-name">__init__</span>, <span class="inherited-name">__new__</span>, <span class="inherited-name">__reduce__</span>, <span class="inherited-name">__reduce_ex__</span>, <span class="inherited-name">__setattr__</span>, <span class="inherited-name">__str__</span></div>
+          <h3>Members</h3>
+          <dl class="members">
+            <dt class="memberdef"><a name="attributes"><span class="member-name">attributes</span></a> = None</dt>
+            <dt class="memberdef"><a name="baseURI"><span class="member-name">baseURI</span></a> = &lt;attribute 'baseURI' of 'Ft.Xml.cDomlette.Node' objects&gt;</dt>
+            <dt class="memberdef"><a name="childNodes"><span class="member-name">childNodes</span></a> = &lt;attribute 'childNodes' of 'Ft.Xml.cDomlette.Node' objects&gt;</dt>
+            <dt class="memberdef"><a name="firstChild"><span class="member-name">firstChild</span></a> = &lt;attribute 'firstChild' of 'Ft.Xml.cDomlette.Node' objects&gt;</dt>
+            <dt class="memberdef"><a name="lastChild"><span class="member-name">lastChild</span></a> = &lt;attribute 'lastChild' of 'Ft.Xml.cDomlette.Node' objects&gt;</dt>
+            <dt class="memberdef"><a name="localName"><span class="member-name">localName</span></a> = None</dt>
+            <dt class="memberdef"><a name="namespaceURI"><span class="member-name">namespaceURI</span></a> = None</dt>
+            <dt class="memberdef"><a name="nextSibling"><span class="member-name">nextSibling</span></a> = &lt;attribute 'nextSibling' of 'Ft.Xml.cDomlette.Node' objects&gt;</dt>
+            <dt class="memberdef"><a name="nodeValue"><span class="member-name">nodeValue</span></a> = None</dt>
+            <dt class="memberdef"><a name="ownerDocument"><span class="member-name">ownerDocument</span></a> = &lt;member 'ownerDocument' of 'Ft.Xml.cDomlette.Node' objects&gt;</dt>
+            <dt class="memberdef"><a name="parentNode"><span class="member-name">parentNode</span></a> = &lt;member 'parentNode' of 'Ft.Xml.cDomlette.Node' objects&gt;</dt>
+            <dt class="memberdef"><a name="prefix"><span class="member-name">prefix</span></a> = None</dt>
+            <dt class="memberdef"><a name="previousSibling"><span class="member-name">previousSibling</span></a> = &lt;attribute 'previousSibling' of 'Ft.Xml.cDomlette.Node' objects&gt;</dt>
+            <dt class="memberdef"><a name="rootNode"><span class="member-name">rootNode</span></a> = &lt;member 'rootNode' of 'Ft.Xml.cDomlette.Node' objects&gt;</dt>
+            <dt class="memberdef"><a name="xmlBase"><span class="member-name">xmlBase</span></a> = &lt;attribute 'xmlBase' of 'Ft.Xml.cDomlette.Node' objects&gt;</dt>
+            <dt class="memberdef"><a name="xpathAttributes"><span class="member-name">xpathAttributes</span></a> = &lt;attribute 'xpathAttributes' of 'Ft.Xml.cDomlette.Node' objects&gt;</dt>
+            <dt class="memberdef"><a name="xpathNamespaces"><span class="member-name">xpathNamespaces</span></a> = &lt;attribute 'xpathNamespaces' of 'Ft.Xml.cDomlette.Node' objects&gt;</dt>
+          </dl>
+          <h3>Members inherited from class <span class="undocumented">object</span></h3>
+          <div class="inherited"><span class="inherited-name">__class__</span></div>
+          <h3>Members inherited from class <span class="undocumented">xml.dom.Node</span></h3>
+          <div class="inherited"><span class="inherited-name">ATTRIBUTE_NODE</span>, <span class="inherited-name">CDATA_SECTION_NODE</span>, <span class="inherited-name">COMMENT_NODE</span>, <span class="inherited-name">DOCUMENT_FRAGMENT_NODE</span>, <span class="inherited-name">DOCUMENT_NODE</span>, <span class="inherited-name">DOCUMENT_TYPE_NODE</span>, <span class="inherited-name">ELEMENT_NODE</span>, <span class="inherited-name">ENTITY_NODE</span>, <span class="inherited-name">ENTITY_REFERENCE_NODE</span>, <span class="inherited-name">NOTATION_NODE</span>, <span class="inherited-name">PROCESSING_INSTRUCTION_NODE</span>, <span class="inherited-name">TEXT_NODE</span>, <span class="inherited-name">TREE_POSITION_ANCESTOR</span>, <span class="inherited-name">TREE_POSITION_DESCENDENT</span>, <span class="inherited-name">TREE_POSITION_DISCONNECTED</span>, <span class="inherited-name">TREE_POSITION_EQUIVALENT</span>, <span class="inherited-name">TREE_POSITION_FOLLOWING</span>, <span class="inherited-name">TREE_POSITION_PRECEDING</span>, <span class="inherited-name">TREE_POSITION_SAME_NODE</span></div>
+        </dd>
+        <dt class="classdef"><a name="ProcessingInstruction"></a>class <span class="class-name">ProcessingInstruction</span><span class="bases">(<span class="class-name"><a href="Ft.Xml.cDomlette.html#Node">Node</a></span>)</span></dt>
+        <dd class="classdesc">
+          <div class="abstract">ProcessingInstruction(ownerDocument, target, data) -&gt; ProcessingInstruction</div>
+          <pre class="description">The ProcessingInstruction interface represents a "processing instruction",
+used in XML as a way to keep processor-specific information in the text of
+the document.</pre>
+          <h3>Methods</h3>
+          <dl class="methods">
+            <dt class="methoddef"><a name="ProcessingInstruction-__new__"><span class="method-name">__new__</span></a>(<span class="argument-name">...</span>)</dt>
+            <dd class="methoddesc">
+              <div class="abstract">T.__new__(S, ...) -&gt; a new object with type S, a subtype of T</div>
+            </dd>
+            <dd class="overrides"><b>Overrides: </b><span class="inherited-name"><a href="Ft.Xml.cDomlette.html#Node-__new__">__new__</a></span> from class <span class="class-name"><a href="Ft.Xml.cDomlette.html#Node">Node</a></span></dd>
+            <dt class="methoddef"><a name="ProcessingInstruction-__repr__"><span class="method-name">__repr__</span></a>(<span class="argument-name">...</span>)</dt>
+            <dd class="methoddesc">
+              <div class="abstract">x.__repr__() &lt;==&gt; repr(x)</div>
+            </dd>
+          </dl>
+          <h3>Methods inherited from class <a href="Ft.Xml.cDomlette.html#Node">Node</a></h3>
+          <div class="inherited"><span class="inherited-name"><a href="Ft.Xml.cDomlette.html#Node-__eq__">__eq__</a></span>, <span class="inherited-name"><a href="Ft.Xml.cDomlette.html#Node-__ge__">__ge__</a></span>, <span class="inherited-name"><a href="Ft.Xml.cDomlette.html#Node-__gt__">__gt__</a></span>, <span class="inherited-name"><a href="Ft.Xml.cDomlette.html#Node-__hash__">__hash__</a></span>, <span class="inherited-name"><a href="Ft.Xml.cDomlette.html#Node-__iter__">__iter__</a></span>, <span class="inherited-name"><a href="Ft.Xml.cDomlette.html#Node-__le__">__le__</a></span>, <span class="inherited-name"><a href="Ft.Xml.cDomlette.html#Node-__lt__">__lt__</a></span>, <span class="inherited-name"><a href="Ft.Xml.cDomlette.html#Node-__ne__">__ne__</a></span>, <span class="inherited-name"><a href="Ft.Xml.cDomlette.html#Node-appendChild">appendChild</a></span>, <span class="inherited-name"><a href="Ft.Xml.cDomlette.html#Node-cloneNode">cloneNode</a></span>, <span class="inherited-name"><a href="Ft.Xml.cDomlette.html#Node-hasChildNodes">hasChildNodes</a></span>, <span class="inherited-name"><a href="Ft.Xml.cDomlette.html#Node-insertBefore">insertBefore</a></span>, <span class="inherited-name"><a href="Ft.Xml.cDomlette.html#Node-isSameNode">isSameNode</a></span>, <span class="inherited-name"><a href="Ft.Xml.cDomlette.html#Node-normalize">normalize</a></span>, <span class="inherited-name"><a href="Ft.Xml.cDomlette.html#Node-removeChild">removeChild</a></span>, <span class="inherited-name"><a href="Ft.Xml.cDomlette.html#Node-replaceChild">replaceChild</a></span>, <span class="inherited-name"><a href="Ft.Xml.cDomlette.html#Node-xpath">xpath</a></span></div>
+          <h3>Methods inherited from class <span class="undocumented">object</span></h3>
+          <div class="inherited"><span class="inherited-name">__delattr__</span>, <span class="inherited-name">__getattribute__</span>, <span class="inherited-name">__init__</span>, <span class="inherited-name">__reduce__</span>, <span class="inherited-name">__reduce_ex__</span>, <span class="inherited-name">__setattr__</span>, <span class="inherited-name">__str__</span></div>
+          <h3>Members</h3>
+          <dl class="members">
+            <dt class="memberdef"><a name="data"><span class="member-name">data</span></a> = &lt;attribute 'data' of 'Ft.Xml.cDomlette.ProcessingInstruction' objects&gt;</dt>
+            <dt class="memberdef"><a name="nodeName"><span class="member-name">nodeName</span></a> = &lt;member 'nodeName' of 'Ft.Xml.cDomlette.ProcessingInstruction' objects&gt;</dt>
+            <dt class="memberdef"><a name="nodeType"><span class="member-name">nodeType</span></a> = 7</dt>
+            <dt class="memberdef"><a name="nodeValue"><span class="member-name">nodeValue</span></a> = &lt;attribute 'nodeValue' of 'Ft.Xml.cDomlette.ProcessingInstruction' objects&gt;</dt>
+            <dt class="memberdef"><a name="target"><span class="member-name">target</span></a> = &lt;member 'target' of 'Ft.Xml.cDomlette.ProcessingInstruction' objects&gt;</dt>
+          </dl>
+          <h3>Members inherited from class <a href="Ft.Xml.cDomlette.html#Node">Node</a></h3>
+          <div class="inherited"><span class="inherited-name"><a href="Ft.Xml.cDomlette.html#Node-attributes">attributes</a></span>, <span class="inherited-name"><a href="Ft.Xml.cDomlette.html#Node-baseURI">baseURI</a></span>, <span class="inherited-name"><a href="Ft.Xml.cDomlette.html#Node-childNodes">childNodes</a></span>, <span class="inherited-name"><a href="Ft.Xml.cDomlette.html#Node-firstChild">firstChild</a></span>, <span class="inherited-name"><a href="Ft.Xml.cDomlette.html#Node-lastChild">lastChild</a></span>, <span class="inherited-name"><a href="Ft.Xml.cDomlette.html#Node-localName">localName</a></span>, <span class="inherited-name"><a href="Ft.Xml.cDomlette.html#Node-namespaceURI">namespaceURI</a></span>, <span class="inherited-name"><a href="Ft.Xml.cDomlette.html#Node-nextSibling">nextSibling</a></span>, <span class="inherited-name"><a href="Ft.Xml.cDomlette.html#Node-ownerDocument">ownerDocument</a></span>, <span class="inherited-name"><a href="Ft.Xml.cDomlette.html#Node-parentNode">parentNode</a></span>, <span class="inherited-name"><a href="Ft.Xml.cDomlette.html#Node-prefix">prefix</a></span>, <span class="inherited-name"><a href="Ft.Xml.cDomlette.html#Node-previousSibling">previousSibling</a></span>, <span class="inherited-name"><a href="Ft.Xml.cDomlette.html#Node-rootNode">rootNode</a></span>, <span class="inherited-name"><a href="Ft.Xml.cDomlette.html#Node-xmlBase">xmlBase</a></span>, <span class="inherited-name"><a href="Ft.Xml.cDomlette.html#Node-xpathAttributes">xpathAttributes</a></span>, <span class="inherited-name"><a href="Ft.Xml.cDomlette.html#Node-xpathNamespaces">xpathNamespaces</a></span></div>
+          <h3>Members inherited from class <span class="undocumented">object</span></h3>
+          <div class="inherited"><span class="inherited-name">__class__</span></div>
+          <h3>Members inherited from class <span class="undocumented">xml.dom.Node</span></h3>
+          <div class="inherited"><span class="inherited-name">ATTRIBUTE_NODE</span>, <span class="inherited-name">CDATA_SECTION_NODE</span>, <span class="inherited-name">COMMENT_NODE</span>, <span class="inherited-name">DOCUMENT_FRAGMENT_NODE</span>, <span class="inherited-name">DOCUMENT_NODE</span>, <span class="inherited-name">DOCUMENT_TYPE_NODE</span>, <span class="inherited-name">ELEMENT_NODE</span>, <span class="inherited-name">ENTITY_NODE</span>, <span class="inherited-name">ENTITY_REFERENCE_NODE</span>, <span class="inherited-name">NOTATION_NODE</span>, <span class="inherited-name">PROCESSING_INSTRUCTION_NODE</span>, <span class="inherited-name">TEXT_NODE</span>, <span class="inherited-name">TREE_POSITION_ANCESTOR</span>, <span class="inherited-name">TREE_POSITION_DESCENDENT</span>, <span class="inherited-name">TREE_POSITION_DISCONNECTED</span>, <span class="inherited-name">TREE_POSITION_EQUIVALENT</span>, <span class="inherited-name">TREE_POSITION_FOLLOWING</span>, <span class="inherited-name">TREE_POSITION_PRECEDING</span>, <span class="inherited-name">TREE_POSITION_SAME_NODE</span></div>
+        </dd>
+        <dt class="classdef"><a name="Text"></a>class <span class="class-name">Text</span><span class="bases">(<span class="class-name"><a href="Ft.Xml.cDomlette.html#CharacterData">CharacterData</a></span>)</span></dt>
+        <dd class="classdesc">
+          <div class="abstract">Text(ownerDocument, data) -&gt; Text object</div>
+          <pre class="description">This interface represents the contents of a text node.</pre>
+          <h3>Methods inherited from class <a href="Ft.Xml.cDomlette.html#CharacterData">CharacterData</a></h3>
+          <div class="inherited"><span class="inherited-name"><a href="Ft.Xml.cDomlette.html#CharacterData-__new__">__new__</a></span>, <span class="inherited-name"><a href="Ft.Xml.cDomlette.html#CharacterData-__repr__">__repr__</a></span>, <span class="inherited-name"><a href="Ft.Xml.cDomlette.html#CharacterData-appendData">appendData</a></span>, <span class="inherited-name"><a href="Ft.Xml.cDomlette.html#CharacterData-deleteData">deleteData</a></span>, <span class="inherited-name"><a href="Ft.Xml.cDomlette.html#CharacterData-insertData">insertData</a></span>, <span class="inherited-name"><a href="Ft.Xml.cDomlette.html#CharacterData-replaceData">replaceData</a></span>, <span class="inherited-name"><a href="Ft.Xml.cDomlette.html#CharacterData-substringData">substringData</a></span></div>
+          <h3>Methods inherited from class <a href="Ft.Xml.cDomlette.html#Node">Node</a></h3>
+          <div class="inherited"><span class="inherited-name"><a href="Ft.Xml.cDomlette.html#Node-__eq__">__eq__</a></span>, <span class="inherited-name"><a href="Ft.Xml.cDomlette.html#Node-__ge__">__ge__</a></span>, <span class="inherited-name"><a href="Ft.Xml.cDomlette.html#Node-__gt__">__gt__</a></span>, <span class="inherited-name"><a href="Ft.Xml.cDomlette.html#Node-__hash__">__hash__</a></span>, <span class="inherited-name"><a href="Ft.Xml.cDomlette.html#Node-__iter__">__iter__</a></span>, <span class="inherited-name"><a href="Ft.Xml.cDomlette.html#Node-__le__">__le__</a></span>, <span class="inherited-name"><a href="Ft.Xml.cDomlette.html#Node-__lt__">__lt__</a></span>, <span class="inherited-name"><a href="Ft.Xml.cDomlette.html#Node-__ne__">__ne__</a></span>, <span class="inherited-name"><a href="Ft.Xml.cDomlette.html#Node-appendChild">appendChild</a></span>, <span class="inherited-name"><a href="Ft.Xml.cDomlette.html#Node-cloneNode">cloneNode</a></span>, <span class="inherited-name"><a href="Ft.Xml.cDomlette.html#Node-hasChildNodes">hasChildNodes</a></span>, <span class="inherited-name"><a href="Ft.Xml.cDomlette.html#Node-insertBefore">insertBefore</a></span>, <span class="inherited-name"><a href="Ft.Xml.cDomlette.html#Node-isSameNode">isSameNode</a></span>, <span class="inherited-name"><a href="Ft.Xml.cDomlette.html#Node-normalize">normalize</a></span>, <span class="inherited-name"><a href="Ft.Xml.cDomlette.html#Node-removeChild">removeChild</a></span>, <span class="inherited-name"><a href="Ft.Xml.cDomlette.html#Node-replaceChild">replaceChild</a></span>, <span class="inherited-name"><a href="Ft.Xml.cDomlette.html#Node-xpath">xpath</a></span></div>
+          <h3>Methods inherited from class <span class="undocumented">object</span></h3>
+          <div class="inherited"><span class="inherited-name">__delattr__</span>, <span class="inherited-name">__getattribute__</span>, <span class="inherited-name">__init__</span>, <span class="inherited-name">__reduce__</span>, <span class="inherited-name">__reduce_ex__</span>, <span class="inherited-name">__setattr__</span>, <span class="inherited-name">__str__</span></div>
+          <h3>Members</h3>
+          <dl class="members">
+            <dt class="memberdef"><a name="nodeName"><span class="member-name">nodeName</span></a> = u'#text'</dt>
+            <dt class="memberdef"><a name="nodeType"><span class="member-name">nodeType</span></a> = 3</dt>
+            <dt class="memberdef"><a name="xsltOutputEscaping"><span class="member-name">xsltOutputEscaping</span></a> = True</dt>
+          </dl>
+          <h3>Members inherited from class <a href="Ft.Xml.cDomlette.html#CharacterData">CharacterData</a></h3>
+          <div class="inherited"><span class="inherited-name"><a href="Ft.Xml.cDomlette.html#CharacterData-data">data</a></span>, <span class="inherited-name"><a href="Ft.Xml.cDomlette.html#CharacterData-length">length</a></span>, <span class="inherited-name"><a href="Ft.Xml.cDomlette.html#CharacterData-nodeValue">nodeValue</a></span></div>
+          <h3>Members inherited from class <a href="Ft.Xml.cDomlette.html#Node">Node</a></h3>
+          <div class="inherited"><span class="inherited-name"><a href="Ft.Xml.cDomlette.html#Node-attributes">attributes</a></span>, <span class="inherited-name"><a href="Ft.Xml.cDomlette.html#Node-baseURI">baseURI</a></span>, <span class="inherited-name"><a href="Ft.Xml.cDomlette.html#Node-childNodes">childNodes</a></span>, <span class="inherited-name"><a href="Ft.Xml.cDomlette.html#Node-firstChild">firstChild</a></span>, <span class="inherited-name"><a href="Ft.Xml.cDomlette.html#Node-lastChild">lastChild</a></span>, <span class="inherited-name"><a href="Ft.Xml.cDomlette.html#Node-localName">localName</a></span>, <span class="inherited-name"><a href="Ft.Xml.cDomlette.html#Node-namespaceURI">namespaceURI</a></span>, <span class="inherited-name"><a href="Ft.Xml.cDomlette.html#Node-nextSibling">nextSibling</a></span>, <span class="inherited-name"><a href="Ft.Xml.cDomlette.html#Node-ownerDocument">ownerDocument</a></span>, <span class="inherited-name"><a href="Ft.Xml.cDomlette.html#Node-parentNode">parentNode</a></span>, <span class="inherited-name"><a href="Ft.Xml.cDomlette.html#Node-prefix">prefix</a></span>, <span class="inherited-name"><a href="Ft.Xml.cDomlette.html#Node-previousSibling">previousSibling</a></span>, <span class="inherited-name"><a href="Ft.Xml.cDomlette.html#Node-rootNode">rootNode</a></span>, <span class="inherited-name"><a href="Ft.Xml.cDomlette.html#Node-xmlBase">xmlBase</a></span>, <span class="inherited-name"><a href="Ft.Xml.cDomlette.html#Node-xpathAttributes">xpathAttributes</a></span>, <span class="inherited-name"><a href="Ft.Xml.cDomlette.html#Node-xpathNamespaces">xpathNamespaces</a></span></div>
+          <h3>Members inherited from class <span class="undocumented">object</span></h3>
+          <div class="inherited"><span class="inherited-name">__class__</span></div>
+          <h3>Members inherited from class <span class="undocumented">xml.dom.Node</span></h3>
+          <div class="inherited"><span class="inherited-name">ATTRIBUTE_NODE</span>, <span class="inherited-name">CDATA_SECTION_NODE</span>, <span class="inherited-name">COMMENT_NODE</span>, <span class="inherited-name">DOCUMENT_FRAGMENT_NODE</span>, <span class="inherited-name">DOCUMENT_NODE</span>, <span class="inherited-name">DOCUMENT_TYPE_NODE</span>, <span class="inherited-name">ELEMENT_NODE</span>, <span class="inherited-name">ENTITY_NODE</span>, <span class="inherited-name">ENTITY_REFERENCE_NODE</span>, <span class="inherited-name">NOTATION_NODE</span>, <span class="inherited-name">PROCESSING_INSTRUCTION_NODE</span>, <span class="inherited-name">TEXT_NODE</span>, <span class="inherited-name">TREE_POSITION_ANCESTOR</span>, <span class="inherited-name">TREE_POSITION_DESCENDENT</span>, <span class="inherited-name">TREE_POSITION_DISCONNECTED</span>, <span class="inherited-name">TREE_POSITION_EQUIVALENT</span>, <span class="inherited-name">TREE_POSITION_FOLLOWING</span>, <span class="inherited-name">TREE_POSITION_PRECEDING</span>, <span class="inherited-name">TREE_POSITION_SAME_NODE</span></div>
+        </dd>
+        <dt class="classdef"><a name="XPathNamespace"></a>class <span class="class-name">XPathNamespace</span><span class="bases">(<span class="class-name"><a href="Ft.Xml.cDomlette.html#Node">Node</a></span>)</span></dt>
+        <dd class="classdesc">
+          <div class="abstract">XPathNamespace(parentNode, prefix, namespaceURI) -&gt; XPathNamespace object</div>
+          <pre class="description">The XPathNamespace interface represents the XPath namespace node type
+that DOM lacks.</pre>
+          <h3>Methods</h3>
+          <dl class="methods">
+            <dt class="methoddef"><a name="XPathNamespace-__new__"><span class="method-name">__new__</span></a>(<span class="argument-name">...</span>)</dt>
+            <dd class="methoddesc">
+              <div class="abstract">T.__new__(S, ...) -&gt; a new object with type S, a subtype of T</div>
+            </dd>
+            <dd class="overrides"><b>Overrides: </b><span class="inherited-name"><a href="Ft.Xml.cDomlette.html#Node-__new__">__new__</a></span> from class <span class="class-name"><a href="Ft.Xml.cDomlette.html#Node">Node</a></span></dd>
+            <dt class="methoddef"><a name="XPathNamespace-__repr__"><span class="method-name">__repr__</span></a>(<span class="argument-name">...</span>)</dt>
+            <dd class="methoddesc">
+              <div class="abstract">x.__repr__() &lt;==&gt; repr(x)</div>
+            </dd>
+          </dl>
+          <h3>Methods inherited from class <a href="Ft.Xml.cDomlette.html#Node">Node</a></h3>
+          <div class="inherited"><span class="inherited-name"><a href="Ft.Xml.cDomlette.html#Node-__eq__">__eq__</a></span>, <span class="inherited-name"><a href="Ft.Xml.cDomlette.html#Node-__ge__">__ge__</a></span>, <span class="inherited-name"><a href="Ft.Xml.cDomlette.html#Node-__gt__">__gt__</a></span>, <span class="inherited-name"><a href="Ft.Xml.cDomlette.html#Node-__hash__">__hash__</a></span>, <span class="inherited-name"><a href="Ft.Xml.cDomlette.html#Node-__iter__">__iter__</a></span>, <span class="inherited-name"><a href="Ft.Xml.cDomlette.html#Node-__le__">__le__</a></span>, <span class="inherited-name"><a href="Ft.Xml.cDomlette.html#Node-__lt__">__lt__</a></span>, <span class="inherited-name"><a href="Ft.Xml.cDomlette.html#Node-__ne__">__ne__</a></span>, <span class="inherited-name"><a href="Ft.Xml.cDomlette.html#Node-appendChild">appendChild</a></span>, <span class="inherited-name"><a href="Ft.Xml.cDomlette.html#Node-cloneNode">cloneNode</a></span>, <span class="inherited-name"><a href="Ft.Xml.cDomlette.html#Node-hasChildNodes">hasChildNodes</a></span>, <span class="inherited-name"><a href="Ft.Xml.cDomlette.html#Node-insertBefore">insertBefore</a></span>, <span class="inherited-name"><a href="Ft.Xml.cDomlette.html#Node-isSameNode">isSameNode</a></span>, <span class="inherited-name"><a href="Ft.Xml.cDomlette.html#Node-normalize">normalize</a></span>, <span class="inherited-name"><a href="Ft.Xml.cDomlette.html#Node-removeChild">removeChild</a></span>, <span class="inherited-name"><a href="Ft.Xml.cDomlette.html#Node-replaceChild">replaceChild</a></span>, <span class="inherited-name"><a href="Ft.Xml.cDomlette.html#Node-xpath">xpath</a></span></div>
+          <h3>Methods inherited from class <span class="undocumented">object</span></h3>
+          <div class="inherited"><span class="inherited-name">__delattr__</span>, <span class="inherited-name">__getattribute__</span>, <span class="inherited-name">__init__</span>, <span class="inherited-name">__reduce__</span>, <span class="inherited-name">__reduce_ex__</span>, <span class="inherited-name">__setattr__</span>, <span class="inherited-name">__str__</span></div>
+          <h3>Members</h3>
+          <dl class="members">
+            <dt class="memberdef"><a name="localName"><span class="member-name">localName</span></a> = &lt;member 'localName' of 'Ft.Xml.cDomlette.XPathNamespace' objects&gt;</dt>
+            <dt class="memberdef"><a name="nodeName"><span class="member-name">nodeName</span></a> = &lt;member 'nodeName' of 'Ft.Xml.cDomlette.XPathNamespace' objects&gt;</dt>
+            <dt class="memberdef"><a name="nodeType"><span class="member-name">nodeType</span></a> = 13</dt>
+            <dt class="memberdef"><a name="nodeValue"><span class="member-name">nodeValue</span></a> = &lt;member 'nodeValue' of 'Ft.Xml.cDomlette.XPathNamespace' objects&gt;</dt>
+            <dt class="memberdef"><a name="value"><span class="member-name">value</span></a> = &lt;member 'value' of 'Ft.Xml.cDomlette.XPathNamespace' objects&gt;</dt>
+          </dl>
+          <h3>Members inherited from class <a href="Ft.Xml.cDomlette.html#Node">Node</a></h3>
+          <div class="inherited"><span class="inherited-name"><a href="Ft.Xml.cDomlette.html#Node-attributes">attributes</a></span>, <span class="inherited-name"><a href="Ft.Xml.cDomlette.html#Node-baseURI">baseURI</a></span>, <span class="inherited-name"><a href="Ft.Xml.cDomlette.html#Node-childNodes">childNodes</a></span>, <span class="inherited-name"><a href="Ft.Xml.cDomlette.html#Node-firstChild">firstChild</a></span>, <span class="inherited-name"><a href="Ft.Xml.cDomlette.html#Node-lastChild">lastChild</a></span>, <span class="inherited-name"><a href="Ft.Xml.cDomlette.html#Node-namespaceURI">namespaceURI</a></span>, <span class="inherited-name"><a href="Ft.Xml.cDomlette.html#Node-nextSibling">nextSibling</a></span>, <span class="inherited-name"><a href="Ft.Xml.cDomlette.html#Node-ownerDocument">ownerDocument</a></span>, <span class="inherited-name"><a href="Ft.Xml.cDomlette.html#Node-parentNode">parentNode</a></span>, <span class="inherited-name"><a href="Ft.Xml.cDomlette.html#Node-prefix">prefix</a></span>, <span class="inherited-name"><a href="Ft.Xml.cDomlette.html#Node-previousSibling">previousSibling</a></span>, <span class="inherited-name"><a href="Ft.Xml.cDomlette.html#Node-rootNode">rootNode</a></span>, <span class="inherited-name"><a href="Ft.Xml.cDomlette.html#Node-xmlBase">xmlBase</a></span>, <span class="inherited-name"><a href="Ft.Xml.cDomlette.html#Node-xpathAttributes">xpathAttributes</a></span>, <span class="inherited-name"><a href="Ft.Xml.cDomlette.html#Node-xpathNamespaces">xpathNamespaces</a></span></div>
+          <h3>Members inherited from class <span class="undocumented">object</span></h3>
+          <div class="inherited"><span class="inherited-name">__class__</span></div>
+          <h3>Members inherited from class <span class="undocumented">xml.dom.Node</span></h3>
+          <div class="inherited"><span class="inherited-name">ATTRIBUTE_NODE</span>, <span class="inherited-name">CDATA_SECTION_NODE</span>, <span class="inherited-name">COMMENT_NODE</span>, <span class="inherited-name">DOCUMENT_FRAGMENT_NODE</span>, <span class="inherited-name">DOCUMENT_NODE</span>, <span class="inherited-name">DOCUMENT_TYPE_NODE</span>, <span class="inherited-name">ELEMENT_NODE</span>, <span class="inherited-name">ENTITY_NODE</span>, <span class="inherited-name">ENTITY_REFERENCE_NODE</span>, <span class="inherited-name">NOTATION_NODE</span>, <span class="inherited-name">PROCESSING_INSTRUCTION_NODE</span>, <span class="inherited-name">TEXT_NODE</span>, <span class="inherited-name">TREE_POSITION_ANCESTOR</span>, <span class="inherited-name">TREE_POSITION_DESCENDENT</span>, <span class="inherited-name">TREE_POSITION_DISCONNECTED</span>, <span class="inherited-name">TREE_POSITION_EQUIVALENT</span>, <span class="inherited-name">TREE_POSITION_FOLLOWING</span>, <span class="inherited-name">TREE_POSITION_PRECEDING</span>, <span class="inherited-name">TREE_POSITION_SAME_NODE</span></div>
+        </dd>
+      </dl>
+    </div>
+    <div class="section">
+      <h2>Functions</h2>
+      <dl class="functions">
+        <dt class="functiondef"><a name="GetAllNs"><span class="function-name">GetAllNs</span></a>(<span class="argument-name">node</span>)</dt>
+        <dd class="functiondesc">
+          <div class="abstract">GetAllNs(node) -&gt; dict</div>
+          <pre class="description">Get all of the namespaces defined in scope of this node.</pre>
+        </dd>
+        <dt class="functiondef"><a name="NonvalParse"><span class="function-name">NonvalParse</span></a>(<span class="argument-name">isrc[, readExtDtd]</span>)</dt>
+        <dd class="functiondesc">
+          <div class="abstract">NonvalParse(isrc[, readExtDtd]) -&gt; Document</div>
+        </dd>
+        <dt class="functiondef"><a name="Parse"><span class="function-name">Parse</span></a>(<span class="argument-name">isrc[, readExtDtd]</span>)</dt>
+        <dd class="functiondesc">
+          <div class="abstract">Parse(isrc[, readExtDtd]) -&gt; Document</div>
+        </dd>
+        <dt class="functiondef"><a name="SeekNss"><span class="function-name">SeekNss</span></a>(<span class="argument-name">node</span>)</dt>
+        <dd class="functiondesc">
+          <div class="abstract">SeekNss(node) -&gt; dict</div>
+          <pre class="description">Traverses the tree to seek an approximate set of defined namespaces.</pre>
+        </dd>
+        <dt class="functiondef"><a name="ValParse"><span class="function-name">ValParse</span></a>(<span class="argument-name">isrc</span>)</dt>
+        <dd class="functiondesc">
+          <div class="abstract">ValParse(isrc) -&gt; Document</div>
+        </dd>
+      </dl>
+    </div>
+    <div class="section">
+      <h2>Globals</h2>
+      <dl class="globals">
+        <dt class="globaldef"><a name="implementation"><span class="global-name">implementation</span></a> = &lt;DOMImplementation&gt;</dt>
+        <dd class="globaldesc">
+          <div class="abstract">The DOMImplementation interface provides a number of methods for performing
+operations that are independent of any particular instance of the document
+object model.</div>
+        </dd>
+      </dl>
+    </div>
+    <div class="universal-footer">Last modified on 2006-08-27 11:55:13</div>
+  </body>
+</html>

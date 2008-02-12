@@ -1,0 +1,160 @@
+<html>
+  <head>
+    <meta content="text/html; charset=iso-8859-1" http-equiv="Content-Type">
+    <title>4Suite API Documentation: Ft.Xml.XPointer</title>
+    <link href="modules.css" type="text/css" rel="stylesheet">
+  </head>
+  <body>
+    <div class="universal-header"><span class="universal-header-prefix">&nbsp;&nbsp;&nbsp;</span>&nbsp;<span class="universal-header-prefix">&nbsp;&nbsp;</span>&nbsp;<span class="universal-header-prefix">&nbsp;</span>&nbsp;<a href="../index.html">4Suite<sup>&trade;</sup> API Documentation</a></div>
+    <h1><span class="glyph-arrow">&#9658;</span> Module <span class="this-name"><a href="Ft.html" title="Ft">Ft</a>.<a href="Ft.Xml.html" title="Ft.Xml">Xml</a>.XPointer</span></h1>
+    <div class="abstract">Module for XPointer processing</div>
+    <pre class="description">Copyright 2005 Fourthought, Inc. (USA).
+Detailed license and copyright information: http://4suite.org/COPYRIGHT
+Project home, documentation, distributions: http://4suite.org/</pre>
+    <div class="summary-section">
+      <table cellpadding="0" cellspacing="0">
+        <tbody>
+          <tr>
+            <td valign="top">
+              <div class="summary-header">Classes:</div>
+              <div class="summary-list"><span class="class-name"><a href="#XPtrException">XPtrException</a></span></div>
+            </td>
+            <td width="7" valign="middle"></td>
+            <td bgcolor="#C5C5C5" valign="middle" width="1"></td>
+            <td width="7" valign="middle"></td>
+            <td valign="top">
+              <div class="summary-header">Functions:</div>
+              <div class="summary-list"><span class="function-name"><a href="#Compile">Compile</a></span>, <span class="function-name"><a href="#SelectNode">SelectNode</a></span>, <span class="function-name"><a href="#SelectUri">SelectUri</a></span></div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="section">
+      <h2>Modules</h2>
+      <table class="modules">
+        <tbody>
+          <tr>
+            <td class="moduledef" valign="top">
+              <div class="module-name"><a name="MessageSource"></a><a href="Ft.Xml.XPointer.MessageSource.html">MessageSource</a></div>
+            </td>
+            <td class="moduledesc" valign="bottom">
+              <div class="abstract">XPointer error codes and messages</div>
+            </td>
+          </tr>
+          <tr>
+            <td class="moduledef" valign="top">
+              <div class="module-name"><a name="ParsedNodeTest"></a><a href="Ft.Xml.XPointer.ParsedNodeTest.html">ParsedNodeTest</a></div>
+            </td>
+            <td class="moduledesc" valign="bottom">
+              <div class="abstract">A Parsed Token that represents a node test.
+WWW: http://4suite.org/XPATH        e-mail: support@4suite.org</div>
+            </td>
+          </tr>
+          <tr>
+            <td class="moduledef" valign="top">
+              <div class="module-name"><a name="ParsedXPointer"></a><a href="Ft.Xml.XPointer.ParsedXPointer.html">ParsedXPointer</a></div>
+            </td>
+            <td class="moduledesc" valign="bottom">
+              <div class="abstract">A Parsed Token that represents a list of XPointers
+WWW: http://4suite.org/XPointer        e-mail: support@4suite.org</div>
+            </td>
+          </tr>
+          <tr>
+            <td class="moduledef" valign="top">
+              <div class="module-name"><a name="XPointer"></a><a href="Ft.Xml.XPointer.XPointer.html">XPointer</a></div>
+            </td>
+            <td class="moduledesc" valign="bottom">
+              <div class="abstract">A Parsed Token that represents a list of XPointers
+WWW: http://4suite.org/XPointer        e-mail: support@4suite.org</div>
+            </td>
+          </tr>
+          <tr>
+            <td class="moduledef" valign="top">
+              <div class="module-name"><a name="XPointerParserc"></a><a href="Ft.Xml.XPointer.XPointerParserc.html">XPointerParserc</a></div>
+            </td>
+            <td class="moduledesc" valign="bottom"></td>
+          </tr>
+          <tr>
+            <td class="moduledef" valign="top">
+              <div class="module-name"><a name="XPtrContext"></a><a href="Ft.Xml.XPointer.XPtrContext.html">XPtrContext</a></div>
+            </td>
+            <td class="moduledesc" valign="bottom"></td>
+          </tr>
+          <tr>
+            <td class="moduledef" valign="top">
+              <div class="module-name"><a name="XPtrExprParserc"></a><a href="Ft.Xml.XPointer.XPtrExprParserc.html">XPtrExprParserc</a></div>
+            </td>
+            <td class="moduledesc" valign="bottom"></td>
+          </tr>
+          <tr>
+            <td class="moduledef" valign="top">
+              <div class="module-name"><a name="XPtrFunctions"></a><a href="Ft.Xml.XPointer.XPtrFunctions.html">XPtrFunctions</a></div>
+            </td>
+            <td class="moduledesc" valign="bottom"></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="section">
+      <h2>Classes</h2>
+      <dl class="classes">
+        <dt class="classdef"><a name="XPtrException"></a>class <span class="class-name">XPtrException</span><span class="bases">(<span class="class-name"><a href="Ft.html#FtException">Ft.FtException</a></span>)</span></dt>
+        <dd class="classdesc">
+          <h3>Methods</h3>
+          <dl class="methods">
+            <dt class="methoddef"><a name="XPtrException-__init__"><span class="method-name">__init__</span></a>(<span class="argument-name">self</span>, <span class="argument-name">errorCode</span>, <span class="argument-name">*args</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dd class="overrides"><b>Overrides: </b><span class="inherited-name"><a href="Ft.html#FtException-__init__">__init__</a></span> from class <span class="class-name"><a href="Ft.html#FtException">FtException</a></span></dd>
+          </dl>
+          <h3>Methods inherited from class <a href="Ft.html#FtException">Ft.FtException</a></h3>
+          <div class="inherited"><span class="inherited-name"><a href="Ft.html#FtException-__getattr__">__getattr__</a></span>, <span class="inherited-name"><a href="Ft.html#FtException-__repr__">__repr__</a></span>, <span class="inherited-name"><a href="Ft.html#FtException-__str__">__str__</a></span></div>
+          <h3>Methods inherited from class <span class="undocumented">Exception</span></h3>
+          <div class="inherited"><span class="inherited-name">__getitem__</span></div>
+          <h3>Members</h3>
+          <dl class="members">
+            <dt class="memberdef"><a name="INTERNAL_ERROR"><span class="member-name">INTERNAL_ERROR</span></a> = 1</dt>
+            <dt class="memberdef"><a name="RESOURCE_ERROR"><span class="member-name">RESOURCE_ERROR</span></a> = 3</dt>
+            <dt class="memberdef"><a name="SUB_RESOURCE_ERROR"><span class="member-name">SUB_RESOURCE_ERROR</span></a> = 4</dt>
+            <dt class="memberdef"><a name="SYNTAX_ERROR"><span class="member-name">SYNTAX_ERROR</span></a> = 2</dt>
+          </dl>
+        </dd>
+      </dl>
+    </div>
+    <div class="section">
+      <h2>Functions</h2>
+      <dl class="functions">
+        <dt class="functiondef"><a name="Compile"><span class="function-name">Compile</span></a>(<span class="argument-name">expr</span>)</dt>
+        <dd class="functiondesc">
+          <div class="abstract">Given an XPointer expression as a string, returns an object that allows
+an evaluation engine to operate on the expression efficiently.</div>
+        </dd>
+        <dt class="functiondef"><a name="SelectNode"><span class="function-name">SelectNode</span></a>(<span class="argument-name">doc</span>, <span class="argument-name">xpointer</span>, <span class="argument-name">nss</span><span class="argument-default">=None</span>, <span class="argument-name">contextNode</span><span class="argument-default">=None</span>)</dt>
+        <dd class="functiondesc">
+          <div class="abstract">Given a valid DOM node, evaluates an XPointer against it.</div>
+          <pre class="description">contextNode, if given, is the original XPointer context node
+(e.g., from the referring document, if any; accessible in the
+XPointer via the 'here' function).
+
+nss is a set of explicit namespace mappings for use when evaluating
+the XPointer (e.g., when the xmlns scheme isn't being used).</pre>
+        </dd>
+        <dt class="functiondef"><a name="SelectUri"><span class="function-name">SelectUri</span></a>(<span class="argument-name">uri</span>, <span class="argument-name">contextNode</span><span class="argument-default">=None</span>, <span class="argument-name">nss</span><span class="argument-default">=None</span>)</dt>
+        <dd class="functiondesc">
+          <div class="abstract">Parses the document with the given URI, and returns the node
+corresponding to the XPointer given in the fragment of the URI.</div>
+          <pre class="description">uri must be an absolute URI reference. If it doesn't have a
+fragment, returns the root node.
+
+contextNode, if given, is the original XPointer context node
+(e.g., from the referring document, if any; accessible in the
+XPointer via the 'here' function).
+
+nss is a set of explicit namespace mappings for use when evaluating
+the XPointer (e.g., when the xmlns scheme isn't being used).</pre>
+        </dd>
+      </dl>
+    </div>
+    <div class="universal-footer">Last modified on 2006-04-28 13:54:50</div>
+  </body>
+</html>

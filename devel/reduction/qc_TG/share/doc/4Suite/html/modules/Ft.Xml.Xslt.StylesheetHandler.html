@@ -1,0 +1,116 @@
+<html>
+  <head>
+    <meta content="text/html; charset=iso-8859-1" http-equiv="Content-Type">
+    <title>4Suite API Documentation: Ft.Xml.Xslt.StylesheetHandler</title>
+    <link href="modules.css" type="text/css" rel="stylesheet">
+  </head>
+  <body>
+    <div class="universal-header"><span class="universal-header-prefix">&nbsp;&nbsp;&nbsp;</span>&nbsp;<span class="universal-header-prefix">&nbsp;&nbsp;</span>&nbsp;<span class="universal-header-prefix">&nbsp;</span>&nbsp;<a href="../index.html">4Suite<sup>&trade;</sup> API Documentation</a></div>
+    <h1><span class="glyph-arrow">&#9658;</span> Module <span class="this-name"><a href="Ft.html" title="Ft">Ft</a>.<a href="Ft.Xml.html" title="Ft.Xml">Xml</a>.<a href="Ft.Xml.Xslt.html" title="Ft.Xml.Xslt">Xslt</a>.StylesheetHandler</span></h1>
+    <div class="abstract">Stylesheet tree generator</div>
+    <pre class="description">Copyright 2004 Fourthought, Inc. (USA).
+Detailed license and copyright information: http://4suite.org/COPYRIGHT
+Project home, documentation, distributions: http://4suite.org/</pre>
+    <div class="summary-section">
+      <table cellpadding="0" cellspacing="0">
+        <tbody>
+          <tr>
+            <td valign="top">
+              <div class="summary-header">Classes:</div>
+              <div class="summary-list"><span class="class-name"><a href="#ParseState">ParseState</a></span>, <span class="class-name"><a href="#StylesheetHandler">StylesheetHandler</a></span></div>
+            </td>
+            <td width="7" valign="middle"></td>
+            <td width="1" valign="middle" bgcolor="#C5C5C5"></td>
+            <td width="7" valign="middle"></td>
+            <td valign="top">
+              <div class="summary-header">Globals:</div>
+              <div class="summary-list"><span class="global-name"><a href="#EMPTY_NAMESPACE">EMPTY_NAMESPACE</a></span>, <span class="global-name"><a href="#XML_NAMESPACE">XML_NAMESPACE</a></span>, <span class="global-name"><a href="#XSL_NAMESPACE">XSL_NAMESPACE</a></span></div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="section">
+      <h2>Classes</h2>
+      <dl class="classes">
+        <dt class="classdef"><a name="ParseState"></a>class <span class="class-name">ParseState</span></dt>
+        <dd class="classdesc">
+          <div class="abstract">Stores the current state of the parser.</div>
+          <pre class="description">Constructor arguments/instance variables:
+  validation - validation state for the current containing node.
+
+  localVariables - set of in-scope variable bindings to determine
+                   variable shadowing.
+
+  forwardsCompatible - flag indicating whether or not forwards-compatible
+                       processing is enabled.
+
+  currentNamespaces - set of in-scope namespaces for the current node.
+
+  extensionNamespaces - set of namespaces defining extension elements
+
+  outputNamespaces - set of in-scope namespaces for literal result elements</pre>
+          <h3>Methods</h3>
+          <dl class="methods">
+            <dt class="methoddef"><a name="ParseState-__init__"><span class="method-name">__init__</span></a>(<span class="argument-name">self</span>, <span class="argument-name">node</span>, <span class="argument-name">validation</span>, <span class="argument-name">localVariables</span>, <span class="argument-name">forwardsCompatible</span>, <span class="argument-name">currentNamespaces</span>, <span class="argument-name">extensionNamespaces</span>, <span class="argument-name">outputNamespaces</span>)</dt>
+            <dd class="methoddesc"></dd>
+          </dl>
+        </dd>
+        <dt class="classdef"><a name="StylesheetHandler"></a>class <span class="class-name">StylesheetHandler</span></dt>
+        <dd class="classdesc">
+          <div class="abstract">Handles SAX events coming from the stylesheet parser,
+in order to build the stylesheet tree.</div>
+          <h3>Methods</h3>
+          <dl class="methods">
+            <dt class="methoddef"><a name="StylesheetHandler-__init__"><span class="method-name">__init__</span></a>(<span class="argument-name">self</span>, <span class="argument-name">importIndex</span><span class="argument-default">=0</span>, <span class="argument-name">globalVars</span><span class="argument-default">=None</span>, <span class="argument-name">extElements</span><span class="argument-default">=None</span>, <span class="argument-name">visitedStyUris</span><span class="argument-default">=None</span>, <span class="argument-name">altBaseUris</span><span class="argument-default">=None</span>, <span class="argument-name">ownerDocument</span><span class="argument-default">=None</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dt class="methoddef"><a name="StylesheetHandler-addExtensionElementMapping"><span class="method-name">addExtensionElementMapping</span></a>(<span class="argument-name">self</span>, <span class="argument-name">elementMapping</span>)</dt>
+            <dd class="methoddesc">
+              <div class="abstract">Add a mapping of extension element names to classes to the
+existing mapping of extension elements.</div>
+              <pre class="description">This should only be used for standalone uses of this class.  The
+only known standalone use for this class is for creating compiled
+stylesheets.  The benefits of compiled stylesheets are now so minor
+that this use case may also disappear and then so will this function.
+You have been warned.</pre>
+            </dd>
+            <dt class="methoddef"><a name="StylesheetHandler-characters"><span class="method-name">characters</span></a>(<span class="argument-name">self</span>, <span class="argument-name">data</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dt class="methoddef"><a name="StylesheetHandler-clone"><span class="method-name">clone</span></a>(<span class="argument-name">self</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dt class="methoddef"><a name="StylesheetHandler-endDocument"><span class="method-name">endDocument</span></a>(<span class="argument-name">self</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dt class="methoddef"><a name="StylesheetHandler-endElementNS"><span class="method-name">endElementNS</span></a>(<span class="argument-name">self</span>, <span class="argument-name">expandedName</span>, <span class="argument-name">qualifiedName</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dt class="methoddef"><a name="StylesheetHandler-getResult"><span class="method-name">getResult</span></a>(<span class="argument-name">self</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dt class="methoddef"><a name="StylesheetHandler-reset"><span class="method-name">reset</span></a>(<span class="argument-name">self</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dt class="methoddef"><a name="StylesheetHandler-setDocumentLocator"><span class="method-name">setDocumentLocator</span></a>(<span class="argument-name">self</span>, <span class="argument-name">locator</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dt class="methoddef"><a name="StylesheetHandler-startDocument"><span class="method-name">startDocument</span></a>(<span class="argument-name">self</span>)</dt>
+            <dd class="methoddesc">
+              <div class="abstract">ownerDoc is supplied when processing an XSLT import or include.</div>
+            </dd>
+            <dt class="methoddef"><a name="StylesheetHandler-startElementNS"><span class="method-name">startElementNS</span></a>(<span class="argument-name">self</span>, <span class="argument-name">expandedName</span>, <span class="argument-name">qualifiedName</span>, <span class="argument-name">attribs</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dt class="methoddef"><a name="StylesheetHandler-startPrefixMapping"><span class="method-name">startPrefixMapping</span></a>(<span class="argument-name">self</span>, <span class="argument-name">prefix</span>, <span class="argument-name">uri</span>)</dt>
+            <dd class="methoddesc"></dd>
+          </dl>
+        </dd>
+      </dl>
+    </div>
+    <div class="section">
+      <h2>Globals</h2>
+      <dl class="globals">
+        <dt class="globaldef"><a name="EMPTY_NAMESPACE"><span class="global-name">EMPTY_NAMESPACE</span></a> = None</dt>
+        <dd class="globaldesc"></dd>
+        <dt class="globaldef"><a name="XML_NAMESPACE"><span class="global-name">XML_NAMESPACE</span></a> = u'http://www.w3.org/XML/1998/namespace'</dt>
+        <dd class="globaldesc"></dd>
+        <dt class="globaldef"><a name="XSL_NAMESPACE"><span class="global-name">XSL_NAMESPACE</span></a> = u'http://www.w3.org/1999/XSL/Transform'</dt>
+        <dd class="globaldesc"></dd>
+      </dl>
+    </div>
+    <div class="universal-footer">Last modified on 2006-04-28 13:54:50</div>
+  </body>
+</html>

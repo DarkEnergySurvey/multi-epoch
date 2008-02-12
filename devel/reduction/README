@@ -1,0 +1,145 @@
+Pipeline depository in two places:
+
+1. /home/cngeow/Pipeline_v1 -- location of the latest pipelines.
+2. /home/cngeow/Pipeline_src -- location of the latest source codes.
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%  OLD README %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+*************************
+* Directories structure:*
+*************************
+
+ basic dirs
+ -- /bin: include all the binaries
+ -- /src: the source codes
+ -- /etc: SExtractor related files
+ -- /stages: collection of xml scripts for different stages (PENDING)
+
+ generated on-the-fly
+ -- /sql: sql scripts
+ -- /outgoing: outgoing files for the DES
+ -- /condor_job: log files for the condor jobs
+ -- /workplace: for BCS data
+
+
+***********************
+* List of xml scripts:*
+***********************
+ 
+ -- createlist.xml, getastrostds.xml, msetup.xml, movelistcat.xml, makexml.xml, runjobs.xml, moveDESlocalogs.xml
+ -- dir_struct.xml, raw2grid.xml
+ -- DES.xml.template, BCS.xml.template, combine.prop.template
+
+
+*******************************************
+* Stages involved in the DC1/BCS pipeline:*
+*******************************************
+
+ -- Stage_createlists (in createlists.xml): create the lists for science and calibration images by querying the database
+
+ -- Stage_getastrostds (in getastrostds.xml): create the USNO-B catalog for astrometry refinement by querying the database 
+ 
+ -- Stage_raw2grid (in raw2grid.xml): transfer the raw data files from archive to teragrid based on the lists. This stage is DES-specific (PENDING)
+
+ -- Stage_msetup (in msetup.xml): setup the lower-level directory (for each jobs/ccds), and transfer the /bin & /etc directory to the teragrid if project=DES. Involved dir_struct.xml if project=DES. 
+
+ -- State_movelistcat (in movelistcat.xml): move the lists and usnob catalog to teragrid. This stage is DES-specific.
+
+ -- Stage_makexml (in makexml.xml): generate the main xml/properties scripts for running the pipeline. 
+
+ -- Stage_runjobs (in runjobs.xml): run the parallel (for DES) or sequential (for BCS) main reduction pipeline.
+
+ -- Stage_moveDESlocalogs (in moveDESlocalogs.xml): move the DES-specific sub-directory, /condor_job, /sql and /outgoing to single nite/ subdirectory to keep track the logs.
+
+
+********************************
+* Running the pipeline for DES:*
+********************************
+
+ A. get grid-proxy for teragrid: grid-proxy-init
+
+ B. edit pipeline.properties to setup correct parameters
+
+ C. run "ogrelaunch workflow.xml Stage_DES" for the following sequence:
+
+    1. run Stage_createlists to create input lists
+       
+    2. run Stage_getastrostds to generate the USNO-B catalog 
+
+    3. run Stage_msetup to setup lower-level directory in teragrid and transfer the /bin & /etc 
+
+    4. run Stage_movelistcat to move the list and usnob catalog to teragrid 
+
+    5. run Stage_makexml to make the xml/properties scripts and move to teragrid 
+
+    6. run Stage_runjobs to run main parallel jobs in teragrid 
+
+    7. run Stage_moveDESlocalogs to move the local logs sub-directories
+
+
+******************************** 
+* Running the pipeline for BCS:*
+********************************
+
+ A. edit pipeline.properties to setup correct parameters
+
+ D. copy local binaries to /bin
+
+ C. run "ogrelaunch workflow.xml Stage_BCS" for the following sequence:
+
+    1. run Stage_msetup to setup lower-level directory in working directory
+
+    2. run Stage_createlists to create input lists
+  
+    3. run Stage_getastrostds to generate the USNO-B catalog 
+
+    4. run Stage_makexml to make the xml/properties scripts 
+
+    5. run Stage_runjobs to run main sequential jobs in workstation 
+
+
+***********************************************
+* C-binaries involved in the DC1/BCS pipeline:*
+***********************************************
+
+(Pending) 
+ -- makelist:  
+
+ -- usno_input:
+
+ -- makedirs:  
+
+ -- getfitsfromlist:
+
+ -- zerocombine:
+
+ -- flatcombine:
+
+ -- imcorrect:
+
+ -- astrometry:
+
+ -- runSExtractor:
+
+ -- fitscombine:
+
+ -- runadaptive:
+
+ -- SExtractor:
+
+ -- imwcs:
+
+ -- getmoments:
+
+
+***********
+* Updates:*
+***********
+
+
+

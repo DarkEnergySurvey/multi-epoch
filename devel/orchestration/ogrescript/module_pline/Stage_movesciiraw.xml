@@ -1,0 +1,69 @@
+   <target name="Stage_movesciiraw" description="Stage move scii raw">
+     <esequence>
+
+         <edeclare name="listname" string="${scii.list}"/>
+
+         <rtexec inheritedEnv="false" execDir="${nite.dir}"
+                   args="${moveraw.exec} ${moveraw.command1}" quiet="true">
+           <outMonitor file="${nite.dir}/count.dat"/>
+         </rtexec>
+
+         <edeclare name="count" />
+            <read path="${nite.dir}/count.dat" lines="true"/>
+         <ereturn name="count" get="string"/>
+
+         <edeclare name="check_count" string="0"/>
+
+         <econdblock type="else-if">
+           <econdtask>
+              <eeval>
+                <statement>
+                  <ecompare string="$R{count}">
+                    <predicate string="$R{check_count}" comparator="EQUALS"/>
+                  </ecompare>
+                </statement>
+              </eeval>
+                  <esequence>
+                   <delete file="${nite.dir}/count.dat"/>
+                   <write path="${local.out}/${log.name}" text="true"
+                             errorProperty="failed" rethrow="false" append="true">
+                      <segment string=" * no files found in $R{listname}" lineBreaks="1"/>
+                   </write>
+                 </esequence>
+           </econdtask>
+             <esequence>
+
+              <write path="${local.out}/${log.name}" text="true"
+                    errorProperty="failed" rethrow="false" append="true">
+                 <segment string=" -- $R{listname} has $R{count} fits files" lineBreaks="1"/>
+              </write>
+
+              <eloop counterName="i">
+                <ecounter>
+                 <expression infix="$R{i} &lt; $R{count}"/>
+                </ecounter>
+
+                <rtexec inheritedEnv="false" execDir="${nite.dir}"
+                    args="${moveraw.exec} ${moveraw.command2}" quiet="true">
+                </rtexec>
+
+                <edeclare name="rawname" />
+                  <read path="${nite.dir}/fitsname.in" lines="true"/>
+                <ereturn name="rawname" get="string"/>
+
+                <uricopy from="${archive.dir}/$R{rawname}" to="${data.protocol}://${nite.dir}/$R{rawname}"/>
+
+                <write path="${local.out}/${log.name}" text="true"
+                    errorProperty="failed" rethrow="false" append="true">
+                <segment string=" * moving $R{rawname} success" lineBreaks="1"/>
+                </write>
+
+                <delete file="${nite.dir}/fitsname.in"/>
+              </eloop>
+
+              <delete file="${nite.dir}/count.dat"/>
+             </esequence>
+        </econdblock>
+
+     </esequence>
+   </target>

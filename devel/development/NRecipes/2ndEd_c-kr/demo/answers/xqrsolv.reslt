@@ -1,0 +1,44 @@
+right-hand side vector:
+    1.000000    0.000000    0.000000
+result of matrix applied to sol'n vector
+    1.000000    0.000000    0.000000
+*********************************
+right-hand side vector:
+    1.000000    1.000000    1.000000
+result of matrix applied to sol'n vector
+    1.000000    1.000000    1.000000
+*********************************
+press RETURN for next problem:
+right-hand side vector:
+    1.000000    1.000000    1.000000
+result of matrix applied to sol'n vector
+    1.000000    1.000000    1.000000
+*********************************
+right-hand side vector:
+    1.000000    2.000000    3.000000
+result of matrix applied to sol'n vector
+    1.000000    2.000000    3.000000
+*********************************
+press RETURN for next problem:
+right-hand side vector:
+    1.000000    1.000000    1.000000    1.000000    1.000000
+result of matrix applied to sol'n vector
+    1.000000    1.000000    1.000000    1.000000    1.000000
+*********************************
+right-hand side vector:
+    1.000000    2.000000    3.000000    4.000000    5.000000
+result of matrix applied to sol'n vector
+    0.999999    2.000000    3.000000    4.000000    5.000000
+*********************************
+press RETURN for next problem:
+right-hand side vector:
+    1.100000    1.600000    4.700000    9.100000    0.100000
+result of matrix applied to sol'n vector
+    1.100009    1.600001    4.700005    9.100004    0.100002
+*********************************
+right-hand side vector:
+    4.000000    9.300000    8.400000    0.400000    4.100000
+result of matrix applied to sol'n vector
+    3.999970    9.300005    8.399993    0.400000    4.099994
+*********************************
+press RETURN for next problem:

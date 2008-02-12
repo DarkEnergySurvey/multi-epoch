@@ -1,0 +1,126 @@
+<html>
+  <head>
+    <meta content="text/html; charset=iso-8859-1" http-equiv="Content-Type">
+    <title>4Suite API Documentation: Ft.Xml.ThirdParty.Xvif.sax2dom_chunker</title>
+    <link href="modules.css" type="text/css" rel="stylesheet">
+  </head>
+  <body>
+    <div class="universal-header"><span class="universal-header-prefix">&nbsp;&nbsp;&nbsp;</span>&nbsp;<span class="universal-header-prefix">&nbsp;&nbsp;</span>&nbsp;<span class="universal-header-prefix">&nbsp;</span>&nbsp;<a href="../index.html">4Suite<sup>&trade;</sup> API Documentation</a></div>
+    <h1><span class="glyph-arrow">&#9658;</span> Module <span class="this-name"><a href="Ft.html" title="Ft">Ft</a>.<a href="Ft.Xml.html" title="Ft.Xml">Xml</a>.<a href="Ft.Xml.ThirdParty.html" title="Ft.Xml.ThirdParty">ThirdParty</a>.<a href="Ft.Xml.ThirdParty.Xvif.html" title="Ft.Xml.ThirdParty.Xvif">Xvif</a>.sax2dom_chunker</span></h1>
+    <div class="abstract">sax2dom_chunker.py    version 1.1</div>
+    <pre class="description">A SAX handler that takes a set of element paths and
+creates a series of DOM chunks matching the element paths
+for individual processing.  Designed for Python 2.2. or greater.
+
+Copyright 2004 Fourthought Inc, USA.
+This work is licensed under Creative Commons Attribution 1.0
+For details: http://creativecommons.org/licenses/by/1.0/</pre>
+    <div class="summary-section">
+      <table cellpadding="0" cellspacing="0">
+        <tbody>
+          <tr>
+            <td valign="top">
+              <div class="summary-header">Classes:</div>
+              <div class="summary-list"><span class="class-name"><a href="#sax2dom_chunker">sax2dom_chunker</a></span></div>
+            </td>
+            <td width="7" valign="middle"></td>
+            <td width="1" valign="middle" bgcolor="#C5C5C5"></td>
+            <td width="7" valign="middle"></td>
+            <td valign="top">
+              <div class="summary-header">Globals:</div>
+              <div class="summary-list"><span class="global-name"><a href="#DUMMY_DOCELEM">DUMMY_DOCELEM</a></span>, <span class="global-name"><a href="#EMPTY_NAMESPACE">EMPTY_NAMESPACE</a></span>, <span class="global-name"><a href="#START_STATE">START_STATE</a></span>, <span class="global-name"><a href="#TOP">TOP</a></span>, <span class="global-name"><a href="#XMLNS_NAMESPACE">XMLNS_NAMESPACE</a></span>, <span class="global-name"><a href="#XML_NAMESPACE">XML_NAMESPACE</a></span></div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="section">
+      <h2>Classes</h2>
+      <dl class="classes">
+        <dt class="classdef"><a name="sax2dom_chunker"></a>class <span class="class-name">sax2dom_chunker</span><span class="bases">(<span class="class-name"><span class="undocumented">xml.sax.handler.ContentHandler</span></span>)</span></dt>
+        <dd class="classdesc">
+          <div class="abstract">Note: ignores nodes prior to the document element, such as PIs and
+text nodes
+This filter is only designed to work if you set features
+sax.handler.feature_namespaces
+and
+sax.handler.feature_namespace_prefixes
+to 1 on the parser you use.  It will not work on drivers that
+do not support these features.  The default drv_expat works fine
+in this case, but of course has but very limited DTD processing.
+It also collapses CDATA sections into plain text</div>
+          <pre class="description">trim_to_paths - a list of lists of tuples.  Each tuple is of
+    the form (namespace, local-name), providing one segment
+    in a path of contained elements
+    [
+      [ (None, u'monty'), (None, u'python') ],
+      [ (None, u'monty'), (None, u'spam'), ('urn:dummy', u'eggs') ]
+    ]
+    If None (the default, a DOM node will be created representing
+    the entire tree.
+
+chunk_consumer - a callable object taking a DOM node.  It will be
+    invoked as each DOM chunk is prepared.
+
+domimpl - DOM implemention to build, e.g. mindom (the default)
+    or cDomlette or pxdom (if you have the right third-party
+    packages installed).
+
+owner_doc - for advanced uses, if you want to use an existing
+    DOM document object as the owner of all created nodes.</pre>
+          <h3>Methods</h3>
+          <dl class="methods">
+            <dt class="methoddef"><a name="sax2dom_chunker-__init__"><span class="method-name">__init__</span></a>(<span class="argument-name">self</span>, <span class="argument-name">trim_to_paths</span><span class="argument-default">=None</span>, <span class="argument-name">chunk_consumer</span><span class="argument-default">=None</span>, <span class="argument-name">domimpl</span><span class="argument-default">=&lt;xml.dom.minidom.DOMImplementation instance at 0xb75f2f0c&gt;</span>, <span class="argument-name">owner_doc</span><span class="argument-default">=None</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dd class="overrides"><b>Overrides: </b><span class="inherited-name">__init__</span> from class <span class="class-name"><span class="undocumented">ContentHandler</span></span></dd>
+            <dt class="methoddef"><a name="sax2dom_chunker-characters"><span class="method-name">characters</span></a>(<span class="argument-name">self</span>, <span class="argument-name">chars</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dd class="overrides"><b>Overrides: </b><span class="inherited-name">characters</span> from class <span class="class-name"><span class="undocumented">ContentHandler</span></span></dd>
+            <dt class="methoddef"><a name="sax2dom_chunker-comment"><span class="method-name">comment</span></a>(<span class="argument-name">self</span>, <span class="argument-name">text</span>)</dt>
+            <dd class="methoddesc">
+              <div class="abstract">#Overridden LexicalHandler methods</div>
+            </dd>
+            <dt class="methoddef"><a name="sax2dom_chunker-endElementNS"><span class="method-name">endElementNS</span></a>(<span class="argument-name">self</span>, <span class="argument-name">name</span>, <span class="argument-name">qname</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dd class="overrides"><b>Overrides: </b><span class="inherited-name">endElementNS</span> from class <span class="class-name"><span class="undocumented">ContentHandler</span></span></dd>
+            <dt class="methoddef"><a name="sax2dom_chunker-get_root_node"><span class="method-name">get_root_node</span></a>(<span class="argument-name">self</span>)</dt>
+            <dd class="methoddesc">
+              <div class="abstract">Only useful if the user does not register trim paths
+If so, then after SAX processing the user can call this
+method to retrieve resulting DOm representing the entire
+document</div>
+            </dd>
+            <dt class="methoddef"><a name="sax2dom_chunker-processingInstruction"><span class="method-name">processingInstruction</span></a>(<span class="argument-name">self</span>, <span class="argument-name">target</span>, <span class="argument-name">data</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dd class="overrides"><b>Overrides: </b><span class="inherited-name">processingInstruction</span> from class <span class="class-name"><span class="undocumented">ContentHandler</span></span></dd>
+            <dt class="methoddef"><a name="sax2dom_chunker-startElementNS"><span class="method-name">startElementNS</span></a>(<span class="argument-name">self</span>, <span class="argument-name">name</span>, <span class="argument-name">qname</span>, <span class="argument-name">attribs</span>)</dt>
+            <dd class="methoddesc">
+              <div class="abstract">#Overridden DocumentHandler methods</div>
+            </dd>
+            <dd class="overrides"><b>Overrides: </b><span class="inherited-name">startElementNS</span> from class <span class="class-name"><span class="undocumented">ContentHandler</span></span></dd>
+          </dl>
+          <h3>Methods inherited from class <span class="undocumented">xml.sax.handler.ContentHandler</span></h3>
+          <div class="inherited"><span class="inherited-name">endDocument</span>, <span class="inherited-name">endElement</span>, <span class="inherited-name">endPrefixMapping</span>, <span class="inherited-name">ignorableWhitespace</span>, <span class="inherited-name">setDocumentLocator</span>, <span class="inherited-name">skippedEntity</span>, <span class="inherited-name">startDocument</span>, <span class="inherited-name">startElement</span>, <span class="inherited-name">startPrefixMapping</span></div>
+        </dd>
+      </dl>
+    </div>
+    <div class="section">
+      <h2>Globals</h2>
+      <dl class="globals">
+        <dt class="globaldef"><a name="DUMMY_DOCELEM"><span class="global-name">DUMMY_DOCELEM</span></a> = u'dummy'</dt>
+        <dd class="globaldesc"></dd>
+        <dt class="globaldef"><a name="EMPTY_NAMESPACE"><span class="global-name">EMPTY_NAMESPACE</span></a> = None</dt>
+        <dd class="globaldesc"></dd>
+        <dt class="globaldef"><a name="START_STATE"><span class="global-name">START_STATE</span></a> = 0</dt>
+        <dd class="globaldesc"></dd>
+        <dt class="globaldef"><a name="TOP"><span class="global-name">TOP</span></a> = -1</dt>
+        <dd class="globaldesc"></dd>
+        <dt class="globaldef"><a name="XMLNS_NAMESPACE"><span class="global-name">XMLNS_NAMESPACE</span></a> = 'http://www.w3.org/2000/xmlns/'</dt>
+        <dd class="globaldesc"></dd>
+        <dt class="globaldef"><a name="XML_NAMESPACE"><span class="global-name">XML_NAMESPACE</span></a> = 'http://www.w3.org/XML/1998/namespace'</dt>
+        <dd class="globaldesc"></dd>
+      </dl>
+    </div>
+    <div class="universal-footer">Last modified on 2004-10-12 16:59:14</div>
+  </body>
+</html>

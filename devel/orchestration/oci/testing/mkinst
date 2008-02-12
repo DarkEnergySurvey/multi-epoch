@@ -1,0 +1,7 @@
+make
+
+echo RUN g++...
+
+g++ -g3 -o run-test -L/oracle/10.2.0/client_1/lib -Wl,-rpath,/oracle/10.2.0/client_1/lib test_load_maybe.o desw_rel.o htm_aux.o imarithsubs.o catsubs.o archivesubs.o -lclntsh -lm -lmcheck /home/pduda/des/trunk/development/lib/libcfitsio.a /home/pduda/des/trunk/development/lib/press2ndkr.a
+
+echo DONE...

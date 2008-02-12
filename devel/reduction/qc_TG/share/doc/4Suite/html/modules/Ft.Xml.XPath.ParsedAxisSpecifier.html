@@ -1,0 +1,289 @@
+<html>
+  <head>
+    <meta content="text/html; charset=iso-8859-1" http-equiv="Content-Type">
+    <title>4Suite API Documentation: Ft.Xml.XPath.ParsedAxisSpecifier</title>
+    <link href="modules.css" type="text/css" rel="stylesheet">
+  </head>
+  <body>
+    <div class="universal-header"><span class="universal-header-prefix">&nbsp;&nbsp;&nbsp;</span>&nbsp;<span class="universal-header-prefix">&nbsp;&nbsp;</span>&nbsp;<span class="universal-header-prefix">&nbsp;</span>&nbsp;<a href="../index.html">4Suite<sup>&trade;</sup> API Documentation</a></div>
+    <h1><span class="glyph-arrow">&#9658;</span> Module <span class="this-name"><a href="Ft.html" title="Ft">Ft</a>.<a href="Ft.Xml.html" title="Ft.Xml">Xml</a>.<a href="Ft.Xml.XPath.html" title="Ft.Xml.XPath">XPath</a>.ParsedAxisSpecifier</span></h1>
+    <div class="abstract">A parsed token that represents an axis specifier.</div>
+    <pre class="description">Copyright 2004 Fourthought, Inc. (USA).
+Detailed license and copyright information: http://4suite.org/COPYRIGHT
+Project home, documentation, distributions: http://4suite.org/</pre>
+    <div class="summary-section">
+      <table cellpadding="0" cellspacing="0">
+        <tbody>
+          <tr>
+            <td valign="top">
+              <div class="summary-header">Classes:</div>
+              <div class="summary-list"><span class="class-name"><a href="#AxisSpecifier">AxisSpecifier</a></span>, <span class="class-name"><a href="#ParsedAncestorAxisSpecifier">ParsedAncestorAxisSpecifier</a></span>, <span class="class-name"><a href="#ParsedAncestorOrSelfAxisSpecifier">ParsedAncestorOrSelfAxisSpecifier</a></span>, <span class="class-name"><a href="#ParsedAttributeAxisSpecifier">ParsedAttributeAxisSpecifier</a></span>, <span class="class-name"><a href="#ParsedChildAxisSpecifier">ParsedChildAxisSpecifier</a></span>, <span class="class-name"><a href="#ParsedDescendantAxisSpecifier">ParsedDescendantAxisSpecifier</a></span>, <span class="class-name"><a href="#ParsedDescendantOrSelfAxisSpecifier">ParsedDescendantOrSelfAxisSpecifier</a></span>, <span class="class-name"><a href="#ParsedFollowingAxisSpecifier">ParsedFollowingAxisSpecifier</a></span>, <span class="class-name"><a href="#ParsedFollowingSiblingAxisSpecifier">ParsedFollowingSiblingAxisSpecifier</a></span>, <span class="class-name"><a href="#ParsedNamespaceAxisSpecifier">ParsedNamespaceAxisSpecifier</a></span>, <span class="class-name"><a href="#ParsedParentAxisSpecifier">ParsedParentAxisSpecifier</a></span>, <span class="class-name"><a href="#ParsedPrecedingAxisSpecifier">ParsedPrecedingAxisSpecifier</a></span>, <span class="class-name"><a href="#ParsedPrecedingSiblingAxisSpecifier">ParsedPrecedingSiblingAxisSpecifier</a></span>, <span class="class-name"><a href="#ParsedSelfAxisSpecifier">ParsedSelfAxisSpecifier</a></span></div>
+            </td>
+            <td width="7" valign="middle"></td>
+            <td width="1" valign="middle" bgcolor="#C5C5C5"></td>
+            <td width="7" valign="middle"></td>
+            <td valign="top">
+              <div class="summary-header">Functions:</div>
+              <div class="summary-list"><span class="function-name"><a href="#ParsedAxisSpecifier">ParsedAxisSpecifier</a></span></div>
+            </td>
+            <td width="7" valign="middle"></td>
+            <td width="1" valign="middle" bgcolor="#C5C5C5"></td>
+            <td width="7" valign="middle"></td>
+            <td valign="top">
+              <div class="summary-header">Globals:</div>
+              <div class="summary-list"><span class="global-name"><a href="#NAMESPACE_NODE">NAMESPACE_NODE</a></span>, <span class="global-name"><a href="#g_classMap">g_classMap</a></span></div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="section">
+      <h2>Classes</h2>
+      <dl class="classes">
+        <dt class="classdef"><a name="AxisSpecifier"></a>class <span class="class-name">AxisSpecifier</span></dt>
+        <dd class="classdesc">
+          <h3>Methods</h3>
+          <dl class="methods">
+            <dt class="methoddef"><a name="AxisSpecifier-__init__"><span class="method-name">__init__</span></a>(<span class="argument-name">self</span>, <span class="argument-name">axis</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dt class="methoddef"><a name="AxisSpecifier-__repr__"><span class="method-name">__repr__</span></a>(<span class="argument-name">self</span>)</dt>
+            <dd class="methoddesc">
+              <div class="abstract">Always displays verbose expression</div>
+            </dd>
+            <dt class="methoddef"><a name="AxisSpecifier-__str__"><span class="method-name">__str__</span></a>(<span class="argument-name">self</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dt class="methoddef"><a name="AxisSpecifier-descendants"><span class="method-name">descendants</span></a>(<span class="argument-name">self</span>, <span class="argument-name">context</span>, <span class="argument-name">nodeTest</span>, <span class="argument-name">node</span>, <span class="argument-name">nodeSet</span>)</dt>
+            <dd class="methoddesc">
+              <div class="abstract">Select all of the descendants from the context node</div>
+            </dd>
+            <dt class="methoddef"><a name="AxisSpecifier-pprint"><span class="method-name">pprint</span></a>(<span class="argument-name">self</span>, <span class="argument-name">indent</span><span class="argument-default">=''</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dt class="methoddef"><a name="AxisSpecifier-select"><span class="method-name">select</span></a>(<span class="argument-name">self</span>, <span class="argument-name">context</span>, <span class="argument-name">nodeTest</span>)</dt>
+            <dd class="methoddesc">
+              <div class="abstract">Always returns a node-set and 0 if forward, 1 if reverse.</div>
+            </dd>
+          </dl>
+          <h3>Members</h3>
+          <dl class="members">
+            <dt class="memberdef"><a name="principalType"><span class="member-name">principalType</span></a> = 1</dt>
+          </dl>
+        </dd>
+        <dt class="classdef"><a name="ParsedAncestorAxisSpecifier"></a>class <span class="class-name">ParsedAncestorAxisSpecifier</span><span class="bases">(<span class="class-name"><a href="Ft.Xml.XPath.ParsedAxisSpecifier.html#AxisSpecifier">AxisSpecifier</a></span>)</span></dt>
+        <dd class="classdesc">
+          <h3>Methods</h3>
+          <dl class="methods">
+            <dt class="methoddef"><a name="ParsedAncestorAxisSpecifier-select"><span class="method-name">select</span></a>(<span class="argument-name">self</span>, <span class="argument-name">context</span>, <span class="argument-name">nodeTest</span>)</dt>
+            <dd class="methoddesc">
+              <div class="abstract">Select all of the ancestors including the root</div>
+            </dd>
+            <dd class="overrides"><b>Overrides: </b><span class="inherited-name"><a href="Ft.Xml.XPath.ParsedAxisSpecifier.html#AxisSpecifier-select">select</a></span> from class <span class="class-name"><a href="Ft.Xml.XPath.ParsedAxisSpecifier.html#AxisSpecifier">AxisSpecifier</a></span></dd>
+          </dl>
+          <h3>Methods inherited from class <a href="Ft.Xml.XPath.ParsedAxisSpecifier.html#AxisSpecifier">AxisSpecifier</a></h3>
+          <div class="inherited"><span class="inherited-name"><a href="Ft.Xml.XPath.ParsedAxisSpecifier.html#AxisSpecifier-__init__">__init__</a></span>, <span class="inherited-name"><a href="Ft.Xml.XPath.ParsedAxisSpecifier.html#AxisSpecifier-__repr__">__repr__</a></span>, <span class="inherited-name"><a href="Ft.Xml.XPath.ParsedAxisSpecifier.html#AxisSpecifier-__str__">__str__</a></span>, <span class="inherited-name"><a href="Ft.Xml.XPath.ParsedAxisSpecifier.html#AxisSpecifier-descendants">descendants</a></span>, <span class="inherited-name"><a href="Ft.Xml.XPath.ParsedAxisSpecifier.html#AxisSpecifier-pprint">pprint</a></span></div>
+          <h3>Members inherited from class <a href="Ft.Xml.XPath.ParsedAxisSpecifier.html#AxisSpecifier">AxisSpecifier</a></h3>
+          <div class="inherited"><span class="inherited-name"><a href="Ft.Xml.XPath.ParsedAxisSpecifier.html#AxisSpecifier-principalType">principalType</a></span></div>
+        </dd>
+        <dt class="classdef"><a name="ParsedAncestorOrSelfAxisSpecifier"></a>class <span class="class-name">ParsedAncestorOrSelfAxisSpecifier</span><span class="bases">(<span class="class-name"><a href="Ft.Xml.XPath.ParsedAxisSpecifier.html#AxisSpecifier">AxisSpecifier</a></span>)</span></dt>
+        <dd class="classdesc">
+          <h3>Methods</h3>
+          <dl class="methods">
+            <dt class="methoddef"><a name="ParsedAncestorOrSelfAxisSpecifier-select"><span class="method-name">select</span></a>(<span class="argument-name">self</span>, <span class="argument-name">context</span>, <span class="argument-name">nodeTest</span>)</dt>
+            <dd class="methoddesc">
+              <div class="abstract">Select all of the ancestors including ourselves through the root</div>
+            </dd>
+            <dd class="overrides"><b>Overrides: </b><span class="inherited-name"><a href="Ft.Xml.XPath.ParsedAxisSpecifier.html#AxisSpecifier-select">select</a></span> from class <span class="class-name"><a href="Ft.Xml.XPath.ParsedAxisSpecifier.html#AxisSpecifier">AxisSpecifier</a></span></dd>
+          </dl>
+          <h3>Methods inherited from class <a href="Ft.Xml.XPath.ParsedAxisSpecifier.html#AxisSpecifier">AxisSpecifier</a></h3>
+          <div class="inherited"><span class="inherited-name"><a href="Ft.Xml.XPath.ParsedAxisSpecifier.html#AxisSpecifier-__init__">__init__</a></span>, <span class="inherited-name"><a href="Ft.Xml.XPath.ParsedAxisSpecifier.html#AxisSpecifier-__repr__">__repr__</a></span>, <span class="inherited-name"><a href="Ft.Xml.XPath.ParsedAxisSpecifier.html#AxisSpecifier-__str__">__str__</a></span>, <span class="inherited-name"><a href="Ft.Xml.XPath.ParsedAxisSpecifier.html#AxisSpecifier-descendants">descendants</a></span>, <span class="inherited-name"><a href="Ft.Xml.XPath.ParsedAxisSpecifier.html#AxisSpecifier-pprint">pprint</a></span></div>
+          <h3>Members inherited from class <a href="Ft.Xml.XPath.ParsedAxisSpecifier.html#AxisSpecifier">AxisSpecifier</a></h3>
+          <div class="inherited"><span class="inherited-name"><a href="Ft.Xml.XPath.ParsedAxisSpecifier.html#AxisSpecifier-principalType">principalType</a></span></div>
+        </dd>
+        <dt class="classdef"><a name="ParsedAttributeAxisSpecifier"></a>class <span class="class-name">ParsedAttributeAxisSpecifier</span><span class="bases">(<span class="class-name"><a href="Ft.Xml.XPath.ParsedAxisSpecifier.html#AxisSpecifier">AxisSpecifier</a></span>)</span></dt>
+        <dd class="classdesc">
+          <h3>Methods</h3>
+          <dl class="methods">
+            <dt class="methoddef"><a name="ParsedAttributeAxisSpecifier-select"><span class="method-name">select</span></a>(<span class="argument-name">self</span>, <span class="argument-name">context</span>, <span class="argument-name">nodeTest</span>)</dt>
+            <dd class="methoddesc">
+              <div class="abstract">Select all of the attributes from the context node</div>
+            </dd>
+            <dd class="overrides"><b>Overrides: </b><span class="inherited-name"><a href="Ft.Xml.XPath.ParsedAxisSpecifier.html#AxisSpecifier-select">select</a></span> from class <span class="class-name"><a href="Ft.Xml.XPath.ParsedAxisSpecifier.html#AxisSpecifier">AxisSpecifier</a></span></dd>
+          </dl>
+          <h3>Methods inherited from class <a href="Ft.Xml.XPath.ParsedAxisSpecifier.html#AxisSpecifier">AxisSpecifier</a></h3>
+          <div class="inherited"><span class="inherited-name"><a href="Ft.Xml.XPath.ParsedAxisSpecifier.html#AxisSpecifier-__init__">__init__</a></span>, <span class="inherited-name"><a href="Ft.Xml.XPath.ParsedAxisSpecifier.html#AxisSpecifier-__repr__">__repr__</a></span>, <span class="inherited-name"><a href="Ft.Xml.XPath.ParsedAxisSpecifier.html#AxisSpecifier-__str__">__str__</a></span>, <span class="inherited-name"><a href="Ft.Xml.XPath.ParsedAxisSpecifier.html#AxisSpecifier-descendants">descendants</a></span>, <span class="inherited-name"><a href="Ft.Xml.XPath.ParsedAxisSpecifier.html#AxisSpecifier-pprint">pprint</a></span></div>
+          <h3>Members</h3>
+          <dl class="members">
+            <dt class="memberdef"><a name="principalType"><span class="member-name">principalType</span></a> = 2</dt>
+          </dl>
+        </dd>
+        <dt class="classdef"><a name="ParsedChildAxisSpecifier"></a>class <span class="class-name">ParsedChildAxisSpecifier</span><span class="bases">(<span class="class-name"><a href="Ft.Xml.XPath.ParsedAxisSpecifier.html#AxisSpecifier">AxisSpecifier</a></span>)</span></dt>
+        <dd class="classdesc">
+          <h3>Methods</h3>
+          <dl class="methods">
+            <dt class="methoddef"><a name="ParsedChildAxisSpecifier-select"><span class="method-name">select</span></a>(<span class="argument-name">self</span>, <span class="argument-name">context</span>, <span class="argument-name">nodeTest</span>)</dt>
+            <dd class="methoddesc">
+              <div class="abstract">Select all of the children of the context node</div>
+            </dd>
+            <dd class="overrides"><b>Overrides: </b><span class="inherited-name"><a href="Ft.Xml.XPath.ParsedAxisSpecifier.html#AxisSpecifier-select">select</a></span> from class <span class="class-name"><a href="Ft.Xml.XPath.ParsedAxisSpecifier.html#AxisSpecifier">AxisSpecifier</a></span></dd>
+          </dl>
+          <h3>Methods inherited from class <a href="Ft.Xml.XPath.ParsedAxisSpecifier.html#AxisSpecifier">AxisSpecifier</a></h3>
+          <div class="inherited"><span class="inherited-name"><a href="Ft.Xml.XPath.ParsedAxisSpecifier.html#AxisSpecifier-__init__">__init__</a></span>, <span class="inherited-name"><a href="Ft.Xml.XPath.ParsedAxisSpecifier.html#AxisSpecifier-__repr__">__repr__</a></span>, <span class="inherited-name"><a href="Ft.Xml.XPath.ParsedAxisSpecifier.html#AxisSpecifier-__str__">__str__</a></span>, <span class="inherited-name"><a href="Ft.Xml.XPath.ParsedAxisSpecifier.html#AxisSpecifier-descendants">descendants</a></span>, <span class="inherited-name"><a href="Ft.Xml.XPath.ParsedAxisSpecifier.html#AxisSpecifier-pprint">pprint</a></span></div>
+          <h3>Members inherited from class <a href="Ft.Xml.XPath.ParsedAxisSpecifier.html#AxisSpecifier">AxisSpecifier</a></h3>
+          <div class="inherited"><span class="inherited-name"><a href="Ft.Xml.XPath.ParsedAxisSpecifier.html#AxisSpecifier-principalType">principalType</a></span></div>
+        </dd>
+        <dt class="classdef"><a name="ParsedDescendantAxisSpecifier"></a>class <span class="class-name">ParsedDescendantAxisSpecifier</span><span class="bases">(<span class="class-name"><a href="Ft.Xml.XPath.ParsedAxisSpecifier.html#AxisSpecifier">AxisSpecifier</a></span>)</span></dt>
+        <dd class="classdesc">
+          <h3>Methods</h3>
+          <dl class="methods">
+            <dt class="methoddef"><a name="ParsedDescendantAxisSpecifier-select"><span class="method-name">select</span></a>(<span class="argument-name">self</span>, <span class="argument-name">context</span>, <span class="argument-name">nodeTest</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dd class="overrides"><b>Overrides: </b><span class="inherited-name"><a href="Ft.Xml.XPath.ParsedAxisSpecifier.html#AxisSpecifier-select">select</a></span> from class <span class="class-name"><a href="Ft.Xml.XPath.ParsedAxisSpecifier.html#AxisSpecifier">AxisSpecifier</a></span></dd>
+          </dl>
+          <h3>Methods inherited from class <a href="Ft.Xml.XPath.ParsedAxisSpecifier.html#AxisSpecifier">AxisSpecifier</a></h3>
+          <div class="inherited"><span class="inherited-name"><a href="Ft.Xml.XPath.ParsedAxisSpecifier.html#AxisSpecifier-__init__">__init__</a></span>, <span class="inherited-name"><a href="Ft.Xml.XPath.ParsedAxisSpecifier.html#AxisSpecifier-__repr__">__repr__</a></span>, <span class="inherited-name"><a href="Ft.Xml.XPath.ParsedAxisSpecifier.html#AxisSpecifier-__str__">__str__</a></span>, <span class="inherited-name"><a href="Ft.Xml.XPath.ParsedAxisSpecifier.html#AxisSpecifier-descendants">descendants</a></span>, <span class="inherited-name"><a href="Ft.Xml.XPath.ParsedAxisSpecifier.html#AxisSpecifier-pprint">pprint</a></span></div>
+          <h3>Members inherited from class <a href="Ft.Xml.XPath.ParsedAxisSpecifier.html#AxisSpecifier">AxisSpecifier</a></h3>
+          <div class="inherited"><span class="inherited-name"><a href="Ft.Xml.XPath.ParsedAxisSpecifier.html#AxisSpecifier-principalType">principalType</a></span></div>
+        </dd>
+        <dt class="classdef"><a name="ParsedDescendantOrSelfAxisSpecifier"></a>class <span class="class-name">ParsedDescendantOrSelfAxisSpecifier</span><span class="bases">(<span class="class-name"><a href="Ft.Xml.XPath.ParsedAxisSpecifier.html#AxisSpecifier">AxisSpecifier</a></span>)</span></dt>
+        <dd class="classdesc">
+          <h3>Methods</h3>
+          <dl class="methods">
+            <dt class="methoddef"><a name="ParsedDescendantOrSelfAxisSpecifier-select"><span class="method-name">select</span></a>(<span class="argument-name">self</span>, <span class="argument-name">context</span>, <span class="argument-name">nodeTest</span>)</dt>
+            <dd class="methoddesc">
+              <div class="abstract">Select the context node and all of its descendants</div>
+            </dd>
+            <dd class="overrides"><b>Overrides: </b><span class="inherited-name"><a href="Ft.Xml.XPath.ParsedAxisSpecifier.html#AxisSpecifier-select">select</a></span> from class <span class="class-name"><a href="Ft.Xml.XPath.ParsedAxisSpecifier.html#AxisSpecifier">AxisSpecifier</a></span></dd>
+          </dl>
+          <h3>Methods inherited from class <a href="Ft.Xml.XPath.ParsedAxisSpecifier.html#AxisSpecifier">AxisSpecifier</a></h3>
+          <div class="inherited"><span class="inherited-name"><a href="Ft.Xml.XPath.ParsedAxisSpecifier.html#AxisSpecifier-__init__">__init__</a></span>, <span class="inherited-name"><a href="Ft.Xml.XPath.ParsedAxisSpecifier.html#AxisSpecifier-__repr__">__repr__</a></span>, <span class="inherited-name"><a href="Ft.Xml.XPath.ParsedAxisSpecifier.html#AxisSpecifier-__str__">__str__</a></span>, <span class="inherited-name"><a href="Ft.Xml.XPath.ParsedAxisSpecifier.html#AxisSpecifier-descendants">descendants</a></span>, <span class="inherited-name"><a href="Ft.Xml.XPath.ParsedAxisSpecifier.html#AxisSpecifier-pprint">pprint</a></span></div>
+          <h3>Members inherited from class <a href="Ft.Xml.XPath.ParsedAxisSpecifier.html#AxisSpecifier">AxisSpecifier</a></h3>
+          <div class="inherited"><span class="inherited-name"><a href="Ft.Xml.XPath.ParsedAxisSpecifier.html#AxisSpecifier-principalType">principalType</a></span></div>
+        </dd>
+        <dt class="classdef"><a name="ParsedFollowingAxisSpecifier"></a>class <span class="class-name">ParsedFollowingAxisSpecifier</span><span class="bases">(<span class="class-name"><a href="Ft.Xml.XPath.ParsedAxisSpecifier.html#AxisSpecifier">AxisSpecifier</a></span>)</span></dt>
+        <dd class="classdesc">
+          <h3>Methods</h3>
+          <dl class="methods">
+            <dt class="methoddef"><a name="ParsedFollowingAxisSpecifier-select"><span class="method-name">select</span></a>(<span class="argument-name">self</span>, <span class="argument-name">context</span>, <span class="argument-name">nodeTest</span>)</dt>
+            <dd class="methoddesc">
+              <div class="abstract">Select all of the nodes the follow the context node,
+not including descendants.</div>
+            </dd>
+            <dd class="overrides"><b>Overrides: </b><span class="inherited-name"><a href="Ft.Xml.XPath.ParsedAxisSpecifier.html#AxisSpecifier-select">select</a></span> from class <span class="class-name"><a href="Ft.Xml.XPath.ParsedAxisSpecifier.html#AxisSpecifier">AxisSpecifier</a></span></dd>
+          </dl>
+          <h3>Methods inherited from class <a href="Ft.Xml.XPath.ParsedAxisSpecifier.html#AxisSpecifier">AxisSpecifier</a></h3>
+          <div class="inherited"><span class="inherited-name"><a href="Ft.Xml.XPath.ParsedAxisSpecifier.html#AxisSpecifier-__init__">__init__</a></span>, <span class="inherited-name"><a href="Ft.Xml.XPath.ParsedAxisSpecifier.html#AxisSpecifier-__repr__">__repr__</a></span>, <span class="inherited-name"><a href="Ft.Xml.XPath.ParsedAxisSpecifier.html#AxisSpecifier-__str__">__str__</a></span>, <span class="inherited-name"><a href="Ft.Xml.XPath.ParsedAxisSpecifier.html#AxisSpecifier-descendants">descendants</a></span>, <span class="inherited-name"><a href="Ft.Xml.XPath.ParsedAxisSpecifier.html#AxisSpecifier-pprint">pprint</a></span></div>
+          <h3>Members inherited from class <a href="Ft.Xml.XPath.ParsedAxisSpecifier.html#AxisSpecifier">AxisSpecifier</a></h3>
+          <div class="inherited"><span class="inherited-name"><a href="Ft.Xml.XPath.ParsedAxisSpecifier.html#AxisSpecifier-principalType">principalType</a></span></div>
+        </dd>
+        <dt class="classdef"><a name="ParsedFollowingSiblingAxisSpecifier"></a>class <span class="class-name">ParsedFollowingSiblingAxisSpecifier</span><span class="bases">(<span class="class-name"><a href="Ft.Xml.XPath.ParsedAxisSpecifier.html#AxisSpecifier">AxisSpecifier</a></span>)</span></dt>
+        <dd class="classdesc">
+          <h3>Methods</h3>
+          <dl class="methods">
+            <dt class="methoddef"><a name="ParsedFollowingSiblingAxisSpecifier-select"><span class="method-name">select</span></a>(<span class="argument-name">self</span>, <span class="argument-name">context</span>, <span class="argument-name">nodeTest</span>)</dt>
+            <dd class="methoddesc">
+              <div class="abstract">Select all of the siblings that follow the context node</div>
+            </dd>
+            <dd class="overrides"><b>Overrides: </b><span class="inherited-name"><a href="Ft.Xml.XPath.ParsedAxisSpecifier.html#AxisSpecifier-select">select</a></span> from class <span class="class-name"><a href="Ft.Xml.XPath.ParsedAxisSpecifier.html#AxisSpecifier">AxisSpecifier</a></span></dd>
+          </dl>
+          <h3>Methods inherited from class <a href="Ft.Xml.XPath.ParsedAxisSpecifier.html#AxisSpecifier">AxisSpecifier</a></h3>
+          <div class="inherited"><span class="inherited-name"><a href="Ft.Xml.XPath.ParsedAxisSpecifier.html#AxisSpecifier-__init__">__init__</a></span>, <span class="inherited-name"><a href="Ft.Xml.XPath.ParsedAxisSpecifier.html#AxisSpecifier-__repr__">__repr__</a></span>, <span class="inherited-name"><a href="Ft.Xml.XPath.ParsedAxisSpecifier.html#AxisSpecifier-__str__">__str__</a></span>, <span class="inherited-name"><a href="Ft.Xml.XPath.ParsedAxisSpecifier.html#AxisSpecifier-descendants">descendants</a></span>, <span class="inherited-name"><a href="Ft.Xml.XPath.ParsedAxisSpecifier.html#AxisSpecifier-pprint">pprint</a></span></div>
+          <h3>Members inherited from class <a href="Ft.Xml.XPath.ParsedAxisSpecifier.html#AxisSpecifier">AxisSpecifier</a></h3>
+          <div class="inherited"><span class="inherited-name"><a href="Ft.Xml.XPath.ParsedAxisSpecifier.html#AxisSpecifier-principalType">principalType</a></span></div>
+        </dd>
+        <dt class="classdef"><a name="ParsedNamespaceAxisSpecifier"></a>class <span class="class-name">ParsedNamespaceAxisSpecifier</span><span class="bases">(<span class="class-name"><a href="Ft.Xml.XPath.ParsedAxisSpecifier.html#AxisSpecifier">AxisSpecifier</a></span>)</span></dt>
+        <dd class="classdesc">
+          <h3>Methods</h3>
+          <dl class="methods">
+            <dt class="methoddef"><a name="ParsedNamespaceAxisSpecifier-select"><span class="method-name">select</span></a>(<span class="argument-name">self</span>, <span class="argument-name">context</span>, <span class="argument-name">nodeTest</span>)</dt>
+            <dd class="methoddesc">
+              <div class="abstract">Select all of the namespaces from the context node.</div>
+            </dd>
+            <dd class="overrides"><b>Overrides: </b><span class="inherited-name"><a href="Ft.Xml.XPath.ParsedAxisSpecifier.html#AxisSpecifier-select">select</a></span> from class <span class="class-name"><a href="Ft.Xml.XPath.ParsedAxisSpecifier.html#AxisSpecifier">AxisSpecifier</a></span></dd>
+          </dl>
+          <h3>Methods inherited from class <a href="Ft.Xml.XPath.ParsedAxisSpecifier.html#AxisSpecifier">AxisSpecifier</a></h3>
+          <div class="inherited"><span class="inherited-name"><a href="Ft.Xml.XPath.ParsedAxisSpecifier.html#AxisSpecifier-__init__">__init__</a></span>, <span class="inherited-name"><a href="Ft.Xml.XPath.ParsedAxisSpecifier.html#AxisSpecifier-__repr__">__repr__</a></span>, <span class="inherited-name"><a href="Ft.Xml.XPath.ParsedAxisSpecifier.html#AxisSpecifier-__str__">__str__</a></span>, <span class="inherited-name"><a href="Ft.Xml.XPath.ParsedAxisSpecifier.html#AxisSpecifier-descendants">descendants</a></span>, <span class="inherited-name"><a href="Ft.Xml.XPath.ParsedAxisSpecifier.html#AxisSpecifier-pprint">pprint</a></span></div>
+          <h3>Members</h3>
+          <dl class="members">
+            <dt class="memberdef"><a name="principalType"><span class="member-name">principalType</span></a> = 13</dt>
+          </dl>
+        </dd>
+        <dt class="classdef"><a name="ParsedParentAxisSpecifier"></a>class <span class="class-name">ParsedParentAxisSpecifier</span><span class="bases">(<span class="class-name"><a href="Ft.Xml.XPath.ParsedAxisSpecifier.html#AxisSpecifier">AxisSpecifier</a></span>)</span></dt>
+        <dd class="classdesc">
+          <h3>Methods</h3>
+          <dl class="methods">
+            <dt class="methoddef"><a name="ParsedParentAxisSpecifier-select"><span class="method-name">select</span></a>(<span class="argument-name">self</span>, <span class="argument-name">context</span>, <span class="argument-name">nodeTest</span>)</dt>
+            <dd class="methoddesc">
+              <div class="abstract">Select the parent of the context node</div>
+            </dd>
+            <dd class="overrides"><b>Overrides: </b><span class="inherited-name"><a href="Ft.Xml.XPath.ParsedAxisSpecifier.html#AxisSpecifier-select">select</a></span> from class <span class="class-name"><a href="Ft.Xml.XPath.ParsedAxisSpecifier.html#AxisSpecifier">AxisSpecifier</a></span></dd>
+          </dl>
+          <h3>Methods inherited from class <a href="Ft.Xml.XPath.ParsedAxisSpecifier.html#AxisSpecifier">AxisSpecifier</a></h3>
+          <div class="inherited"><span class="inherited-name"><a href="Ft.Xml.XPath.ParsedAxisSpecifier.html#AxisSpecifier-__init__">__init__</a></span>, <span class="inherited-name"><a href="Ft.Xml.XPath.ParsedAxisSpecifier.html#AxisSpecifier-__repr__">__repr__</a></span>, <span class="inherited-name"><a href="Ft.Xml.XPath.ParsedAxisSpecifier.html#AxisSpecifier-__str__">__str__</a></span>, <span class="inherited-name"><a href="Ft.Xml.XPath.ParsedAxisSpecifier.html#AxisSpecifier-descendants">descendants</a></span>, <span class="inherited-name"><a href="Ft.Xml.XPath.ParsedAxisSpecifier.html#AxisSpecifier-pprint">pprint</a></span></div>
+          <h3>Members inherited from class <a href="Ft.Xml.XPath.ParsedAxisSpecifier.html#AxisSpecifier">AxisSpecifier</a></h3>
+          <div class="inherited"><span class="inherited-name"><a href="Ft.Xml.XPath.ParsedAxisSpecifier.html#AxisSpecifier-principalType">principalType</a></span></div>
+        </dd>
+        <dt class="classdef"><a name="ParsedPrecedingAxisSpecifier"></a>class <span class="class-name">ParsedPrecedingAxisSpecifier</span><span class="bases">(<span class="class-name"><a href="Ft.Xml.XPath.ParsedAxisSpecifier.html#AxisSpecifier">AxisSpecifier</a></span>)</span></dt>
+        <dd class="classdesc">
+          <h3>Methods</h3>
+          <dl class="methods">
+            <dt class="methoddef"><a name="ParsedPrecedingAxisSpecifier-select"><span class="method-name">select</span></a>(<span class="argument-name">self</span>, <span class="argument-name">context</span>, <span class="argument-name">nodeTest</span>)</dt>
+            <dd class="methoddesc">
+              <div class="abstract">Select all of the nodes the precede the context node, not including ancestors</div>
+            </dd>
+            <dd class="overrides"><b>Overrides: </b><span class="inherited-name"><a href="Ft.Xml.XPath.ParsedAxisSpecifier.html#AxisSpecifier-select">select</a></span> from class <span class="class-name"><a href="Ft.Xml.XPath.ParsedAxisSpecifier.html#AxisSpecifier">AxisSpecifier</a></span></dd>
+          </dl>
+          <h3>Methods inherited from class <a href="Ft.Xml.XPath.ParsedAxisSpecifier.html#AxisSpecifier">AxisSpecifier</a></h3>
+          <div class="inherited"><span class="inherited-name"><a href="Ft.Xml.XPath.ParsedAxisSpecifier.html#AxisSpecifier-__init__">__init__</a></span>, <span class="inherited-name"><a href="Ft.Xml.XPath.ParsedAxisSpecifier.html#AxisSpecifier-__repr__">__repr__</a></span>, <span class="inherited-name"><a href="Ft.Xml.XPath.ParsedAxisSpecifier.html#AxisSpecifier-__str__">__str__</a></span>, <span class="inherited-name"><a href="Ft.Xml.XPath.ParsedAxisSpecifier.html#AxisSpecifier-descendants">descendants</a></span>, <span class="inherited-name"><a href="Ft.Xml.XPath.ParsedAxisSpecifier.html#AxisSpecifier-pprint">pprint</a></span></div>
+          <h3>Members inherited from class <a href="Ft.Xml.XPath.ParsedAxisSpecifier.html#AxisSpecifier">AxisSpecifier</a></h3>
+          <div class="inherited"><span class="inherited-name"><a href="Ft.Xml.XPath.ParsedAxisSpecifier.html#AxisSpecifier-principalType">principalType</a></span></div>
+        </dd>
+        <dt class="classdef"><a name="ParsedPrecedingSiblingAxisSpecifier"></a>class <span class="class-name">ParsedPrecedingSiblingAxisSpecifier</span><span class="bases">(<span class="class-name"><a href="Ft.Xml.XPath.ParsedAxisSpecifier.html#AxisSpecifier">AxisSpecifier</a></span>)</span></dt>
+        <dd class="classdesc">
+          <h3>Methods</h3>
+          <dl class="methods">
+            <dt class="methoddef"><a name="ParsedPrecedingSiblingAxisSpecifier-select"><span class="method-name">select</span></a>(<span class="argument-name">self</span>, <span class="argument-name">context</span>, <span class="argument-name">nodeTest</span>)</dt>
+            <dd class="methoddesc">
+              <div class="abstract">Select all of the siblings that precede the context node</div>
+            </dd>
+            <dd class="overrides"><b>Overrides: </b><span class="inherited-name"><a href="Ft.Xml.XPath.ParsedAxisSpecifier.html#AxisSpecifier-select">select</a></span> from class <span class="class-name"><a href="Ft.Xml.XPath.ParsedAxisSpecifier.html#AxisSpecifier">AxisSpecifier</a></span></dd>
+          </dl>
+          <h3>Methods inherited from class <a href="Ft.Xml.XPath.ParsedAxisSpecifier.html#AxisSpecifier">AxisSpecifier</a></h3>
+          <div class="inherited"><span class="inherited-name"><a href="Ft.Xml.XPath.ParsedAxisSpecifier.html#AxisSpecifier-__init__">__init__</a></span>, <span class="inherited-name"><a href="Ft.Xml.XPath.ParsedAxisSpecifier.html#AxisSpecifier-__repr__">__repr__</a></span>, <span class="inherited-name"><a href="Ft.Xml.XPath.ParsedAxisSpecifier.html#AxisSpecifier-__str__">__str__</a></span>, <span class="inherited-name"><a href="Ft.Xml.XPath.ParsedAxisSpecifier.html#AxisSpecifier-descendants">descendants</a></span>, <span class="inherited-name"><a href="Ft.Xml.XPath.ParsedAxisSpecifier.html#AxisSpecifier-pprint">pprint</a></span></div>
+          <h3>Members inherited from class <a href="Ft.Xml.XPath.ParsedAxisSpecifier.html#AxisSpecifier">AxisSpecifier</a></h3>
+          <div class="inherited"><span class="inherited-name"><a href="Ft.Xml.XPath.ParsedAxisSpecifier.html#AxisSpecifier-principalType">principalType</a></span></div>
+        </dd>
+        <dt class="classdef"><a name="ParsedSelfAxisSpecifier"></a>class <span class="class-name">ParsedSelfAxisSpecifier</span><span class="bases">(<span class="class-name"><a href="Ft.Xml.XPath.ParsedAxisSpecifier.html#AxisSpecifier">AxisSpecifier</a></span>)</span></dt>
+        <dd class="classdesc">
+          <h3>Methods</h3>
+          <dl class="methods">
+            <dt class="methoddef"><a name="ParsedSelfAxisSpecifier-select"><span class="method-name">select</span></a>(<span class="argument-name">self</span>, <span class="argument-name">context</span>, <span class="argument-name">nodeTest</span>)</dt>
+            <dd class="methoddesc">
+              <div class="abstract">Select the context node</div>
+            </dd>
+            <dd class="overrides"><b>Overrides: </b><span class="inherited-name"><a href="Ft.Xml.XPath.ParsedAxisSpecifier.html#AxisSpecifier-select">select</a></span> from class <span class="class-name"><a href="Ft.Xml.XPath.ParsedAxisSpecifier.html#AxisSpecifier">AxisSpecifier</a></span></dd>
+          </dl>
+          <h3>Methods inherited from class <a href="Ft.Xml.XPath.ParsedAxisSpecifier.html#AxisSpecifier">AxisSpecifier</a></h3>
+          <div class="inherited"><span class="inherited-name"><a href="Ft.Xml.XPath.ParsedAxisSpecifier.html#AxisSpecifier-__init__">__init__</a></span>, <span class="inherited-name"><a href="Ft.Xml.XPath.ParsedAxisSpecifier.html#AxisSpecifier-__repr__">__repr__</a></span>, <span class="inherited-name"><a href="Ft.Xml.XPath.ParsedAxisSpecifier.html#AxisSpecifier-__str__">__str__</a></span>, <span class="inherited-name"><a href="Ft.Xml.XPath.ParsedAxisSpecifier.html#AxisSpecifier-descendants">descendants</a></span>, <span class="inherited-name"><a href="Ft.Xml.XPath.ParsedAxisSpecifier.html#AxisSpecifier-pprint">pprint</a></span></div>
+          <h3>Members inherited from class <a href="Ft.Xml.XPath.ParsedAxisSpecifier.html#AxisSpecifier">AxisSpecifier</a></h3>
+          <div class="inherited"><span class="inherited-name"><a href="Ft.Xml.XPath.ParsedAxisSpecifier.html#AxisSpecifier-principalType">principalType</a></span></div>
+        </dd>
+      </dl>
+    </div>
+    <div class="section">
+      <h2>Functions</h2>
+      <dl class="functions">
+        <dt class="functiondef"><a name="ParsedAxisSpecifier"><span class="function-name">ParsedAxisSpecifier</span></a>(<span class="argument-name">axis</span>)</dt>
+        <dd class="functiondesc"></dd>
+      </dl>
+    </div>
+    <div class="section">
+      <h2>Globals</h2>
+      <dl class="globals">
+        <dt class="globaldef"><a name="NAMESPACE_NODE"><span class="global-name">NAMESPACE_NODE</span></a> = 13</dt>
+        <dd class="globaldesc"></dd>
+        <dt class="globaldef"><a name="g_classMap"><span class="global-name">g_classMap</span></a> = {'ancestor': &lt;class Ft.Xml.XPath.ParsedAxisSpecifier.ParsedAncestorAxisSpecifier&gt;, 'ancestor-or-self': &lt;class Ft.Xml.XPath.ParsedAxisSpecifier.ParsedAncestorOrSelfAxisSpecifier&gt;, 'attribute': &lt;class Ft.Xml.XPath.ParsedAxisSpecifier.ParsedAttributeAxisSpecifier&gt;, 'child': &lt;class Ft.Xml.XPath.ParsedAxisSpecifier.ParsedChildAxisSpecifier&gt;, 'descendant': &lt;class Ft.Xml.XPath.ParsedAxisSpecifier.ParsedDescendantAxisSpecifier&gt;, 'descendant-or-self': &lt;class Ft.Xml.XPath.ParsedAxisSpecifier.ParsedDescendantOrSelfAxisSpecifier&gt;, 'following': &lt;class Ft.Xml.XPath.ParsedAxisSpecifier.ParsedFollowingAxisSpecifier&gt;, 'following-sibling': &lt;class Ft.Xml.XPath.ParsedAxisSpecifier.ParsedFollowingSiblingAxisSpecifier&gt;, 'namespace': &lt;class Ft.Xml.XPath.ParsedAxisSpecifier.ParsedNamespaceAxisSpecifier&gt;, 'parent': &lt;class Ft.Xml.XPath.ParsedAxisSpecifier.ParsedParentAxisSpecifier&gt;, ...}</dt>
+        <dd class="globaldesc"></dd>
+      </dl>
+    </div>
+    <div class="universal-footer">Last modified on 2005-04-18 16:47:00</div>
+  </body>
+</html>

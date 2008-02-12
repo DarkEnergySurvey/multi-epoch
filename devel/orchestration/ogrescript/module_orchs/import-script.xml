@@ -1,0 +1,17 @@
+   <elf>
+      <workdir/>
+      <serial-scripts separate-script-dirs="false">
+
+<ogrescript strict="true">
+
+<echo stdout="true" message="HERE"/>
+<import file="/home/bcs/newflows/pipeline/trunk/reduction/module_orchs/simple-embedded-script.xml"/>
+<echo stdout="true" message="HERE"/>
+<echo stdout="true" message="g0 = ${g0}"/>
+<echo stdout="true" message="g1 = ${g1}"/>
+<echo stdout="true" message="g2 = ${g2}"/>
+</ogrescript>
+
+</serial-scripts>
+</elf>
+

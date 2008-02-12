@@ -1,0 +1,13 @@
+   <target name="Stage_flatcombine" depends="Stage_flatcombine_g, Stage_flatcombine_r, Stage_flatcombine_i, Stage_flatcombine_z" description="create flat correction">
+        <esequence>
+
+         <write path="${local.out}/${flatcombine.log}" text="true"
+                         errorProperty="failed" rethrow="false" append="true">
+                         <segment string=" -- flatcombine done" lineBreaks="1"/>
+         </write>
+
+         <print line=" - Stage_flatcombine done"/>
+
+
+        </esequence>
+   </target>

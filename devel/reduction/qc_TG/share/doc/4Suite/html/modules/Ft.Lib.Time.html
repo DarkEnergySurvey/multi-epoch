@@ -1,0 +1,251 @@
+<html>
+  <head>
+    <meta content="text/html; charset=iso-8859-1" http-equiv="Content-Type">
+    <title>4Suite API Documentation: Ft.Lib.Time</title>
+    <link href="modules.css" type="text/css" rel="stylesheet">
+  </head>
+  <body>
+    <div class="universal-header"><span class="universal-header-prefix">&nbsp;&nbsp;&nbsp;</span>&nbsp;<span class="universal-header-prefix">&nbsp;&nbsp;</span>&nbsp;<span class="universal-header-prefix">&nbsp;</span>&nbsp;<a href="../index.html">4Suite<sup>&trade;</sup> API Documentation</a></div>
+    <h1><span class="glyph-arrow">&#9658;</span> Module <span class="this-name"><a href="Ft.html" title="Ft">Ft</a>.<a href="Ft.Lib.html" title="Ft.Lib">Lib</a>.Time</span></h1>
+    <div class="abstract">Date and time related functionality for use within 4Suite only.</div>
+    <pre class="description">This module is experimental and may not be staying in 4Suite for long;
+application developers should avoid forming dependencies on it.
+
+Copyright 2005 Fourthought, Inc. (USA).
+Detailed license and copyright information: http://4suite.org/COPYRIGHT
+Project home, documentation, distributions: http://4suite.org/</pre>
+    <div class="summary-section">
+      <table cellpadding="0" cellspacing="0">
+        <tbody>
+          <tr>
+            <td valign="top">
+              <div class="summary-header">Classes:</div>
+              <div class="summary-list"><span class="class-name"><a href="#DT">DT</a></span></div>
+            </td>
+            <td width="7" valign="middle"></td>
+            <td width="1" valign="middle" bgcolor="#C5C5C5"></td>
+            <td width="7" valign="middle"></td>
+            <td valign="top">
+              <div class="summary-header">Functions:</div>
+              <div class="summary-list"><span class="function-name"><a href="#DayOfYearFromYMD">DayOfYearFromYMD</a></span>, <span class="function-name"><a href="#FromISO8601">FromISO8601</a></span>, <span class="function-name"><a href="#FromPythonTime">FromPythonTime</a></span>, <span class="function-name"><a href="#FromPythonTimeTuple">FromPythonTimeTuple</a></span>, <span class="function-name"><a href="#FromRFC822">FromRFC822</a></span>, <span class="function-name"><a href="#WeekdayFromYMD">WeekdayFromYMD</a></span>, <span class="function-name"><a href="#isDST">isDST</a></span></div>
+            </td>
+            <td width="7" valign="middle"></td>
+            <td width="1" valign="middle" bgcolor="#C5C5C5"></td>
+            <td width="7" valign="middle"></td>
+            <td valign="top">
+              <div class="summary-header">Globals:</div>
+              <div class="summary-list"><span class="global-name"><a href="#g_isoExpressions">g_isoExpressions</a></span></div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="section">
+      <h2>Classes</h2>
+      <dl class="classes">
+        <dt class="classdef"><a name="DT"></a>class <span class="class-name">DT</span></dt>
+        <dd class="classdesc">
+          <div class="abstract">A class that contains the data needed to represent a single point in time
+using many different date and time formats.</div>
+          <pre class="description">Its constructor requires a UTC (GMT) date and time (year, month (0-11), day
+(0-31), hour (0-23), minute (0-59), second (0-59), millisecond (0-999), plus
+some information to help express this time in local terms: a local time zone
+name, or if that's not available, an hour offset of the local time from GMT
+(-11 to 14, typically), a minute offset of the local time from GMT (0 or 30,
+usually), and an optional flag indicating Daylight Savings Time, to help
+determine the time zone name.</pre>
+          <h3>Methods</h3>
+          <dl class="methods">
+            <dt class="methoddef"><a name="DT-__cmp__"><span class="method-name">__cmp__</span></a>(<span class="argument-name">self</span>, <span class="argument-name">other</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dt class="methoddef"><a name="DT-__hash__"><span class="method-name">__hash__</span></a>(<span class="argument-name">self</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dt class="methoddef"><a name="DT-__init__"><span class="method-name">__init__</span></a>(<span class="argument-name">self</span>, <span class="argument-name">year</span>, <span class="argument-name">month</span>, <span class="argument-name">day</span>, <span class="argument-name">hour</span>, <span class="argument-name">minute</span>, <span class="argument-name">second</span>, <span class="argument-name">milliSecond</span>, <span class="argument-name">daylightSavings</span>, <span class="argument-name">tzName</span>, <span class="argument-name">tzHourOffset</span>, <span class="argument-name">tzMinuteOffset</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dt class="methoddef"><a name="DT-__str__"><span class="method-name">__str__</span></a> = <a href="#DT-asISO8601DateTime">asISO8601DateTime</a>(<span class="argument-name">self</span>, <span class="argument-name">local</span><span class="argument-default">=0</span>)</dt>
+            <dd class="methoddesc">
+              <div class="abstract">Represents this DT object as an ISO 8601 date-time string, using
+UTC time like '2001-01-01T00:00:00Z' if local=0, or local time with
+UTC offset like '2000-12-31T17:00:00-07:00' if local=1.</div>
+            </dd>
+            <dt class="methoddef"><a name="DT-abbreviatedMonthName"><span class="method-name">abbreviatedMonthName</span></a>(<span class="argument-name">self</span>, <span class="argument-name">local</span><span class="argument-default">=0</span>)</dt>
+            <dd class="methoddesc">
+              <div class="abstract">Returns the month component of the stored date and time as a
+string like 'Jan'.</div>
+            </dd>
+            <dt class="methoddef"><a name="DT-asISO8601Date"><span class="method-name">asISO8601Date</span></a>(<span class="argument-name">self</span>, <span class="argument-name">local</span><span class="argument-default">=0</span>)</dt>
+            <dd class="methoddesc">
+              <div class="abstract">Represents this DT object as an ISO 8601 date-time string, like
+'2001-01-01' if local=0, or '2000-12-31' if local=1. The local date
+may vary from UTC date depending on the time of day that is stored
+in the object.</div>
+            </dd>
+            <dt class="methoddef"><a name="DT-asISO8601DateTime"><span class="method-name">asISO8601DateTime</span></a>(<span class="argument-name">self</span>, <span class="argument-name">local</span><span class="argument-default">=0</span>)</dt>
+            <dd class="methoddesc">
+              <div class="abstract">Represents this DT object as an ISO 8601 date-time string, using
+UTC time like '2001-01-01T00:00:00Z' if local=0, or local time with
+UTC offset like '2000-12-31T17:00:00-07:00' if local=1.</div>
+            </dd>
+            <dt class="methoddef"><a name="DT-asISO8601Time"><span class="method-name">asISO8601Time</span></a>(<span class="argument-name">self</span>, <span class="argument-name">local</span><span class="argument-default">=0</span>)</dt>
+            <dd class="methoddesc">
+              <div class="abstract">Represents this DT object as an ISO 8601 time string, using UTC
+time like 'T00:00:00Z' if local=0, or local time with UTC offset
+like 'T17:00:00-07:00' if local=1</div>
+            </dd>
+            <dt class="methoddef"><a name="DT-asPythonTime"><span class="method-name">asPythonTime</span></a>(<span class="argument-name">self</span>, <span class="argument-name">local</span><span class="argument-default">=0</span>)</dt>
+            <dd class="methoddesc">
+              <div class="abstract">Returns the stored date and time as a float indicating the number
+of seconds since the local machine's epoch.</div>
+            </dd>
+            <dt class="methoddef"><a name="DT-asPythonTimeTuple"><span class="method-name">asPythonTimeTuple</span></a>(<span class="argument-name">self</span>, <span class="argument-name">local</span><span class="argument-default">=0</span>)</dt>
+            <dd class="methoddesc">
+              <div class="abstract">Returns the stored date and time as a Python time tuple, as
+documented in the time module. If the tuple is going to be passed
+to a function that expects the local time, set local=1. The
+Daylight Savings flag is always -1, which means unknown, and may
+or may not have ramifications.</div>
+            </dd>
+            <dt class="methoddef"><a name="DT-asRFC822DateTime"><span class="method-name">asRFC822DateTime</span></a>(<span class="argument-name">self</span>, <span class="argument-name">local</span><span class="argument-default">=0</span>)</dt>
+            <dd class="methoddesc">
+              <div class="abstract">Represents this DT object as an RFC 1123 (which updated RFC 822)
+date string, using UTC time like 'Mon, 01 Jan 2001 00:00:00 GMT' if
+local=0, or local time with time zone indicator or offset like
+'Sun, 31 Dec 2000 17:00:00 MDT' if local=1. Although RFC 822 allows
+the weekday to be optional, it is always included in the returned
+string.</div>
+            </dd>
+            <dt class="methoddef"><a name="DT-day"><span class="method-name">day</span></a>(<span class="argument-name">self</span>, <span class="argument-name">local</span><span class="argument-default">=0</span>)</dt>
+            <dd class="methoddesc">
+              <div class="abstract">Returns the day component of the stored date and time as an
+integer in the range 1-31.</div>
+            </dd>
+            <dt class="methoddef"><a name="DT-dayOfWeek"><span class="method-name">dayOfWeek</span></a>(<span class="argument-name">self</span>, <span class="argument-name">local</span><span class="argument-default">=0</span>)</dt>
+            <dd class="methoddesc">
+              <div class="abstract">Returns the day of week component of the stored date and time
+as an int in the range 0-6 (0=Monday).</div>
+            </dd>
+            <dt class="methoddef"><a name="DT-dayOfYear"><span class="method-name">dayOfYear</span></a>(<span class="argument-name">self</span>, <span class="argument-name">local</span><span class="argument-default">=0</span>)</dt>
+            <dd class="methoddesc">
+              <div class="abstract">Returns the day of year component of the stored date and time
+as an int in the range 1-366.</div>
+            </dd>
+            <dt class="methoddef"><a name="DT-hour"><span class="method-name">hour</span></a>(<span class="argument-name">self</span>, <span class="argument-name">local</span><span class="argument-default">=0</span>)</dt>
+            <dd class="methoddesc">
+              <div class="abstract">Returns the hour component of the stored date and time as an int
+in the range 0-23.</div>
+            </dd>
+            <dt class="methoddef"><a name="DT-milliSecond"><span class="method-name">milliSecond</span></a>(<span class="argument-name">self</span>)</dt>
+            <dd class="methoddesc">
+              <div class="abstract">Returns the millisecond component of the stored date and time as
+an int in the range 0-999.</div>
+            </dd>
+            <dt class="methoddef"><a name="DT-minute"><span class="method-name">minute</span></a>(<span class="argument-name">self</span>, <span class="argument-name">local</span><span class="argument-default">=0</span>)</dt>
+            <dd class="methoddesc">
+              <div class="abstract">Returns the minute component of the stored date and time as an
+int in the range 0-59.</div>
+            </dd>
+            <dt class="methoddef"><a name="DT-month"><span class="method-name">month</span></a>(<span class="argument-name">self</span>, <span class="argument-name">local</span><span class="argument-default">=0</span>)</dt>
+            <dd class="methoddesc">
+              <div class="abstract">Returns the month component of the stored date and time as an int
+in the range 0-11.</div>
+            </dd>
+            <dt class="methoddef"><a name="DT-monthName"><span class="method-name">monthName</span></a>(<span class="argument-name">self</span>, <span class="argument-name">local</span><span class="argument-default">=0</span>)</dt>
+            <dd class="methoddesc">
+              <div class="abstract">Returns the month component of the stored date and time as a
+string like 'January'.</div>
+            </dd>
+            <dt class="methoddef"><a name="DT-second"><span class="method-name">second</span></a>(<span class="argument-name">self</span>)</dt>
+            <dd class="methoddesc">
+              <div class="abstract">Returns the second component of the stored date and time as an
+int in the range 0-59.</div>
+            </dd>
+            <dt class="methoddef"><a name="DT-tzHourOffset"><span class="method-name">tzHourOffset</span></a>(<span class="argument-name">self</span>)</dt>
+            <dd class="methoddesc">
+              <div class="abstract">Returns the local time's hour offset from GMT component of the
+stored date and time as an int, typically in the range -12 to 14.</div>
+            </dd>
+            <dt class="methoddef"><a name="DT-tzMinuteOffset"><span class="method-name">tzMinuteOffset</span></a>(<span class="argument-name">self</span>)</dt>
+            <dd class="methoddesc">
+              <div class="abstract">Returns the local time's minute offset from GMT component of the
+stored date and time as an int in the range 0-59.</div>
+            </dd>
+            <dt class="methoddef"><a name="DT-tzName"><span class="method-name">tzName</span></a>(<span class="argument-name">self</span>)</dt>
+            <dd class="methoddesc">
+              <div class="abstract">Returns the local time's time zone name component of the stored
+date and time as a string like 'MST'.</div>
+            </dd>
+            <dt class="methoddef"><a name="DT-year"><span class="method-name">year</span></a>(<span class="argument-name">self</span>, <span class="argument-name">local</span><span class="argument-default">=0</span>)</dt>
+            <dd class="methoddesc">
+              <div class="abstract">Returns the year component of the stored date and time as an int
+like 2001.</div>
+            </dd>
+          </dl>
+          <h3>Members</h3>
+          <dl class="members">
+            <dt class="memberdef"><a name="abbreviatedMonthNameTable"><span class="member-name">abbreviatedMonthNameTable</span></a> = ('ERR', 'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec')</dt>
+            <dt class="memberdef"><a name="abbreviatedWeekdayNameTable"><span class="member-name">abbreviatedWeekdayNameTable</span></a> = ('Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun')</dt>
+            <dt class="memberdef"><a name="monthNameTable"><span class="member-name">monthNameTable</span></a> = ('ERROR', 'January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December')</dt>
+            <dt class="memberdef"><a name="tzNameTable"><span class="member-name">tzNameTable</span></a> = {-12: ('GMT-11', 'Yankee', 'IDLW', ''), -11: ('GMT-11', 'XRay', 'NT', ''), -10: ('GMT-10', 'Whiskey', 'AHST', ''), -9.5: ('GMT-9:30', '', '', 'HDT'), -9: ('GMT-9', 'Victor', 'YST', ''), -8.5: ('GMT-8:30', '', '', 'YDT'), -8: ('GMT-8', 'Uniform', 'PST', ''), -7: ('GMT-7', 'Tango', 'MST', 'PDT'), -6: ('GMT-6', 'Sierra', 'CST', 'MDT'), -5: ('GMT-5', 'Romeo', 'EST', 'CDT'), ...}</dt>
+            <dt class="memberdef"><a name="weekdayNameTable"><span class="member-name">weekdayNameTable</span></a> = ('Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday')</dt>
+          </dl>
+        </dd>
+      </dl>
+    </div>
+    <div class="section">
+      <h2>Functions</h2>
+      <dl class="functions">
+        <dt class="functiondef"><a name="DayOfYearFromYMD"><span class="function-name">DayOfYearFromYMD</span></a>(<span class="argument-name">year</span>, <span class="argument-name">month</span>, <span class="argument-name">day</span>)</dt>
+        <dd class="functiondesc">
+          <div class="abstract">Calculates the Julian day (day of year, between 1 and 366),
+for the given date. This function is accurate for dates back to
+01 Jan 0004 (that's 4 A.D.), when the Julian calendar stabilized.</div>
+        </dd>
+        <dt class="functiondef"><a name="FromISO8601"><span class="function-name">FromISO8601</span></a>(<span class="argument-name">st</span>)</dt>
+        <dd class="functiondesc">
+          <div class="abstract">Create a DT object from an ISO 8601 date, time or date-time string.
+The DT object must contain a complete date and time, and the
+ISO 8601 string might represent a partial date or time, so some
+assumptions are made about the 'implied' information (ISO 8601's
+terminology).</div>
+        </dd>
+        <dt class="functiondef"><a name="FromPythonTime"><span class="function-name">FromPythonTime</span></a>(<span class="argument-name">t</span><span class="argument-default">=None</span>)</dt>
+        <dd class="functiondesc">
+          <div class="abstract">Create a DT object from a float that represents seconds elapsed since the
+local machine's epoch. If not specified, then current time is used.</div>
+        </dd>
+        <dt class="functiondef"><a name="FromPythonTimeTuple"><span class="function-name">FromPythonTimeTuple</span></a>(<span class="argument-name">t</span>)</dt>
+        <dd class="functiondesc">
+          <div class="abstract">Create a DT object from a Python time tuple as documented in the time
+module. This 9-tuple must represent a UTC date and time.</div>
+        </dd>
+        <dt class="functiondef"><a name="FromRFC822"><span class="function-name">FromRFC822</span></a>(<span class="argument-name">st</span>)</dt>
+        <dd class="functiondesc">
+          <div class="abstract">Create a DT object from an RFC 822/1123 date string</div>
+        </dd>
+        <dt class="functiondef"><a name="WeekdayFromYMD"><span class="function-name">WeekdayFromYMD</span></a>(<span class="argument-name">year</span>, <span class="argument-name">month</span>, <span class="argument-name">day</span>)</dt>
+        <dd class="functiondesc">
+          <div class="abstract">Calculates the day of week (0=Mon, 6=Sun) for the given date.
+This function is accurate for dates on/after Friday, 15 Oct 1582,
+when the Gregorian reform took effect, although it should be noted
+that some nations didn't adopt the Gregorian calendar until as late
+as the 20th century, so dates that were referenced before then
+would have fallen on a different day of the week, at the time.</div>
+        </dd>
+        <dt class="functiondef"><a name="isDST"><span class="function-name">isDST</span></a>(<span class="argument-name">t</span>)</dt>
+        <dd class="functiondesc">
+          <div class="abstract">Indicates whether the given UTC time tuple corresponds to a date
+and time that falls during Daylight Savings Time in the local
+time zone.</div>
+        </dd>
+      </dl>
+    </div>
+    <div class="section">
+      <h2>Globals</h2>
+      <dl class="globals">
+        <dt class="globaldef"><a name="g_isoExpressions"><span class="global-name">g_isoExpressions</span></a> = [['^(?P&lt;Date&gt;(?P&lt;CalendarDate&gt;(?P&lt;Century&gt;[0-9]{2,2...{2,2})(?P&lt;Month&gt;[0-9]{2,2})(?P&lt;Day&gt;[0-9]{2,2})))$', None], ['^(?P&lt;Date&gt;(?P&lt;CalendarDate&gt;(?P&lt;Century&gt;[0-9]{2,2...,2})-(?P&lt;Month&gt;[0-9]{2,2})-(?P&lt;Day&gt;[0-9]{2,2})))$', None], ['^(?P&lt;Date&gt;(?P&lt;CalendarDate&gt;(-|(?P&lt;Century&gt;[0-9]{2,2}))(?P&lt;Year&gt;[0-9]{2,2})-(?P&lt;Month&gt;[0-9]{2,2})))$', None], ['^(?P&lt;Date&gt;(?P&lt;CalendarDate&gt;-(?P&lt;Year&gt;[0-9]{2,2})(?P&lt;Month&gt;[0-9]{2,2})))$', None], ['^(?P&lt;Date&gt;(?P&lt;CalendarDate&gt;(-|(?P&lt;Century&gt;[0-9]{2,2}))(?P&lt;Year&gt;[0-9]{2,2})))$', None], ['^(?P&lt;Date&gt;(?P&lt;CalendarDate&gt;(?P&lt;Century&gt;[0-9]{2,2})))$', None], ['^(?P&lt;Date&gt;(?P&lt;CalendarDate&gt;--(?P&lt;Month&gt;[0-9]{2,2})(?:-?(?P&lt;Day&gt;[0-9]{2,2}))?))$', None], ['^(?P&lt;Date&gt;(?P&lt;CalendarDate&gt;---(?P&lt;Day&gt;[0-9]{2,2})))$', None], ['^(?P&lt;Date&gt;(?P&lt;OrdinalDate&gt;(?P&lt;Century&gt;[0-9]{2,2})?(?P&lt;Year&gt;[0-9]{2,2})-?(?P&lt;Ordinal&gt;[0-9]{3,3})))$', None], ['^(?P&lt;Date&gt;(?P&lt;OrdinalDate&gt;-(?P&lt;Ordinal&gt;[0-9]{3,3})))$', None], ['^(?P&lt;Date&gt;(?P&lt;WeekDate&gt;(?P&lt;Century&gt;[0-9]{2,2})?(...{2,2})W(?P&lt;Week&gt;[0-9][0-9])(?P&lt;Weekday&gt;[1-7])?))$', None], ['^(?P&lt;Date&gt;(?P&lt;WeekDate&gt;(?P&lt;Century&gt;[0-9]{2,2})?(...-W(?P&lt;Week&gt;[0-9][0-9])(?:-(?P&lt;Weekday&gt;[1-7]))?))$', None], ['^(?P&lt;Date&gt;(?P&lt;WeekDate&gt;-(?P&lt;YearInDecade&gt;[0-9])W(?P&lt;Week&gt;[0-9][0-9])(?P&lt;Weekday&gt;[1-7])))$', None], ['^(?P&lt;Date&gt;(?P&lt;WeekDate&gt;-(?P&lt;YearInDecade&gt;[0-9])-W(?P&lt;Week&gt;[0-9][0-9])-(?P&lt;Weekday&gt;[1-7])))$', None], ['^(?P&lt;Date&gt;(?P&lt;WeekDate&gt;-W(?P&lt;Week&gt;[0-9][0-9])(?:-?(?P&lt;Weekday&gt;[1-7]))?))$', None], ['^(?P&lt;Date&gt;(?P&lt;WeekDate&gt;-W?-(?P&lt;Weekday&gt;[1-7])))$', None], ['^(?P&lt;Time&gt;(?:(?P&lt;Hour&gt;(?:0[0-9])|(?:1[0-9])|(?:2...]))(?::?(?P&lt;TzMinute&gt;(?:[0-5][0-9])|(?:60)))?))?$', None], ['^(?P&lt;Time&gt;(?:(?P&lt;Hour&gt;(?:0[0-9])|(?:1[0-9])|(?:2...]))(?::?(?P&lt;TzMinute&gt;(?:[0-5][0-9])|(?:60)))?))?$', None], ['^(?P&lt;Time&gt;(?:(?P&lt;Hour&gt;(?:0[0-9])|(?:1[0-9])|(?:2...]))(?::?(?P&lt;TzMinute&gt;(?:[0-5][0-9])|(?:60)))?))?$', None], ['^(?P&lt;Time&gt;(?:(?P&lt;Hour&gt;(?:0[0-9])|(?:1[0-9])|(?:2...]))(?::?(?P&lt;TzMinute&gt;(?:[0-5][0-9])|(?:60)))?))?$', None], ...]</dt>
+        <dd class="globaldesc"></dd>
+      </dl>
+    </div>
+    <div class="universal-footer">Last modified on 2005-04-18 16:46:56</div>
+  </body>
+</html>

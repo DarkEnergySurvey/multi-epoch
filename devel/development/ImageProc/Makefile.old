@@ -1,0 +1,487 @@
+FITSIO =	../lib/libcfitsio.a
+NR2 =		../lib/libpress2ndkr.a
+NR2D =		../lib/libpress2ndkrD.a
+BINDIR = 	../bin
+
+#CC =		cc
+CC =		icc
+#CPPC = 		g++ -g3
+CPPC = 		icpc
+CPPCOPTS =	-c -Wall -Wno-deprecated -funroll-loops -O3
+#CPPLINK =	g++ -g3
+CPPLINK =	icpc
+#FC =		f77
+FC =		ifort -O3
+CFLAGS =
+CFLAGS = 	-g -O3
+#CFLAGS = 	-O 
+
+imcorrect: imcorrect.o imreadsubs.o imarithsubs.o
+	$(CC) $(CFLAGS) -o $(BINDIR)/imcorrect imcorrect.o \
+	imreadsubs.o imarithsubs.o $(NR2) $(FITSIO) -lm
+
+skycombine: skycombine.o imreadsubs.o imarithsubs.o
+	$(CC) $(CFLAGS) -o $(BINDIR)/skycombine skycombine.o \
+	imreadsubs.o imarithsubs.o $(NR2) $(FITSIO) -lm
+
+sciencecombine: sciencecombine.o imreadsubs.o imarithsubs.o
+	$(CC) $(CFLAGS) -o $(BINDIR)/sciencecombine sciencecombine.o \
+	imreadsubs.o imarithsubs.o $(NR2) $(FITSIO) -lm
+
+zerocombine: zerocombine.o imreadsubs.o imarithsubs.o
+	$(CC) $(CFLAGS) -o $(BINDIR)/zerocombine zerocombine.o \
+	imreadsubs.o imarithsubs.o $(NR2) $(FITSIO) -lm
+
+flatcombine: flatcombine.o imreadsubs.o imarithsubs.o
+	$(CC) $(CFLAGS) -o $(BINDIR)/flatcombine flatcombine.o \
+	imreadsubs.o imarithsubs.o $(NR2) $(FITSIO) -lm
+
+mkbpm: mkbpm.o imreadsubs.o 
+	$(CC) $(CFLAGS) -o $(BINDIR)/mkbpm mkbpm.o \
+	imreadsubs.o $(NR2) $(FITSIO) -lm
+
+editbpm: editbpm.o imreadsubs.o 
+	$(CC) $(CFLAGS) -o $(BINDIR)/editbpm editbpm.o \
+	imreadsubs.o $(NR2) $(FITSIO) -lm
+
+fitscombine: fitscombine.o imreadsubs.o
+	$(CC) $(CFLAGS) -o $(BINDIR)/fitscombine fitscombine.o \
+	imreadsubs.o $(FITSIO) -lm
+
+mkillumcor: mkillumcor.o imreadsubs.o
+	$(CC) $(CFLAGS) -o $(BINDIR)/mkillumcor mkillumcor.o \
+	imreadsubs.o $(FITSIO) $(NR2) -lm
+
+imsim1_convert: imsim1_convert.o imreadsubs.o
+	$(CC) $(CFLAGS) -o $(BINDIR)/imsim1_convert imsim1_convert.o \
+	imreadsubs.o $(NR2) $(FITSIO) -lm
+
+imreadRADEC:  imreadRADEC.o imreadsubs.o
+	$(CC) $(CFLAGS) -o $(BINDIR)/imreadRADEC imreadRADEC.o \
+	imreadsubs.o $(NR1) $(FITSIO) -lm
+
+Mosaic2_convert: Mosaic2_convert.o imreadsubs.o archivesubsnew.o
+	$(CC) $(CFLAGS) -o $(BINDIR)/Mosaic2_convert Mosaic2_convert.o \
+	archivesubsnew.o imreadsubs.o $(FITSIO) -lm
+
+DECam_convert: DECam_convert.o imreadsubs.o archivesubsnew.o
+	$(CC) $(CFLAGS) -o $(BINDIR)/DECam_convert DECam_convert.o \
+	archivesubsnew.o imreadsubs.o $(FITSIO) -lm
+
+archivesubsnew.o: archivesubsnew.c imageproc.h
+	$(CC) -c $(CFLAGS) archivesubsnew.c
+
+archivesubs.o: archivesubs.c imageproc.h
+	$(CC) -c $(CFLAGS) archivesubs.c
+
+TNXtoTANPV: TNXtoTANPV.o imreadsubs.o
+	$(CC) $(CFLAGS) -o $(BINDIR)/TNXtoTANPV TNXtoTANPV.o imreadsubs.o \
+	$(FITSIO) -lm
+
+splitimage: splitimage.o imreadsubs.o 
+	$(CC) $(CFLAGS) -o $(BINDIR)/splitimage splitimage.o \
+	imreadsubs.o $(NR2) $(FITSIO) -lm
+
+correctRADEC: correctRADEC.o imsubs.o
+	$(CC) $(CFLAGS) -o $(BINDIR)/correctRADEC correctRADEC.o imsubs.o \
+	$(NR2) $(FITSIO) -lm
+
+fitsheaderfix: fitsheaderfix.o imreadsubs.o
+	$(CC) $(CFLAGS) -o $(BINDIR)/fitsheaderfix fitsheaderfix.o \
+	imreadsubs.o $(NR2) $(FITSIO) -lm
+
+imarithsubs.o:  imarithsubs.c imageproc.h
+	$(CC) -c $(CFLAGS) imarithsubs.c
+
+imreadsubs.o:  imreadsubs.c imageproc.h
+	$(CC) -c $(CFLAGS) imreadsubs.c
+
+DECam_convert.o:  DECam_convert.c imageproc.h
+	$(CC) -c $(CFLAGS) DECam_convert.c
+
+imcorrect.o:  imcorrect.c imageproc.h
+	$(CC) -c $(CFLAGS) imcorrect.c
+
+fitsheaderfix.c:  fitsheaderfix.c imageproc.h
+	$(CC) -c $(CFLAGS) fitsheaderfix.c
+
+zerocombine.o:  zerocombine.c imageproc.h
+	$(CC) -c $(CFLAGS) zerocombine.c
+
+fitscombine.o:  fitscombine.c 
+	$(CC) -c $(CFLAGS) fitscombine.c
+
+editbpm.o:  editbpm.c imageproc.h
+	$(CC) -c $(CFLAGS) editbpm.c
+
+mkbpm.o:  mkbpm.c imageproc.h
+	$(CC) -c $(CFLAGS) mkbpm.c
+
+splitimage.o:  splitimage.c imageproc.h
+	$(CC) -c $(CFLAGS) splitimage.c
+
+MOSAIC_convert.o:  MOSAIC_convert.c imageproc.h
+	$(CC) -c $(CFLAGS) MOSAIC_convert.c	
+
+imreadRADEC.o:  imreadRADEC.c imageproc.h
+	$(CC) -c $(CFLAGS) imreadRADEC.c	
+
+
+overscan:  overscan.o
+	$(CC) $(CFLAGS) -o $(BINDIR)/overscan overscan.o $(NR2) $(FITSIO) -lm
+
+
+convert_ingest:  convert_ingest.o
+	$(CC) $(CFLAGS) -o $(BINDIR)/convert_ingest convert_ingest.o -lm
+
+src_ingest:  src_ingest.o
+	$(CC) $(CFLAGS) -o $(BINDIR)/src_ingest src_ingest.o -lm
+
+SPT_ingest:  SPT_ingest.o
+	$(CC) $(CFLAGS) -o $(BINDIR)/SPT_ingest SPT_ingest.o -lm
+
+sexcombine.o:  sexcombine.c imageproc.h
+	$(CC) -c $(CFLAGS) sexcombine.c
+
+sexcombine: sexcombine.o 
+	$(CC) $(CFLAGS) -o $(BINDIR)/sexcombine sexcombine.o \
+	$(NR2) $(FITSIO) -lm
+
+correcctRADEC.o:  correcctRADEC.c imageproc.h
+	$(CC) -c $(CFLAGS) correcctRADEC.c
+
+correcctRADEC: correcctRADEC.o 
+	$(CC) $(CFLAGS) -o $(BINDIR)/correcctRADEC correcctRADEC.o \
+	$(NR2) $(FITSIO) -lm
+
+sciencecombine.o:  sciencecombine.c imageproc.h
+	$(CC) -c $(CFLAGS) sciencecombine.c
+
+correctRADEC.o:  correctRADEC.c imageproc.h
+	$(CC) -c $(CFLAGS) correctRADEC.c
+
+mkillumcor.o:  mkillumcor.c imageproc.h
+	$(CC) -c $(CFLAGS) mkillumcor.c
+
+#
+# Files from original CatalogProc
+#
+
+DC0truth_convert: DC0truth_convert.o catsubs.o
+	$(CC) $(CFLAGS) -o $(BINDIR)/DC0truth_convert DC0truth_convert.o \
+	catsubs.o \
+	$(NR2) $(FITSIO) -lm
+
+USNOB_convert: USNOB_convert.o catsubs.o
+	$(CC) $(CFLAGS) -o $(BINDIR)/USNOB_convert USNOB_convert.o \
+	catsubs.o $(NR2) $(FITSIO) -lm
+
+SExcat_convert: SExcat_convert.o catsubs.o
+	$(CC) $(CFLAGS) -o $(BINDIR)/SExcat_convert SExcat_convert.o \
+	catsubs.o \
+	$(NR2) $(FITSIO) -lm
+
+update_zeropoint: update_zeropoint.o
+	$(CC) $(CFLAGS) -o $(BINDIR)/update_zeropoint update_zeropoint.o \
+	$(NR2) $(FITSIO) -lm
+
+select_remaps: select_remaps.o
+	$(CC) $(CFLAGS) -o $(BINDIR)/select_remaps select_remaps.o \
+	$(NR2) $(FITSIO) -lm
+
+grabmatches: grabmatches.o
+	$(CC) $(CFLAGS) -o $(BINDIR)/grabmatches grabmatches.o \
+	$(NR2) $(FITSIO) -lm
+
+update_zeropoint_fl: update_zeropoint_fl.o
+	$(CC) $(CFLAGS) -o $(BINDIR)/update_zeropoint_fl update_zeropoint_fl.o \
+	$(NR2) $(FITSIO) -lm
+
+DC0truth_convert.o:  DC0truth_convert.c imageproc.h
+	$(CC) -c $(CFLAGS) DC0truth_convert.c
+
+SExcat_convert.o: SExcat_convert.c imageproc.h
+	$(CC) -c $(CFLAGS) SExcat_convert.c
+
+catsubs.o:  catsubs.c imageproc.h
+	$(CC) -c $(CFLAGS) catsubs.c
+
+update_zeropoint.o: update_zeropoint.c imageproc.h
+	$(CC) -c $(CFLAGS) update_zeropoint.c
+
+findtile: findtile.o
+	$(CC) $(CFLAGS) -o $(BINDIR)/findtile findtile.o \
+	$(NR2) $(FITSIO) -lm
+
+findtile_allccd: findtile_allccd.o
+	$(CC) $(CFLAGS) -o $(BINDIR)/findtile_allccd findtile_allccd.o \
+	$(NR2) $(FITSIO) -lm
+
+
+ascii2ldac: ascii2ldac.o
+	$(CC) $(CFLAGS) -o $(BINDIR)/ascii2ldac ascii2ldac.o \
+	$(NR2) $(FITSIO) -lm
+
+htm_aux.o: htm_aux.cc
+	$(CPPC) -c $(CPPCOPTS) htm_aux.cc 
+
+catalog_ingest.o: catalog_ingest.c 
+	$(CC) -c $(CFLAGS) catalog_ingest.c
+
+catalog_ingest: catalog_ingest.c catalog_ingest.o catsubs.o htm_aux.o imarithsubs.o
+	$(CPPC) -o $(BINDIR)/catalog_ingest catalog_ingest.o catsubs.o htm_aux.o \
+	imarithsubs.o $(NR2) $(FITSIO) -lm
+
+#
+# Files from original AuxiliaryProc
+#
+
+coadd_zp:  coadd_zp.o
+	$(CC) $(CFLAGS) -o $(BINDIR)/coadd_zp coadd_zp.o \
+	$(NR2) $(FITSIO) -lm
+
+fwhm:  fwhm.o imreadsubs.o
+	$(CC) $(CFLAGS) -o $(BINDIR)/fwhm fwhm.o imreadsubs.o\
+	$(NR2) $(FITSIO) -lm
+
+# makeingestlist
+makeingestlist.o:  makeingestlist.c imageproc.h
+	$(CC) -c $(CFLAGS) makeingestlist.c
+
+#makeingestlist: makeingestlist.o
+	$(CC) $(CFLAGS) -o $(BINDIR)/makeingestlist makeingestlist.o -lm
+
+fixradec:  fixradec.o
+	$(CC) $(CFLAGS) -o $(BINDIR)/fixradec fixradec.o -lm
+
+# test program
+test_filename_resolve:  test_filename_resolve.o archivesubsnew.o
+	$(CC) $(CFLAGS) -o $(BINDIR)/test_filename_resolve test_filename_resolve.o \
+	archivesubsnew.o -lm
+test_filename_construct:  test_filename_construct.o archivesubsnew.o
+	$(CC) $(CFLAGS) -o $(BINDIR)/test_filename_construct test_filename_construct.o \
+	archivesubsnew.o -lm
+
+mosaictile: mosaictile.o imreadsubs.o
+	$(CC) $(CFLAGS) -o $(BINDIR)/mosaictile mosaictile.o imreadsubs.o \
+	$(FITSIO) -lm
+
+# mosaictile.o
+mosaictile.o: mosaictile.c imageproc.h
+	$(CC) -c $(CFLAGS) mosaictile.c
+
+# ar_find
+ar_find:  ar_find.o
+	$(CC) $(CFLAGS) -o $(BINDIR)/ar_find ar_find.o -lm
+
+# ar_filterduplicates
+ar_filterduplicates:  ar_filterduplicates.o
+	$(CC) $(CFLAGS) -o $(BINDIR)/ar_filterduplicates ar_filterduplicates.o -lm
+
+# ar_remove
+ar_remove:  ar_remove.o
+	$(CC) $(CFLAGS) -o $(BINDIR)/ar_remove ar_remove.o -lm
+
+# ar_removefile
+ar_removefile:  ar_removefile.o archivesubs.o
+	$(CC) $(CFLAGS) -o $(BINDIR)/ar_removefile ar_removefile.o \
+	archivesubs.o -lm
+
+# check_hdu
+check_hdu.o:  check_hdu.c  $(INDIR)/imageproc.h
+	$(CC) -c $(CFLAGS) check_hdu.c
+
+check_hdu: check_hdu.o $(INDIR)/imageproc.h
+	$(CC) $(CFLAGS) -o $(BINDIR)/check_hdu check_hdu.o \
+	$(FITSIO) -lm
+
+# check_keyword
+check_keyword.o:  check_keyword.c  $(INDIR)/imageproc.h
+	$(CC) -c $(CFLAGS) check_keyword.c
+
+check_keyword: check_keyword.o $(INDIR)/imageproc.h
+	$(CC) $(CFLAGS) -o $(BINDIR)/check_keyword check_keyword.o \
+	$(FITSIO) -lm
+
+# checklist
+checklist.o:  checklist.c 
+	$(CC) -c $(CFLAGS) checklist.c
+
+checklist: checklist.o 
+	$(CC) $(CFLAGS) -o $(BINDIR)/checklist checklist.o \
+	$(FITSIO) -lm
+
+# getfitsfromlist
+getfitsfromlist.o:  getfitsfromlist.c 
+	$(CC) -c $(CFLAGS) getfitsfromlist.c
+
+getfitsfromlist: getfitsfromlist.o
+	$(CC) $(CFLAGS) -o $(BINDIR)/getfitsfromlist getfitsfromlist.o
+
+# makedirs
+makedirs.o:  makedirs.c 
+	$(CC) -c $(CFLAGS) makedirs.c
+
+makedirs: makedirs.o
+	$(CC) $(CFLAGS) -o $(BINDIR)/makedirs makedirs.o
+
+# makelist
+makelist.o:  makelist.c 
+	$(CC) -c $(CFLAGS) makelist.c
+
+makelist: makelist.o
+	$(CC) $(CFLAGS) -o $(BINDIR)/makelist makelist.o
+
+# runSWarp_remap
+runSWarp_remap.o:  runSWarp_remap.c 
+	$(CC) -c $(CFLAGS) runSWarp_remap.c
+
+runSWarp_remap: runSWarp_remap.o imreadsubs.o archivesubs.o
+	$(CC) $(CFLAGS) -o $(BINDIR)/runSWarp_remap runSWarp_remap.o \
+	archivesubs.o imreadsubs.o $(NR2) $(FITSIO) -lm
+
+# runSExtractor
+runSExtractor.o:  runSExtractor.c 
+	$(CC) -c $(CFLAGS) runSExtractor.c
+
+runSExtractor: runSExtractor.o imreadsubs.o archivesubs.o
+	$(CC) $(CFLAGS) -o $(BINDIR)/runSExtractor runSExtractor.o \
+	imreadsubs.o archivesubs.o $(NR2) $(FITSIO) -lm
+
+# runFitscombine
+runFitscombine.o:  runFitscombine.c 
+	$(CC) -c $(CFLAGS) runFitscombine.c
+
+runFitscombine: runFitscombine.o 
+	$(CC) $(CFLAGS) -o $(BINDIR)/runFitscombine runFitscombine.o \
+	$(NR2) $(FITSIO) -lm
+
+# runCatalog_ingest
+runCatalog_ingest.o:  runCatalog_ingest.c 
+	$(CC) -c $(CFLAGS) runCatalog_ingest.c
+
+runCatalog_ingest: runCatalog_ingest.o archivesubs.o
+	$(CC) $(CFLAGS) -o $(BINDIR)/runCatalog_ingest runCatalog_ingest.o \
+	archivesubs.o $(NR2) $(FITSIO) -lm
+
+runSCAMP.o:  runSCAMP.c 
+	$(CC) -c $(CFLAGS) runSCAMP.c
+
+runSCAMP: runSCAMP.o imreadsubs.o archivesubs.o
+	$(CC) $(CFLAGS) -o $(BINDIR)/runSCAMP runSCAMP.o \
+	archivesubs.o imreadsubs.o $(NR2) $(FITSIO) -lm
+
+#image_ingest
+image_ingest.o:  image_ingest.c  fitsio.h fitsio2.h \
+	imageproc.h
+	$(CC) -c $(CFLAGS) image_ingest.c
+
+image_ingest: image_ingest.o imreadsubs.o archivesubsnew.o 
+	$(CC) $(CFLAGS) -o $(BINDIR)/image_ingest image_ingest.o \
+	archivesubsnew.o imreadsubs.o $(FITSIO) -lm
+
+#keyword_ingest:
+keyword_ingest.o:  keyword_ingest.c  fitsio.h fitsio2.h imageproc.h
+	$(CC) -c $(CFLAGS) keyword_ingest.c
+
+keyword_ingest: keyword_ingest.o imreadsubs.o archivesubsnew.o 
+	$(CC) $(CFLAGS) -o $(BINDIR)/keyword_ingest keyword_ingest.o \
+	archivesubsnew.o imreadsubs.o $(FITSIO) -lm
+
+# usno_input
+usno_input.o:  usno_input.c 
+	$(CC) -c $(CFLAGS) usno_input.c
+
+usno_input: usno_input.o
+	$(CC) $(CFLAGS) -o $(BINDIR)/usno_input usno_input.o -lm
+
+#quick_coadd
+quick_coadd: quick_coadd.o
+	$(CC) $(CFLAGS) -o $(BINDIR)/quick_coadd quick_coadd.o \
+	$(NR2) $(FITSIO) -lm
+
+#astrometry
+astrometry: astrometry.o imreadsubs.o archivesubs.o
+	$(CC) $(CFLAGS) -o $(BINDIR)/astrometry astrometry.o \
+	archivesubs.o imreadsubs.o $(NR2) $(FITSIO) -lm
+
+#insert_head
+insert_head: insert_head.o imreadsubs.o archivesubs.o
+	$(CC) $(CFLAGS) -o $(BINDIR)/insert_head insert_head.o \
+	archivesubs.o imreadsubs.o $(NR2) $(FITSIO) -lm
+
+#QA_astrometry
+QA_astrometry: QA_astrometry.o
+	$(CC) $(CFLAGS) -o $(BINDIR)/QA_astrometry QA_astrometry.o \
+	$(NR2) $(FITSIO) -lm
+
+#binary2ascii
+binary2ascii: binary2ascii.o binary2ascii.o binary2ascii.o
+	$(CC) $(CFLAGS) -o $(BINDIR)/binary2ascii binary2ascii.o \
+	archivesubs.o imreadsubs.o $(NR2) $(FITSIO) -lm
+
+#image_chi2
+image_chi2: image_chi2.o
+	$(CC) $(CFLAGS) -o $(BINDIR)/image_chi2 image_chi2.o \
+	$(NR2) $(FITSIO) -lm
+
+#scampmkcat
+scampmkcat: scampmkcat.o
+	$(CC) $(CFLAGS) -o $(BINDIR)/scampmkcat scampmkcat.o \
+	$(NR2) $(FITSIO) -lm
+
+#select_astrometric_standards
+select_astrometric_standards: select_astrometric_standards.o
+	$(CC) $(CFLAGS) -o $(BINDIR)/select_astrometric_standards \
+	select_astrometric_standards.o $(NR2) $(FITSIO) -lm
+
+# listconvert
+listconvert.o:  listconvert.c 
+	$(CC) -c $(CFLAGS) listconvert.c
+
+listconvert: listconvert.o
+	$(CC) $(CFLAGS) -o $(BINDIR)/listconvert listconvert.o
+
+
+# coadd_fluxscale
+coadd_fluxscale: coadd_fluxscale.o
+	$(CC) $(CFLAGS) -o $(BINDIR)/coadd_fluxscale coadd_fluxscale.o \
+	$(NR2) $(FITSIO) -lm
+
+# coadd_chi2detection
+coadd_chi2detection: coadd_chi2detection.o
+	$(CC) $(CFLAGS) -o $(BINDIR)/coadd_chi2detection coadd_chi2detection.o \
+	$(NR2) $(FITSIO) -lm
+
+# coadd_catalogingest
+coadd_catalogingest.o:  coadd_catalogingest.c 
+	$(CC) -c $(CFLAGS) coadd_catalogingest.c
+
+coadd_catalogingest: coadd_catalogingest.o 
+	$(CC) $(CFLAGS) -o $(BINDIR)/coadd_catalogingest coadd_catalogingest.o \
+	$(NR2) $(FITSIO) -lm
+
+# coadd_fmatch
+coadd_fmatch: coadd_fmatch.o
+	$(CC) $(CFLAGS) -o $(BINDIR)/coadd_fmatch coadd_fmatch.o \
+	$(NR2) $(FITSIO) -lm
+
+#photometry_mean
+photometry_mean:  photometry_mean.o 
+	$(CC) $(CFLAGS) -o $(BINDIR)/photometry_mean photometry_mean.o \
+	$(NR2) -lm
+
+#coadd_grabmatches_catsim1
+coadd_grabmatches_catsim1: coadd_grabmatches_catsim1.o
+	$(CC) $(CFLAGS) -o $(BINDIR)/coadd_grabmatches_catsim1 coadd_grabmatches_catsim1.o \
+	$(NR2) $(FITSIO) -lm
+
+#grabmatches_Imsim2_truth
+grabmatches_Imsim2_truth: grabmatches_Imsim2_truth.o
+	$(CC) $(CFLAGS) -o $(BINDIR)/grabmatches_Imsim2_truth grabmatches_Imsim2_truth.o \
+	$(NR2) $(FITSIO) -lm
+
+#grabmatches_usnob
+grabmatches_usnob: grabmatches_usnob.o
+	$(CC) $(CFLAGS) -o $(BINDIR)/grabmatches_usnob grabmatches_usnob.o \
+	$(NR2) $(FITSIO) -lm

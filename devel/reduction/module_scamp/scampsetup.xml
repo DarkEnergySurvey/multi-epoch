@@ -1,0 +1,228 @@
+  <target name="Stage_scampsetup" description="Setups working environment for scamp">
+   <property file="${mypath}/module_scamp/scampsetup.properties"/>
+         
+     <envtosysprops/>
+     <esequence>
+
+      <publish>
+         <event ensembleid="${ensemble.id}"
+                workflowid="Main"
+                nodeid="Begin Stage_scampsetup"
+                currentState="0">
+              <property name="message" value="Begin Stage_scampsetup"/>
+         </event>
+      </publish>
+
+      <print line=" - Begin Stage_scampsetup"/>
+
+      <edeclare name="appbase"      string="${user.dir}"/>
+
+      <econdblock type="else-if">
+        <econdtask>
+          <eeval>
+             <statement>
+               <ecompare string="${platform}">
+                     <predicate string="TG" comparator="EQUALS"/>
+                 </ecompare>
+               </statement>
+          </eeval>
+              <esequence>
+
+	       <!-- prepare directory for this job -->
+               <delete  dir="$R{appbase}/jobs/${uid}_scamp"/>
+               <mkdir  dir="$R{appbase}/jobs/${uid}_scamp"/>
+
+               <!-- write out the dir_struct.xml -->
+               <print line=" -- Write ${uid}_scamp.xml ... "/>
+               <delete file="$R{appbase}/jobs/${uid}_scamp/${uid}.tmp"/>
+
+               <write path="$R{appbase}/jobs/${uid}_scamp/${uid}.tmp" text="true"
+                    errorProperty="failed" rethrow="false">
+                 <segment string=" &lt;project name=&quot;DESpipesetup&quot; default=&quot;Stage_setup&quot; basedir=&quot;.&quot; &gt;" lineBreaks="1"/> 
+                 <segment string="   &lt;target name=&quot;Stage_setup&quot; description=&quot;make some directories&quot;&gt;" lineBreaks="2"/> 
+                 <segment string="&lt;property file=&quot;${uid}_scamp.properties&quot;/&gt;" lineBreaks="1"/> 
+               </write>
+
+               <rtexec inheritedEnv="true" execDir="." args="${catpath} $R{appbase}/jobs/${uid}_scamp/${uid}.tmp ${mypath}/module_scamp/dir_struct.xml" quiet="true">
+                   <outMonitor file="$R{appbase}/jobs/${uid}_scamp/${uid}_scamp.xml"/>
+               </rtexec>
+
+               <delete file="$R{appbase}/jobs/${uid}/${uid}_scamp.tmp"/>
+
+               <!-- write out the dir_struct.properties -->
+               <print line=" -- Write ${uid}_scamp.properties ... "/>
+               <delete file="$R{appbase}/jobs/${uid}_scamp/${uid}_scamp.properties"/>
+
+               <write path="$R{appbase}/jobs/${uid}_scamp/${uid}_scamp.properties" text="true"
+                    errorProperty="failed" rethrow="false">
+                 <segment string="ensemble.id=${ensemble.id}" lineBreaks="1"/> 
+                 <segment string="nite=${nite}" lineBreaks="1"/>
+                 <segment string="uid=${uid}" lineBreaks="1"/> 
+                 <segment string="binhost=${binhost}" lineBreaks="1"/>            
+                 <segment string="etchost=${etchost}" lineBreaks="1"/>            
+                 <segment string="binpath=${mypath}/bin_TG" lineBreaks="1"/>            
+                 <segment string="etcpath=${mypath}/etc" lineBreaks="1"/>
+                 <segment string="chmodpath=/bin/chmod" lineBreaks="1"/>            
+                 <segment string="cppath=/bin/cp" lineBreaks="1"/>     
+                 <segment string="lspath=/bin/ls" lineBreaks="1"/>     
+                 <segment string="platform=${platform}" lineBreaks="1"/>                   
+                 <segment string="scamplist.number=${scamplist.number}" lineBreaks="1"/>                   
+               </write>
+  
+               <print line=" -- Done: $R{appbase}/jobs/${uid}_scamp/${uid}_scamp.properties written."/>
+
+               <!-- sent out the dir_struct to teragrid -->
+               <print line=" -- GridFTP ${uid}_scamp.xml and .properties across ... "/>
+
+               <edeclare name="srcxfile"  string="$R{appbase}/jobs/${uid}_scamp/${uid}_scamp.xml"/>
+               <edeclare name="srcpfile"  string="$R{appbase}/jobs/${uid}_scamp/${uid}_scamp.properties"/>
+               <edeclare name="targetdir" string="${targetprot}://${tgrid_server_${site}}${tgrid_homepath_${site}}"/>
+
+               <uricopy from="$R{srcxfile}" to="$R{targetdir}">
+               </uricopy>
+               <uricopy from="$R{srcpfile}" to="$R{targetdir}">
+               </uricopy>
+
+               <print line=" -- ${uid}_scamp setup files sent"/>
+
+               <!-- condor job-submission -->
+
+               <edeclare name="condor_home"     null="true"/>
+               <getsysprop name="condor.home"/>
+               <ereturn name="condor_home"      get="value"/>
+
+               <edeclare name="currentuser"  string="${user.name}"/>
+               <edeclare name="condorsubmit" string="$R{condor_home}/bin/condor_submit"/>
+               <!-- Change for multiple condor job tolerance -->
+               <edeclare name="ogretag" string='"scamp_setup_${nite}"'/>
+               <edeclare name="condorq"      string="$R{condor_home}/bin/condor_q -constraint 'ogretag==$R{ogretag}'"/>
+               <edeclare name="mxc" string="maxCputime=30"/>
+               <edeclare name="mxw" string="maxWallTime=30"/>
+               <edeclare name="fastio" string="host_types=fastio"/>
+
+               <edeclare name="line1" string="universe=globus"/>
+               <edeclare name="line2" string="executable=${tgrid_ogre_${site}}/bin/launch"/>
+               <edeclare name="line2B" string="globusrsl = ($R{mxw})(max_memory=${maxmem})(environment=(OGRE_HOME ${tgrid_ogre_${site}}) (JAVA_HOME ${tgrid_java_${site}}))"/>
+
+               <edeclare name="line4" string="transfer_executable=false"/>
+               <edeclare name="line5" string="globusscheduler=${tgrid_jobserver_${site}}/${jobmanager_scampsetup}"/>
+
+               <edeclare name="line9" string="remote_initialdir=${tgrid_homepath_${site}}"/>
+               <edeclare name="line10" string="queue"/>
+
+               <print line=" -- condor_g command: $R{condorsubmit}"/>
+               <print line=" -- Stage_EntryExecute  : Writing ${uid}_scampsetup.condor "/>
+
+               <edeclare name="line3" string="arguments=${uid}_scamp.xml Stage_setup"/>              
+               <edeclare name="line6" string="output=$R{appbase}/jobs/${uid}_scamp/scampsetup_condor.out"/>
+               <edeclare name="line7" string="error=$R{appbase}/jobs/${uid}_scamp/scampsetup_condor.err"/>
+               <edeclare name="line8" string="log=$R{appbase}/jobs/${uid}_scamp/scampsetup_condor.log"/>
+               <edeclare name="line9B" string='+ogretag=$R{ogretag}'/>
+               <edeclare name="line9C" string="notification = never"/>
+
+               <write path="$R{appbase}/jobs/${uid}_scamp/scampsetup.condor" text="true"
+                    errorProperty="failed" rethrow="false">
+                <segment string="$R{line1}" lineBreaks="1"/>
+                <segment string="$R{line2}" lineBreaks="1"/>
+                <segment string="$R{line2B}" lineBreaks="1"/>
+                <segment string="$R{line3}" lineBreaks="1"/>
+                <segment string="$R{line4}" lineBreaks="1"/>
+                <segment string="$R{line5}" lineBreaks="1"/>
+                <segment string="$R{line6}" lineBreaks="1"/>
+                <segment string="$R{line7}" lineBreaks="1"/>
+                <segment string="$R{line8}" lineBreaks="1"/>
+                <segment string="$R{line9}" lineBreaks="1"/>
+                <segment string="$R{line9B}" lineBreaks="1"/>
+                <segment string="$R{line9C}" lineBreaks="1"/>
+                <segment string="$R{line10}" tabs="1"/>
+               </write>
+
+               <print line=" -- ${uid}_scamp/scampsetup.condor file written. "/>
+
+               <!-- Write condor_q command to a script -->
+               <edeclare name="sline1" string='#!/bin/bash'/>
+               <edeclare name="sline2" string="$R{condorq}"/>
+               <write path="$R{appbase}/jobs/${uid}/getcondorq_scamp_setup" text="true"
+                     errorProperty="failed" rethrow="false">
+                    <segment string="$R{sline1}" lineBreaks="1"/>
+                    <segment string="$R{sline2}" lineBreaks="1"/>
+               </write>
+               <rtexec inheritedEnv="true" execDir="$R{appbase}/jobs/${uid}" args="${chmodpath} 755 getcondorq_scamp_setup" quiet="true">
+               </rtexec>
+               <edeclare name="getcondorq" string="$R{appbase}/jobs/${uid}/getcondorq_scamp_setup"/>
+
+
+	        <!-- Getting the current number of condor jobs -->
+                <rtexec inheritedEnv="true" execDir="$R{appbase}"
+                       args="$R{getcondorq}" quiet="true">
+                    <outMonitor file="$R{appbase}/jobs/${uid}_scamp/condorq.out" append="false">
+                     <filterQueue>
+                       <rTStreamFilter pattern="$R{currentuser}" line="multiline"/>
+                     </filterQueue>
+                    </outMonitor>
+                    <errMonitor file="$R{appbase}/jobs/${uid}_scamp/condorq.err" append="false"/>
+                </rtexec>
+                <esleep timeout="1000"/>
+
+                <edeclare name="stacklevel" int="0"/>
+
+                <read path="$R{appbase}/jobs/${uid}_scamp/condorq.out" lines="true"/>
+                <ereturn name="stacklevel" get="lineCount"/>
+
+               <print line=" -- Submit the scampsetup condor job... "/>
+
+               <rtexec inheritedEnv="true" execDir="$R{appbase}"
+                     args="$R{condorsubmit} $R{appbase}/jobs/${uid}_scamp/scampsetup.condor"
+                     quiet="true">
+                   <outMonitor file="$R{appbase}/jobs/${uid}_scamp/scampsetup.out"/>
+                   <errMonitor file="$R{appbase}/jobs/${uid}_scamp/scampsetup.err"/>
+               </rtexec>
+               <esleep timeout="10000"/>
+
+               <print line=" -- Submitted. Query condor queue ... "/>
+
+               <edeclare name="linecount" int="500"/>
+
+               <eloop counterName="j">
+                <ecounter>
+                   <expression infix="( ( $R{j} &lt; 800 ) &amp;&amp; ( $R{linecount} &gt; $R{stacklevel} ) )"/>
+                </ecounter>
+                <esleep timeout="5000"/>
+
+                <rtexec inheritedEnv="true" execDir="$R{appbase}"
+                       args="$R{getcondorq}" quiet="true">
+                    <outMonitor file="$R{appbase}/jobs/${uid}_scamp/condorq.out" append="false">
+                     <filterQueue>
+                       <rTStreamFilter pattern="$R{currentuser}" line="multiline"/>
+                     </filterQueue>
+                    </outMonitor>
+                    <errMonitor file="$R{appbase}/jobs/${uid}_scamp/condorq.err" append="false"/>
+                </rtexec>
+                <esleep timeout="1000"/>
+
+                <read path="$R{appbase}/jobs/${uid}_scamp/condorq.out" lines="true"/>
+                <ereturn name="linecount" get="lineCount"/>
+
+                <print line="      -- Condor stack has $R{linecount} scamp_setup jobs for nite: ${nite}. ($R{j})"/>
+
+               </eloop>
+
+               </esequence>
+        </econdtask>
+      </econdblock>
+
+     <print line=" - Stage_scampsetup done"/>
+     <print line=" "/>
+
+     <publish>
+          <event ensembleid="${ensemble.id}"
+                 workflowid="Main"
+                 nodeid="End Stage_scampsetup"
+                 currentState="0">
+              <property name="message" value="End Stage_scampsetup"/>
+          </event>
+     </publish>
+
+    </esequence>
+  </target>
+

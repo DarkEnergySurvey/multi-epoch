@@ -1,0 +1,120 @@
+<html>
+  <head>
+    <meta content="text/html; charset=iso-8859-1" http-equiv="Content-Type">
+    <title>4Suite API Documentation: Ft.Xml.Xslt.Exslt.Common</title>
+    <link href="modules.css" type="text/css" rel="stylesheet">
+  </head>
+  <body>
+    <div class="universal-header"><span class="universal-header-prefix">&nbsp;&nbsp;&nbsp;</span>&nbsp;<span class="universal-header-prefix">&nbsp;&nbsp;</span>&nbsp;<span class="universal-header-prefix">&nbsp;</span>&nbsp;<a href="../index.html">4Suite<sup>&trade;</sup> API Documentation</a></div>
+    <h1><span class="glyph-arrow">&#9658;</span> Module <span class="this-name"><a href="Ft.html" title="Ft">Ft</a>.<a href="Ft.Xml.html" title="Ft.Xml">Xml</a>.<a href="Ft.Xml.Xslt.html" title="Ft.Xml.Xslt">Xslt</a>.<a href="Ft.Xml.Xslt.Exslt.html" title="Ft.Xml.Xslt.Exslt">Exslt</a>.Common</span></h1>
+    <div class="abstract">EXSLT 2.0 - Common (http://www.exslt.org/exsl/index.html)</div>
+    <pre class="description">Copyright 2005 Fourthought, Inc. (USA).
+Detailed license and copyright information: http://4suite.org/COPYRIGHT
+Project home, documentation, distributions: http://4suite.org/</pre>
+    <div class="summary-section">
+      <table cellpadding="0" cellspacing="0">
+        <tbody>
+          <tr>
+            <td valign="top">
+              <div class="summary-header">Classes:</div>
+              <div class="summary-list"><span class="class-name"><a href="#DocumentElement">DocumentElement</a></span></div>
+            </td>
+            <td width="7" valign="middle"></td>
+            <td width="1" valign="middle" bgcolor="#C5C5C5"></td>
+            <td width="7" valign="middle"></td>
+            <td valign="top">
+              <div class="summary-header">Functions:</div>
+              <div class="summary-list"><span class="function-name"><a href="#NodeSet">NodeSet</a></span>, <span class="function-name"><a href="#ObjectType">ObjectType</a></span></div>
+            </td>
+            <td width="7" valign="middle"></td>
+            <td width="1" valign="middle" bgcolor="#C5C5C5"></td>
+            <td width="7" valign="middle"></td>
+            <td valign="top">
+              <div class="summary-header">Globals:</div>
+              <div class="summary-list"><span class="global-name"><a href="#EXSL_COMMON_NS">EXSL_COMMON_NS</a></span>, <span class="global-name"><a href="#ExtElements">ExtElements</a></span>, <span class="global-name"><a href="#ExtFunctions">ExtFunctions</a></span>, <span class="global-name"><a href="#ExtNamespaces">ExtNamespaces</a></span>, <span class="global-name"><a href="#FT_EXT_NAMESPACE">FT_EXT_NAMESPACE</a></span></div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="section">
+      <h2>Classes</h2>
+      <dl class="classes">
+        <dt class="classdef"><a name="DocumentElement"></a>class <span class="class-name">DocumentElement</span><span class="bases">(<span class="class-name"><a href="Ft.Xml.Xslt.StylesheetTree.html#XsltElement">Ft.Xml.Xslt.StylesheetTree.XsltElement</a></span>)</span></dt>
+        <dd class="classdesc">
+          <div class="abstract">For the basic specification, see:
+http://www.exslt.org/exsl/elements/document/index.html
+The only URI scheme supported by 4Suite currently is 'file:'
+Security note:
+As a precaution, if you try to overwrite an existing file, it will be
+saved to a temporary file (there will be a warning with the file name).
+If this this precaution fails, the instruction will abort.  You can
+override this precaution, always allowing the function to overwrite
+a document by using the f:overwrite-okay extension attribute.</div>
+          <h3>Methods</h3>
+          <dl class="methods">
+            <dt class="methoddef"><a name="DocumentElement-instantiate"><span class="method-name">instantiate</span></a>(<span class="argument-name">self</span>, <span class="argument-name">context</span>, <span class="argument-name">processor</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dd class="overrides"><b>Overrides: </b><span class="inherited-name"><a href="Ft.Xml.Xslt.StylesheetTree.html#XsltElement-instantiate">instantiate</a></span> from class <span class="class-name"><a href="Ft.Xml.Xslt.StylesheetTree.html#XsltElement">XsltElement</a></span></dd>
+            <dt class="methoddef"><a name="DocumentElement-setup"><span class="method-name">setup</span></a>(<span class="argument-name">self</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dd class="overrides"><b>Overrides: </b><span class="inherited-name"><a href="Ft.Xml.Xslt.StylesheetTree.html#XsltElement-setup">setup</a></span> from class <span class="class-name"><a href="Ft.Xml.Xslt.StylesheetTree.html#XsltElement">XsltElement</a></span></dd>
+          </dl>
+          <h3>Methods inherited from class <a href="Ft.Xml.Xslt.StylesheetTree.html#XsltElement">Ft.Xml.Xslt.StylesheetTree.XsltElement</a></h3>
+          <div class="inherited"><span class="inherited-name"><a href="Ft.Xml.Xslt.StylesheetTree.html#XsltElement-__init__">__init__</a></span>, <span class="inherited-name"><a href="Ft.Xml.Xslt.StylesheetTree.html#XsltElement-__str__">__str__</a></span>, <span class="inherited-name"><a href="Ft.Xml.Xslt.StylesheetTree.html#XsltElement-appendChild">appendChild</a></span>, <span class="inherited-name"><a href="Ft.Xml.Xslt.StylesheetTree.html#XsltElement-expandQName">expandQName</a></span>, <span class="inherited-name"><a href="Ft.Xml.Xslt.StylesheetTree.html#XsltElement-insertChild">insertChild</a></span>, <span class="inherited-name"><a href="Ft.Xml.Xslt.StylesheetTree.html#XsltElement-parseAVT">parseAVT</a></span>, <span class="inherited-name"><a href="Ft.Xml.Xslt.StylesheetTree.html#XsltElement-parseExpression">parseExpression</a></span>, <span class="inherited-name"><a href="Ft.Xml.Xslt.StylesheetTree.html#XsltElement-parsePattern">parsePattern</a></span>, <span class="inherited-name"><a href="Ft.Xml.Xslt.StylesheetTree.html#XsltElement-processChildren">processChildren</a></span>, <span class="inherited-name"><a href="Ft.Xml.Xslt.StylesheetTree.html#XsltElement-splitQName">splitQName</a></span></div>
+          <h3>Methods inherited from class <a href="Ft.Xml.Xslt.StylesheetTree.html#XsltNode">Ft.Xml.Xslt.StylesheetTree.XsltNode</a></h3>
+          <div class="inherited"><span class="inherited-name"><a href="Ft.Xml.Xslt.StylesheetTree.html#XsltNode-idle">idle</a></span>, <span class="inherited-name"><a href="Ft.Xml.Xslt.StylesheetTree.html#XsltNode-isLastChild">isLastChild</a></span>, <span class="inherited-name"><a href="Ft.Xml.Xslt.StylesheetTree.html#XsltNode-isPseudoNode">isPseudoNode</a></span>, <span class="inherited-name"><a href="Ft.Xml.Xslt.StylesheetTree.html#XsltNode-pprint">pprint</a></span>, <span class="inherited-name"><a href="Ft.Xml.Xslt.StylesheetTree.html#XsltNode-prime">prime</a></span></div>
+          <h3>Members</h3>
+          <dl class="members">
+            <dt class="memberdef"><a name="content"><span class="member-name">content</span></a> = &lt;Ft.Xml.Xslt.ContentInfo.Rep instance&gt;</dt>
+            <dt class="memberdef"><a name="doesSetup"><span class="member-name">doesSetup</span></a> = True</dt>
+            <dt class="memberdef"><a name="legalAttrs"><span class="member-name">legalAttrs</span></a> = {'cdata-section-elements': &lt;Ft.Xml.Xslt.AttributeInfo.QNamesAvt instance&gt;, 'doctype-public': &lt;Ft.Xml.Xslt.AttributeInfo.StringAvt instance&gt;, 'doctype-system': &lt;Ft.Xml.Xslt.AttributeInfo.StringAvt instance&gt;, 'encoding': &lt;Ft.Xml.Xslt.AttributeInfo.StringAvt instance&gt;, 'f:overwrite-safeguard': &lt;Ft.Xml.Xslt.AttributeInfo.YesNoAvt instance&gt;, 'f:utfbom': &lt;Ft.Xml.Xslt.AttributeInfo.YesNoAvt instance&gt;, 'href': &lt;Ft.Xml.Xslt.AttributeInfo.UriReferenceAvt instance&gt;, 'indent': &lt;Ft.Xml.Xslt.AttributeInfo.YesNoAvt instance&gt;, 'media-type': &lt;Ft.Xml.Xslt.AttributeInfo.StringAvt instance&gt;, 'method': &lt;Ft.Xml.Xslt.AttributeInfo.QNameAvt instance&gt;, ...}</dt>
+          </dl>
+          <h3>Members inherited from class <a href="Ft.Xml.Xslt.StylesheetTree.html#XsltElement">Ft.Xml.Xslt.StylesheetTree.XsltElement</a></h3>
+          <div class="inherited"><span class="inherited-name"><a href="Ft.Xml.Xslt.StylesheetTree.html#XsltElement-category">category</a></span>, <span class="inherited-name"><a href="Ft.Xml.Xslt.StylesheetTree.html#XsltElement-validator">validator</a></span></div>
+          <h3>Members inherited from class <a href="Ft.Xml.Xslt.StylesheetTree.html#XsltNode">Ft.Xml.Xslt.StylesheetTree.XsltNode</a></h3>
+          <div class="inherited"><span class="inherited-name"><a href="Ft.Xml.Xslt.StylesheetTree.html#XsltNode-attributes">attributes</a></span>, <span class="inherited-name"><a href="Ft.Xml.Xslt.StylesheetTree.html#XsltNode-baseUri">baseUri</a></span>, <span class="inherited-name"><a href="Ft.Xml.Xslt.StylesheetTree.html#XsltNode-children">children</a></span>, <span class="inherited-name"><a href="Ft.Xml.Xslt.StylesheetTree.html#XsltNode-columnNumber">columnNumber</a></span>, <span class="inherited-name"><a href="Ft.Xml.Xslt.StylesheetTree.html#XsltNode-doesIdle">doesIdle</a></span>, <span class="inherited-name"><a href="Ft.Xml.Xslt.StylesheetTree.html#XsltNode-doesPrime">doesPrime</a></span>, <span class="inherited-name"><a href="Ft.Xml.Xslt.StylesheetTree.html#XsltNode-expandedName">expandedName</a></span>, <span class="inherited-name"><a href="Ft.Xml.Xslt.StylesheetTree.html#XsltNode-importIndex">importIndex</a></span>, <span class="inherited-name"><a href="Ft.Xml.Xslt.StylesheetTree.html#XsltNode-lineNumber">lineNumber</a></span>, <span class="inherited-name"><a href="Ft.Xml.Xslt.StylesheetTree.html#XsltNode-nodeName">nodeName</a></span>, <span class="inherited-name"><a href="Ft.Xml.Xslt.StylesheetTree.html#XsltNode-parent">parent</a></span>, <span class="inherited-name"><a href="Ft.Xml.Xslt.StylesheetTree.html#XsltNode-root">root</a></span></div>
+        </dd>
+      </dl>
+    </div>
+    <div class="section">
+      <h2>Functions</h2>
+      <dl class="functions">
+        <dt class="functiondef"><a name="NodeSet"><span class="function-name">NodeSet</span></a>(<span class="argument-name">context</span>, <span class="argument-name">obj</span>)</dt>
+        <dd class="functiondesc">
+          <div class="abstract">The purpose of the exsl:node-set function is to return a node-set from a
+result tree fragment. If the argument is a node-set already, it is simply
+returned as is. If the argument to exsl:node-set is not a node-set or a
+result tree fragment, then it is converted to a string as by the string()
+function, and the function returns a node-set consisting of a single text
+node with that string value.</div>
+          <pre class="description">The exsl:node-set function does not have side-effects: the result tree
+fragment used as an argument is still available as a result tree fragment
+after it is passed as an argument to exsl:node-set.</pre>
+        </dd>
+        <dt class="functiondef"><a name="ObjectType"><span class="function-name">ObjectType</span></a>(<span class="argument-name">context</span>, <span class="argument-name">obj</span>)</dt>
+        <dd class="functiondesc">
+          <div class="abstract">The exsl:object-type function returns a string giving the type of the
+object passed as the argument. The possible object types are: 'string',
+'number', 'boolean', 'node-set', 'RTF' or 'external'.</div>
+        </dd>
+      </dl>
+    </div>
+    <div class="section">
+      <h2>Globals</h2>
+      <dl class="globals">
+        <dt class="globaldef"><a name="EXSL_COMMON_NS"><span class="global-name">EXSL_COMMON_NS</span></a> = 'http://exslt.org/common'</dt>
+        <dd class="globaldesc"></dd>
+        <dt class="globaldef"><a name="ExtElements"><span class="global-name">ExtElements</span></a> = {('http://exslt.org/common', 'document'): &lt;class Ft.Xml.Xslt.Exslt.Common.DocumentElement&gt;}</dt>
+        <dd class="globaldesc"></dd>
+        <dt class="globaldef"><a name="ExtFunctions"><span class="global-name">ExtFunctions</span></a> = {('http://exslt.org/common', 'node-set'): &lt;function NodeSet&gt;, ('http://exslt.org/common', 'object-type'): &lt;function ObjectType&gt;}</dt>
+        <dd class="globaldesc"></dd>
+        <dt class="globaldef"><a name="ExtNamespaces"><span class="global-name">ExtNamespaces</span></a> = {'http://exslt.org/common': 'exsl'}</dt>
+        <dd class="globaldesc"></dd>
+        <dt class="globaldef"><a name="FT_EXT_NAMESPACE"><span class="global-name">FT_EXT_NAMESPACE</span></a> = 'http://xmlns.4suite.org/ext'</dt>
+        <dd class="globaldesc"></dd>
+      </dl>
+    </div>
+    <div class="universal-footer">Last modified on 2006-08-21 16:34:44</div>
+  </body>
+</html>

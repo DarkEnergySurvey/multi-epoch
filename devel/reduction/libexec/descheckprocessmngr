@@ -1,0 +1,175 @@
+#!/usr/bin/env perl
+########################################################################
+#  $Id$
+#
+#  $Rev::                                  $:  # Revision of last commit.
+#  $LastChangedBy::                        $:  # Author of last commit. 
+#  $LastChangedDate::                      $:  # Date of last commit.
+#
+#  Authors: 
+#         Michelle Gower (mgower@ncsa.uiuc.edu)
+#         Darren Adams (dadams@ncsa.uiuc.edu)
+#
+#  Developed at: 
+#  The National Center for Supercomputing Applications (NCSA).
+#
+#  Copyright (C) 2007 Board of Trustees of the University of Illinois. 
+#  All rights reserved.
+#
+#  DESCRIPTION:
+#
+#######################################################################
+
+use strict;
+use warnings;
+
+use Getopt::Long;
+use FindBin;
+use lib "$FindBin::Bin/../lib";
+use DES::utils::misc;
+use DES::utils::hist;
+use DES::utils::email;
+use DES::utils::posttasks;
+use DES::desconfig;
+
+my $Version;
+
+&Getopt::Long::Configure( 'noignorecase', 'no_autoabbrev');
+Getopt::Long::GetOptions(
+   'version|v' => \$Version
+);
+
+my $DebugFH;
+open $DebugFH, "> descheckprocessmngr.out";
+local *STDOUT = $DebugFH;
+local *STDERR = $DebugFH;
+
+my $DESHome = getHome() or die "Error: Can't determine DESHome";
+
+if (defined($Version))
+{
+  printVersion();
+  exit 0;
+}
+
+if ((scalar(@ARGV) < 1) || (2 < scalar(@ARGV)))
+{
+  print STDERR "Usage: descheckprocessmngr [-version] configFile [exitcode]\n";
+  close $DebugFH;
+  exit 1;
+}
+
+my  $ConfigFile = $ARGV[0];
+my  $ExitCode = 0;
+if (scalar(@ARGV) == 2)
+{
+  $ExitCode = $ARGV[1];
+}
+
+debug("descheckprocessmngr","configFile = '$ConfigFile'");
+debug("descheckprocessmngr","exitcode = '$ExitCode'");
+
+
+# read sysinfo file
+my $Config = new DES::desconfig;
+$Config->readConfig($ConfigFile, 0, \*STDERR);
+
+logEvent($Config, "process","j","mngr", "posttask", $ExitCode);
+logEvent($Config, "process", "c", "mngr", "pretask");
+
+# Get configuration vars.
+my %SearchDefs;
+$SearchDefs{"stage"}="process_ogre";
+my $Nite = $Config->getValueReq("nite");
+my $RunID = $Config->getValueReq("runid");
+my $RunSite = $Config->getValueReq("run_site");
+$SearchDefs{"site"}=$RunSite;
+my $CCDStart = $Config->getValueReq("ccd_start", \%SearchDefs);
+my $CCDStop = $Config->getValueReq("ccd_stop", \%SearchDefs);
+my $StageList = $Config->getValueReq("stage_list", \%SearchDefs);
+
+# In the process output, stage copycal is written as 2 stages.
+$StageList =~ s/Stage_copycal/Stage_copybpm, Stage_copypupil/;
+
+my @Stages = split(',',$StageList);
+foreach (@Stages) {
+  chomp;
+  s/^\s*//g;
+  s/\s*$//g;
+}
+
+
+# Inspect each output file for all of the process runs.
+my %Stats;
+for (my $i=$CCDStart; $i<=$CCDStop; $i++) {
+  my %StageHash;
+  foreach (@Stages) {
+    $StageHash{"$_"} = 'FAILED';
+  }
+  my $Num = sprintf ("%02d", $i);
+  # File to inspect.
+  my $File = "jobs/$RunID".'_'."$Nite/$Num/$Num"."_condor.out";
+  if (-r $File) {
+    print "\nParsing $File:\n";
+    open (FH, "<$File");
+    my @File = <FH>;
+    foreach my $Line (@File) {
+      foreach my $Stage (@Stages) {
+        if ($Line =~ /$Stage\s*done/i ) {
+          $StageHash{"$Stage"} = 'SUCCEEDED';
+        }
+      }
+    }
+    close FH;
+    
+  }
+  else {
+    print "\nFile $File unreadable.\n";
+  }
+
+  foreach my $Stage (@Stages) {
+    print "$Stage: $StageHash{$Stage}\n";
+  }
+  $Stats{"$Num"} = \%StageHash;
+
+}
+
+$ExitCode=$SUCCESS;
+foreach my $Key (keys(%Stats)) {
+  my $Hash = $Stats{"$Key"};
+  foreach my $Val (values(%$Hash)) {
+    if ($Val ne 'SUCCEEDED') {
+      $ExitCode = $FAILURE;
+      last;
+    }
+  }
+}
+
+debug("descheckprocessmngr", "exitcode: $ExitCode");
+
+
+my ($Msg1, $Msg2);
+if ($ExitCode == $SUCCESS) {
+   $Msg1 = "Process stage is complete\n\n";
+   $Msg1 .= "Completed the following stages for CCDs $CCDStart - $CCDStop:\n";
+   $Msg1 .= "$StageList\n\n";
+   $Msg2 = "";
+}
+else {
+   $Msg1 = "Process stage failed\n\n";
+   $Msg2 = "List of failed:\n";
+   for (my $i=$CCDStart; $i<=$CCDStop; $i++) {
+      my $Num = sprintf ("%02d", $i);
+      $Msg2 .= "\nCCD: $Num\n";
+      my $hash = $Stats{"$Num"};
+      foreach my $Stage (@Stages) {
+         $Msg2 .= "$Stage: $$hash{$Stage}\n" if ($$hash{"$Stage"} ne 'SUCCEEDED');
+      }
+   }
+}
+sendEmail($Config, undef, "process", $ExitCode, $Msg1, $Msg2);
+
+posttasks($Config, "process", "c", "mngr", $ExitCode);
+close $DebugFH;
+
+exit $ExitCode;

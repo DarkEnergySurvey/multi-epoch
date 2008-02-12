@@ -1,0 +1,36 @@
+########################################################################
+#  $Id$
+#
+#  $Rev::                                  $:  # Revision of last commit.
+#  $LastChangedBy::                        $:  # Author of last commit. 
+#  $LastChangedDate::                      $:  # Date of last commit.
+#
+#  Authors: 
+#         Michelle Gower (mgower@ncsa.uiuc.edu)
+#         Darren Adams (dadams@ncsa.uiuc.edu)
+#
+#  Developed at: 
+#  The National Center for Supercomputing Applications (NCSA).
+#
+#  Copyright (C) 2007 Board of Trustees of the University of Illinois. 
+#  All rights reserved.
+#
+#  DESCRIPTION:
+#
+#######################################################################
+
+universe=local
+executable=$(deshome)/libexec/desingestsrc
+arguments = $(descfg) $(Cluster)
+getenv=true
+notification=never
+output=ingestsrc.$(Cluster).$(Process).out
+error=ingestsrc.$(Cluster).$(Process).err
+log=ingestsrc.log
++des_isdesjob=TRUE
++des_nite="$(nite)"
++des_runid="$(runid)"
++des_runsite="$(runsite)"
++des_stage="ingestsrc"
++des_substage=" "
+queue

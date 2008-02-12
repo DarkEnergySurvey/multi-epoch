@@ -1,0 +1,75 @@
+<html>
+  <head>
+    <meta content="text/html; charset=iso-8859-1" http-equiv="Content-Type">
+    <title>4Suite API Documentation: Ft.Lib.DistExt.InstallLib</title>
+    <link href="modules.css" type="text/css" rel="stylesheet">
+  </head>
+  <body>
+    <div class="universal-header"><span class="universal-header-prefix">&nbsp;&nbsp;&nbsp;</span>&nbsp;<span class="universal-header-prefix">&nbsp;&nbsp;</span>&nbsp;<span class="universal-header-prefix">&nbsp;</span>&nbsp;<a href="../index.html">4Suite<sup>&trade;</sup> API Documentation</a></div>
+    <h1><span class="glyph-arrow">&#9658;</span> Module <span class="this-name"><a href="Ft.html" title="Ft">Ft</a>.<a href="Ft.Lib.html" title="Ft.Lib">Lib</a>.<a href="Ft.Lib.DistExt.html" title="Ft.Lib.DistExt">DistExt</a>.InstallLib</span></h1>
+    <div class="summary-section">
+      <table cellpadding="0" cellspacing="0">
+        <tbody>
+          <tr>
+            <td valign="top">
+              <div class="summary-header">Classes:</div>
+              <div class="summary-list"><span class="class-name"><a href="#InstallLib">InstallLib</a></span></div>
+            </td>
+            <td width="7" valign="middle"></td>
+            <td width="1" valign="middle" bgcolor="#C5C5C5"></td>
+            <td width="7" valign="middle"></td>
+            <td valign="top">
+              <div class="summary-header">Globals:</div>
+              <div class="summary-list"><span class="global-name"><a href="#PY_SOURCE_EXTS">PY_SOURCE_EXTS</a></span>, <span class="global-name"><a href="#m">m</a></span>, <span class="global-name"><a href="#s">s</a></span>, <span class="global-name"><a href="#t">t</a></span></div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="section">
+      <h2>Classes</h2>
+      <dl class="classes">
+        <dt class="classdef"><a name="InstallLib"></a>class <span class="class-name">InstallLib</span><span class="bases">(<span class="class-name"><span class="undocumented">distutils.command.install_lib.install_lib</span></span>)</span></dt>
+        <dd class="classdesc">
+          <h3>Methods</h3>
+          <dl class="methods">
+            <dt class="methoddef"><a name="InstallLib-get_source_files"><span class="method-name">get_source_files</span></a>(<span class="argument-name">self</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dt class="methoddef"><a name="InstallLib-install"><span class="method-name">install</span></a>(<span class="argument-name">self</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dd class="overrides"><b>Overrides: </b><span class="inherited-name">install</span> from class <span class="class-name"><span class="undocumented">install_lib</span></span></dd>
+          </dl>
+          <h3>Methods inherited from class <span class="undocumented">distutils.command.install_lib.install_lib</span></h3>
+          <div class="inherited"><span class="inherited-name">build</span>, <span class="inherited-name">byte_compile</span>, <span class="inherited-name">finalize_options</span>, <span class="inherited-name">get_inputs</span>, <span class="inherited-name">get_outputs</span>, <span class="inherited-name">initialize_options</span>, <span class="inherited-name">run</span></div>
+          <h3>Methods inherited from class <span class="undocumented">distutils.cmd.Command</span></h3>
+          <div class="inherited"><span class="inherited-name">__getattr__</span>, <span class="inherited-name">__init__</span>, <span class="inherited-name">announce</span>, <span class="inherited-name">copy_file</span>, <span class="inherited-name">copy_tree</span>, <span class="inherited-name">debug_print</span>, <span class="inherited-name">dump_options</span>, <span class="inherited-name">ensure_dirname</span>, <span class="inherited-name">ensure_filename</span>, <span class="inherited-name">ensure_finalized</span>, <span class="inherited-name">ensure_string</span>, <span class="inherited-name">ensure_string_list</span>, <span class="inherited-name">execute</span>, <span class="inherited-name">get_command_name</span>, <span class="inherited-name">get_finalized_command</span>, <span class="inherited-name">get_sub_commands</span>, <span class="inherited-name">make_archive</span>, <span class="inherited-name">make_file</span>, <span class="inherited-name">mkpath</span>, <span class="inherited-name">move_file</span>, <span class="inherited-name">reinitialize_command</span>, <span class="inherited-name">run_command</span>, <span class="inherited-name">set_undefined_options</span>, <span class="inherited-name">spawn</span>, <span class="inherited-name">warn</span></div>
+          <h3>Members</h3>
+          <dl class="members">
+            <dt class="memberdef"><a name="boolean_options"><span class="member-name">boolean_options</span></a> = ['force', 'compile', 'skip-build']</dt>
+            <dt class="memberdef"><a name="command_name"><span class="member-name">command_name</span></a> = 'install_lib'</dt>
+            <dt class="memberdef"><a name="negative_opt"><span class="member-name">negative_opt</span></a> = {'no-compile': 'compile'}</dt>
+            <dt class="memberdef"><a name="user_options"><span class="member-name">user_options</span></a> = [('force', 'f', 'force installation (overwrite existing files)'), ('compile', 'c', 'compile .py to .pyc [default]'), ('no-compile', None, "don't compile .py files"), ('optimize=', 'O', 'also compile with optimization: -O1 for "python ...r "python -OO", and -O0 to disable [default: -O0]'), ('skip-build', None, 'skip the build steps')]</dt>
+          </dl>
+          <h3>Members inherited from class <span class="undocumented">distutils.command.install_lib.install_lib</span></h3>
+          <div class="inherited"><span class="inherited-name">description</span></div>
+          <h3>Members inherited from class <span class="undocumented">distutils.cmd.Command</span></h3>
+          <div class="inherited"><span class="inherited-name">sub_commands</span></div>
+        </dd>
+      </dl>
+    </div>
+    <div class="section">
+      <h2>Globals</h2>
+      <dl class="globals">
+        <dt class="globaldef"><a name="PY_SOURCE_EXTS"><span class="global-name">PY_SOURCE_EXTS</span></a> = ['.py']</dt>
+        <dd class="globaldesc"></dd>
+        <dt class="globaldef"><a name="m"><span class="global-name">m</span></a> = 'rb'</dt>
+        <dd class="globaldesc"></dd>
+        <dt class="globaldef"><a name="s"><span class="global-name">s</span></a> = '.pyc'</dt>
+        <dd class="globaldesc"></dd>
+        <dt class="globaldef"><a name="t"><span class="global-name">t</span></a> = 2</dt>
+        <dd class="globaldesc"></dd>
+      </dl>
+    </div>
+    <div class="universal-footer">Last modified on 2006-08-22 10:46:57</div>
+  </body>
+</html>

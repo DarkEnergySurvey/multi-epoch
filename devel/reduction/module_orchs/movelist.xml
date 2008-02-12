@@ -1,0 +1,62 @@
+   <target name="Stage_movelist" description="Move image lists to teragrid">
+    <property file="${mypath}/module_orchs/movelist.properties"/>
+
+    <esequence>
+
+        <publish>
+           <event ensembleid="${ensemble.id}"
+                 workflowid="Main"
+                 nodeid="Begin Stage_movelist"
+                 currentState="0">
+                  <property name="message" value="Begin Stage_movelist"/>
+           </event>
+        </publish>
+
+     <print line=" - Begin Stage_movelist"/>
+
+     <edeclare name="end" long="$E{ ${ccd.stop} + 1 }"/> 
+     <eloop counterName="i" initialValue="${ccd.start}">
+          <ecounter>
+               <expression infix="$R{i} &lt; $R{end}"/>
+          </ecounter>           
+
+          <!-- convert 1,...,9 to 01,...,09 -->
+
+          <econdblock type="else-if">
+            <econdtask>
+              <eeval>
+                <statement> 
+                  <ecompare long="$R{i}">
+                    <predicate long="10" comparator="LT"/>
+                  </ecompare> 
+                 </statement>
+              </eeval>
+                <edeclare globalName="in" string="0$R{i}"/>
+            </econdtask>
+                <edeclare globalName="in" long="$R{i}"/>
+          </econdblock>
+ 
+              <print line=" -- Running Stage_movelist - GridFTP lists for CCD$R{in} ... "/>
+
+              <edeclare name="srcdir"  string="${local_listpath}/log"/>
+              <edeclare name="targetdir" string="${targetprot}://${tgrid_server_${site}}${tgrid_homepath_${site}}/${uid}_$R{in}/data/${nite}"/>
+
+              <uricopy from="$R{srcdir}" to="$R{targetdir}">
+              </uricopy>    
+
+     </eloop>
+
+     <print line=" - Stage_movelist done"/>
+     <print line="  "/>
+
+        <publish>
+           <event ensembleid="${ensemble.id}"
+                 workflowid="Main"
+                 nodeid="End Stage_movelist"
+                 currentState="0">
+                  <property name="message" value="End Stage_movelist"/>
+           </event>
+        </publish>
+
+    </esequence>
+   </target>

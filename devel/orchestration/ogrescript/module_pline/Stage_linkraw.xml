@@ -1,0 +1,12 @@
+   <target name="Stage_linkraw" description="link to raw data">
+       <esequence>
+
+          <rtexec inheritedEnv="false" execDir="." args="/bin/ln -s ${archive.dir}/raw ${nite.dir}" quiet="true">
+               <outMonitor file="${local.out}/${log.name}" append="true"/>
+               <errMonitor file="${local.out}/${log.name}" append="true"/>
+          </rtexec>
+
+       <print line=" - Stage_linkraw done"/>
+
+       </esequence>
+   </target>

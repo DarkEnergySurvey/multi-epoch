@@ -1,0 +1,106 @@
+<html>
+  <head>
+    <meta content="text/html; charset=iso-8859-1" http-equiv="Content-Type">
+    <title>4Suite API Documentation: Ft.Xml.XPointer.XPtrFunctions</title>
+    <link href="modules.css" type="text/css" rel="stylesheet">
+  </head>
+  <body>
+    <div class="universal-header"><span class="universal-header-prefix">&nbsp;&nbsp;&nbsp;</span>&nbsp;<span class="universal-header-prefix">&nbsp;&nbsp;</span>&nbsp;<span class="universal-header-prefix">&nbsp;</span>&nbsp;<a href="../index.html">4Suite<sup>&trade;</sup> API Documentation</a></div>
+    <h1><span class="glyph-arrow">&#9658;</span> Module <span class="this-name"><a href="Ft.html" title="Ft">Ft</a>.<a href="Ft.Xml.html" title="Ft.Xml">Xml</a>.<a href="Ft.Xml.XPointer.html" title="Ft.Xml.XPointer">XPointer</a>.XPtrFunctions</span></h1>
+    <div class="summary-section">
+      <table cellpadding="0" cellspacing="0">
+        <tbody>
+          <tr>
+            <td valign="top">
+              <div class="summary-header">Functions:</div>
+              <div class="summary-list"><span class="function-name"><a href="#EndPoint">EndPoint</a></span>, <span class="function-name"><a href="#Here">Here</a></span>, <span class="function-name"><a href="#Origin">Origin</a></span>, <span class="function-name"><a href="#Range">Range</a></span>, <span class="function-name"><a href="#RangeInside">RangeInside</a></span>, <span class="function-name"><a href="#RangeTo">RangeTo</a></span>, <span class="function-name"><a href="#StartPoint">StartPoint</a></span>, <span class="function-name"><a href="#StringRange">StringRange</a></span>, <span class="function-name"><a href="#Unique">Unique</a></span></div>
+            </td>
+            <td width="7" valign="middle"></td>
+            <td width="1" valign="middle" bgcolor="#C5C5C5"></td>
+            <td width="7" valign="middle"></td>
+            <td valign="top">
+              <div class="summary-header">Globals:</div>
+              <div class="summary-list"><span class="global-name"><a href="#CoreFunctions">CoreFunctions</a></span>, <span class="global-name"><a href="#EMPTY_NAMESPACE">EMPTY_NAMESPACE</a></span></div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="section">
+      <h2>Functions</h2>
+      <dl class="functions">
+        <dt class="functiondef"><a name="EndPoint"><span class="function-name">EndPoint</span></a>(<span class="argument-name">context</span>, <span class="argument-name">point</span>)</dt>
+        <dd class="functiondesc">
+          <div class="abstract">&lt;point&gt; end-point(&lt;point&gt;)</div>
+          <pre class="description">For each location x in the argument location-set, end-point adds a location
+of type point to the result location-set.</pre>
+        </dd>
+        <dt class="functiondef"><a name="Here"><span class="function-name">Here</span></a>(<span class="argument-name">context</span>)</dt>
+        <dd class="functiondesc">
+          <div class="abstract">&lt;location-set&gt; here()</div>
+          <pre class="description">The here function returns a location-set with a single member.  That
+location locates the node that directly contains the XPointer being
+evaluated.</pre>
+        </dd>
+        <dt class="functiondef"><a name="Origin"><span class="function-name">Origin</span></a>(<span class="argument-name">context</span>)</dt>
+        <dd class="functiondesc">
+          <div class="abstract">&lt;location-set&gt; origin()</div>
+          <pre class="description">The origin functions enables addressing relative to out-of-line links
+such as defined in XLink. This allows XPointers to be used in applications
+to express relative locations when links do not reside directly at one of
+their endpoints. The function returns a location-set with a single member,
+which locates the element from which a user or program initiated traversal
+of the link.</pre>
+        </dd>
+        <dt class="functiondef"><a name="Range"><span class="function-name">Range</span></a>(<span class="argument-name">context</span>, <span class="argument-name">locationSet</span>)</dt>
+        <dd class="functiondesc">
+          <div class="abstract">&lt;location-set&gt; range(&lt;location-set&gt;)</div>
+          <pre class="description">The range function returns ranges covering the locations in the argument
+location-set.  For each location x in the argument location-set, a range
+location representing the covering range of x is added to the result
+location-set.</pre>
+        </dd>
+        <dt class="functiondef"><a name="RangeInside"><span class="function-name">RangeInside</span></a>(<span class="argument-name">context</span>, <span class="argument-name">locationSet</span>)</dt>
+        <dd class="functiondesc">
+          <div class="abstract">&lt;location-set&gt; range-inside(&lt;location-set&gt;)</div>
+          <pre class="description">The range-inside function returns ranges covering the content of the
+locations in the argument location-set.  For each location x in the
+argument location-set, a range location is added to the result location-set.</pre>
+        </dd>
+        <dt class="functiondef"><a name="RangeTo"><span class="function-name">RangeTo</span></a>(<span class="argument-name">context</span>, <span class="argument-name">expr</span>)</dt>
+        <dd class="functiondesc">
+          <div class="abstract">&lt;location-set&gt; range-to(&lt;expr&gt;)</div>
+          <pre class="description">For each location in the context, range-to returns a range.</pre>
+        </dd>
+        <dt class="functiondef"><a name="StartPoint"><span class="function-name">StartPoint</span></a>(<span class="argument-name">context</span>, <span class="argument-name">point</span>)</dt>
+        <dd class="functiondesc">
+          <div class="abstract">&lt;point&gt; start-point(&lt;point&gt;)</div>
+          <pre class="description">For each location x in the argument location-set, start-point adds a
+location of type point to the result location-set.</pre>
+        </dd>
+        <dt class="functiondef"><a name="StringRange"><span class="function-name">StringRange</span></a>(<span class="argument-name">context</span>, <span class="argument-name">string</span>, <span class="argument-name">startPos</span><span class="argument-default">=1</span>, <span class="argument-name">length</span><span class="argument-default">=None</span>)</dt>
+        <dd class="functiondesc">
+          <div class="abstract">&lt;location-set&gt; string-range(&lt;location-set&gt;, &lt;string&gt;, &lt;number&gt;?, &lt;number&gt;?)</div>
+          <pre class="description">For each location in the location-set argument, string-range returns a set
+of string ranges, a set of substrings in a string.</pre>
+        </dd>
+        <dt class="functiondef"><a name="Unique"><span class="function-name">Unique</span></a>(<span class="argument-name">context</span>)</dt>
+        <dd class="functiondesc">
+          <div class="abstract">&lt;boolean&gt; unique()</div>
+          <pre class="description">The predicate function unique returns true if and only if context size is
+equal to 1.</pre>
+        </dd>
+      </dl>
+    </div>
+    <div class="section">
+      <h2>Globals</h2>
+      <dl class="globals">
+        <dt class="globaldef"><a name="CoreFunctions"><span class="global-name">CoreFunctions</span></a> = {(None, 'end-point'): &lt;function EndPoint&gt;, (None, 'here'): &lt;function Here&gt;, (None, 'origin'): &lt;function Origin&gt;, (None, 'range'): &lt;function Range&gt;, (None, 'range-inside'): &lt;function RangeInside&gt;, (None, 'range-to'): &lt;function RangeTo&gt;, (None, 'start-point'): &lt;function StartPoint&gt;, (None, 'string-range'): &lt;function StringRange&gt;, (None, 'unique'): &lt;function Unique&gt;}</dt>
+        <dd class="globaldesc"></dd>
+        <dt class="globaldef"><a name="EMPTY_NAMESPACE"><span class="global-name">EMPTY_NAMESPACE</span></a> = None</dt>
+        <dd class="globaldesc"></dd>
+      </dl>
+    </div>
+    <div class="universal-footer">Last modified on 2002-01-22 14:43:15</div>
+  </body>
+</html>

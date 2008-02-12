@@ -1,0 +1,94 @@
+#Ft libraries are provided by 4Suite
+import Ft.Xml.Domlette as dom
+import Ft.Xml as xml
+from Ft.Lib import Uri
+import time
+import os
+import sys
+import re
+
+
+class PipeLine():
+
+	def __init__(self, configFile=None):
+		if (configFile):
+			self.loadConfig(configFile)
+		else:
+			self.doc = None
+		self.uniqId = str(int(time.time()*1000000))
+
+		
+	def loadXML(self, file):
+		file_string = ''.join(open(file).readlines()).replace('\n','').replace('\t','')
+		s1 = re.sub('[\t\n]', '', file_string)
+		s2 = re.sub('\ +', ' ', s1)
+		s3 = re.sub('> ', '>', s2)
+		file_string = re.sub(' <', '<', s3)
+		return  dom.NonvalidatingReader.parseString(file_string, self.uniqId)
+
+
+	def loadConfig(self, configFile):
+		self.doc = self.loadXML(configFile)
+
+	def execute(self):
+		
+		rootDir = self.doc.xpath('/job/config/rootDir/text()')[0].nodeValue
+		self.runBaseDir = rootDir+'/base-'+self.uniqId
+		dataRepository = self.doc.xpath('/job/config/dataRepository/text()')[0].nodeValue
+
+		os.mkdir(self.runBaseDir)
+		os.chdir(self.runBaseDir)
+		os.mkdir('data')
+		dataDir = self.runBaseDir+'/data'
+
+		components = self.doc.xpath('/job/components/*')
+		for i in range(len(components)):
+			modNode = components[i].xpath('module/text()')
+			if (modNode):
+				os.mkdir('component'+str(i))
+				os.chdir('component'+str(i))
+				from Ft.Xml.Domlette import Print, PrettyPrint
+				cxml = components[i].xpath('config')[0]
+				ixml = components[i].xpath('input/*')
+
+				f = open('input.xml','w')
+#				f.write('<?xml version="1.0" encoding="UTF-8"?>\n')
+				input_doc = dom.implementation.createRootNode(self.uniqId)
+				tag_data = input_doc.createElementNS(xml.EMPTY_NAMESPACE,  'input')
+				input_doc.appendChild(tag_data)
+				
+				for inp in ixml:
+					PrettyPrint(inp)
+					input_name = inp.nodeName
+					input_source = inp.attributes[(None,'source')].nodeValue
+					input_type = inp.attributes[(None,'type')].nodeValue
+					input_xpath = '//job/components/component[@id="'+input_source+'"]/data/'+input_name+'[ @type="'+input_type+'"]'
+					input_els = self.doc.xpath(input_xpath)
+					tag_data.appendChild(input_els[0].cloneNode(1))
+
+
+
+				PrettyPrint(input_doc, stream=f)
+				f.close()
+
+				f = open('config.xml','w')
+				f.write('<?xml version="1.0" encoding="UTF-8"?>\n')
+				PrettyPrint(cxml, stream=f)
+				f.close()
+
+				mod = components[i].xpath('module/text()')[0].nodeValue
+
+				import shutil
+				arquivos = input_doc.xpath('input/file')
+				for arq_element in arquivos:
+					shutil.copy(dataRepository+'/'+arq_element.attributes[(None,'value')].nodeValue, '.')
+
+				m = __import__('components.'+mod)
+				mod = getattr(m, mod)
+				mod.run()
+
+				outdoc = self.loadXML('output.xml')
+				components[i].appendChild(outdoc.xpath('output')[0])
+
+			os.chdir(self.runBaseDir)
+

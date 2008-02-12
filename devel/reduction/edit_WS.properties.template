@@ -1,0 +1,84 @@
+# ************ properties file for the pipeline (WS version) ************** #
+
+##### edit the following fields (if applicable) #####
+
+# set the project (such as BCS, SCS or DES)
+project=BCS
+
+# (nite) directory for the given nite
+nite=
+
+# set the running id
+uid_in=
+
+# range of ccds to work on, input same number in both fields for single ccd
+# input number (1,2,3...) not 01,02,..,09 
+ccd.start=1
+ccd.stop=8
+
+# setup workplace for reduced data
+workplace=/Archive/red
+
+# job_id directory (i.e. the directory to run the pipeline in orchestration node)
+job.id=${user.dir}
+
+# path to the pipeline (/bin, /etc and /module_orchs) in orchestration node
+mypath=/home/${user.name}/pipeline/trunk/reduction
+
+stage.list=Stage_makedirs, Stage_copybpm, Stage_zerocombine, Stage_flatcombine, Stage_imcorrect, Stage_mkillum, Stage_imcorrect_withcorr, Stage_catforscamp, Stage_fileingest_scamp
+
+stage_postscamp.list=Stage_remap, Stage_runcat, Stage_psfex_reduced, Stage_cat4reduce, Stage_shapelet_measure_stars, Stage_runfitscombine, Stage_qc, Stage_fileingest, Stage_objectingest, Stage_done
+
+
+################# end edition ###################
+
+#-----------------------------------------#
+#               WS specific:             #
+#-----------------------------------------#
+
+# set the platform
+# TG=teragrid, WS=workstation
+platform=WS
+
+# set the detector and telescope use
+detector=Mosaic2
+telescope=Blanco 4m
+
+# archive for BCS data in des
+WS_archpath=/Archive/raw
+
+# specific for WS pipeline to launch the reduction
+ogre.command=${workplace}/${uid}/xml/${project}_0$R{i}.xml ${run.stage} 
+
+# set the correct ogrelaunch for WS pipeline 
+ogre.launch=/home/gdaues/ncsa-tools-ogre-2.1.1/bin/launch
+
+# bpm location
+bpm.location=/Archive/cal/${project}/bpm
+
+# number of scamp jobs
+scamplist.number=1
+
+#-----------------------------------------#
+#                  common:                #
+#-----------------------------------------#
+
+# uid and ensemble_id
+uid=${uid_in}_${nite}
+ensemble.id=${project}_${user.name}_${uid_in}
+
+# run the stages in main reduction pipeline
+run.stage=Stages
+
+# bin path 
+bin.path=${mypath}/bin_${platform}
+
+# etc path 
+etc.path=${mypath}/etc
+
+# common unix-command
+catpath=/bin/cat
+chmodpath=/bin/chmod
+cppath=/bin/cp
+lspath=/bin/ls
+mvpath=/bin/mv

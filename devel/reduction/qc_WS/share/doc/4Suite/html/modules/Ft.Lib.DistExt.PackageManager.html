@@ -1,0 +1,129 @@
+<html>
+  <head>
+    <meta content="text/html; charset=iso-8859-1" http-equiv="Content-Type">
+    <title>4Suite API Documentation: Ft.Lib.DistExt.PackageManager</title>
+    <link href="modules.css" type="text/css" rel="stylesheet">
+  </head>
+  <body>
+    <div class="universal-header"><span class="universal-header-prefix">&nbsp;&nbsp;&nbsp;</span>&nbsp;<span class="universal-header-prefix">&nbsp;&nbsp;</span>&nbsp;<span class="universal-header-prefix">&nbsp;</span>&nbsp;<a href="../index.html">4Suite<sup>&trade;</sup> API Documentation</a></div>
+    <h1><span class="glyph-arrow">&#9658;</span> Module <span class="this-name"><a href="Ft.html" title="Ft">Ft</a>.<a href="Ft.Lib.html" title="Ft.Lib">Lib</a>.<a href="Ft.Lib.DistExt.html" title="Ft.Lib.DistExt">DistExt</a>.PackageManager</span></h1>
+    <div class="summary-section">
+      <table cellpadding="0" cellspacing="0">
+        <tbody>
+          <tr>
+            <td valign="top">
+              <div class="summary-header">Classes:</div>
+              <div class="summary-list"><span class="class-name"><a href="#PackageManager">PackageManager</a></span></div>
+            </td>
+            <td width="7" valign="middle"></td>
+            <td bgcolor="#C5C5C5" valign="middle" width="1"></td>
+            <td width="7" valign="middle"></td>
+            <td valign="top">
+              <div class="summary-header">Globals:</div>
+              <div class="summary-list"><span class="global-name"><a href="#DEBUG">DEBUG</a></span>, <span class="global-name"><a href="#PKGINFO_FORMAT">PKGINFO_FORMAT</a></span>, <span class="global-name"><a href="#generators">generators</a></span></div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="section">
+      <h2>Classes</h2>
+      <dl class="classes">
+        <dt class="classdef"><a name="PackageManager"></a>class <span class="class-name">PackageManager</span><span class="bases">(<span class="class-name"><a href="Ft.Lib.DistExt.Dist.html#Dist">Ft.Lib.DistExt.Dist.Dist</a></span>)</span></dt>
+        <dd class="classdesc">
+          <h3>Methods</h3>
+          <dl class="methods">
+            <dt class="methoddef"><a name="PackageManager-__init__"><span class="method-name">__init__</span></a>(<span class="argument-name">self</span>, <span class="argument-name">attrs</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dd class="overrides"><b>Overrides: </b><span class="inherited-name"><a href="Ft.Lib.DistExt.Dist.html#Dist-__init__">__init__</a></span> from class <span class="class-name"><a href="Ft.Lib.DistExt.Dist.html#Dist">Dist</a></span></dd>
+            <dt class="methoddef"><a name="PackageManager-check_package_options"><span class="method-name">check_package_options</span></a>(<span class="argument-name">self</span>, <span class="argument-name">options</span>)</dt>
+            <dd class="methoddesc">
+              <div class="abstract">Ensure that the package attributes are valid and the required
+fields are provided.</div>
+              <pre class="description">Raise DistutilsSetupError if the stucture is invalid anywhere.</pre>
+            </dd>
+            <dt class="methoddef"><a name="PackageManager-finalize_options"><span class="method-name">finalize_options</span></a>(<span class="argument-name">self</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dd class="overrides"><b>Overrides: </b><span class="inherited-name"><a href="Ft.Lib.DistExt.Dist.html#Dist-finalize_options">finalize_options</a></span> from class <span class="class-name"><a href="Ft.Lib.DistExt.Dist.html#Dist">Dist</a></span></dd>
+            <dt class="methoddef"><a name="PackageManager-get_distributions"><span class="method-name">get_distributions</span></a>(<span class="argument-name">self</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dt class="methoddef"><a name="PackageManager-get_package_distribution"><span class="method-name">get_package_distribution</span></a>(<span class="argument-name">self</span>, <span class="argument-name">package</span>)</dt>
+            <dd class="methoddesc">
+              <div class="abstract">Return the distribution object for 'package'. Normally this object
+is cached on a previous call to 'get_package_distribution()'; if no
+distribution object is in the cache, then it is created.</div>
+            </dd>
+            <dt class="methoddef"><a name="PackageManager-get_package_options"><span class="method-name">get_package_options</span></a>(<span class="argument-name">self</span>, <span class="argument-name">package</span>)</dt>
+            <dd class="methoddesc">
+              <div class="abstract">Get the option dictionary for a given package.  If that packages's
+option dictionary hasn't been created yet, then create it and return
+the new dictionary; otherwise, return the existing option dictionary.</div>
+            </dd>
+            <dt class="methoddef"><a name="PackageManager-handle_display_options"><span class="method-name">handle_display_options</span></a>(<span class="argument-name">self</span>, <span class="argument-name">option_order</span>)</dt>
+            <dd class="methoddesc">
+              <div class="abstract">Overrides handle_display_options() to update 'package_defaults'
+and handle the '--help-packages' option.</div>
+            </dd>
+            <dd class="overrides"><b>Overrides: </b><span class="inherited-name"><a href="Ft.Lib.DistExt.Dist.html#Dist-handle_display_options">handle_display_options</a></span> from class <span class="class-name"><a href="Ft.Lib.DistExt.Dist.html#Dist">Dist</a></span></dd>
+            <dt class="methoddef"><a name="PackageManager-parse_command_line"><span class="method-name">parse_command_line</span></a>(<span class="argument-name">self</span>)</dt>
+            <dd class="methoddesc">
+              <div class="abstract">Overrides parse_command_line() to validate the '--package' option and
+to add the command-line options to the default package options.</div>
+            </dd>
+            <dd class="overrides"><b>Overrides: </b><span class="inherited-name"><a href="Ft.Lib.DistExt.Dist.html#Dist-parse_command_line">parse_command_line</a></span> from class <span class="class-name"><a href="Ft.Lib.DistExt.Dist.html#Dist">Dist</a></span></dd>
+            <dt class="methoddef"><a name="PackageManager-parse_config_files"><span class="method-name">parse_config_files</span></a>(<span class="argument-name">self</span>, <span class="argument-name">filenames</span><span class="argument-default">=None</span>)</dt>
+            <dd class="methoddesc">
+              <div class="abstract">Overrides parse_config_files() to update 'package_defaults' with
+any global values from the config files and to parse the package
+files to populate the 'package_options' dictionary.</div>
+            </dd>
+            <dd class="overrides"><b>Overrides: </b><span class="inherited-name"><a href="Ft.Lib.DistExt.Dist.html#Dist-parse_config_files">parse_config_files</a></span> from class <span class="class-name"><a href="Ft.Lib.DistExt.Dist.html#Dist">Dist</a></span></dd>
+            <dt class="methoddef"><a name="PackageManager-parse_package_file"><span class="method-name">parse_package_file</span></a>(<span class="argument-name">self</span>, <span class="argument-name">filename</span>)</dt>
+            <dd class="methoddesc">
+              <div class="abstract">Returns a dictionary of the options defined in the package definition
+'filename'.</div>
+            </dd>
+            <dt class="methoddef"><a name="PackageManager-print_packages"><span class="method-name">print_packages</span></a>(<span class="argument-name">self</span>)</dt>
+            <dd class="methoddesc">
+              <div class="abstract">Print out a help message listing all available packages with a
+description of each.  The descriptions come from the package
+definition's 'description' field.</div>
+            </dd>
+            <dt class="methoddef"><a name="PackageManager-run_commands"><span class="method-name">run_commands</span></a>(<span class="argument-name">self</span>)</dt>
+            <dd class="methoddesc">
+              <div class="abstract">Overrides run_commands() to handle multiple source packages in a
+single setup script.</div>
+            </dd>
+            <dd class="overrides"><b>Overrides: </b><span class="inherited-name"><a href="Ft.Lib.DistExt.Dist.html#Dist-run_commands">run_commands</a></span> from class <span class="class-name"><a href="Ft.Lib.DistExt.Dist.html#Dist">Dist</a></span></dd>
+          </dl>
+          <h3>Methods inherited from class <a href="Ft.Lib.DistExt.Dist.html#Dist">Ft.Lib.DistExt.Dist.Dist</a></h3>
+          <div class="inherited"><span class="inherited-name"><a href="Ft.Lib.DistExt.Dist.html#Dist-announce">announce</a></span>, <span class="inherited-name"><a href="Ft.Lib.DistExt.Dist.html#Dist-get_allfiles">get_allfiles</a></span>, <span class="inherited-name"><a href="Ft.Lib.DistExt.Dist.html#Dist-get_command_class">get_command_class</a></span>, <span class="inherited-name"><a href="Ft.Lib.DistExt.Dist.html#Dist-get_command_list">get_command_list</a></span>, <span class="inherited-name"><a href="Ft.Lib.DistExt.Dist.html#Dist-get_source_files">get_source_files</a></span>, <span class="inherited-name"><a href="Ft.Lib.DistExt.Dist.html#Dist-has_bgen">has_bgen</a></span>, <span class="inherited-name"><a href="Ft.Lib.DistExt.Dist.html#Dist-has_devel">has_devel</a></span>, <span class="inherited-name"><a href="Ft.Lib.DistExt.Dist.html#Dist-has_docs">has_docs</a></span>, <span class="inherited-name"><a href="Ft.Lib.DistExt.Dist.html#Dist-has_l10n">has_l10n</a></span>, <span class="inherited-name"><a href="Ft.Lib.DistExt.Dist.html#Dist-has_localstate">has_localstate</a></span>, <span class="inherited-name"><a href="Ft.Lib.DistExt.Dist.html#Dist-has_sysconf">has_sysconf</a></span>, <span class="inherited-name"><a href="Ft.Lib.DistExt.Dist.html#Dist-has_text">has_text</a></span>, <span class="inherited-name"><a href="Ft.Lib.DistExt.Dist.html#Dist-print_commands">print_commands</a></span>, <span class="inherited-name"><a href="Ft.Lib.DistExt.Dist.html#Dist-print_option_list">print_option_list</a></span></div>
+          <h3>Methods inherited from class <span class="undocumented">distutils.dist.Distribution</span></h3>
+          <div class="inherited"><span class="inherited-name">dump_option_dicts</span>, <span class="inherited-name">find_config_files</span>, <span class="inherited-name">get_command_obj</span>, <span class="inherited-name">get_command_packages</span>, <span class="inherited-name">get_option_dict</span>, <span class="inherited-name">has_c_libraries</span>, <span class="inherited-name">has_data_files</span>, <span class="inherited-name">has_ext_modules</span>, <span class="inherited-name">has_headers</span>, <span class="inherited-name">has_modules</span>, <span class="inherited-name">has_pure_modules</span>, <span class="inherited-name">has_scripts</span>, <span class="inherited-name">is_pure</span>, <span class="inherited-name">print_command_list</span>, <span class="inherited-name">reinitialize_command</span>, <span class="inherited-name">run_command</span></div>
+          <h3>Members</h3>
+          <dl class="members">
+            <dt class="memberdef"><a name="display_option_names"><span class="member-name">display_option_names</span></a> = ['help_packages', 'help_commands', 'name', 'version', 'fullname', 'author', 'author_email', 'maintainer', 'maintainer_email', 'contact', 'contact_email', 'url', 'license', 'licence', 'description', 'long_description', 'platforms', 'classifiers', 'keywords', 'provides', ...]</dt>
+            <dt class="memberdef"><a name="display_options"><span class="member-name">display_options</span></a> = [('help-packages', None, 'list all available packages'), ('help-commands', None, 'list all available commands'), ('name', None, 'print package name'), ('version', 'V', 'print package version'), ('fullname', None, 'print &lt;package name&gt;-&lt;version&gt;'), ('author', None, "print the author's name"), ('author-email', None, "print the author's email address"), ('maintainer', None, "print the maintainer's name"), ('maintainer-email', None, "print the maintainer's email address"), ('contact', None, "print the maintainer's name if known, else the author's"), ('contact-email', None, "print the maintainer's email address if known, else the author's"), ('url', None, 'print the URL for this package'), ('license', None, 'print the license of the package'), ('licence', None, 'alias for --license'), ('description', None, 'print the package description'), ('long-description', None, 'print the long package description'), ('platforms', None, 'print the list of platforms'), ('classifiers', None, 'print the list of classifiers'), ('keywords', None, 'print the list of keywords'), ('provides', None, 'print the list of packages/modules provided'), ...]</dt>
+            <dt class="memberdef"><a name="toplevel_options"><span class="member-name">toplevel_options</span></a> = [('source-package', 's', 'run as if from a source dist (developer testing)'), ('package=', 'p', 'limit command(s) to a given package')]</dt>
+          </dl>
+          <h3>Members inherited from class <a href="Ft.Lib.DistExt.Dist.html#Dist">Ft.Lib.DistExt.Dist.Dist</a></h3>
+          <div class="inherited"><span class="inherited-name"><a href="Ft.Lib.DistExt.Dist.html#Dist-command_aliases">command_aliases</a></span>, <span class="inherited-name"><a href="Ft.Lib.DistExt.Dist.html#Dist-command_mapping">command_mapping</a></span>, <span class="inherited-name"><a href="Ft.Lib.DistExt.Dist.html#Dist-source_package">source_package</a></span>, <span class="inherited-name"><a href="Ft.Lib.DistExt.Dist.html#Dist-standard_commands">standard_commands</a></span></div>
+          <h3>Members inherited from class <span class="undocumented">distutils.dist.Distribution</span></h3>
+          <div class="inherited"><span class="inherited-name">common_usage</span>, <span class="inherited-name">global_options</span>, <span class="inherited-name">negative_opt</span></div>
+        </dd>
+      </dl>
+    </div>
+    <div class="section">
+      <h2>Globals</h2>
+      <dl class="globals">
+        <dt class="globaldef"><a name="DEBUG"><span class="global-name">DEBUG</span></a> = None</dt>
+        <dd class="globaldesc"></dd>
+        <dt class="globaldef"><a name="PKGINFO_FORMAT"><span class="global-name">PKGINFO_FORMAT</span></a> = {'bgen_files': &lt;type 'list'&gt;, 'classifiers': &lt;type 'list'&gt;, 'config_module': &lt;type 'str'&gt;, 'data_files': &lt;type 'list'&gt;, 'description': &lt;type 'str'&gt;, 'devel_files': &lt;type 'list'&gt;, 'doc_files': &lt;type 'list'&gt;, 'download_url': &lt;type 'str'&gt;, 'ext_modules': &lt;type 'list'&gt;, 'headers': &lt;type 'list'&gt;, ...}</dt>
+        <dd class="globaldesc"></dd>
+        <dt class="globaldef"><a name="generators"><span class="global-name">generators</span></a> = _Feature((2, 2, 0, 'alpha', 1), (2, 3, 0, 'final', 0), 0)</dt>
+        <dd class="globaldesc"></dd>
+      </dl>
+    </div>
+    <div class="universal-footer">Last modified on 2006-10-30 13:44:42</div>
+  </body>
+</html>

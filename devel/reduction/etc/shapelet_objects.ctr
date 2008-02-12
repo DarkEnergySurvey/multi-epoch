@@ -1,0 +1,14 @@
+Load data
+append into table shapelet_objects
+FIELDS TERMINATED BY ','
+trailing nullcols(
+OBJECT_ID      integer external,                           
+MAG_AUTO       decimal external,                                   
+FLAGS          integer external,                                     
+SIGMA          decimal external,                                   
+COEFF1         decimal external,                                    
+COEFF2         decimal external,                                    
+COEFF3         decimal external,                                    
+COEFF4         decimal external,                                    
+COEFF5         decimal external,                                    
+COEFF6         decimal external terminated by whitespace )

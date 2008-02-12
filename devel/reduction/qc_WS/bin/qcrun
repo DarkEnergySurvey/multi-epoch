@@ -1,0 +1,23 @@
+#!/bin/bash
+
+for i in $@
+do
+	opt=$(echo $i | grep qchome=)
+	if [ ! -z $opt ]
+	then
+		QC_HOME=$(echo $opt | cut -d= -f2)
+		export QC_HOME
+	fi
+done
+
+if [ -z $QC_HOME ]
+then
+	echo "The --qchome parameter is mandatory. Exiting..."
+	exit 1
+fi
+
+#export PYTHONHOME=$QC_HOME
+export LD_LIBRARY_PATH=$QC_HOME/lib64:$LD_LIBRARY_PATH
+export PATH=$QC_HOME/bin:$PATH
+
+python $QC_HOME/bin/qcrun.py $@

@@ -1,0 +1,84 @@
+#!/usr/bin/env perl
+########################################################################
+#  $Id$
+#
+#  $Rev::                                  $:  # Revision of last commit.
+#  $LastChangedBy::                        $:  # Author of last commit. 
+#  $LastChangedDate::                      $:  # Date of last commit.
+#
+#  Authors: 
+#         Michelle Gower (mgower@ncsa.uiuc.edu)
+#         Darren Adams (dadams@ncsa.uiuc.edu)
+#
+#  Developed at: 
+#  The National Center for Supercomputing Applications (NCSA).
+#  with useful conversations with Jordi Cohen and Jim Phillips from the
+#  Theoretical and Computation Biophysics Group at the University
+#  of Illinois at Urbana-Champaign.
+#
+#  Copyright (C) 2007 Board of Trustees of the University of Illinois. 
+#  All rights reserved.
+#
+#  DESCRIPTION:
+#
+#######################################################################
+
+use strict;
+use warnings;
+
+use Getopt::Long;
+use FindBin;
+use lib "$FindBin::Bin/../lib";
+use DES::utils::misc;
+use DES::utils::posttasks;
+use DES::desconfig;
+
+my $version;
+&Getopt::Long::Configure( 'noignorecase', 'no_autoabbrev');
+Getopt::Long::GetOptions(
+   'version|v' => \$version
+);
+
+my $DES_HOME = getHome() or die "Error: Can't determine DES_HOME";
+
+if (defined($version))
+{
+  printVersion();
+  exit 0;
+}
+
+my $debugfh;
+open $debugfh, "> desposttask.out";
+local *STDOUT = $debugfh;
+local *STDERR = $debugfh;
+
+if ((scalar(@ARGV) < 4) || (5 < scalar(@ARGV)))
+{
+  print STDERR "Usage: desposttask [-version] configfile stage [exitcode]\n";
+  close $debugfh;
+  exit 1;
+}
+
+my  $configfile = shift;
+my  $stage = shift;
+my  $substagetype = shift;
+my  $substage = shift;
+my  $exitcode = shift;
+if (!defined($exitcode))
+{
+  $exitcode = 0;
+}
+close $debugfh;
+open $debugfh, "> desposttask_$stage.out";
+local *STDOUT = $debugfh;
+local *STDERR = $debugfh;
+
+# read sysinfo file
+my $config = new DES::desconfig;
+$config->readConfig($configfile, 0, \*STDERR);
+
+posttasks($config, $stage, $substagetype, $substage, $exitcode);
+
+close $debugfh;
+exit $exitcode;
+

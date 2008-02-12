@@ -1,0 +1,174 @@
+#!/usr/bin/env perl
+########################################################################
+#  $Id$
+#
+#  $Rev::                                  $:  # Revision of last commit.
+#  $LastChangedBy::                        $:  # Author of last commit. 
+#  $LastChangedDate::                      $:  # Date of last commit.
+#
+#  Authors: 
+#         Michelle Gower (mgower@ncsa.uiuc.edu)
+#         Darren Adams (dadams@ncsa.uiuc.edu)
+#
+#  Developed at: 
+#  The National Center for Supercomputing Applications (NCSA).
+#
+#  Copyright (C) 2007 Board of Trustees of the University of Illinois. 
+#  All rights reserved.
+#
+#  DESCRIPTION:
+#
+#######################################################################
+
+use strict;
+use warnings;
+
+use Getopt::Long;
+use FindBin;
+use lib "$FindBin::Bin/../lib";
+use DES::utils::misc;
+use DES::utils::hist;
+use DES::utils::email;
+use DES::utils::desdbutils;
+use DES::utils::posttasks;
+use DES::desconfig;
+use DES::desDBI;
+
+
+my ($Version);
+&Getopt::Long::Configure( 'noignorecase', 'no_autoabbrev');
+Getopt::Long::GetOptions(
+   'version|v' => \$Version
+);
+
+my $DebugFH;
+open $DebugFH, "> checkconvertmngr.out";
+local *STDOUT = $DebugFH;
+local *STDERR = $DebugFH;
+
+my $DESHome = getHome() or die "Error: Can't determine DESHome";
+
+if (defined($Version)) {
+  printVersion();
+  exit 0;
+}
+
+if ((scalar(@ARGV) < 1) || (2 < scalar(@ARGV))) {
+  print STDERR "Usage: descheckconvertmngr [-version] configfile [ExitCode]\n";
+  close $DebugFH;
+  exit 1;
+}
+
+my $Configfile = $ARGV[0];
+my $ExitCode = 0;
+if (scalar(@ARGV) == 2) {
+  $ExitCode = $ARGV[1];
+}
+
+
+print "checkconvertmngr: configfile = '$Configfile'\n";
+print "checkconvertmngr: ExitCode = '$ExitCode'\n\n";
+
+
+# read sysinfo file
+my $Config = new DES::desconfig;
+$Config->readConfig($Configfile, 0, \*STDERR);
+
+logEvent($Config, "convert", "j", "mngr", "posttask", $ExitCode);
+logEvent($Config, "convert", "c", "mngr", "pretask");
+
+my %SearchDefs;
+
+my $Nite = $Config->getValueReq("nite");
+my $RunArchiveLoc = $Config->getValue("run_archive_loc", \%SearchDefs);
+$SearchDefs{"archive"} = $RunArchiveLoc;
+my $ArchiveRoot = $Config->getValue("archive_root", \%SearchDefs);
+my $SiteName = $Config->getValue("site_name", \%SearchDefs);
+$SearchDefs{"site"} = $SiteName;
+my $GridFTPHost = $Config->getValue("gridftp_host", \%SearchDefs);
+my $GridFTPPort = $Config->getValue("gridftp_port", \%SearchDefs);
+
+
+# New database connection object:
+my $desdb = new DES::desDBI;
+
+# Get List of src image entries from DB:
+my @ImageList;
+$desdb->getNiteSrcImageList($Nite, \@ImageList);
+my $NumSrcImages = scalar(@ImageList);
+print "NumSrcImages = $NumSrcImages\n";
+
+# check for 62 files in raw/nite/raw/imgname
+my @BadConvert;
+foreach my $ImgName (@ImageList) {
+   my $Cmd = "uberftp ";
+   if ($GridFTPPort =~ /\d/) {
+      $Cmd .= "-P $GridFTPPort "; 
+   }
+   $Cmd .= "$GridFTPHost \"cd $ArchiveRoot/raw/$Nite/raw/$ImgName; ls\"";
+   print "Cmd> $Cmd\n";
+   my $Out = `$Cmd 2>&1`;
+   my $exitval = $?>>8;
+   print "$Out\n";
+
+   my @LsOut = split /\n/, $Out;
+   my $Count = 0;
+   foreach my $Line (@LsOut) {
+      if ($Line =~ /${ImgName}_.*\.fits/) {
+         $Count++;
+      }
+   }
+
+   print "$ImgName has $Count fits files\n";
+   if ($Count != 62) {
+      push(@BadConvert, $ImgName);
+      $ExitCode = $FAILURE;
+   }
+}
+
+# check that database ingest of converted files worked
+my @RawImageList;
+my $FailedRaw = 0;
+$desdb->getNiteRawImageList($Nite, \@RawImageList);
+my $NumRawImages = scalar(@RawImageList);
+print "NumRawImages = $NumRawImages\n";
+if (($NumSrcImages * 62) != $NumRawImages) {
+   $FailedRaw = 1;
+   $ExitCode = $FAILURE;
+}
+
+
+my ($Msg1, $Msg2);
+if ($ExitCode == $SUCCESS) {
+   $Msg1 =  "Convert stage is complete\n\n";
+   $Msg1 .= "Converted $NumSrcImages source images.\n";
+   $Msg1 .= "Created $NumRawImages raw images.\n";
+}
+else {
+   $Msg1 = "Convert stage failed\n\n";
+
+   if (scalar(@BadConvert) > 0) {
+      $Msg1 .= "The following images didn't have 62 files after convert:\n";
+      foreach (@BadConvert) {
+         $Msg1 .= "\t$_\n";
+      }
+   }
+   elsif ($FailedRaw == 1) {
+      $Msg1 .= "Ingesting the list of raw images failed. \n";
+      if ($NumRawImages == 0) {
+         $Msg1 .= "There are 0 raw image entries in the database\n";
+      }
+      elsif ($NumRawImages == 1) {
+         $Msg1 .= "There is only 1 raw image entry in the database\n";
+      }
+      else {
+         $Msg1 .= "There are only $NumRawImages raw image entries in the database\n";
+      }
+   }
+}
+sendEmail($Config, $desdb, "convert", $ExitCode, $Msg1, $Msg2);
+
+posttasks($Config, "convert", "c", "mngr", $ExitCode);
+close $DebugFH;
+
+exit $ExitCode;

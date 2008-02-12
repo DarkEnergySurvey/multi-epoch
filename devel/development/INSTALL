@@ -1,0 +1,43 @@
+#######################################################################
+#  Installation Instructions for DES Software Stack.
+#######################################################################
+
+#######################################################################
+# ImageProc
+#
+# Prerequisites:
+#   * cfitsio
+#   * Numerical Recipies
+#######################################################################
+
+The following will intall to the default location which is the "bin" directory
+in the development area. to provide an alternate installation location, change the
+"BINDIR" variable in ImageProc/Makefile.
+run:
+make
+make install
+
+
+#######################################################################
+# cfitsio
+#
+#
+#######################################################################
+cd cfitsio
+./configure CC=icc CFLAGS="-O2 --static -no-prec-div" --prefix=`pwd`/../
+make
+make install
+
+
+#######################################################################
+# Numerical Recipies
+#######################################################################
+cd NRecipes/2ndEd_c-kr
+make libs
+make install
+make libs_double
+make install_double
+
+#######################################################################
+# TeraPix
+#######################################################################

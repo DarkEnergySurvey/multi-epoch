@@ -1,0 +1,1611 @@
+#!/oracle/10.2.0/client_1/perl/bin/perl -w -I/oracle/10.2.0/client_1/perl -I/oracle/10.2.0/client_1/perl/lib -I/oracle/10.2.0/client_1/perl/lib/site_perl -I/oracle/10.2.0/client_1/perl/lib/site_perl/5.8.3 -I/oracle/10.2.0/client_1/perl/lib/site_perl/5.8.3/i686-linux-thread-multi
+
+###############################################################################
+##
+## Include files.
+##
+###############################################################################
+use strict;
+use Getopt::Long;
+require Pod::Usage;
+use Data::Dumper;
+use File::Basename;
+use DBI;
+
+###############################################################################
+##
+## Global variables
+##
+###############################################################################
+my $prop_filename = 'ar_copy';
+my $sqlplus_junk  = 'Plus:|Copyright|Connected|Oracle|With|old|new|selected';
+##my $types         = 'src|object|bias|flat|raw|reduced|coadd|catalog|bpm';
+my $types =
+'src|log|raw|coadd|catalog|reduced|remap|catalog|object|zero|bias|dark|dome flat|sky flat|flat|bpm|biascor|zerocor|darkcor|ghost|flatcor|illumcor|supersky|fringecor';
+my $classes = 'raw|red|coadd|cal';
+
+my %param_types = (
+   'copy-retry'       => 'int',
+   'target-active'    => 'boolean',
+   'tcpBufferSize'    => 'int',
+   'client-pool-size' => 'int',
+   'server-pool-size' => 'int'
+);
+
+my %attr = (
+   PrintError => 0,
+   RaiseError => 0
+);
+
+##my $prop_directory = $ENV{PWD};
+my $prop_directory = '/tmp';
+
+my $all_ccds = 64;
+
+my $DASH          = q{-};
+my $GREATERTHEN   = q{>};
+my $PERCENT       = q{%};
+my $name_files    = $PERCENT;
+my $action_files  = 'add';
+my $imclass_files = $PERCENT;
+my $imtype_files  = $PERCENT;
+my $imname_files  = $PERCENT;
+my $nite_files    = $PERCENT;
+my $runid_files   = $PERCENT;
+my $tile_files    = $PERCENT;
+my $band_files    = $PERCENT;
+my $ccd_files     = '0';
+
+my $fromDir;
+my $toDir;
+my @from_dirs;
+my @to_dirs;
+my $elf_prop;
+my $ob;
+my @numbers;
+my %stuff;
+my $stuff;
+my %chk_files;
+my %db_files;
+my @from_ret;
+my @to_ret;
+my @to_params;
+my @dbpath;
+my $dbh;
+
+my (
+   $verbose,   $debug,   $help,      $man,    $fromLoc, $toLoc,
+   $imclass,   $nite,    $imagetype, $ccd,    $runid,   $list,
+   $listing,   $verify,  $dryrun,    $delete, $band,    $tile,
+   $imagename, $src_dir, $dest_dir,  $quiet,  $pdiff,   $justify
+);
+
+###############################################################################
+##
+## Parsing of command line arguments.
+##
+###############################################################################
+GetOptions(
+   'help|?' => \$help,
+   'man'    => \$man,
+
+   'dir'     => \$listing,
+   'verify'  => \$verify,
+   'delete'  => \$delete,
+   'list|l'  => \$list,
+   'justify' => \$justify,
+
+   'imclass|i=s'   => \$imclass,
+   'nite|n=s'      => \$nite,
+   'imagetype|t=s' => \$imagetype,
+   'ccd|c=s'       => \$ccd,
+   'runid|r=s'     => \$runid,
+   'name=s'        => \$imagename,
+   'band|b=s'      => \$band,
+   'tile=s'        => \$tile,
+
+   'offset=n'  => \$pdiff,
+   'srcdir=s'  => \$src_dir,
+   'destdir=s' => \$dest_dir,
+
+   'verbose|v' => \$verbose,
+   'debug|d'   => \$debug,
+   'dryrun'    => \$dryrun,
+   'quiet'     => \$quiet
+  )
+  or Pod::Usage::pod2usage(0);
+
+Pod::Usage::pod2usage(0) if $help;
+Pod::Usage::pod2usage( -verbose => 2 ) if $man;
+
+###############################################################################
+##
+## code to write out various XML files used by the ar script.
+##
+###############################################################################
+sub temp_file
+{
+   my $prefix = shift;
+   my $ext    = shift;
+
+   my $tf = $prefix . $DASH . time() . $DASH . $$ . "\.$ext";
+
+   return $tf;
+}
+
+sub write_copy_xml
+{
+   my $of = "$prop_directory/" . temp_file( 'ar_copy', 'xml' );
+
+   print "\nELF XML file: $of\n"
+     if ( defined $debug || defined $verbose );
+
+   open my $xmlout, $GREATERTHEN, "$of" or die "Can't open $of: $!";
+
+   print {$xmlout} "<elf>\n";
+   print {$xmlout} "<workdir/>\n";
+   print {$xmlout} "<serial-scripts separate-script-dirs=\"false\">\n";
+   print {$xmlout} "<ogrescript name=\"ar_copy_wflow\">\n";
+   print {$xmlout} "   <properties file=\"$elf_prop\"/>\n";
+   print {$xmlout}
+"   <set-system-property name=\"org.globus.tcp.port.range\" value=\"50000,55000\"/>\n";
+
+   if ( $toLoc =~ m!mss! )
+   {
+      print {$xmlout}
+        "   <declare name=\"touri\"   string=\"mssftp://\${tonode}\"/>\n";
+   }
+   else
+   {
+      print {$xmlout}
+        "   <declare name=\"touri\"   string=\"gridftp://\${tonode}\"/>\n";
+   }
+
+   if ( $fromLoc =~ m!mss! )
+   {
+      print {$xmlout}
+        "   <declare name=\"fromuri\"   string=\"mssftp://\${fromnode}\"/>\n";
+   }
+   else
+   {
+      print {$xmlout}
+        "   <declare name=\"fromuri\"   string=\"gridftp://\${fromnode}\"/>\n";
+   }
+
+   my $cnt = @from_dirs;
+   my @newTo;
+
+   for my $d ( 0 .. $cnt - 1 )
+   {
+      @newTo = split /(\/*)(\w*)(\/*$)/, $to_dirs[$d];
+
+      my $toCut = $newTo[0];
+
+      my @new_from  = split /(\/*)(\w*)(\/*$)/, $from_dirs[$d];
+      my $from_cut  = $new_from[0];
+      my $cnt       = @new_from;
+      my $last_from =
+        $new_from[ ( $new_from[ $cnt - 1 ] ne '/' ) ? $cnt - 1 : $cnt - 2 ];
+
+      print {$xmlout} "   <copy>\n";
+      print {$xmlout} "      <source base=\"\${fromuri}$from_cut/\">\n";
+      print {$xmlout} "         <include>$last_from/**</include>\n";
+      print {$xmlout} "      </source>\n";
+      print {$xmlout} "      <target>\${touri}$toCut</target>\n";
+
+      print {$xmlout} "      <configuration>\n";
+      print {$xmlout}
+        "         <property name=\"copy-retry\" value=\"20\" type=\"int\"/>\n";
+
+      foreach (@to_params)
+      {
+         my @atts = split( /=/, $_ );
+         print {$xmlout}
+           "         <property name=\"$atts[0]\"  value=\"$atts[1]\"";
+         print {$xmlout} " type=\"$param_types{$atts[0]}\""
+           if defined $param_types{ $atts[0] };
+         print {$xmlout} "/>\n";
+      }
+
+      print {$xmlout} "      </configuration>\n";
+      print {$xmlout} "      <file-progress-listener>\n";
+      print {$xmlout}
+        "         <report file=\"\${runtime.dir}/file-progress.log\"/>\n";
+      print {$xmlout} "      </file-progress-listener>\n";
+      print {$xmlout} "   </copy>\n";
+   }
+
+   print {$xmlout} "</ogrescript>\n";
+   print {$xmlout} "</serial-scripts>\n";
+   print {$xmlout} "</elf>\n";
+
+   close $xmlout;
+
+   return $of;
+}
+
+sub write_listing_xml
+{
+   my $dir = shift;
+   my $loc = shift;
+
+   my $of = "$prop_directory" . '/' . temp_file( 'ar_copy', 'xml' );
+
+   print "\nELF XML listing file: $of\n"
+     if ( defined $debug || defined $verbose );
+
+   open my $xmlout, $GREATERTHEN, "$of" or die "Can't open $of: $!";
+
+   print {$xmlout} "<elf>\n";
+   print {$xmlout} "<workdir/>\n";
+   print {$xmlout} "<serial-scripts separate-script-dirs=\"false\">\n";
+   print {$xmlout} "<ogrescript name=\"ar_copy_wflow\">\n";
+   print {$xmlout} "   <declare name=\"cache\"/>\n";
+   print {$xmlout} "   <properties file=\"$elf_prop\"/>\n";
+   print {$xmlout}
+"   <set-system-property name=\"org.globus.tcp.port.range\" value=\"50000,55000\"/>\n";
+   print {$xmlout}
+"   <echo stdout=\"true\" message=\"Starting ar_copy listing workflow\"/>\n";
+   print {$xmlout}
+     "   <echo stdout=\"true\" message=\"runtime.dir  \${runtime.dir} \"/>\n";
+
+   if ( $loc =~ m!mss! )
+   {
+      print {$xmlout}
+"   <declare name=\"fromuri\"   string=\"mssftp://\${fromnode}$dir/\"/>\n";
+   }
+   else
+   {
+      print {$xmlout}
+"   <declare name=\"fromuri\"   string=\"gridftp://\${fromnode}$dir/\"/>\n";
+   }
+
+   print {$xmlout}
+     "   <echo stdout=\"true\" message=\"Listing directory...  \"/>\n";
+   print {$xmlout} "   <echo stdout=\"true\" message=\"\${fromuri}\"/>\n";
+   print {$xmlout} "   <ls dir=\"\${fromuri}\">\n";
+   print {$xmlout} "      <configuration>\n";
+   print {$xmlout}
+"         <property name=\"list-recursive\" value=\"true\" type=\"boolean\"/>\n";
+   print {$xmlout} "      </configuration>\n";
+   print {$xmlout}
+     "      <return-value assignedName=\"cache\" defaultName=\"listCache\"/>\n";
+   print {$xmlout} "   </ls>\n";
+   print {$xmlout} "   <print-cache stdout=\"true\" cache=\"\${cache}\"/>\n";
+   print {$xmlout} "</ogrescript>\n";
+   print {$xmlout} "</serial-scripts>\n";
+   print {$xmlout} "</elf>\n";
+
+   close $xmlout;
+
+   return $of;
+}
+
+sub write_delete_xml
+{
+   my $of = "$prop_directory" . '/' . temp_file( 'ar_copy', 'xml' );
+
+   print "\nELF XML file: $of\n"
+     if ( defined $debug || defined $verbose );
+
+   open my $xmlout, $GREATERTHEN, "$of" or die "Can't open $of: $!";
+
+   print {$xmlout} "<elf>\n";
+   print {$xmlout} "<workdir/>\n";
+   print {$xmlout} "<serial-scripts separate-script-dirs=\"false\">\n";
+   print {$xmlout} "<ogrescript name=\"ar_copy_wflow\">\n";
+   print {$xmlout} "   <properties file=\"$elf_prop\"/>\n";
+   print {$xmlout}
+"   <set-system-property name=\"org.globus.tcp.port.range\" value=\"50000,55000\"/>\n";
+   print {$xmlout}
+     "   <echo stdout=\"true\" message=\"Starting ar_copy workflow\"/>\n";
+   print {$xmlout}
+     "   <echo stdout=\"true\" message=\"runtime.dir  \${runtime.dir} \"/>\n";
+   print {$xmlout} "\n";
+
+   if ( $fromLoc =~ m!mss! )
+   {
+      print {$xmlout}
+        "   <declare name=\"fromuri\"   string=\"mssftp://\${fromnode}\"/>\n";
+   }
+   else
+   {
+      print {$xmlout}
+        "   <declare name=\"fromuri\"   string=\"gridftp://\${fromnode}\"/>\n";
+   }
+   print {$xmlout} "\n";
+
+   for my $f (@from_dirs)
+   {
+      print {$xmlout}
+        "   <echo stdout=\"true\" message=\"Delete directory...  \"/>\n";
+      print {$xmlout} "   <echo stdout=\"true\" message=\"\${fromuri}$f\"/>\n";
+      print {$xmlout} "\n";
+      print {$xmlout} "   <delete dir=\"\${fromuri}$f\"/>\n";
+   }
+
+   print {$xmlout} "</ogrescript>\n";
+   print {$xmlout} "</serial-scripts>\n";
+   print {$xmlout} "</elf>\n";
+
+   close $xmlout;
+
+   return $of;
+}
+
+sub write_boot
+{
+   my $of = "$prop_directory" . '/' . temp_file( 'bootstrap', 'properties' );
+
+   print "\nBootstrap properties: $of\n"
+     if ( defined $debug || defined $verbose );
+
+   open my $fileout, $GREATERTHEN, "$of" or die "Can't open $of: $!";
+
+   print {$fileout} "# ENVIRONMENT CONFIGURATION\n";
+   print {$fileout} "# containerPath=/home/shawn/elfStuff/container.xml\n";
+   print {$fileout} "# bootstrapHome=/tmp/run\n";
+   print {$fileout} "# containerPath=/home/gdaues/cluster_find/clfind.xml\n";
+   print {$fileout} "# bootstrapHome=/home/gdaues/cluster_find\n";
+   print {$fileout} "\n";
+   print {$fileout} "# EVENT MANAGEMENT\n";
+   print {$fileout} "eventListener.tag=loggingListener\n";
+####  print {$fileout} "eventListener.loggingListener.log4jPropertiesFile=/home/bcs/elfstuff/log4j.properties\n";
+   print {$fileout} "### eventTopic=TROLL\n";
+   print {$fileout}
+"### eventSender=tcp://tb1.ncsa.uiuc.edu:61616,ncsa.tools.jms.localevent.JMSLocalEventSender\n";
+   print {$fileout} "\n";
+   print {$fileout} "# AUTHENTICATION MANAGER\n";
+   print {$fileout}
+     "# authenticationManager.tag=usernamePasswordAuthenication\n";
+   print {$fileout}
+     "# authenticationManager.usernamePasswordAuthentication.username=shawn\n";
+   print {$fileout}
+     "# authenticationManager.usernamePasswordAuthentication.password=foobar\n";
+   print {$fileout} "\n";
+   print {$fileout} "\n";
+   print {$fileout} "# IDENTITY MANAGER\n";
+   print {$fileout} "### identityManager.tag=defaultIdentification\n";
+   print {$fileout}
+     "# identityManager.defaultIdentification.baseId=file://tmp\n";
+   print {$fileout} "\n";
+   print {$fileout}
+"# identityManager.defaultIdentification.baseId=http://tb1.ncsa.uiuc.edu:8080/ensemble/services/EnsembleBroker?\n";
+   print {$fileout} "\n";
+   print {$fileout}
+"### identityManager.defaultIdentification.baseId=http://tb1.ncsa.uiuc.edu:8080/ensemble/services/EnsembleBroker?groupId=des\n";
+   print {$fileout} "### identityManager.baseId=http://daues?groupId=des\n";
+   print {$fileout} "\n";
+   print {$fileout}
+"# identityManager.baseId=http://tb1.ncsa.uiuc.edu:8080/ensemble/services/EnsembleBroker?\n";
+
+   close $fileout;
+
+   return $of;
+}
+
+sub write_elf_prop
+{
+   my $fromRow = shift;
+   my $toRow   = shift;
+
+   $elf_prop = "$prop_directory/" . temp_file( $prop_filename, 'properties' );
+
+   print "\nfileout: $elf_prop\n" if ( defined $verbose || defined $debug );
+
+   open my $fileout, $GREATERTHEN, "$elf_prop"
+     or die "Can't open $elf_prop: $!";
+
+   print $fileout "fromnode=$fromRow->{TRANSFER_HOST}\n"
+     if ( defined $fromRow );
+   print {$fileout} "tonode=$toRow->{TRANSFER_HOST}\n"
+     if ( defined $toRow );
+   print {$fileout} "nite=$nite\n"           if ( defined $nite );
+   print {$fileout} "imclass=$imclass\n"     if ( defined $imclass );
+   print {$fileout} "imagetype=$imagetype\n" if ( defined $imagetype );
+   print {$fileout} "runid=$runid\n"         if ( defined $runid );
+   print {$fileout} "buffer=16777216\n";
+   print {$fileout} "parallel=1\n";
+
+   ##my $size = 'TRANSFER_ARGS_SMALL';
+   my $size;
+
+   if ( $imclass eq 'COADD'
+      || ( ( $imclass eq 'RAW' ) && ( $imagetype eq 'SRC' ) ) )
+   {
+      $size = $toRow->{TRANSFER_ARGS_LARGE};
+   }
+   else
+   {
+      $size = $toRow->{TRANSFER_ARGS_SMALL};
+   }
+
+   foreach my $value ( split /,/, $size )
+   {
+      $value =~ s/^\s+//;
+      $value =~ s/\s+$//;
+      push @to_params, $value;
+      print "To param: $value\n" if ( defined $debug );
+   }
+
+   if ( defined $debug || defined $verbose )
+   {
+      print "fromnode=$fromRow->{TRANSFER_HOST}\n"
+        if ( defined $fromLoc );
+      print "tonode=$toRow->{TRANSFER_HOST}\n" if ( defined $toLoc );
+      print "nite=$nite\n"                     if ( defined $nite );
+      print "imclass=$imclass\n"               if ( defined $imclass );
+      print "imagetype=$imagetype\n"           if ( defined $imagetype );
+      print "runid=$runid\n"                   if ( defined $runid );
+
+      for my $d (@from_dirs)
+      {
+         print "fromdir=$d\n";
+      }
+
+      for my $d (@to_dirs)
+      {
+         print "todir=$d\n";
+      }
+   }
+
+   close $fileout;
+
+   $ob = write_boot;
+}
+
+sub prepare_sql
+{
+   my $stmt = shift;
+   my $sth  = $dbh->prepare($stmt)
+     or die "Can't prepare SQL statment: $stmt\n", $dbh->errstr(), "\n";
+
+   return $sth;
+}
+
+sub execute_sql
+{
+   my $sth = shift;
+
+   $sth->execute()
+     or die "Can not execute SQL statment: ", $sth->errstr(), "\n";
+
+   return $sth;
+}
+
+sub db_to_path
+{
+   my $filename;
+   my $imageclass;
+
+   foreach my $row ( keys %db_files )
+   {
+      $imageclass =
+        ( $db_files{$row}{'IMAGECLASS'} > 0 )
+        ? $db_files{$row}{'IMAGECLASS'}
+        : $imclass;
+
+      ######################################################################
+      #####################       RAW DATA          ########################
+      ######################################################################
+      if ( $imageclass =~ m!raw! )
+      {
+         if ( $db_files{$row}{'IMAGETYPE'} =~ m!src! )
+         {
+            $filename = sprintf( "%s/%s.fits.gz",
+               $db_files{$row}{'IMAGETYPE'},
+               $db_files{$row}{'IMAGENAME'} );
+         }
+         elsif ( $db_files{$row}{'IMAGETYPE'} =~ m!log! )
+         {
+            $filename = sprintf( "%s/%s",
+               $db_files{$row}{'IMAGETYPE'},
+               $db_files{$row}{'IMAGENAME'} );
+         }
+         else
+         {
+            $filename = sprintf(
+               "raw/%s/%s_%02d.fits.gz",
+               $db_files{$row}{'IMAGENAME'},
+               $db_files{$row}{'IMAGENAME'},
+               $db_files{$row}{'CCD_NUMBER'}
+            );
+         }
+      }
+      ######################################################################
+      #####################  CALIBRATION DATA       ########################
+      ######################################################################
+      elsif ( $imageclass =~ m!cal! )
+      {
+         $filename = sprintf(
+            "%s/%s/%s/%s/%s_%02d.fits.gz",
+            $imageclass,                  $db_files{$row}{'IMAGETYPE'},
+            $db_files{$row}{'NITE'},      $db_files{$row}{'IMAGETYPE'},
+            $db_files{$row}{'IMAGETYPE'}, $db_files{$row}{'CCD_NUMBER'}
+         );
+      }
+      ######################################################################
+      #####################    COADDED DATA         ########################
+      ######################################################################
+      elsif ( $imageclass =~ m!coadd! )
+      {
+         if ( $db_files{$row}{'IMAGETYPE'} =~ m!catalog! )
+         {
+            $filename = sprintf(
+               "%s/%s/%s/%s_%s_cat.fits.gz",
+               $imageclass,                 $db_files{$row}{'RUNIDDESC'},
+               $db_files{$row}{'TILENAME'}, $db_files{$row}{'TILNAME'},
+               $db_files{$row}{'BAND'}
+            );
+         }
+         else
+         {
+            $filename = sprintf(
+               "%s/%s/%s/%s_%s.fits.gz",
+               $imageclass,                 $db_files{$row}{'RUNIDDESC'},
+               $db_files{$row}{'TILENAME'}, $db_files{$row}{'TILNAME'},
+               $db_files{$row}{'BAND'}
+            );
+         }
+      }
+      ######################################################################
+      #####################    REDUCED DATA         ########################
+      ######################################################################
+      elsif ( $imageclass =~ m!red! )
+      {
+         if ( $db_files{$row}{'IMAGETYPE'} =~ m!log! )
+         {
+            $filename = sprintf(
+               "%s/%s/data/%s/%s/%s",
+               $imageclass,             $db_files{$row}{'RUNIDDESC'},
+               $db_files{$row}{'NITE'}, $db_files{$row}{'IMAGETYPE'},
+               $db_files{$row}{'IMAGENAME'}
+            );
+         }
+         elsif ( $db_files{$row}{'IMAGETYPE'} =~ m!reduced! )
+         {
+            $filename = sprintf(
+               "%s/%s/data/%s/%s/%s/%s_%02d.fits.gz",
+               $imageclass,                  $db_files{$row}{'RUNIDDESC'},
+               $db_files{$row}{'NITE'},      $db_files{$row}{'BAND'},
+               $db_files{$row}{'IMAGENAME'}, $db_files{$row}{'IMAGENAME'},
+               $db_files{$row}{'CCD_NUMBER'}
+            );
+         }
+         elsif ( $db_files{$row}{'IMAGETYPE'} =~ m!remap! )
+         {
+            $filename = sprintf(
+               "%s/%s/data/%s/%s/%s/%s_%02d.%s.fits.gz",
+               $imageclass,                   $db_files{$row}{'RUNIDDESC'},
+               $db_files{$row}{'NITE'},       $db_files{$row}{'BAND'},
+               $db_files{$row}{'IMAGENAME'},  $db_files{$row}{'IMAGENAME'},
+               $db_files{$row}{'CCD_NUMBER'}, $db_files{$row}{'TILENAME'}
+            );
+         }
+         elsif ( $db_files{$row}{'IMAGETYPE'} =~ m!catalog! )
+         {
+            if ( strlen( $db_files{$row}{'TILNAME'} ) >
+               0 )    ##/* catalog of remap image */
+            {
+               $filename = sprintf(
+                  "%s/%s/data/%s/%s/%s/%s_%02d.%s_cat.fits.gz",
+                  $imageclass,                   $db_files{$row}{'RUNIDDESC'},
+                  $db_files{$row}{'NITE'},       $db_files{$row}{'BAND'},
+                  $db_files{$row}{'IMAGENAME'},  $db_files{$row}{'IMAGENAME'},
+                  $db_files{$row}{'CCD_NUMBER'}, $db_files{$row}{'TILENAME'}
+               );
+            }
+            else
+            {
+               $filename = sprintf(
+                  "%s/%s/data/%s/%s/%s/%s_%02d_cat.fits.gz",
+                  $imageclass,                  $db_files{$row}{'RUNIDDESC'},
+                  $db_files{$row}{'NITE'},      $db_files{$row}{'BAND'},
+                  $db_files{$row}{'IMAGENAME'}, $db_files{$row}{'IMAGENAME'},
+                  $db_files{$row}{'CCD_NUMBER'}
+               );
+            }
+         }
+         elsif ( $db_files{$row}{'IMAGETYPE'} =~
+            m!object|zero|bias|dark|dome flat|sky flat|flat! )
+         {
+            $filename = sprintf(
+               "%s/%s/data/%s/%s/%s/%s_%02d.fits.gz",
+               $imageclass,                  $db_files{$row}{'RUNIDDESC'},
+               $db_files{$row}{'NITE'},      "raw",
+               $db_files{$row}{'IMAGENAME'}, $db_files{$row}{'IMAGENAME'},
+               $db_files{$row}{'CCD_NUMBER'}
+            );
+         }
+         elsif ( $db_files{$row}{'IMAGETYPE'} =~
+            m!bpm|biascor|zerocor|darkcor|ghost! )
+         {
+            $filename = sprintf(
+               "%s/%s/data/%s/cal/%s/%s_%02d.fits.gz",
+               $imageclass,                  $db_files{$row}{'RUNIDDESC'},
+               $db_files{$row}{'NITE'},      $db_files{$row}{'IMAGETYPE'},
+               $db_files{$row}{'IMAGETYPE'}, $db_files{$row}{'CCD_NUMBER'}
+            );
+         }
+         elsif ( $db_files{$row}{'IMAGETYPE'} =~
+            m!flatcor|illumcor|supersky|fringecor! )
+         {
+            $filename = sprintf(
+               "%s/%s/data/%s/cal/%s_%s/%s_%s_%02d.fits.gz",
+               $imageclass,             $db_files{$row}{'RUNIDDESC'},
+               $db_files{$row}{'NITE'}, $db_files{$row}{'IMAGETYPE'},
+               $db_files{$row}{'BAND'}, $db_files{$row}{'IMAGETYPE'},
+               $db_files{$row}{'BAND'}, $db_files{$row}{'CCD_NUMBER'}
+            );
+         }
+         else
+         {
+            print
+"  ** Imagetype $db_files{$row}{'IMAGETYPE'} within Imageclass \"red\" not found\n";
+##        exit(0);
+         }
+      }
+
+      push @dbpath, $filename;
+
+      if ( defined $debug )
+      {
+         print "CLASS: $imageclass -- TYPE: $db_files{$row}{'IMAGETYPE'}\n";
+         print "DB file: $filename\n";
+      }
+
+   }
+}
+
+###############################################################################
+##
+## code to write out various XML files used by the ar script.
+##
+###############################################################################
+sub get_archive_sites
+{
+##  my @ret = `sqlplus pipeline/dc01user\@charon.ncsa.uiuc.edu:1521/des \@ /usr/bin/archive.sql`;
+##  my @ret = `sqlplus pipeline/dc01user\@charon.ncsa.uiuc.edu:1521/des \@ /usr/bin/archive.sql`;
+##      my @ret =
+##`sqlplus pipeline/dc01user\@charon.ncsa.uiuc.edu:1521/des \@ /home/bcs/filestuff/arcopy/t.sql`;
+   my $row = 1;
+
+   my $sth =
+     prepare_sql(
+'select LOCATION_ID,LOCATION_NAME, ARCHIVE_HOST,ARCHIVE_ROOT,STAGING_HOST,STAGING_ROOT,IP_SUBNET,TRANSFER_HOST,DOWNLOAD_DIR,TRANSFER_ARGS_SMALL,TRANSFER_ARGS_LARGE from archive_sites'
+     );
+   $sth = execute_sql($sth);
+
+   $stuff = $sth->fetchall_arrayref(
+      {
+         LOCATION_ID         => 1,
+         LOCATION_NAME       => 1,
+         ARCHIVE_HOST        => 1,
+         ARCHIVE_ROOT        => 1,
+         STAGING_HOST        => 1,
+         STAGING_ROOT        => 1,
+         IP_SUBNET           => 1,
+         TRANSFER_HOST       => 1,
+         DOWNLOAD_DIR        => 1,
+         TRANSFER_ARGS_SMALL => 1,
+         TRANSFER_ARGS_LARGE => 1
+      }
+   );
+
+##      for my $val (@ret)
+##      {
+##              chomp $val;
+##              next if ( $val eq "" || $val =~ m!$sqlplus_junk! );
+
+##              my @params = split /\|/, $val;
+
+##              for my $v (@params)
+##              {
+##                      my ( $cname, $value ) = split /:/, $v;
+
+##                      $value =~ s/^\s+//;
+##                      $value =~ s/\s+$//;
+
+##                      $stuff{$row}{$cname} = $value;
+##                      $row++ if ( $cname eq "TRANSFER_ARGS_LARGE" );
+##              }
+##      }
+
+   print "\nget_archive_sites:\n", Dumper $stuff if ( defined $debug );
+
+   return $stuff;
+}
+
+sub justify_files
+{
+   my $fromRow = shift;
+   my $row     = 1;
+
+   ## imageclass imagetype imagename nite runid ccd_number
+   my $get_sql = "$prop_directory" . '/' . temp_file( 'ar_copy', 'sql' );
+
+   print "\nELF XML file: $get_sql\n"
+     if ( defined $debug || defined $verbose );
+
+   open my $sqlout, $GREATERTHEN, "$get_sql" or die "Can't open $get_sql: $!";
+
+   print {$sqlout}
+"SET NEWP 0 SPA 1 ESC ON PAGES 0 FEED OFF COLSEP '|'HEAD OFF TRIMS ON LINESIZE 5000;\n";
+   print {$sqlout}
+"SELECT 'IMAGECLASS:' || IMAGECLASS, 'IMAGETYPE:' || IMAGETYPE, 'IMAGENAME:' || IMAGENAME, 'NITE:' || NITE, 'RUNIDDESC:' || RUNIDDESC, 'ARCHIVESITES:' || ARCHIVESITES, 'BAND:' || BAND, 'TILENAME:' || TILENAME, 'CCD_NUMBER:' || CCD_NUMBER\n";
+   print {$sqlout} "FROM files\n";
+   print {$sqlout} 'WHERE ';
+
+   print {$sqlout} '(IMAGECLASS like '
+     . ( ( defined $imclass ) ? "'\%$imclass\%'" : "'\%'" );
+   print {$sqlout} ' or IMAGECLASS is null)';
+   print {$sqlout} ' and IMAGETYPE like '
+     . ( ( defined $imagetype ) ? "'\%$imagetype\%'" : "'\%'" );
+   print {$sqlout} ' and IMAGENAME like '
+     . ( ( defined $imagename ) ? "'\%$imagename\%'" : "'\%'" );
+   print {$sqlout} ' and NITE like '
+     . ( ( defined $nite ) ? "'\%$nite\%'" : "'\%'" );
+   print {$sqlout} ' and (RUNIDDESC like '
+     . ( ( defined $runid ) ? "'\%$runid\%'" : "'\%'" );
+   print {$sqlout} ' or RUNIDDESC is null)';
+
+   if ( defined $ccd )
+   {
+      my $ccdstr = ' and CCD_NUMBER in [';
+
+      my $cnt = @numbers;
+      for my $c ( 0 .. $cnt - 1 )
+      {
+         $ccdstr .= $numbers[$c];
+         $ccdstr .= ( $c >= 0 && $c < ( $cnt - 1 ) ) ? ',' : '';
+      }
+      print {$sqlout} "$ccdstr]";
+   }
+
+   if ( $fromRow->{LOCATION_ID} == 1 )
+   {
+      print {$sqlout} " and substr(archivesites,\'"
+        . ( $fromRow->{LOCATION_ID} + 1 )
+        . "\', \'"
+        . ( 12 - $fromRow->{LOCATION_ID} )
+        . "\') = \'Y\'";
+   }
+   else
+   {
+      print {$sqlout} " and substr(archivesites,"
+        . ( $fromRow->{LOCATION_ID} - 1 )
+        . ", 1) = \'Y\'";
+   }
+
+   print {$sqlout} ";\n";
+   print {$sqlout} "quit;\n";
+
+   close $sqlout;
+
+   my @ret =
+     `sqlplus pipeline/dc01user\@charon.ncsa.uiuc.edu:1521/des \@ $get_sql`;
+
+   my $stmt =
+"SELECT IMAGECLASS, IMAGETYPE, IMAGENAME, NITE, RUNIDDESC, ARCHIVESITES, BAND, TILENAME, CCD_NUMBER FROM files WHERE ";
+
+   $stmt .=
+     '(IMAGECLASS like ' . ( ( defined $imclass ) ? "'\%$imclass\%'" : "'\%'" );
+   $stmt .= ' or IMAGECLASS is null)';
+   $stmt .=
+     ' and IMAGETYPE like '
+     . ( ( defined $imagetype ) ? "'\%$imagetype\%'" : "'\%'" );
+   $stmt .=
+     ' and IMAGENAME like '
+     . ( ( defined $imagename ) ? "'\%$imagename\%'" : "'\%'" );
+   $stmt .= ' and NITE like ' . ( ( defined $nite ) ? "'\%$nite\%'" : "'\%'" );
+   $stmt .=
+     ' and (RUNIDDESC like ' . ( ( defined $runid ) ? "'\%$runid\%'" : "'\%'" );
+   $stmt .= ' or RUNIDDESC is null)';
+
+##print "1: $stmt\n\n\n";
+
+   if ( defined $ccd )
+   {
+      my $ccdstr = ' and CCD_NUMBER in (';
+
+      my $cnt = @numbers;
+      for my $c ( 0 .. $cnt - 1 )
+      {
+         $ccdstr .= $numbers[$c];
+         $ccdstr .= ( $c >= 0 && $c < ( $cnt - 1 ) ) ? ',' : '';
+      }
+      $stmt .= "$ccdstr)";
+   }
+
+   if ( $fromRow->{LOCATION_ID} == 1 )
+   {
+      $stmt .=
+          " and substr(archivesites,\'"
+        . ( $fromRow->{LOCATION_ID} + 1 )
+        . "\', \'"
+        . ( 12 - $fromRow->{LOCATION_ID} )
+        . "\') = \'Y\'";
+   }
+   else
+   {
+      $stmt .=
+          " and substr(archivesites,"
+        . ( $fromRow->{LOCATION_ID} - 1 )
+        . ", 1) = \'Y\'";
+   }
+   print "$stmt\n";
+
+   my $sthh = prepare_sql($stmt);
+   $sthh = execute_sql($sthh);
+
+   my $stuff = $sthh->fetchall_arrayref(
+      {
+
+         IMAGECLASS   => 1,
+         IMAGETYPE    => 1,
+         IMAGENAME    => 1,
+         NITE         => 1,
+         RUNIDDESC    => 1,
+         ARCHIVESITES => 1,
+         BAND         => 1,
+         TILENAME     => 1,
+         CCD_NUMBER   => 1
+
+      }
+   );
+
+   print "\nJUSTIFY:\n", Dumper $stuff if ( defined $debug );
+   exit;
+
+   for my $val (@ret)
+   {
+      next if ( $val !~ m!IMAGECLASS! );
+
+      my @params = split /\|/, $val;
+
+      for my $v (@params)
+      {
+         my ( $cname, $value ) = split /:/, $v;
+
+         $value =~ s/^\s+//;
+         $value =~ s/\s+$//;
+
+         $db_files{$row}{$cname} = $value;
+         $row++ if ( $cname eq "CCD_NUMBER" );
+      }
+   }
+
+   db_to_path;
+
+   if ( !defined $debug )
+   {
+      system("rm $get_sql");
+   }
+
+   for my $d (@from_dirs)
+   {
+      my @filelist = get_dir_listing( $fromRow, $d );
+
+      my @path;
+
+      my %path = parse_list(@filelist);
+
+      if ( defined $debug )
+      {
+##      print Dumper @filelist;
+      }
+
+      my @diff  = ();
+      my %count = ();
+
+      foreach my $e (@dbpath)
+      {
+         chomp $e;
+         $count{$e}{'cnt'}++;
+         $count{$e}{'sys'} = 'Database';
+      }
+      foreach my $e ( keys %path )
+      {
+         chomp $e;
+         $count{$e}{'cnt'}++;
+         $count{$e}{'sys'} = 'FileSystem';
+      }
+
+      my %db;
+      my %fs;
+      my @which;
+
+      foreach my $e ( keys %count )
+      {
+         if ( $count{$e}{'cnt'} != 2 )
+         {
+            print $count{$e}{'sys'} . ": $e\n";
+         }
+      }
+   }
+}
+
+sub get_files
+{
+   my $night = shift;
+   my $site  = shift;
+
+   print "sub get_files( $night, $site )\n" if ( defined $debug );
+
+   my @ret =
+`sqlplus pipeline/dc01user\@charon.ncsa.uiuc.edu:1521/des \@ /usr/bin/get_files.sql $night $site`;
+
+   my $row        = 1;
+   my $field      = 0;
+   my @field_name = ( 'IMAGEID', 'IMAGENAME', 'ARCHIVESITE' );
+
+   print "Results:\n", Dumper @ret if ( defined $verbose && defined $debug );
+
+   for my $val (@ret)
+   {
+      chomp $val;
+
+      if ( $val =~ m!no rows selected! )
+      {
+         print "No rows found for site: $site on night: $night\n";
+         exit 1;
+      }
+
+      next if ( $val eq '' || $val =~ m!$sqlplus_junk! );
+
+      $chk_files{$row}{ $field_name[$field] } = $val;
+
+      if ( defined $verbose && defined $debug )
+      {
+         print "VALUE: $val\n";
+         print "chk_files{$row}{$field_name[$field]} = $val\n";
+      }
+
+      if ( $field++ == @field_name - 1 )
+      {
+         $row++;
+         $field = 0;
+      }
+   }
+
+   print "get_files\n", Dumper %chk_files if ( defined $debug );
+}
+
+sub find_site
+{
+   my $site = shift;
+   my $found;
+   my $row;
+
+   foreach my $r (@$stuff)
+   {
+      print "ROW: $r  VAL: ", $r->{LOCATION_NAME}, "\n"
+        if ( defined $verbose && defined $debug );
+
+      if ( $r->{LOCATION_NAME} =~ m!$site! )
+      {
+         $found = 1;
+         $row   = $r;
+         last;
+      }
+   }
+
+   return $row if ( defined $found );
+}
+
+sub list_nodes()
+{
+   my $list_of_sites = get_archive_sites();
+
+   print "Valid Archive Sites:\n";
+
+   foreach my $site (@$list_of_sites)
+   {
+      printf "\t%-10s = %s\n", $site->{LOCATION_NAME}, $site->{ARCHIVE_HOST};
+   }
+
+   exit 0;
+}
+
+sub update_files
+{
+   my $c = shift;
+
+   $ccd_files = $c if ( defined $c );
+
+   if ( !defined $dryrun && !defined $src_dir && !defined $dest_dir )
+   {
+      my $cnt =
+`sqlplus pipeline/dc01user\@charon.ncsa.uiuc.edu:1521/des \@ /usr/bin/update.sql $toLoc $action_files $imclass_files $imtype_files $imname_files $nite_files $runid_files $tile_files $band_files $ccd_files`;
+      $cnt = `cat out.last`;
+      print "$cnt";
+   }
+
+   if ( defined $debug || defined $dryrun )
+   {
+      print
+"\npipeline/dc01user\@charon.ncsa.uiuc.edu:1521/des \@ upd_archivesites '$toLoc','$action_files','$imclass_files','$imtype_files','$imname_files','$nite_files','$runid_files','$tile_files','$band_files','$ccd_files'\n";
+   }
+}
+
+sub get_ccd()
+{
+   my @tokens = split /,/, $ccd;
+   push @tokens, $ccd unless @tokens;
+   my @ranges;
+   my $all = 0;
+
+   for my $t (@tokens)
+   {
+      if ( $t eq 'all' )
+      {
+         for ( 1 .. $all_ccds )
+         {
+            push @numbers, sprintf "%02d", $_;
+         }
+         last;
+      }
+
+      if ( ( $t =~ m!(\d+)! ) && !( $t =~ m!-! ) )
+      {
+         push @numbers, sprintf "%02d", $t;
+         next;
+      }
+
+      my ( $bottom, $top ) = $t =~ m!(\d+)-(\d+)!;
+      if ( defined $top )
+      {
+         push @ranges, { bottom => $bottom, top => $top };
+         for ( $bottom .. $top )
+         {
+            push @numbers, sprintf "%02d", $_;
+         }
+      }
+   }
+
+   print "get_ccd\n", Dumper @numbers if ( defined $debug );
+}
+
+sub create_directory
+{
+   my $row = shift;
+   my $c   = shift;
+
+   my $dir = $row->{ARCHIVE_ROOT} . '/';
+   $imclass = "raw" if ( !defined $imclass );
+   $dir .= $imclass . '/';
+
+   if ( $imclass eq 'raw' )
+   {
+      $dir .= "$nite/$imagetype";
+   }
+   elsif ( $imclass eq 'red' )
+   {
+      if ( defined $ccd )
+      {
+         $dir .= "$runid\_$nite\_$c/$nite";
+      }
+      else
+      {
+         $dir .= "$runid/$nite";
+      }
+   }
+   elsif ( $imclass eq "cal" )
+   {
+      $dir .= "$imagetype/$nite/$imagetype";
+   }
+   elsif ( $imclass eq "coadd" )
+   {
+      $dir .= "$runid";
+   }
+
+   my @dirs = split /(\/*$)/, $dir;
+   return $dirs[0];
+}
+
+sub parse_list
+{
+   my @fg = @_;
+   my $b  = 0;
+   my %AA;
+   my $l;
+   my $pos = 0;
+
+   do
+   {
+      $l = $fg[ $b++ ];
+   } until $l =~ m|SCAN_COMPLETE| || $l =~ m|VALID| || !( $fg[$b] );
+
+   while ( $l = $fg[ $b++ ] )
+   {
+      chomp $l;
+
+      next if ( $l eq '' );
+      next if ( $l =~ m!^d! );
+      my @q = split( /\ /, $l );
+      $AA{ $q[11] } = [@q];
+   }
+
+   return %AA;
+}
+
+sub verify
+{
+   my $fromRow = shift;
+   my $toRow   = shift;
+
+   my %seen2;
+   my @aonly2;
+
+   my %from = parse_list(@from_ret);
+   my %to   = parse_list(@to_ret);
+
+   if ( !(%from) && !(%to) )
+   {
+      print "Files not found on either: $fromLoc or $toLoc\n";
+      return;
+   }
+   elsif ( !(%from) )
+   {
+      print "No files found on: $fromLoc\n";
+      return;
+   }
+   elsif ( !(%to) )
+   {
+      print "No files found on: $toLoc\n";
+      return;
+   }
+
+   my $highw = ( 100 + $pdiff ) / 100;
+   my $loww  = ( 100 - $pdiff ) / 100;
+
+   foreach ( keys %from )
+   {
+      push( @aonly2, $_ ) unless exists $to{$_};
+
+## key = 'ar_copy-1181236203.properties';
+## values = [
+##     [0]     '-rw-r--r--',
+##     [1]     '',
+##     [2]     '0',
+##     [3]     'bcs',
+##     [4]     'cosmology',
+##     [5]     '',
+##     [6]     '803-6c11f74',
+##     [7]     'awr',
+##     [8]     '176',
+##     [9]     '2007/Jun/07',
+##     [10]    '17:10:03',
+##     [11]    'ar_copy-1181236203.properties'
+##           ];
+
+      if ( ( $to{$_}[8] - $from{$_}[8] != 0 ) && ( $from{$_}[8] > 0 ) )
+      {
+         ## Get % diff between file sizes on the 2 machies.
+         my $dfp = $to{$_}[8] / $from{$_}[8];
+         ## Format the value
+         my $rdfp = sprintf( "%.2f", $dfp );
+
+         ## Check to see if it is above or below water marks.
+         if ( ( $rdfp > $highw || $rdfp < $loww ) && !defined $quiet )
+         {
+            print "Problem with $_ sizes between machines:\n";
+            print "\t$fromLoc: $from{$_}[8]\n";
+            print "\t$toLoc: $to{$_}[8]\n";
+         }
+      }
+      elsif ( ( $to{$_}[8] - $from{$_}[8] != 0 ) )
+      {
+         print "Problem with $_ sizes between machines:\n";
+         print "\t$fromLoc: $from{$_}[8]\n";
+         print "\t$toLoc: $to{$_}[8]\n";
+      }
+   }
+
+   my $cnt = @aonly2;
+   print "Number of differences:  $cnt\n";
+
+   if ( @aonly2 && defined($verbose) )
+   {
+      print "Files missing on server: $toLoc\n";
+      print Dumper @aonly2;
+   }
+}
+
+sub update
+{
+   $imclass_files = $imclass   if ( defined $imclass );
+   $imtype_files  = $imagetype if ( defined $imagetype );
+   $nite_files    = $nite      if ( defined $nite );
+   $runid_files   = $runid     if ( defined $runid );
+
+   update_files;
+}
+
+sub run_stuff
+{
+   my $of = shift;
+
+   my @elfret;
+
+   print
+"\nCall ELF: $ENV{ELF_HOME}/elf -containerPath $of -bootstrapProperties $ob\n"
+     if ( defined $debug );
+
+   if ( defined $dryrun )
+   {
+      print "$of:\n\n";
+      system("cat $of");
+
+      print "\n$elf_prop:\n\n";
+      system("cat $elf_prop");
+   }
+   else
+   {
+      @elfret =
+`$ENV{ELF_HOME}/elf -containerPath $of -bootstrapProperties $ob 2>/tmp/ar_copy-err.out`;
+   }
+
+   if ( defined $debug )
+   {
+      print Dumper @elfret;
+   }
+   else
+   {
+      system("rm $of");
+      system("rm $ob");
+      system("rm $elf_prop");
+   }
+
+   return @elfret;
+}
+
+sub deal_with_fnal
+{
+   my $from = shift;
+   my $to   = shift;
+
+   print "Either get or put to FNAL\n";
+
+   if ( defined $listing || defined $delete || defined $verify )
+   {
+      print 'This operation is not yet implamented for FNAL...\n';
+      return;
+   }
+
+   if ( $to->{TRANSFER_HOST} =~ m|fnal| )
+   {
+      print "Currently, we do not allow ar_copy to write to FNAL...\n";
+      return;
+   }
+
+   my $globus_url_copy = "$ENV{GLOBUS_LOCATION}/bin/globus-url-copy";
+   my $globus_args     =
+'-recurse -verbose -tcp-buffer-size 16777216 -no-data-channel-authentication';
+   my $to_url   = "gsiftp://" . $to->{TRANSFER_HOST};
+   my $from_url = "gsiftp://" . $from->{TRANSFER_HOST};
+
+   my $cnt = @from_dirs;
+   for my $d ( 0 .. $cnt - 1 )
+   {
+      my @newTo = split /(\/*)(\w*)(\/*$)/, $to_dirs[$d];
+      my $toCut = $newTo[0];
+
+      my $sd = "$from_url/$from_dirs[$d]/";
+      my $dd = "$to_url/$to_dirs[$d]/";
+
+      my $cmd = "$globus_url_copy $globus_args $sd $dd 2>/tmp/ar_copy-err.out";
+
+      if ( defined $debug || defined $dryrun )
+      {
+         print "$cmd\n";
+      }
+
+      if ( !defined $dryrun )
+      {
+         my $ret = `$cmd`;
+         print "$ret\n";
+      }
+
+      update;
+   }
+}
+
+sub use_elf
+{
+   my $fromRow = shift;
+   my $toRow   = shift;
+
+   write_elf_prop( $fromRow, $toRow );
+
+   my $of = write_copy_xml;
+
+   run_stuff($of);
+   update;
+}
+
+sub get_dir_listing
+{
+   my $row = shift;
+   my $dir = shift;
+
+   write_elf_prop($row);
+
+   my $of = write_listing_xml( $dir, $row->{LOCATION_NAME} );
+
+###  $ENV{ELF_HOME} = "/home/bcs/elf-0.3.1/elf-0.3.1";
+   my @elfret = run_stuff($of);
+
+   return @elfret;
+}
+
+sub delete_dir
+{
+   my $toRow = shift;
+
+   write_elf_prop($toRow);
+
+   my $of = write_delete_xml;
+
+###  $ENV{ELF_HOME} = "/home/bcs/elf-0.3.1/elf-0.3.1";
+   run_stuff($of);
+
+   $toLoc        = $fromLoc;
+   $action_files = "remove";
+   update;
+}
+
+sub verify_files
+{
+   my $fromRow = shift;
+   my $toRow   = shift;
+
+###  $ENV{ELF_HOME} = "/home/bcs/elf-0.3.1/elf-0.3.1";
+   my $cnt = @from_dirs;
+
+   for my $i ( 0 .. $cnt - 1 )
+   {
+      @from_ret = get_dir_listing( $fromRow, $from_dirs[$i] );
+      @to_ret   = get_dir_listing( $toRow,   $to_dirs[$i] );
+
+      verify( $fromRow, $toRow );
+   }
+}
+
+sub main()
+{
+   print "IMCLASS:   $imclass\n"   if ( defined $imclass   && defined $debug );
+   print "NITE:      $nite\n"      if ( defined $nite      && defined $debug );
+   print "IMAGETYPE: $imagetype\n" if ( defined $imagetype && defined $debug );
+   print "RUNID:     $runid\n"     if ( defined $runid     && defined $debug );
+   print "BANE:      $band\n"      if ( defined $band      && defined $debug );
+   print "IMAGENAME: $imagename\n" if ( defined $imagename && defined $debug );
+   print "TILE:      $tile\n"      if ( defined $tile      && defined $debug );
+
+   if ( defined $imclass )
+   {
+      if ( !( $imclass =~ m/$classes/ ) )
+      {
+         print "ERROR: Wrong image class\n";
+         Pod::Usage::pod2usage(1);
+      }
+   }
+
+   if ( defined $ccd )
+   {
+      get_ccd();
+   }
+
+   get_archive_sites();
+
+   my $fromRow = find_site($fromLoc)
+     or die("Can't find FROM location: $fromLoc");
+   print "fromRow:\n", Dumper $fromRow
+     if ( defined($debug) );
+
+   if ( defined $src_dir )
+   {
+      push @from_dirs, $src_dir;
+   }
+   else
+   {
+      if ( defined $ccd && $imclass eq "red" )
+      {
+         for my $c (@numbers)
+         {
+            push @from_dirs, create_directory( $fromRow, $c );
+         }
+      }
+      else
+      {
+         push @from_dirs, create_directory($fromRow);
+      }
+   }
+
+   if ( defined($listing) )
+   {
+      for my $d (@from_dirs)
+      {
+         print get_dir_listing( $fromRow, $d );
+      }
+      exit 0;
+   }
+
+   if ( defined $delete )
+   {
+      delete_dir($fromRow);
+      exit 0;
+   }
+
+   if ( defined $justify )
+   {
+      justify_files($fromRow);
+      exit 0;
+   }
+
+   my $toRow = find_site($toLoc)
+     or die("Can't find TO location: $toLoc");
+   print "toRow    :\n", Dumper $toRow if ( defined($debug) );
+
+   if ( defined $dest_dir )
+   {
+      push @to_dirs, $dest_dir;
+   }
+   else
+   {
+      if ( defined $ccd && $imclass eq "red" )
+      {
+         for my $c (@numbers)
+         {
+            push @to_dirs, create_directory( $toRow, $c );
+         }
+      }
+      else
+      {
+         push @to_dirs, create_directory($toRow);
+      }
+   }
+
+   if ( defined $verify )
+   {
+      verify_files( $fromRow, $toRow );
+      exit 0;
+   }
+
+##  get_files($nite, $stuff{$fromRow}{"LOCATION_NAME"}) if( defined($nite) );
+
+   if ( ( $fromLoc =~ m/fnal/ ) || ( $toLoc =~ m/fnal/ ) )
+   {
+      deal_with_fnal( $fromRow, $toRow );
+   }
+   else
+   {
+      use_elf( $fromRow, $toRow );
+   }
+}
+
+###############################################################################
+##
+## Initial Stuff.
+##
+###############################################################################
+
+if ( !defined $ENV{DB_USER} )
+{
+   $ENV{DB_USER} = 'pipeline';
+}
+##$ENV{DB_PASSWD};
+if ( !defined $ENV{DB_PASSWD} )
+{
+   $ENV{DB_PASSWD} = 'dc01user';
+}
+##$ENV{DB_SERVER};
+if ( !defined $ENV{DB_SERVER} )
+{
+   $ENV{DB_SERVER} = 'charon.ncsa.uiuc.edu';
+}
+##$ENV{DB_NAME};
+if ( !defined $ENV{DB_NAME} )
+{
+   $ENV{DB_NAME} = 'des';
+}
+
+$dbh =
+  DBI->connect( "dbi:Oracle:host=$ENV{DB_SERVER};port=1521;sid=$ENV{DB_NAME}",
+   $ENV{DB_USER}, $ENV{DB_PASSWD}, \%attr )
+  or die "Connect to database failed: ", $DBI::errstr, "\n";
+
+if ( !defined $pdiff )
+{
+   $pdiff = 10;
+}
+
+list_nodes() if ( defined($list) );
+
+if (  ( !defined $ARGV[0] || !defined $ARGV[1] )
+   && !defined $listing
+   && !defined $delete
+   && !defined $justify )
+{
+   print "ERROR: need source node and destination node.\n";
+   Pod::Usage::pod2usage(0);
+}
+
+if (  ( defined $verify && defined $delete )
+   && ( defined $verify  && defined $listing )
+   && ( defined $listing && defined $delete ) )
+{
+   print "ERROR: verify, delete, and dir are mutually exclusive.\n";
+   Pod::Usage::pod2usage(0);
+}
+
+$fromLoc = $ARGV[0] if ( defined $ARGV[0] );
+$toLoc   = $ARGV[1] if ( defined $ARGV[1] );
+
+$ENV{ELF_HOME} = "/home/bcs/elf-0.3.5/elf-0.3.5";
+##$ENV{ELF_HOME} = "/home/bcs/elf-0.5.1/elf-0.5.1";
+
+main();
+
+=head1 NAME
+
+
+B<ar_copy> - Copies DES data files from one archive to another.
+
+
+=head1 SYNOPSIS
+
+
+B<ar_copy> [options] <fromnode> <tonode>
+
+
+  Options:
+     -verbose,       -v    Print copious output
+     -debug,         -d    Print copious output
+     -help,          -?    Print usage
+     -man                  Print man page.
+
+     -list,          -l    List the valid server names
+     -dryrun               Does not run the task only displys ELF xml and
+                           properties files
+     -dir                  Lists the contents of the selected directory
+     -verify               Verifies that everything from the source has been
+                           moved to the desination
+     -quiet                Do not output file data when doing -verify
+     -justify              Compares a specified archive nodes data to the
+                           database and reports discrepensies.
+     -delete               Remove the directory and all its contents.
+
+
+     -imclass=CLASS, -i    The class of the object:
+                           CLASS = [raw, red, coadd, cal]
+     -nite=NIGHT,    -n    is a tag like bcs051124 or des20061014 that is
+                           associated with a collection of data acquired on
+                           a particular night
+     -imagetype,     -t    an attribute that can be one of the
+                           following: src, object, bias, flat, raw, reduced,
+                           coadd, catalog
+     -runid,         -r    is the identifier associated with a particular
+                           processing job.  An example is BCS20061019_bcs051124
+                           (which is the processing job associated with nite
+                           bcs051124 that took place on Oct 19, 2006)
+     -ccd,           -c    is the ccd number or range (1,2 or 1-2, or all)
+     -offset=<%>           Specifies the percent difference in file sizes when
+                           doing a verify.
+
+=head1 EXAMPLES
+
+  ar_copy -imclass red -runid DES20061117_des20061007 -ccd 1 gpfs-wan mercury
+  ar_copy -dryrun -imclass red -runid DES20061117_des20061007 -ccd 1 \
+  gpfs-wan mercury
+  ar_copy -l
+  ar_copy -debug -imclass red -runid DES20061117_des20061007 -ccd 1 \
+  gpfs-wan mercury
+  ar_copy -verify -imclass red -runid DES20061117_des20061007 -ccd 1 \
+  gpfs-wan mercury
+  ar_copy -dir -imclass red -runid DES20061117_des20061007 -ccd 1 gpfs-wan
+  ar_copy -delete -imclass red -runid DES20061117_des20061007 -ccd 1 gpfs-wan
+=cut
+
+
+

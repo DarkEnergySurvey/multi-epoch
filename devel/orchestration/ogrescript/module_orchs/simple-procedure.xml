@@ -1,0 +1,9 @@
+<define procedure="p0" ARG_0="int" ARG_1="long" ARG_2="object"
+                                                RET_0="int" RET_1="long" RET_2="any">
+        <echo message="ARG_0 = ${ARG_0}"/>
+        <echo message="ARG_1 = ${ARG_1}"/>
+        <echo message="ARG_2 = ${ARG_2}"/>
+        <assign name="RET_0" int="${ARG_0}"/>
+        <assign name="RET_1" long="${ARG_1}"/>
+        <assign name="RET_2" object="${ARG_2}"/>
+</define>

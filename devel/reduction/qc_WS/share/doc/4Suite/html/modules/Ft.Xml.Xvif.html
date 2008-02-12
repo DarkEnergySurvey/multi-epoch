@@ -1,0 +1,81 @@
+<html>
+  <head>
+    <meta content="text/html; charset=iso-8859-1" http-equiv="Content-Type">
+    <title>4Suite API Documentation: Ft.Xml.Xvif</title>
+    <link href="modules.css" type="text/css" rel="stylesheet">
+  </head>
+  <body>
+    <div class="universal-header"><span class="universal-header-prefix">&nbsp;&nbsp;&nbsp;</span>&nbsp;<span class="universal-header-prefix">&nbsp;&nbsp;</span>&nbsp;<span class="universal-header-prefix">&nbsp;</span>&nbsp;<a href="../index.html">4Suite<sup>&trade;</sup> API Documentation</a></div>
+    <h1><span class="glyph-arrow">&#9658;</span> Module <span class="this-name"><a href="Ft.html" title="Ft">Ft</a>.<a href="Ft.Xml.html" title="Ft.Xml">Xml</a>.Xvif</span></h1>
+    <div class="abstract">XVIF integration for 4Suite.  Includes basic RELAX NG support</div>
+    <pre class="description">Copyright 2006 Fourthought, Inc. (USA).
+Detailed license and copyright information: http://4suite.org/COPYRIGHT
+Project home, documentation, distributions: http://4suite.org/</pre>
+    <div class="summary-section">
+      <table cellpadding="0" cellspacing="0">
+        <tbody>
+          <tr>
+            <td valign="top">
+              <div class="summary-header">Classes:</div>
+              <div class="summary-list"><span class="class-name"><a href="#RelaxNgValidator">RelaxNgValidator</a></span>, <span class="class-name"><a href="#RngInvalid">RngInvalid</a></span></div>
+            </td>
+            <td width="7" valign="middle"></td>
+            <td bgcolor="#C5C5C5" valign="middle" width="1"></td>
+            <td width="7" valign="middle"></td>
+            <td valign="top">
+              <div class="summary-header">Globals:</div>
+              <div class="summary-list"><span class="global-name"><a href="#NonvalidatingReader">NonvalidatingReader</a></span></div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="section">
+      <h2>Classes</h2>
+      <dl class="classes">
+        <dt class="classdef"><a name="RelaxNgValidator"></a>class <span class="class-name">RelaxNgValidator</span></dt>
+        <dd class="classdesc">
+          <div class="abstract">A class providing RELAX NG support</div>
+          <h3>Methods</h3>
+          <dl class="methods">
+            <dt class="methoddef"><a name="RelaxNgValidator-__init__"><span class="method-name">__init__</span></a>(<span class="argument-name">self</span>, <span class="argument-name">isrc_or_domlette</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dt class="methoddef"><a name="RelaxNgValidator-isValid"><span class="method-name">isValid</span></a>(<span class="argument-name">self</span>, <span class="argument-name">isrc</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dt class="methoddef"><a name="RelaxNgValidator-isValidNode"><span class="method-name">isValidNode</span></a>(<span class="argument-name">self</span>, <span class="argument-name">node</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dt class="methoddef"><a name="RelaxNgValidator-validate"><span class="method-name">validate</span></a>(<span class="argument-name">self</span>, <span class="argument-name">isrc</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dt class="methoddef"><a name="RelaxNgValidator-validateNode"><span class="method-name">validateNode</span></a>(<span class="argument-name">self</span>, <span class="argument-name">node</span>)</dt>
+            <dd class="methoddesc"></dd>
+          </dl>
+        </dd>
+        <dt class="classdef"><a name="RngInvalid"></a>class <span class="class-name">RngInvalid</span><span class="bases">(<span class="class-name"><span class="undocumented">Exception</span></span>)</span></dt>
+        <dd class="classdesc">
+          <h3>Methods</h3>
+          <dl class="methods">
+            <dt class="methoddef"><a name="RngInvalid-__init__"><span class="method-name">__init__</span></a>(<span class="argument-name">self</span>, <span class="argument-name">rngResult</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dd class="overrides"><b>Overrides: </b><span class="inherited-name">__init__</span> from class <span class="class-name"><span class="undocumented">Exception</span></span></dd>
+          </dl>
+          <h3>Methods inherited from class <span class="undocumented">Exception</span></h3>
+          <div class="inherited"><span class="inherited-name">__getitem__</span>, <span class="inherited-name">__str__</span></div>
+        </dd>
+      </dl>
+    </div>
+    <div class="section">
+      <h2>Globals</h2>
+      <dl class="globals">
+        <dt class="globaldef"><a name="NonvalidatingReader"><span class="global-name">NonvalidatingReader</span></a> = &lt;Ft.Xml.Domlette.NonvalidatingReaderBase instance&gt;</dt>
+        <dd class="globaldesc">
+          <div class="abstract">The default non-validating reader instance, created from
+NonvalidatingReaderBase() with no constructor arguments.</div>
+          <pre class="description">Uses the default InputSource factory. If you need to change it,
+reassign the inputSourceFactory attribute, or, preferably, just
+create a new NonvalidatingReaderBase instance.</pre>
+        </dd>
+      </dl>
+    </div>
+    <div class="universal-footer">Last modified on 2006-04-28 13:54:49</div>
+  </body>
+</html>

@@ -1,0 +1,173 @@
+<html>
+  <head>
+    <meta content="text/html; charset=iso-8859-1" http-equiv="Content-Type">
+    <title>4Suite API Documentation: Ft.Lib.TestSuite.Tester</title>
+    <link href="modules.css" type="text/css" rel="stylesheet">
+  </head>
+  <body>
+    <div class="universal-header"><span class="universal-header-prefix">&nbsp;&nbsp;&nbsp;</span>&nbsp;<span class="universal-header-prefix">&nbsp;&nbsp;</span>&nbsp;<span class="universal-header-prefix">&nbsp;</span>&nbsp;<a href="../index.html">4Suite<sup>&trade;</sup> API Documentation</a></div>
+    <h1><span class="glyph-arrow">&#9658;</span> Module <span class="this-name"><a href="Ft.html" title="Ft">Ft</a>.<a href="Ft.Lib.html" title="Ft.Lib">Lib</a>.<a href="Ft.Lib.TestSuite.html" title="Ft.Lib.TestSuite">TestSuite</a>.Tester</span></h1>
+    <div class="abstract">Provides the Tester class, which is the hub for all testing.</div>
+    <pre class="description">Copyright 2004 Fourthought, Inc. (USA).
+Detailed license and copyright information: http://4suite.org/COPYRIGHT
+Project home, documentation, distributions: http://4suite.org/</pre>
+    <div class="summary-section">
+      <table cellpadding="0" cellspacing="0">
+        <tbody>
+          <tr>
+            <td valign="top">
+              <div class="summary-header">Classes:</div>
+              <div class="summary-list"><span class="class-name"><a href="#TestItem">TestItem</a></span>, <span class="class-name"><a href="#Tester">Tester</a></span></div>
+            </td>
+            <td width="7" valign="middle"></td>
+            <td bgcolor="#C5C5C5" valign="middle" width="1"></td>
+            <td width="7" valign="middle"></td>
+            <td valign="top">
+              <div class="summary-header">Functions:</div>
+              <div class="summary-list"><span class="function-name"><a href="#extract_stack">extract_stack</a></span>, <span class="function-name"><a href="#format_stack">format_stack</a></span></div>
+            </td>
+            <td width="7" valign="middle"></td>
+            <td bgcolor="#C5C5C5" valign="middle" width="1"></td>
+            <td width="7" valign="middle"></td>
+            <td valign="top">
+              <div class="summary-header">Globals:</div>
+              <div class="summary-list"><span class="global-name"><a href="#SHOW_GROUPS">SHOW_GROUPS</a></span>, <span class="global-name"><a href="#SHOW_TESTS">SHOW_TESTS</a></span>, <span class="global-name"><a href="#VERBOSE_DEBUG">VERBOSE_DEBUG</a></span>, <span class="global-name"><a href="#VERBOSE_ERROR">VERBOSE_ERROR</a></span>, <span class="global-name"><a href="#VERBOSE_MSG">VERBOSE_MSG</a></span>, <span class="global-name"><a href="#VERBOSE_OFF">VERBOSE_OFF</a></span>, <span class="global-name"><a href="#VERBOSE_WARN">VERBOSE_WARN</a></span></div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="section">
+      <h2>Classes</h2>
+      <dl class="classes">
+        <dt class="classdef"><a name="TestItem"></a>class <span class="class-name">TestItem</span></dt>
+        <dd class="classdesc">
+          <h3>Methods</h3>
+          <dl class="methods">
+            <dt class="methoddef"><a name="TestItem-__init__"><span class="method-name">__init__</span></a>(<span class="argument-name">self</span>, <span class="argument-name">title</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dt class="methoddef"><a name="TestItem-__repr__"><span class="method-name">__repr__</span></a>(<span class="argument-name">self</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dt class="methoddef"><a name="TestItem-debug"><span class="method-name">debug</span></a>(<span class="argument-name">self</span>, <span class="argument-name">msg</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dt class="methoddef"><a name="TestItem-error"><span class="method-name">error</span></a>(<span class="argument-name">self</span>, <span class="argument-name">msg</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dt class="methoddef"><a name="TestItem-finish"><span class="method-name">finish</span></a>(<span class="argument-name">self</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dt class="methoddef"><a name="TestItem-message"><span class="method-name">message</span></a>(<span class="argument-name">self</span>, <span class="argument-name">msg</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dt class="methoddef"><a name="TestItem-warning"><span class="method-name">warning</span></a>(<span class="argument-name">self</span>, <span class="argument-name">msg</span>)</dt>
+            <dd class="methoddesc"></dd>
+          </dl>
+        </dd>
+        <dt class="classdef"><a name="Tester"></a>class <span class="class-name">Tester</span></dt>
+        <dd class="classdesc">
+          <h3>Methods</h3>
+          <dl class="methods">
+            <dt class="methoddef"><a name="Tester-__init__"><span class="method-name">__init__</span></a>(<span class="argument-name">self</span>, <span class="argument-name">stopOnError</span><span class="argument-default">=1</span>, <span class="argument-name">useColor</span><span class="argument-default">=1</span>, <span class="argument-name">verbose</span><span class="argument-default">=4</span>, <span class="argument-name">stream</span><span class="argument-default">=&lt;open file '&lt;stdout&gt;', mode 'w' at 0xb7d98068&gt;</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dt class="methoddef"><a name="Tester-compare"><span class="method-name">compare</span></a>(<span class="argument-name">self</span>, <span class="argument-name">expected</span>, <span class="argument-name">actual</span>, <span class="argument-name">msg</span><span class="argument-default">=None</span>, <span class="argument-name">func</span><span class="argument-default">=&lt;built-in function cmp&gt;</span>, <span class="argument-name">diff</span><span class="argument-default">=0</span>, <span class="argument-name">stackLevel</span><span class="argument-default">=1</span>, <span class="argument-name">funcArgs</span><span class="argument-default">={}</span>)</dt>
+            <dd class="methoddesc">
+              <div class="abstract">Uses func to compare the expected result with actual result
+of a regression test.</div>
+              <pre class="description">diff is ignored.
+
+msg is an optional custom message to print if the
+comparison tests positive (i.e. the results differ).
+
+func is the comparison function to use, and must be a
+function that returns the same as the built-in cmp().
+
+stackLevel affects exception reporting.
+
+funcArgs is an optional dictionary of keyword arguments that
+will be passed to the comparison function, if the dictionary
+is not empty.</pre>
+            </dd>
+            <dt class="methoddef"><a name="Tester-compareIn"><span class="method-name">compareIn</span></a>(<span class="argument-name">self</span>, <span class="argument-name">expected</span>, <span class="argument-name">actual</span>, <span class="argument-name">msg</span><span class="argument-default">=None</span>, <span class="argument-name">stackLevel</span><span class="argument-default">=1</span>)</dt>
+            <dd class="methoddesc">
+              <div class="abstract">Test that 'actual' is in 'expected'</div>
+            </dd>
+            <dt class="methoddef"><a name="Tester-debug"><span class="method-name">debug</span></a>(<span class="argument-name">self</span>, <span class="argument-name">msg</span>)</dt>
+            <dd class="methoddesc">
+              <div class="abstract">debug-level messages</div>
+            </dd>
+            <dt class="methoddef"><a name="Tester-error"><span class="method-name">error</span></a>(<span class="argument-name">self</span>, <span class="argument-name">msg</span>, <span class="argument-name">traceLimit</span><span class="argument-default">=1</span>, <span class="argument-name">stackLevel</span><span class="argument-default">=1</span>)</dt>
+            <dd class="methoddesc">
+              <div class="abstract">error conditions</div>
+            </dd>
+            <dt class="methoddef"><a name="Tester-exception"><span class="method-name">exception</span></a>(<span class="argument-name">self</span>, <span class="argument-name">msg</span>)</dt>
+            <dd class="methoddesc">
+              <div class="abstract">system is unusable</div>
+            </dd>
+            <dt class="methoddef"><a name="Tester-groupDone"><span class="method-name">groupDone</span></a>(<span class="argument-name">self</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dt class="methoddef"><a name="Tester-message"><span class="method-name">message</span></a>(<span class="argument-name">self</span>, <span class="argument-name">msg</span>)</dt>
+            <dd class="methoddesc">
+              <div class="abstract">informational</div>
+            </dd>
+            <dt class="methoddef"><a name="Tester-report"><span class="method-name">report</span></a>(<span class="argument-name">self</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dt class="methoddef"><a name="Tester-startGroup"><span class="method-name">startGroup</span></a>(<span class="argument-name">self</span>, <span class="argument-name">title</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dt class="methoddef"><a name="Tester-startTest"><span class="method-name">startTest</span></a>(<span class="argument-name">self</span>, <span class="argument-name">title</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dt class="methoddef"><a name="Tester-testDone"><span class="method-name">testDone</span></a>(<span class="argument-name">self</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dt class="methoddef"><a name="Tester-testException"><span class="method-name">testException</span></a>(<span class="argument-name">self</span>, <span class="argument-name">func</span>, <span class="argument-name">args</span>, <span class="argument-name">etype</span>, <span class="argument-name">value</span><span class="argument-default">={}</span>, <span class="argument-name">stackLevel</span><span class="argument-default">=1</span>, <span class="argument-name">kwargs</span><span class="argument-default">={}</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dt class="methoddef"><a name="Tester-warning"><span class="method-name">warning</span></a>(<span class="argument-name">self</span>, <span class="argument-name">msg</span>)</dt>
+            <dd class="methoddesc">
+              <div class="abstract">warning conditions</div>
+            </dd>
+            <dt class="methoddef"><a name="Tester-writeline"><span class="method-name">writeline</span></a>(<span class="argument-name">self</span>, <span class="argument-name">level</span>, <span class="argument-name">msg</span>)</dt>
+            <dd class="methoddesc"></dd>
+          </dl>
+          <h3>Members</h3>
+          <dl class="members">
+            <dt class="memberdef"><a name="BROWN"><span class="member-name">BROWN</span></a> = '\x1b[33m'</dt>
+            <dt class="memberdef"><a name="GRAY"><span class="member-name">GRAY</span></a> = '\x1b[1;30m'</dt>
+            <dt class="memberdef"><a name="GREEN"><span class="member-name">GREEN</span></a> = '\x1b[1;32m'</dt>
+            <dt class="memberdef"><a name="NORMAL"><span class="member-name">NORMAL</span></a> = '\x1b[0m'</dt>
+            <dt class="memberdef"><a name="RED"><span class="member-name">RED</span></a> = '\x1b[1;31m'</dt>
+            <dt class="memberdef"><a name="WHITE"><span class="member-name">WHITE</span></a> = '\x1b[1;37m'</dt>
+            <dt class="memberdef"><a name="YELLOW"><span class="member-name">YELLOW</span></a> = '\x1b[1;33m'</dt>
+            <dt class="memberdef"><a name="double_sep"><span class="member-name">double_sep</span></a> = '========================================================================'</dt>
+            <dt class="memberdef"><a name="single_sep"><span class="member-name">single_sep</span></a> = '------------------------------------------------------------------------'</dt>
+          </dl>
+        </dd>
+      </dl>
+    </div>
+    <div class="section">
+      <h2>Functions</h2>
+      <dl class="functions">
+        <dt class="functiondef"><a name="extract_stack"><span class="function-name">extract_stack</span></a>(<span class="argument-name">frame</span><span class="argument-default">=None</span>, <span class="argument-name">limit</span><span class="argument-default">=None</span>)</dt>
+        <dd class="functiondesc"></dd>
+        <dt class="functiondef"><a name="format_stack"><span class="function-name">format_stack</span></a>(<span class="argument-name">frame</span><span class="argument-default">=None</span>, <span class="argument-name">limit</span><span class="argument-default">=None</span>)</dt>
+        <dd class="functiondesc">
+          <div class="abstract">Shorthand for 'format_list(extract_stack(f, limit))'.</div>
+        </dd>
+      </dl>
+    </div>
+    <div class="section">
+      <h2>Globals</h2>
+      <dl class="globals">
+        <dt class="globaldef"><a name="SHOW_GROUPS"><span class="global-name">SHOW_GROUPS</span></a> = 1</dt>
+        <dd class="globaldesc"></dd>
+        <dt class="globaldef"><a name="SHOW_TESTS"><span class="global-name">SHOW_TESTS</span></a> = 3</dt>
+        <dd class="globaldesc"></dd>
+        <dt class="globaldef"><a name="VERBOSE_DEBUG"><span class="global-name">VERBOSE_DEBUG</span></a> = 4</dt>
+        <dd class="globaldesc"></dd>
+        <dt class="globaldef"><a name="VERBOSE_ERROR"><span class="global-name">VERBOSE_ERROR</span></a> = 1</dt>
+        <dd class="globaldesc"></dd>
+        <dt class="globaldef"><a name="VERBOSE_MSG"><span class="global-name">VERBOSE_MSG</span></a> = 3</dt>
+        <dd class="globaldesc"></dd>
+        <dt class="globaldef"><a name="VERBOSE_OFF"><span class="global-name">VERBOSE_OFF</span></a> = 0</dt>
+        <dd class="globaldesc"></dd>
+        <dt class="globaldef"><a name="VERBOSE_WARN"><span class="global-name">VERBOSE_WARN</span></a> = 2</dt>
+        <dd class="globaldesc"></dd>
+      </dl>
+    </div>
+    <div class="universal-footer">Last modified on 2004-11-18 16:36:17</div>
+  </body>
+</html>

@@ -1,0 +1,299 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+  <head>
+    <meta content="text/html; charset=iso-8859-1" http-equiv="Content-Type">
+    <title>Installing 4Suite&trade; on Windows</title>
+    <meta content="Shatin Rai" name="author">
+    <meta content="4Suite is a platform for XML and RDF application development. This document gives step-by step instructions for installing 4Suite on a Microsoft Windows system such as Windows XP. It does not cover Cygwin installation." name="description">
+    <meta content="4Suite, Python, CVS, HOWTO, install, Windows, Windows 2000, Windows XP, Windows Server 2003" name="keywords">
+    <link href="sdocbook_html.css" type="text/css" rel="stylesheet">
+  </head>
+  <body>
+    <div class="article">
+      <div class="article-title">
+        <h1 class="title">Installing <span class="trademark">4Suite<sup class="trademark">&trade;</sup></span> on Windows</h1>
+      </div>
+      <div class="header">
+        <dl>
+          <dt>This version:</dt>
+          <dd>Revision 0.8 (2005-12-08)</dd>
+          <dt>Principal author: </dt>
+          <dd><span class="author"><span class="firstname">Shatin</span> <span class="surname">Rai</span> <span class="orgname">(Fourthought, Inc.)</span></span></dd>
+          <dt>Additional contributors: </dt>
+          <dd><span class="othercredit"><span class="firstname">Uche</span> <span class="surname">Ogbuji</span> <span class="orgname">(Fourthought, Inc.)</span></span></dd>
+          <dd><span class="othercredit"><span class="firstname">Mike</span> <span class="surname">Brown</span> <span class="orgname">(Fourthought, Inc.)</span></span></dd>
+        </dl>
+        <div class="legalnotice">
+          <h2 class="title">Legal Notice</h2>
+          <p>This document can be freely translated and distributed. It's released under the <a href="http://www.linuxdoc.org/manifesto.html">LDP License</a>.</p>
+        </div>
+        <div class="abstract">
+          <h2>Abstract</h2>
+          <p><span class="trademark">4Suite<sup class="trademark">&trade;</sup></span> is a platform for XML and RDF application development. This document gives step-by step instructions for installing 4Suite on a Microsoft Windows system such as Windows XP. It does not cover Cygwin installation.</p>
+        </div>
+      </div>
+      <hr>
+      <div class="toc">
+        <h2>Table Of Contents</h2>
+        <p style="display: inline; padding-left: 1em">1 <a href="#id183014627920">Introduction and conventions</a>
+          <br>
+        </p>
+        <p style="display: inline; padding-left: 1em">2 <a href="#id183014628944">Quick Installation Steps</a>
+          <br>
+        </p>
+        <p style="display: inline; padding-left: 1em">3 <a href="#id183014331984">CVS: bleeding-edge 4Suite</a>
+          <br>
+        </p>
+        <p style="display: inline; padding-left: 1em">4 <a href="#id183014333904">Detailed Installation Guide</a>
+          <br>
+        </p>
+        <p style="display: inline; padding-left: 2em">4.1 <a href="#Python">Python</a>
+          <br>
+        </p>
+        <p style="display: inline; padding-left: 2em">4.2 <a href="#_4Suite">4Suite</a>
+          <br>
+        </p>
+        <p style="display: inline; padding-left: 3em">4.2.1 <a href="#id183016921808">4Suite installation using the installer .exe</a>
+          <br>
+        </p>
+        <p style="display: inline; padding-left: 2em">4.3 <a href="#Final_Step">Final Step</a>
+          <br>
+        </p>
+        <p style="display: inline; padding-left: 2em">4.4 <a href="#id183017306576">Tests and Further Setup</a>
+          <br>
+        </p>
+        <p style="display: inline; padding-left: 1em">5 <a href="#id183017103568">Resources</a>
+          <br>
+        </p>
+        <p style="display: inline; padding-left: 2em">5.1 <a href="#id183017103824">4Suite @ SourceForge</a>
+          <br>
+        </p>
+        <p style="display: inline; padding-left: 2em">5.2 <a href="#id183017104336">Additional Links</a>
+          <br>
+        </p>
+        <p style="display: inline; padding-left: 1em">6 <a href="#PyXML">Appendix A: Notes on PyXML and 4Suite</a>
+          <br>
+        </p>
+      </div>
+      <hr>
+      <div class="body">
+        <div class="section"><a name="id183014627920"></a>
+          <div class="section-title">
+            <h1 class="title"><span class="section-number">1 </span>Introduction and conventions</h1>
+          </div>
+          <p>These instructions were originally written for Windows 98 release 2, and have been tested successfully on Windows 2000 and Windows XP. They should also work on Windows 95, Windows ME, and Windows NT with few, if any, modifications. The 4Suite developers no longer test 4Suite on any Windows platform other than Windows 2000 and Windows XP.</p>
+          <div class="note"><span class="label">Cygwin is not Windows</span>
+            <p>These instructions are for installing 4Suite fully in Windows, as an application that uses modules from a native Windows build of Python. If you instead want to use 4Suite as a Cygwin application, you must refer to separate instructions for installing Python and 4Suite under Cygwin.</p>
+          </div>
+          <p>Some instructions require the user to modify their shell environment. On a Windows 98 or ME system, you will want to make these permanent by editing the autoexec.bat file. Possible things to add will be mentioned when appropriate.</p>
+          <p>Sometimes there will be a great deal of output from an instruction. If there is nothing of particular interest in the output, it will be omitted and replaced with the text "SNIP".</p>
+        </div>
+        <div class="section"><a name="id183014628944"></a>
+          <div class="section-title">
+            <h1 class="title"><span class="section-number">2 </span>Quick Installation Steps</h1>
+          </div>
+          <p>The Detailed Installation Guide sections that follow this section will further explain these steps.</p>
+          <ol style="list-style-type: decimal; list-style-position: outside;">
+            <li>
+              <p><em class="emphasis">Install Python 2.2.1 or higher</em></p>
+              <p>Although you can install versions of Python obtained from other places, the 4Suite installer for WIndows requires that you install the appropriate version of Python from the official distributions available at <a href="http://www.python.org/download/">python.org</a>. The self-installing .exe that you get from there will create the entries in the Windows Registry that are necessary for 4Suite's installer to work properly.</p>
+            </li>
+            <li>
+              <p><em class="emphasis">Install 4Suite</em></p>
+              <p>Download the latest 4Suite installer for Windows from <a href="ftp://ftp.4suite.org/pub/4Suite/">ftp://ftp.4suite.org/pub/4Suite/</a>. Note there are separate installers for use with each version of Python.</p>
+              <p>Save the file somewhere on your hard drive, and run it. It works like almost any other application installer.</p>
+            </li>
+          </ol>
+        </div>
+        <div class="section"><a name="id183014331984"></a>
+          <div class="section-title">
+            <h1 class="title"><span class="section-number">3 </span>CVS: bleeding-edge 4Suite</h1>
+          </div>
+          <p>If you need up-to-the-minute features or fixes for 4Suite, you can install the latest version from the developers' CVS repository. It should be considered an unstable work-in-progress preview of the next official release; it is not recommended for ordinary users.</p>
+          <p>As a further complication, in order to build the development version, you'll need an ANSI/ISO C compiler, such as Microsoft Visual C (the same version used to build Python's C libraries) or Cygwin's mingw32. Refer to separate instructions for how to configure the 4Suite build under compilers other than Microsoft Visual C.</p>
+          <ol style="list-style-type: decimal; list-style-position: outside;">
+            <li>
+              <p><em class="emphasis">4Suite CVS snapshots</em></p>
+              <p>CVS snapshots are a way to get bug fixes and experimental new features between full releases of the software. They are tarballs and zipfiles generated from Fourthought's internal CVS repository nightly.</p>
+            </li>
+            <li>
+              <p><em class="emphasis">4Suite anonymous CVS</em></p>
+              <p>If you want to keep closer track of the 4Suite development, you can use anonymous CVS (pserver). The main advantage of this approach is that you can get fixes quite easily when checked in by the developers, and keeping up-to-date afterward is easy. The main disadvantage is that you can also pick up bugs that the developers sometimes accidentally check in.</p>
+              <p>For more information about 4Suite CVS, refer to the <a href="../4SuiteCVS.xml">Obtaining 4Suite with CVS</a> documentation.</p>
+            </li>
+          </ol>
+        </div>
+        <div class="section"><a name="id183014333904"></a>
+          <div class="section-title">
+            <h1 class="title"><span class="section-number">4 </span>Detailed Installation Guide</h1>
+          </div>
+          <div class="section" id="Python"><a name="Python"></a>
+            <div>
+              <h2 class="title"><span class="section-number">4.1 </span>Python</h2>
+            </div>
+            <p>4Suite is written mostly in Python: a mature, robust, efficient programming language well-suited to object-oriented programming, functional programming, and procedural tasks of any complexity. In the few cases where Python is not sufficiently speedy, certain 4Suite components are implemented in C. The C components are distributed for Windows as compiled DLLs, so you do not need to have a C compiler in order to install and use 4Suite. You do, however, need an appropriate version of Python on your system.</p>
+            <p>Specifically, <strong class="emphasis">Python 2.2.1 or higher is required for 4Suite.</strong> You can also have other versions of Python installed alongside the one you need for 4Suite, as long as when you use 4Suite's Python API, you be sure to load the modules with the interpreter that they were built for.</p>
+            <p>If you need to install Python, then download the appropriate Python installer .exe from <a href="http://www.python.org/download/">python.org</a>.</p>
+            <ol style="list-style-type: decimal; list-style-position: outside;">
+              <li>
+                <p>Double click on the downloaded file. A confirmation screen will appear to make sure that you do want to install Python. Click "next".</p>
+              </li>
+              <li>
+                <p>The next screen will be to pick the destination directory. Preferably, just use the default. You are free to install to any location you choose, but if you do install to a nonstandard location, keep in mind where it is, and adjust all paths in these instructions accordingly.</p>
+              </li>
+              <li>
+                <p>The component selection screen is where you decide what pieces of Python to install. Preferably, just leave them all selected. You may, however, trim them as space requires; the only one that is absolutely necessary is "Python interpreter and library".</p>
+              </li>
+              <li>
+                <p>Start Menu Group is where you name this installation in your start menu. Again, the default is preferable, but it really doesn't matter.</p>
+              </li>
+              <li>
+                <p>Lastly, a confirmation window will appear. If all looks correct press the "next" button to begin the installation.</p>
+              </li>
+              <li>
+                <p>If all goes well, you will get an "Installation Complete" screen. Click the finish button when you are done. Of course you will be prompted to reboot, but for now, press "Cancel"; you can reboot later.</p>
+              </li>
+            </ol>
+            <ol style="list-style-type: decimal; list-style-position: outside;">
+              <li>
+                <p>Now you need to make it so that you can run the Python interpreter and the 4Suite tools from the command line. This requires changing the PATH environment variable.</p>
+                <p>If you installed Python 2.3, add <tt class="computeroutput">C:\Python23;C:\Python23\Scripts</tt> to the path. <strong class="emphasis">In any case, be sure that other versions of Python don't come first in the path.</strong> Also note that any changes you make won't affect command shell windows that are already open.</p>
+                <ul style="list-style-type: disc; list-style-position: inside;" class="compact">
+                  <li style="margin-top: 0; margin-bottom: 0">
+                    <p>If on Windows 98 or Windows ME, you should modify your <tt class="computeroutput">autoexec.bat</tt> script, which gets run automatically at boot time. Add <tt class="computeroutput">set path=C:\Python23;C:\Python23\Scripts;%path%</tt> to the bottom of the file.</p>
+                  </li>
+                  <li style="margin-top: 0; margin-bottom: 0">
+                    <p>If on Windows NT, Windows 2000 or Windows XP, you should set the environment in the System Properties. Either right-click on your computer's icon on the desktop and pick "Properties", or navigate through the Start Menu to Control Panels and then to System. There are slight variations from version to version of Windows, but somewhere in the system properties window, perhaps on the "advanced" tab, there will be an "environment variables" button. Click the button so that you can modify the environment variables.</p>
+                  </li>
+                </ul>
+              </li>
+              <li>
+                <p>Now you may reboot your machine.</p>
+              </li>
+            </ol>
+            <p><strong class="emphasis">Test the installation</strong></p>
+            <p>When the machine is back up, test that Python is working by opening a command/DOS shell window. Then type <tt class="computeroutput">python</tt> to enter the Python interpreter shell.
+        
+              <div class="screen">
+                <pre>
+<tt class="computeroutput">C:\WINDOWS&gt;<tt class="userinput">python</tt>
+Python 2.3.3 (#51, Dec 18 2003, 20:22:39) [MSC v.1200 32 bit (Intel)] on win32
+Type "help", "copyright", "credits" or "license" for more information.
+&gt;&gt;&gt;
+</tt>
+</pre>
+              </div>
+        
+            </p>
+            <p>Slight differences in build info are to be expected, but if you get an error or don't get similar output, then your environment is probably incorrect.</p>
+            <p>Type ctrl-Z and press enter to get out of the Python interpreter.</p>
+          </div>
+          <div class="section" id="_4Suite"><a name="_4Suite"></a>
+            <div>
+              <h2 class="title"><span class="section-number">4.2 </span>4Suite</h2>
+            </div>
+            <p>4Suite is available for Windows download in two formats:</p>
+            <ol style="list-style-type: decimal; list-style-position: outside;">
+              <li>
+                <p>a standard application installer in executable form, and</p>
+              </li>
+              <li>
+                <p>a ZIP archive containing all the same files as the installer.</p>
+              </li>
+            </ol>
+            <p>Preferably, just use the installer, because it automatically detects where Python is installed (via registry keys), and because afterward, 4Suite can be easily uninstalled via the Add/Remove Programs menu, just like any other application. Advanced users who cannot use the installer can use the ZIP file instead.</p>
+            <p>These instructions will walk through both installation processes.</p>
+            <div class="section"><a name="id183016921808"></a>
+              <div>
+                <h3 class="title"><span class="section-number">4.2.1 </span>4Suite installation using the installer .exe</h3>
+              </div>
+              <p>There are separate 4Suite installers -- one for each version of Python. Be sure you download the correct one for your system. If you are using Python 2.3, download the latest Windows installation executable from <a href="ftp://ftp.4suite.org/pub/4Suite/">ftp://ftp.4suite.org/pub/4Suite/</a></p>
+              <ol style="list-style-type: decimal; list-style-position: outside;">
+                <li>
+                  <p>Double-click on the downloaded executable. The first screen is a confirmation that you do indeed want to install this version of 4Suite. Click "next".</p>
+                </li>
+                <li>
+                  <p>It will then ask you for an installation directory. This should default to the directory you just installed Python into. Once the correct directory is selected, click "next".
+              </p>
+                  <p>Normally, if Python 2.3 was installed in <tt class="computeroutput">C:\Python23</tt> (the default location), then the installer will put the main 4Suite libs in <tt class="computeroutput">C:\Python23\Lib\site-packages\Ft</tt>, the executables will go in C:\Python23\Scripts, and other support files will go in C:\Python23\Share\4Suite. Under Python 2.2 the locations will be similar, but rooted under C:\Python22.</p>
+                </li>
+                <li>
+                  <p>One last screen before installation begins... If all is ready, click the "next" button.</p>
+                </li>
+              </ol>
+              <p>Go to the <a href="#Final_Step" title="Final Step">final step</a> section.</p>
+            </div>
+          </div>
+          <div class="section" id="Final_Step"><a name="Final_Step"></a>
+            <div>
+              <h2 class="title"><span class="section-number">4.3 </span>Final Step</h2>
+            </div>
+            <p>Now you can perform a quick test to make sure everything is installed correctly. First, open up a command prompt. From any directory outside of the 4Suite source or installation directories, run the following (you enter '<tt class="computeroutput">python</tt>' and then the text to the right of the '<tt class="computeroutput">&gt;&gt;&gt;</tt>' prompts):</p>
+            <div class="screen">
+              <pre>
+<tt class="computeroutput">C:\WINDOWS&gt;<tt class="userinput">python</tt>
+Python 2.3.3 (#51, Dec 18 2003, 20:22:39) [MSC v.1200 32 bit (Intel)] on win32
+Type "help", "copyright", "credits" or "license" for more information.
+&gt;&gt;&gt; <tt class="userinput">from Ft.Xml import Domlette</tt>
+&gt;&gt;&gt; <tt class="userinput">from Ft.Xml.Xslt import Processor</tt>
+&gt;&gt;&gt; <tt class="userinput">print Processor</tt>
+&lt;module 'Ft.Xml.Xslt.Processor' from 'C:\Python23\lib\site-packages\Ft\Xml\Xslt\Processor.pyc'&gt;
+&gt;&gt;&gt;
+</tt>
+</pre>
+            </div>
+            <p>The imports and the print should complete without error. Report any problems to the <a href="http://lists.fourthought.com/mailman/listinfo/4suite">4Suite mailing list</a>.</p>
+          </div>
+          <div class="section"><a name="id183017306576"></a>
+            <div>
+              <h2 class="title"><span class="section-number">4.4 </span>Tests and Further Setup</h2>
+            </div>
+            <p>If all you wish to use in 4Suite are the basic command-line tools and Python libraries, then you are done with installation and can proceed to use them. To make sure things are working, try running a few of the command-line tools with the <tt class="computeroutput">-h</tt> option to get usage information.</p>
+            <div class="screen">
+              <pre>
+<tt class="computeroutput">C:\&gt;<tt class="userinput">4xml -h</tt>
+SNIP
+C:\&gt;<tt class="userinput">4xslt -h</tt>
+SNIP
+C:\&gt;<tt class="userinput">4xpath -h</tt>
+SNIP
+C:\&gt;<tt class="userinput">4rdf -h</tt>
+SNIP
+</tt>
+</pre>
+            </div>
+            <p><em class="emphasis">If you want to use the XML/RDF repository and server features of 4Suite, then you will need to customize and install a configuration file, initialize a repository, and do some further tests.</em> These topics are covered in the <a href="../QuickStart.xml">Quick Start</a> documentation.</p>
+          </div>
+        </div>
+        <div class="section"><a name="id183017103568"></a>
+          <div class="section-title">
+            <h1 class="title"><span class="section-number">5 </span>Resources</h1>
+          </div>
+          <div class="section"><a name="id183017103824"></a>
+            <div>
+              <h2 class="title"><span class="section-number">5.1 </span>4Suite @ SourceForge</h2>
+            </div>
+            <p><a href="http://sourceforge.net/projects/foursuite/">4Suite Project Page</a> - Bug Reports, Feature Requests, Patches</p>
+          </div>
+          <div class="section"><a name="id183017104336"></a>
+            <div>
+              <h2 class="title"><span class="section-number">5.2 </span>Additional Links</h2>
+            </div>
+            <p><a href="http://4suite.org/">4suite.org</a> - Documentation, Downloads, News, CVS, Developer Resources</p>
+            <p><a href="http://lists.fourthought.com/mailman/listinfo/4suite">4Suite Users Mailing List</a> - Peer &amp; Developer Support</p>
+            <p><a href="http://lists.fourthought.com/mailman/listinfo/4suite-ann">4Suite Announcement Mailing List</a> - Infrequent Announcements about 4Suite</p>
+            <p><a href="http://fourthought.com/">Fourthought, Inc.</a> - Commercial Development, Consulting &amp; Support</p>
+          </div>
+        </div>
+        <div class="section" id="PyXML"><a name="PyXML"></a>
+          <div class="section-title">
+            <h1 class="title"><span class="section-number">6 </span>Appendix A: Notes on PyXML and 4Suite</h1>
+          </div>
+          <p>PyXML is a collection of XML processing libraries for Python. 4Suite and PyXML are complementary projects developed in tandem. There is minimal overlap in functionality. For example, where PyXML has a compliant, pure Python implementation of DOM Level 1, 4Suite has a lightweight, "Domlette" optimized for XPath processing and implemented mostly in C.</p>
+          <p>Prior to the 4Suite 0.12.0a1 release, PyXML was required to use 4Suite. This is no longer the case with modern versions of 4Suite; PyXML is not needed at all.</p>
+          <p>If you decide to install PyXML, you must install PyXML 0.8 or higher (try to install the most recent version) for compatibility with 4Suite. Avoid PyXML 0.8.1 &mdash; that specific version integrates a buggy version of Expat (1.95.5), which leads to core dumps in some situations. When installing PyXML, it is recommended that you use the <tt class="computeroutput">--without-xpath --without-xslt</tt> options for <tt class="computeroutput">setup.py install</tt> in order to ensure that the very old, deprecated XPath and XSLT implementations included with PyXML will not be installed. These implementations are ported from 4Suite 0.11.1 and using them alongside newer versions of 4Suite may be problematic.</p>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

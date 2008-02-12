@@ -1,0 +1,95 @@
+<html>
+  <head>
+    <meta content="text/html; charset=iso-8859-1" http-equiv="Content-Type">
+    <title>4Suite API Documentation: Ft.Xml.Xslt.StylesheetReader</title>
+    <link href="modules.css" type="text/css" rel="stylesheet">
+  </head>
+  <body>
+    <div class="universal-header"><span class="universal-header-prefix">&nbsp;&nbsp;&nbsp;</span>&nbsp;<span class="universal-header-prefix">&nbsp;&nbsp;</span>&nbsp;<span class="universal-header-prefix">&nbsp;</span>&nbsp;<a href="../index.html">4Suite<sup>&trade;</sup> API Documentation</a></div>
+    <h1><span class="glyph-arrow">&#9658;</span> Module <span class="this-name"><a href="Ft.html" title="Ft">Ft</a>.<a href="Ft.Xml.html" title="Ft.Xml">Xml</a>.<a href="Ft.Xml.Xslt.html" title="Ft.Xml.Xslt">Xslt</a>.StylesheetReader</span></h1>
+    <div class="abstract">Classes for the creation of a stylesheet object</div>
+    <pre class="description">Copyright 2004 Fourthought, Inc. (USA).
+Detailed license and copyright information: http://4suite.org/COPYRIGHT
+Project home, documentation, distributions: http://4suite.org/</pre>
+    <div class="summary-section">
+      <table cellpadding="0" cellspacing="0">
+        <tbody>
+          <tr>
+            <td valign="top">
+              <div class="summary-header">Classes:</div>
+              <div class="summary-list"><span class="class-name"><a href="#StylesheetReader">StylesheetReader</a></span></div>
+            </td>
+            <td width="7" valign="middle"></td>
+            <td bgcolor="#C5C5C5" valign="middle" width="1"></td>
+            <td width="7" valign="middle"></td>
+            <td valign="top">
+              <div class="summary-header">Globals:</div>
+              <div class="summary-list"><span class="global-name"><a href="#STYLESHEET_WHITESPACE_RULES">STYLESHEET_WHITESPACE_RULES</a></span>, <span class="global-name"><a href="#XMLNS_NAMESPACE">XMLNS_NAMESPACE</a></span>, <span class="global-name"><a href="#XSL_NAMESPACE">XSL_NAMESPACE</a></span>, <span class="global-name"><a href="#property_dom_node">property_dom_node</a></span></div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="section">
+      <h2>Classes</h2>
+      <dl class="classes">
+        <dt class="classdef"><a name="StylesheetReader"></a>class <span class="class-name">StylesheetReader</span><span class="bases">(<span class="class-name"><a href="Ft.Xml.Xslt.StylesheetHandler.html#StylesheetHandler">Ft.Xml.Xslt.StylesheetHandler.StylesheetHandler</a></span>)</span></dt>
+        <dd class="classdesc">
+          <div class="abstract">This class can be used to read, from a variety of sources, a
+stylesheet and all its included and imported stylesheets, building
+from them a single, compact representation of an XSLT stylesheet
+tree (an Ft.Xml.Xslt.Stylesheet.Stylesheet object).</div>
+          <pre class="description">This is done with the most efficient parsing method available, and
+avoids creating a Domlette document for each document it reads.</pre>
+          <h3>Methods</h3>
+          <dl class="methods">
+            <dt class="methoddef"><a name="StylesheetReader-__init__"><span class="method-name">__init__</span></a>(<span class="argument-name">self</span>, <span class="argument-name">altBaseUris</span><span class="argument-default">=None</span>, <span class="argument-name">ownerDocument</span><span class="argument-default">=None</span>, <span class="argument-name">importIndex</span><span class="argument-default">=0</span>, <span class="argument-name">globalVars</span><span class="argument-default">=None</span>, <span class="argument-name">extElements</span><span class="argument-default">=None</span>, <span class="argument-name">visitedStyUris</span><span class="argument-default">=None</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dd class="overrides"><b>Overrides: </b><span class="inherited-name"><a href="Ft.Xml.Xslt.StylesheetHandler.html#StylesheetHandler-__init__">__init__</a></span> from class <span class="class-name"><a href="Ft.Xml.Xslt.StylesheetHandler.html#StylesheetHandler">StylesheetHandler</a></span></dd>
+            <dt class="methoddef"><a name="StylesheetReader-clone"><span class="method-name">clone</span></a>(<span class="argument-name">self</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dd class="overrides"><b>Overrides: </b><span class="inherited-name"><a href="Ft.Xml.Xslt.StylesheetHandler.html#StylesheetHandler-clone">clone</a></span> from class <span class="class-name"><a href="Ft.Xml.Xslt.StylesheetHandler.html#StylesheetHandler">StylesheetHandler</a></span></dd>
+            <dt class="methoddef"><a name="StylesheetReader-fromDocument"><span class="method-name">fromDocument</span></a>(<span class="argument-name">self</span>, <span class="argument-name">document</span>, <span class="argument-name">baseUri</span><span class="argument-default">=''</span>, <span class="argument-name">factory</span><span class="argument-default">=None</span>)</dt>
+            <dd class="methoddesc">
+              <div class="abstract">Read in a stylesheet source document from a Domlette and add it to
+the stylesheet tree. If a document with the same URI has already been
+read, the cached version will be used instead (so duplicate imports,
+includes, or stylesheet appends do not result in multiple reads).</div>
+            </dd>
+            <dt class="methoddef"><a name="StylesheetReader-fromInstant"><span class="method-name">fromInstant</span></a>(<span class="argument-name">self</span>, <span class="argument-name">instant</span>, <span class="argument-name">baseUri</span><span class="argument-default">=''</span>, <span class="argument-name">is_import</span><span class="argument-default">=0</span>)</dt>
+            <dd class="methoddesc">
+              <div class="abstract">Read in an "instant" stylesheet (a pickled stylesheet tree) and add
+it to the stylesheet tree.</div>
+            </dd>
+            <dt class="methoddef"><a name="StylesheetReader-fromSrc"><span class="method-name">fromSrc</span></a>(<span class="argument-name">self</span>, <span class="argument-name">isrc</span>, <span class="argument-name">extElements</span><span class="argument-default">=None</span>)</dt>
+            <dd class="methoddesc">
+              <div class="abstract">Read in a stylesheet source document from an InputSource and add it to
+the stylesheet tree. If a document with the same URI has already been
+read, the cached version will be used instead (so duplicate imports,
+includes, or stylesheet appends do not result in multiple reads).</div>
+            </dd>
+            <dt class="methoddef"><a name="StylesheetReader-reset"><span class="method-name">reset</span></a>(<span class="argument-name">self</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dd class="overrides"><b>Overrides: </b><span class="inherited-name"><a href="Ft.Xml.Xslt.StylesheetHandler.html#StylesheetHandler-reset">reset</a></span> from class <span class="class-name"><a href="Ft.Xml.Xslt.StylesheetHandler.html#StylesheetHandler">StylesheetHandler</a></span></dd>
+          </dl>
+          <h3>Methods inherited from class <a href="Ft.Xml.Xslt.StylesheetHandler.html#StylesheetHandler">Ft.Xml.Xslt.StylesheetHandler.StylesheetHandler</a></h3>
+          <div class="inherited"><span class="inherited-name"><a href="Ft.Xml.Xslt.StylesheetHandler.html#StylesheetHandler-addExtensionElementMapping">addExtensionElementMapping</a></span>, <span class="inherited-name"><a href="Ft.Xml.Xslt.StylesheetHandler.html#StylesheetHandler-characters">characters</a></span>, <span class="inherited-name"><a href="Ft.Xml.Xslt.StylesheetHandler.html#StylesheetHandler-endDocument">endDocument</a></span>, <span class="inherited-name"><a href="Ft.Xml.Xslt.StylesheetHandler.html#StylesheetHandler-endElementNS">endElementNS</a></span>, <span class="inherited-name"><a href="Ft.Xml.Xslt.StylesheetHandler.html#StylesheetHandler-getResult">getResult</a></span>, <span class="inherited-name"><a href="Ft.Xml.Xslt.StylesheetHandler.html#StylesheetHandler-setDocumentLocator">setDocumentLocator</a></span>, <span class="inherited-name"><a href="Ft.Xml.Xslt.StylesheetHandler.html#StylesheetHandler-startDocument">startDocument</a></span>, <span class="inherited-name"><a href="Ft.Xml.Xslt.StylesheetHandler.html#StylesheetHandler-startElementNS">startElementNS</a></span>, <span class="inherited-name"><a href="Ft.Xml.Xslt.StylesheetHandler.html#StylesheetHandler-startPrefixMapping">startPrefixMapping</a></span></div>
+        </dd>
+      </dl>
+    </div>
+    <div class="section">
+      <h2>Globals</h2>
+      <dl class="globals">
+        <dt class="globaldef"><a name="STYLESHEET_WHITESPACE_RULES"><span class="global-name">STYLESHEET_WHITESPACE_RULES</span></a> = [(u'http://www.w3.org/1999/XSL/Transform', 'text', False), (None, '*', True)]</dt>
+        <dd class="globaldesc"></dd>
+        <dt class="globaldef"><a name="XMLNS_NAMESPACE"><span class="global-name">XMLNS_NAMESPACE</span></a> = u'http://www.w3.org/2000/xmlns/'</dt>
+        <dd class="globaldesc"></dd>
+        <dt class="globaldef"><a name="XSL_NAMESPACE"><span class="global-name">XSL_NAMESPACE</span></a> = u'http://www.w3.org/1999/XSL/Transform'</dt>
+        <dd class="globaldesc"></dd>
+        <dt class="globaldef"><a name="property_dom_node"><span class="global-name">property_dom_node</span></a> = 'http://xml.org/sax/properties/dom-node'</dt>
+        <dd class="globaldesc"></dd>
+      </dl>
+    </div>
+    <div class="universal-footer">Last modified on 2006-04-28 13:54:50</div>
+  </body>
+</html>

@@ -1,0 +1,172 @@
+   <elf>
+      <workdir/>
+      <serial-scripts separate-script-dirs="false">
+         <ogrescript>
+
+            <env/>
+            <properties sysprops="true"/>
+            
+            
+            
+            <declare global="true" name="host" string="teragrid"/>
+            <stream-monitor-process execution-dir=".">
+            <command-line>/bin/hostname -f</command-line>
+            <out-monitor>
+               <trigger>
+                  <filter pattern=".*"/>
+                  <actions>
+                     <stream-file-write-action path="hostname.out" append="false"/>
+                  </actions>
+               </trigger>
+            </out-monitor>
+            <err-monitor>
+               <trigger>
+                  <filter pattern=".*"/>
+                  <actions>
+                     <stream-file-write-action path="hostname.err" append="false"/>
+                  </actions>
+               </trigger>
+            </err-monitor>
+         </stream-monitor-process>
+         
+         <sleep timeout="1000"/>
+         
+         <read path="hostname.out" lines="true"/>
+         <return name="host" get="string"/>
+         
+         <send>
+            <progress-event message="Begin Stage_setup on $G{host}">
+               <header-property name="some-special-id" value="${ensemble.id}-ComputeEnvSetup-Begin-Stage_setup-on-$G{host}"/>
+            </progress-event>
+         </send>
+         
+         <declare name="appbase"      string="${user.dir}"/>
+         
+         <declare name="srcdir_bin"  string="gridftp://${binhost}${binpath}"/>
+         <declare name="srcdir_etc"  string="gridftp://${etchost}${etcpath}"/>
+         
+         <declare name="targetdirbin" string="file://${appbase}/bin"/>
+         <declare name="targetdiretc" string="file://${appbase}/etc"/>
+         
+         <echo stdout="true" message="Stage_setup - Transferring bin/ ...  "/>
+
+<copy>
+  <source base="file:${srcdir_bin}/">
+    <include>*</include>
+  </source>
+  <target>file:${targetdirbin}</target>
+</copy>
+
+
+<!--
+         <copy sourceDir="${srcdir_bin}" target="${targetdirbin}" />
+-->
+
+
+<!--
+   <copy taskName="test_copy" verbose="true">
+        <targetGroup targetURI="${targetdirbin}">
+               <pattern base="${srcdir_bin}">
+               </pattern>
+        </targetGroup>
+   </copy>
+-->
+
+
+
+         <echo stdout="true" message="Stage_setup - Transferred bin/ "/>
+         
+         <echo stdout="true" message="Stage_setup - Transferring etc/ ...  "/>
+
+<!--
+     <copy sourceDir="${srcdir_etc}" target="${targetdiretc}" />
+-->
+
+<copy>
+  <source base="file:${srcdir_etc}/">
+    <include>*</include>
+  </source>
+  <target>file:${targetdiretc}</target>
+</copy>
+
+<!--
+   <copy taskName="test_copy" verbose="true">
+        <targetGroup targetURI="${targetdiretc}">
+               <pattern base="${srcdir_etc}">
+               </pattern>
+        </targetGroup>
+   </copy>
+-->
+
+
+         <echo stdout="true" message="Stage_setup - Transferred etc "/>
+         
+         <echo stdout="true" message="Stage_setup - chmod ... "/>
+         <stream-monitor-process execution-dir=".">
+         <command-line>${chmodpath} -R 755 bin</command-line>
+      </stream-monitor-process>
+      <echo stdout="true" message="Stage_setup - chmod done "/>
+      
+      <echo stdout="true" message="Stage_setup - Creating directory workspaces ... "/>
+      
+      <declare name="end" long="$E{ ${ccdstop} + 1 }"/>
+      
+      <declare name="i" int="0" />
+      <for var="i" from="${ccdstart}" condition="$E{${i} &lt; ${end}}">
+         
+         <declare name="in" long="0" />
+         <add-leading-zeros number="${i}" places="2">
+            <return-value defaultName="zerosAdded" assignedName="in"/>
+         </add-leading-zeros>
+         
+         <delete dir="file:${uid}_${in}"/>
+         <mkdir dir="file:${uid}_${in}"/>
+         <delete dir="file:${uid}_${in}/bin"/>
+         <delete dir="file:${uid}_${in}/etc"/>
+         
+         <stream-monitor-process execution-dir=".">
+         <command-line>${cppath} -r bin etc ${uid}_${in}</command-line>
+      </stream-monitor-process>
+      
+      <delete dir="file:${uid}_${in}/xml"/>
+      <mkdir dir="file:${uid}_${in}/xml"/>
+      
+      <mkdir dir="file:${uid}_${in}/data"/>
+      <mkdir dir="file:${uid}_${in}/data/${nite}"/>
+      <mkdir dir="file:${uid}_${in}/data/${nite}/g"/>
+      <mkdir dir="file:${uid}_${in}/data/${nite}/r"/>
+      <mkdir dir="file:${uid}_${in}/data/${nite}/i"/>
+      <mkdir dir="file:${uid}_${in}/data/${nite}/z"/>
+      <mkdir dir="file:${uid}_${in}/data/${nite}/log"/>
+      <mkdir dir="file:${uid}_${in}/data/${nite}/cal"/>
+      <mkdir dir="file:${uid}_${in}/data/${nite}/cal/bias"/>
+      <mkdir dir="file:${uid}_${in}/data/${nite}/cal/bpm"/>
+      <mkdir dir="file:${uid}_${in}/data/${nite}/cal/flat_g"/>
+      <mkdir dir="file:${uid}_${in}/data/${nite}/cal/flat_i"/>
+      <mkdir dir="file:${uid}_${in}/data/${nite}/cal/flat_r"/>
+      <mkdir dir="file:${uid}_${in}/data/${nite}/cal/flat_z"/>
+      
+   </for>
+   
+   <delete dir="file:bin"/>
+   <delete dir="file:etc"/>
+   <delete dir="file:hostname.out"/>
+   <delete dir="file:hostname.err"/>
+   
+   
+   <echo stdout="true" message="Stage_setup - Created ${ccdstart} to ${ccdstop} directory workspaces. "/>
+   
+   <send>
+      <progress-event message="End Stage_setup on $G{host}">
+         <header-property name="some-special-id" value="${ensemble.id}-ComputeEnvSetup-End-Stage_setup-on-$G{host}"/>
+      </progress-event>
+   </send>
+   
+   <echo stdout="true" message="Stage_setup - copy etc/ done "/>
+   
+   <echo stdout="true" message=" - Stage_setup done"/>
+   
+</project>
+</ogrescript>
+</serial-scripts>
+</elf>

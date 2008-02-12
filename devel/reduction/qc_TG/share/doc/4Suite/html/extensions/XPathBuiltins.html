@@ -1,0 +1,486 @@
+<html>
+  <head>
+    <meta content="text/html; charset=iso-8859-1" http-equiv="Content-Type">
+    <title>XPathBuiltins</title>
+    <link href="extensions.css" type="text/css" rel="stylesheet">
+  </head>
+  <body>
+    <h1>Extension Module - XPathBuiltins</h1>
+  
+  
+    <h2>Namespaces</h2>
+    <p>The namespace for extensions defined in this document are:</p>
+    <table cellpadding="4">
+      <tr>
+        <th align="left">Prefix</th>
+        <th align="center">Namespace</th>
+      </tr>
+      <tr align="left">
+        <td><samp>f</samp></td>
+        <td><samp>http://xmlns.4suite.org/ext</samp></td>
+      </tr>
+    </table>
+    <p>The prefix is given for this document only. Any other prefix can be
+      used within a particular stylesheet.</p>
+  
+    <hr width="100%">
+    <h2>Functions</h2>
+    <table cellpadding="4">
+      <tr>
+        <th align="left">Function</th>
+        <th align="center">Syntax</th>
+      </tr>
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+  
+      <tr align="left">
+        <td valign="top"><a href="#id2305843009262173008">f:base-uri</a></td>
+        <td class="syntax"><var>string</var> <b>f:base-uri</b>(<var>node-set</var>)</td>
+      </tr>
+      <tr align="left">
+        <td valign="top"><a href="#id2305843009262171984">f:bin-path</a></td>
+        <td class="syntax"><var>string</var> <b>f:bin-path</b>()</td>
+      </tr>
+      <tr align="left">
+        <td valign="top"><a href="#id2305843009262368592">f:cos</a></td>
+        <td class="syntax"><var>number</var> <b>f:cos</b>(<var>number</var>)</td>
+      </tr>
+      <tr align="left">
+        <td valign="top"><a href="#id2305843009262114256">f:decode</a></td>
+        <td class="syntax"><var>object</var> <b>f:decode</b>(<var>object</var>, <var>string</var>)</td>
+      </tr>
+      <tr align="left">
+        <td valign="top"><a href="#id2305843009262170704">f:degrees-to-rads</a></td>
+        <td class="syntax"><var>number</var> <b>f:degrees-to-rads</b>(<var>number</var>)</td>
+      </tr>
+      <tr align="left">
+        <td valign="top"><a href="#id2305843009264783952">f:encode</a></td>
+        <td class="syntax"><var>object</var> <b>f:encode</b>(<var>object</var>, <var>string</var>)</td>
+      </tr>
+      <tr align="left">
+        <td valign="top"><a href="#id2305843009262370640">f:ends-with</a></td>
+        <td class="syntax"><var>boolean</var> <b>f:ends-with</b>(<var>string</var>, <var>string</var>)</td>
+      </tr>
+      <tr align="left">
+        <td valign="top"><a href="#id2305843009262370128">f:escape-xml</a></td>
+        <td class="syntax"><var>string</var> <b>f:escape-xml</b>(<var>string</var>)</td>
+      </tr>
+      <tr align="left">
+        <td valign="top"><a href="#id2305843009262115408">f:fact</a></td>
+        <td class="syntax"><var>number</var> <b>f:fact</b>(<var>number</var>)</td>
+      </tr>
+      <tr align="left">
+        <td valign="top"><a href="#id2305843009264786256">f:generate-uuid</a></td>
+        <td class="syntax"><var>string</var> <b>f:generate-uuid</b>()</td>
+      </tr>
+      <tr align="left">
+        <td valign="top"><a href="#id2305843009262331088">f:if</a></td>
+        <td class="syntax"><var>object</var> <b>f:if</b>(<var>boolean</var>, <var>object</var>, <var>object</var>)</td>
+      </tr>
+      <tr align="left">
+        <td valign="top"><a href="#id2305843009262367440">f:import-string</a></td>
+        <td class="syntax"><var>string</var> <b>f:import-string</b>(<var>object</var>)</td>
+      </tr>
+      <tr align="left">
+        <td valign="top"><a href="#id2305843009262332752">f:indent</a></td>
+        <td class="syntax"><var>string</var> <b>f:indent</b>(<var>string</var>, <var>number</var>, <var>string</var>)</td>
+      </tr>
+      <tr align="left">
+        <td valign="top"><a href="#id2305843009264785232">f:join</a></td>
+        <td class="syntax"><var>string</var> <b>f:join</b>(<var>node-set</var>, <var>string</var>)</td>
+      </tr>
+      <tr align="left">
+        <td valign="top"><a href="#id2305843009262330448">f:match</a></td>
+        <td class="syntax"><var>string</var> <b>f:match</b>(<var>string</var>, <var>string</var>)</td>
+      </tr>
+      <tr align="left">
+        <td valign="top"><a href="#id2305843009262369616">f:normalize-eol</a></td>
+        <td class="syntax"><var>string</var> <b>f:normalize-eol</b>(<var>string</var>)</td>
+      </tr>
+      <tr align="left">
+        <td valign="top"><a href="#id2305843009262369104">f:ospath2uri</a></td>
+        <td class="syntax"><var>string</var> <b>f:ospath2uri</b>(<var>string</var>)</td>
+      </tr>
+      <tr align="left">
+        <td valign="top"><a href="#id2305843009264786640">f:parse-date</a></td>
+        <td class="syntax"><var>string</var> <b>f:parse-date</b>(<var>string</var>, <var>string</var>)</td>
+      </tr>
+      <tr align="left">
+        <td valign="top"><a href="#id2305843009262366800">f:parse-xml</a></td>
+        <td class="syntax"><var>node-set</var> <b>f:parse-xml</b>(<var>string</var>, <var>object</var>)</td>
+      </tr>
+      <tr align="left">
+        <td valign="top"><a href="#id2305843009262331856">f:pytime-to-exslt</a></td>
+        <td class="syntax"><var>string</var> <b>f:pytime-to-exslt</b>(<var>number</var>)</td>
+      </tr>
+      <tr align="left">
+        <td valign="top"><a href="#id2305843009264787280">f:random</a></td>
+        <td class="syntax"><var>number</var> <b>f:random</b>(<var>number</var>, <var>boolean</var>)</td>
+      </tr>
+      <tr align="left">
+        <td valign="top"><a href="#id2305843009262113616">f:range</a></td>
+        <td class="syntax"><var>node-set</var> <b>f:range</b>(<var>number</var>, <var>number</var>)</td>
+      </tr>
+      <tr align="left">
+        <td valign="top"><a href="#id2305843009262171216">f:replace</a></td>
+        <td class="syntax"><var>string</var> <b>f:replace</b>(<var>string</var>, <var>string</var>, <var>string</var>)</td>
+      </tr>
+      <tr align="left">
+        <td valign="top"><a href="#id2305843009262173520">f:resolve-path</a></td>
+        <td class="syntax"><var>string</var> <b>f:resolve-path</b>(<var>string</var>, <var>string</var>)</td>
+      </tr>
+      <tr align="left">
+        <td valign="top"><a href="#id2305843009262367952">f:resolve-url</a></td>
+        <td class="syntax"><var>string</var> <b>f:resolve-url</b>(<var>string</var>, <var>string</var>)</td>
+      </tr>
+      <tr align="left">
+        <td valign="top"><a href="#id2305843009264783440">f:sha-hash</a></td>
+        <td class="syntax"><var>string</var> <b>f:sha-hash</b>(<var>string</var>)</td>
+      </tr>
+      <tr align="left">
+        <td valign="top"><a href="#id2305843009262332368">f:share-path</a></td>
+        <td class="syntax"><var>string</var> <b>f:share-path</b>()</td>
+      </tr>
+      <tr align="left">
+        <td valign="top"><a href="#id2305843009262114896">f:sin</a></td>
+        <td class="syntax"><var>number</var> <b>f:sin</b>(<var>number</var>)</td>
+      </tr>
+      <tr align="left">
+        <td valign="top"><a href="#id2305843009262112976">f:strftime</a></td>
+        <td class="syntax"><var>string</var> <b>f:strftime</b>(<var>string</var>, <var>string</var>)</td>
+      </tr>
+      <tr align="left">
+        <td valign="top"><a href="#id2305843009262333520">f:uri2ospath</a></td>
+        <td class="syntax"><var>string</var> <b>f:uri2ospath</b>(<var>string</var>)</td>
+      </tr>
+      <tr align="left">
+        <td valign="top"><a href="#id2305843009264785872">f:version</a></td>
+        <td class="syntax"><var>string</var> <b>f:version</b>()</td>
+      </tr>
+      <tr align="left">
+        <td valign="top"><a href="#id2305843009262172368">f:wrap</a></td>
+        <td class="syntax"><var>string</var> <b>f:wrap</b>(<var>string</var>, <var>number</var>)</td>
+      </tr>
+    </table>
+
+    <hr width="100%">
+    <h2>Functions</h2>
+    <div class="detail"><a name="id2305843009262173008"></a>
+      <h3>Function - f:base-uri</h3>
+      <h4>Function Syntax</h4>
+      <div class="syntax"><var>string</var> <b>f:base-uri</b>(<var>node-set</var>)</div>
+      <p>Returns the base URI of the first node in the given node-set, or
+of the context node if no argument is given. If the given node-set
+is empty, an empty string is returned.</p>
+    </div>
+    <div class="detail"><a name="id2305843009262171984"></a>
+      <h3>Function - f:bin-path</h3>
+      <h4>Function Syntax</h4>
+      <div class="syntax"><var>string</var> <b>f:bin-path</b>()</div>
+      <p>Returns the system-dependent path of Fourthought binaries</p>
+    </div>
+    <div class="detail"><a name="id2305843009262368592"></a>
+      <h3>Function - f:cos</h3>
+      <h4>Function Syntax</h4>
+      <div class="syntax"><var>number</var> <b>f:cos</b>(<var>number</var>)</div>
+      <p>math.cos</p>
+    </div>
+    <div class="detail"><a name="id2305843009262114256"></a>
+      <h3>Function - f:decode</h3>
+      <h4>Function Syntax</h4>
+      <div class="syntax"><var>object</var> <b>f:decode</b>(<var>object</var>, <var>string</var>)</div>
+      <p>f:decode mirrors the Python decode function/method. It takes a
+foreign object that is a Python byte string, and an encoding,
+and returns another foreign object which is a Unicode object.</p>
+    </div>
+    <div class="detail"><a name="id2305843009262170704"></a>
+      <h3>Function - f:degrees-to-rads</h3>
+      <h4>Function Syntax</h4>
+      <div class="syntax"><var>number</var> <b>f:degrees-to-rads</b>(<var>number</var>)</div>
+      <p>Convert degrees to radians</p>
+    </div>
+    <div class="detail"><a name="id2305843009264783952"></a>
+      <h3>Function - f:encode</h3>
+      <h4>Function Syntax</h4>
+      <div class="syntax"><var>object</var> <b>f:encode</b>(<var>object</var>, <var>string</var>)</div>
+      <p>f:encode mirrors the Python encode function/method. It takes a
+foreign object that is a Unicode object, and an encoding,
+and returns another foreign object which is a Python byte string.</p>
+    </div>
+    <div class="detail"><a name="id2305843009262370640"></a>
+      <h3>Function - f:ends-with</h3>
+      <h4>Function Syntax</h4>
+      <div class="syntax"><var>boolean</var> <b>f:ends-with</b>(<var>string</var>, <var>string</var>)</div>
+      <p>Returns true if the string given in the first argument ends with
+the substring given in the second argument.</p>
+    </div>
+    <div class="detail"><a name="id2305843009262370128"></a>
+      <h3>Function - f:escape-xml</h3>
+      <h4>Function Syntax</h4>
+      <div class="syntax"><var>string</var> <b>f:escape-xml</b>(<var>string</var>)</div>
+      <p>Returns the given string with XML markup characters "&amp;", "&lt;" and
+"&gt;" escaped as "&amp;amp;", "&amp;lt;" and "&amp;gt;", respectively.</p>
+    </div>
+    <div class="detail"><a name="id2305843009262115408"></a>
+      <h3>Function - f:fact</h3>
+      <h4>Function Syntax</h4>
+      <div class="syntax"><var>number</var> <b>f:fact</b>(<var>number</var>)</div>
+      <p>Factorial</p>
+    </div>
+    <div class="detail"><a name="id2305843009264786256"></a>
+      <h3>Function - f:generate-uuid</h3>
+      <h4>Function Syntax</h4>
+      <div class="syntax"><var>string</var> <b>f:generate-uuid</b>()</div>
+      <p>Returns a random UUID string.</p>
+    </div>
+    <div class="detail"><a name="id2305843009262331088"></a>
+      <h3>Function - f:if</h3>
+      <h4>Function Syntax</h4>
+      <div class="syntax"><var>object</var> <b>f:if</b>(<var>boolean</var>, <var>object</var>, <var>object</var>)</div>
+      <p>If the first argument, when converted to a boolean, is true,
+returns the second argument. Otherwise, returns the third
+argument, or if the third argument is not given, returns an
+empty node-set.</p>
+    </div>
+    <div class="detail"><a name="id2305843009262367440"></a>
+      <h3>Function - f:import-string</h3>
+      <h4>Function Syntax</h4>
+      <div class="syntax"><var>string</var> <b>f:import-string</b>(<var>object</var>)</div>
+      <p>f:import-string takes a Unicode FO and returns an XPath string.  It is
+an error if the FO contains illegal XML chars.  (although eventually
+this function might be extended to recover from this error)</p>
+    </div>
+    <div class="detail"><a name="id2305843009262332752"></a>
+      <h3>Function - f:indent</h3>
+      <h4>Function Syntax</h4>
+      <div class="syntax"><var>string</var> <b>f:indent</b>(<var>string</var>, <var>number</var>, <var>string</var>)</div>
+      <p>f:indent() returns a string with each line of the text indented the
+given number of levels. For each level, the indent string, normally
+2 spaces by default, is prepended to each line.</p>
+    </div>
+    <div class="detail"><a name="id2305843009264785232"></a>
+      <h3>Function - f:join</h3>
+      <h4>Function Syntax</h4>
+      <div class="syntax"><var>string</var> <b>f:join</b>(<var>node-set</var>, <var>string</var>)</div>
+      <p>Concatenates the string-values of the nodes in the given node-set,
+inserting the delimiter given in the optional second argument in
+between each string-value. The delimiter defaults to a space.
+See also: EXSLT's str:concat()</p>
+    </div>
+    <div class="detail"><a name="id2305843009262330448"></a>
+      <h3>Function - f:match</h3>
+      <h4>Function Syntax</h4>
+      <div class="syntax"><var>string</var> <b>f:match</b>(<var>string</var>, <var>string</var>)</div>
+      <p>Returns true if the string given in the optional second argument
+(or the string-value of the context node if no second argument is
+given) matches the regular expression given in the first argument.
+See also: EXSLT's regexp:test()
+This function does differ from XSLT 2.0 match() function</p>
+    </div>
+    <div class="detail"><a name="id2305843009262369616"></a>
+      <h3>Function - f:normalize-eol</h3>
+      <h4>Function Syntax</h4>
+      <div class="syntax"><var>string</var> <b>f:normalize-eol</b>(<var>string</var>)</div>
+      <p>    Normalizes end-of-line characters in input string, returning the
+    normalized string. Normalization involves replacing "
+
+", "
+"
+    or "
+" with "
+"</p>
+    </div>
+    <div class="detail"><a name="id2305843009262369104"></a>
+      <h3>Function - f:ospath2uri</h3>
+      <h4>Function Syntax</h4>
+      <div class="syntax"><var>string</var> <b>f:ospath2uri</b>(<var>string</var>)</div>
+      <p>Returns the given OS path as a URI.
+The result varies depending on the underlying operating system.</p>
+    </div>
+    <div class="detail"><a name="id2305843009264786640"></a>
+      <h3>Function - f:parse-date</h3>
+      <h4>Function Syntax</h4>
+      <div class="syntax"><var>string</var> <b>f:parse-date</b>(<var>string</var>, <var>string</var>)</div>
+      <p>This function is similar to EXSLT's date:parse-date()
+except that it uses Python rather than Java conventions
+for the date formatting.</p>
+    </div>
+    <div class="detail"><a name="id2305843009262366800"></a>
+      <h3>Function - f:parse-xml</h3>
+      <h4>Function Syntax</h4>
+      <div class="syntax"><var>node-set</var> <b>f:parse-xml</b>(<var>string</var>, <var>object</var>)</div>
+      <p>f:parse-xml() parses the string-value of the given object as XML
+and returns a node-set whose sole item is the resulting parsed
+document's root node. The XML must be a well-formed document.
+
+src - the string or object to be parsed as XML.
+
+parameters - the name of a parameter set for the operation.
+
+The parameters argument is ignored for now. In the future, it
+will provide a way to specify a base URI for the resolution of
+relative URIs in entity declarations and XIncludes.
+
+Also for now, if the XML contains an encoding declaration, the
+declaration must specify UTF-8.
+
+An example:
+
+&lt;?xml version="1.0" encoding="utf-8"?&gt;
+&lt;xsl:stylesheet
+  xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
+  xmlns:f="http://xmlns.4suite.org/ext"
+  version="1.0"
+&gt;
+  &lt;xsl:output method="text"/&gt;
+  &lt;xsl:variable name="doc"
+    select="'&amp;lt;spam&gt;eggs&amp;lt;monty&gt;python&amp;lt;/monty&gt;&amp;lt;/spam&gt;'"/&gt;
+
+  &lt;xsl:template match="/"&gt;
+    &lt;xsl:value-of select="f:parse-xml($doc)/spam/monty"/&gt;
+  &lt;/xsl:template&gt;
+&lt;/xsl:stylesheet&gt;
+
+...run against any XML source should yield:
+
+python
+
+See also: XSLT (not XPath) extension function f:serialize-xml()</p>
+    </div>
+    <div class="detail"><a name="id2305843009262331856"></a>
+      <h3>Function - f:pytime-to-exslt</h3>
+      <h4>Function Syntax</h4>
+      <div class="syntax"><var>string</var> <b>f:pytime-to-exslt</b>(<var>number</var>)</div>
+      <p>Takes a Python time value as a number and returns a date/time as if
+from EXSLT date-time()
+t - a time stamp number, as from Python's time.time()
+    if omitted, use the current time</p>
+    </div>
+    <div class="detail"><a name="id2305843009264787280"></a>
+      <h3>Function - f:random</h3>
+      <h4>Function Syntax</h4>
+      <div class="syntax"><var>number</var> <b>f:random</b>(<var>number</var>, <var>boolean</var>)</div>
+      <p>Returns a random number between 0 (inclusive) and max (exclusive).
+max defaults to 1. The first optional argument is a different
+value for max, and the second argument is a flag that, if set,
+causes the random number to be rounded to an integer.
+See also: EXSLT's math:random()</p>
+    </div>
+    <div class="detail"><a name="id2305843009262113616"></a>
+      <h3>Function - f:range</h3>
+      <h4>Function Syntax</h4>
+      <div class="syntax"><var>node-set</var> <b>f:range</b>(<var>number</var>, <var>number</var>)</div>
+      <p>Returns a node-set consisting of text nodes encapsulating integers
+in the numeric range bounded by the given low and high values.</p>
+    </div>
+    <div class="detail"><a name="id2305843009262171216"></a>
+      <h3>Function - f:replace</h3>
+      <h4>Function Syntax</h4>
+      <div class="syntax"><var>string</var> <b>f:replace</b>(<var>string</var>, <var>string</var>, <var>string</var>)</div>
+      <p>Returns the third argument string, which defaults to the
+string-value of the context node, with occurrences of the substring
+given in the first argument replaced by the string given in the
+second argument.
+See also: EXSLT's str:replace()</p>
+    </div>
+    <div class="detail"><a name="id2305843009262173520"></a>
+      <h3>Function - f:resolve-path</h3>
+      <h4>Function Syntax</h4>
+      <div class="syntax"><var>string</var> <b>f:resolve-path</b>(<var>string</var>, <var>string</var>)</div>
+      <p>Resolves a Posix-style path, such as the path portion of a URL,
+against a base. Similar to f:resolve-url, but allows the base to be
+just a path, not necessarily a full URL.</p>
+    </div>
+    <div class="detail"><a name="id2305843009262367952"></a>
+      <h3>Function - f:resolve-url</h3>
+      <h4>Function Syntax</h4>
+      <div class="syntax"><var>string</var> <b>f:resolve-url</b>(<var>string</var>, <var>string</var>)</div>
+      <p>Returns the relative URL ref given in the second argument
+resolved against the base given in the first argument.
+In case of URI processing error an empty string is returned</p>
+    </div>
+    <div class="detail"><a name="id2305843009264783440"></a>
+      <h3>Function - f:sha-hash</h3>
+      <h4>Function Syntax</h4>
+      <div class="syntax"><var>string</var> <b>f:sha-hash</b>(<var>string</var>)</div>
+      <p>Returns a SHA message digest of the given string, as a string of
+several groups of hex digits separated by '-'. See
+http://www.itl.nist.gov/fipspubs/fip180-1.htm for info on SHA.</p>
+    </div>
+    <div class="detail"><a name="id2305843009262332368"></a>
+      <h3>Function - f:share-path</h3>
+      <h4>Function Syntax</h4>
+      <div class="syntax"><var>string</var> <b>f:share-path</b>()</div>
+      <p>Returns the system-dependent path to modifiable data</p>
+    </div>
+    <div class="detail"><a name="id2305843009262114896"></a>
+      <h3>Function - f:sin</h3>
+      <h4>Function Syntax</h4>
+      <div class="syntax"><var>number</var> <b>f:sin</b>(<var>number</var>)</div>
+      <p>math.sin</p>
+    </div>
+    <div class="detail"><a name="id2305843009262112976"></a>
+      <h3>Function - f:strftime</h3>
+      <h4>Function Syntax</h4>
+      <div class="syntax"><var>string</var> <b>f:strftime</b>(<var>string</var>, <var>string</var>)</div>
+      <p>Returns the given ISO 8601 UTC date-time formatted according to
+the given format string as would be used by Python's
+time.strftime(). If no date-time string is given, the current
+time is used.</p>
+    </div>
+    <div class="detail"><a name="id2305843009262333520"></a>
+      <h3>Function - f:uri2ospath</h3>
+      <h4>Function Syntax</h4>
+      <div class="syntax"><var>string</var> <b>f:uri2ospath</b>(<var>string</var>)</div>
+      <p>Returns the given URI as an OS path.
+The result varies depending on the underlying operating system.</p>
+    </div>
+    <div class="detail"><a name="id2305843009264785872"></a>
+      <h3>Function - f:version</h3>
+      <h4>Function Syntax</h4>
+      <div class="syntax"><var>string</var> <b>f:version</b>()</div>
+      <p>Returns the 4Suite version number as a string.</p>
+    </div>
+    <div class="detail"><a name="id2305843009262172368"></a>
+      <h3>Function - f:wrap</h3>
+      <h4>Function Syntax</h4>
+      <div class="syntax"><var>string</var> <b>f:wrap</b>(<var>string</var>, <var>number</var>)</div>
+      <p>f:wrap() returns a string with the text reflowed so that each line
+fits within the given width. Existing linefeeds are preserved, but
+spaces are considered inter-word separators that can be collapsed.
+To reflow without preserving existing linefeeds, strip them first,
+e.g. with translate(text, '&amp;#10;', '').
+http://lists.fourthought.com/pipermail/4suite-dev/2002-December/000878.html</p>
+    </div>
+  </body>
+</html>

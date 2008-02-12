@@ -1,0 +1,33 @@
+New (gov/fnal/eag/dtucker directory structure + Oracle):
+1. cp -pr /home/dtucker/eclipse/workspace/gov.fnal.eag.dtucker/gov /home/dtucker/DESPhotoStdsMod/lib
+   (perhaps in the future use CVS instead)
+2. setenv DESPHOTOSTDSMOD_HOME /home/dtucker/DESPhotoStdsMod
+3. setenv JAVA_HOME /usr/java/j2sdk1.4.2_02
+4. cd $DESPHOTOSTDSMOD_HOME
+5. source bin/setup.csh
+6. java gov.fnal.eag.dtucker.desPhotoStds.test.PhotomEqSolverTest
+   (this is the junit test)
+7. java gov.fnal.eag.dtucker.desPhotoStds.PhotomEqSolverRun pipeline dc01user 55135.0 55135.4 r 29 v1.0 1
+   (this is the real thing)
+8. a. sqlplus username/password@talamlx/DES
+   b. select * from des_testfit order by timestamp;
+
+
+Old (jars + postgresql):
+1. export new desPhotoStds.jar from Eclipse IDE
+2. jar -tvf desPhotoStds.jar
+    90 Sun Sep 25 18:19:24 CDT 2005 META-INF/MANIFEST.MF
+  1142 Thu Sep 01 20:07:20 CDT 2005 gov/fnal/eag/dtucker/desPhotoStds/test/PhotomEqSolverTest.class
+   967 Tue Aug 23 14:21:12 CDT 2005 gov/fnal/eag/dtucker/desPhotoStds/test/PhotomEqSolverTest.java
+ 12217 Sun Sep 25 16:47:20 CDT 2005 gov/fnal/eag/dtucker/desPhotoStds/PhotomEqSolver.class
+ 14497 Sun Sep 25 16:47:16 CDT 2005 gov/fnal/eag/dtucker/desPhotoStds/PhotomEqSolver.java
+  2052 Thu Sep 01 20:07:20 CDT 2005 gov/fnal/eag/dtucker/desPhotoStds/PhotomEqSolverRun.class
+  1923 Mon Aug 29 13:38:42 CDT 2005 gov/fnal/eag/dtucker/desPhotoStds/PhotomEqSolverRun.java
+3. setenv DESPHOTOSTDSMOD_HOME /home/dtucker/DESPhotoStdsMod
+4. setenv JAVA_HOME /usr/java/j2sdk1.4.2_02
+5. cd $DESPHOTOSTDSMOD_HOME
+6. source bin/setup.csh
+7. java gov.fnal.eag.dtucker.desPhotoStds.test.PhotomEqSolverTest
+8. java gov.fnal.eag.dtucker.desPhotoStds.PhotomEqSolverRun pipeline dc01user 55135.0 55135.4 r 29 v1.0 1
+9. psql -U dtucker -d images -c "select count(*) from des_testfit"
+

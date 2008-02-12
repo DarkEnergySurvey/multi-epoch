@@ -1,0 +1,61 @@
+<html>
+  <head>
+    <meta content="text/html; charset=iso-8859-1" http-equiv="Content-Type">
+    <title>4Suite API Documentation: Ft.Lib.Uuid</title>
+    <link href="modules.css" type="text/css" rel="stylesheet">
+  </head>
+  <body>
+    <div class="universal-header"><span class="universal-header-prefix">&nbsp;&nbsp;&nbsp;</span>&nbsp;<span class="universal-header-prefix">&nbsp;&nbsp;</span>&nbsp;<span class="universal-header-prefix">&nbsp;</span>&nbsp;<a href="../index.html">4Suite<sup>&trade;</sup> API Documentation</a></div>
+    <h1><span class="glyph-arrow">&#9658;</span> Module <span class="this-name"><a href="Ft.html" title="Ft">Ft</a>.<a href="Ft.Lib.html" title="Ft.Lib">Lib</a>.Uuid</span></h1>
+    <div class="abstract">Functions for generating and comparing Universal Unique Identifiers
+(UUIDs), based on ideas from e2fsprogs.</div>
+    <pre class="description">A UUID is essentially a 128-bit random number that has a string
+representation of 28 hexadecimal digits, hyphenated in groups of
+8-4-4-12. The value could be greater than the number of atoms in the
+universe; it's extremely unlikely that the same number would ever be
+generated twice.
+
+UUIDs are defined by ISO/IEC 11578:1996 (Remote Procedure Call)
+and The Open Group's DCE 1.1 (Distributed Computing Environment) spec
+(the ISO version was based on an earlier version of the DCE spec).
+See http://www.opengroup.org/onlinepubs/009629399/apdxa.htm#tagcjh_20
+for the current version, and also see the expired IETF Internet-Draft
+http://www.opengroup.org/dce/info/draft-leach-uuids-guids-01.txt for
+a version with more informative prose and examples.
+
+Copyright 2004 Fourthought, Inc. (USA).
+Detailed license and copyright information: http://4suite.org/COPYRIGHT
+Project home, documentation, distributions: http://4suite.org/</pre>
+    <div class="summary-section">
+      <table cellpadding="0" cellspacing="0">
+        <tbody>
+          <tr>
+            <td valign="top">
+              <div class="summary-header">Functions:</div>
+              <div class="summary-list"><span class="function-name"><a href="#CompareUuids">CompareUuids</a></span>, <span class="function-name"><a href="#GenerateUuid">GenerateUuid</a></span>, <span class="function-name"><a href="#UuidAsString">UuidAsString</a></span></div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="section">
+      <h2>Functions</h2>
+      <dl class="functions">
+        <dt class="functiondef"><a name="CompareUuids"><span class="function-name">CompareUuids</span></a>(<span class="argument-name">u1</span>, <span class="argument-name">u2</span>)</dt>
+        <dd class="functiondesc">
+          <div class="abstract">Compares, as with cmp(), two UUID strings case-insensitively</div>
+        </dd>
+        <dt class="functiondef"><a name="GenerateUuid"><span class="function-name">GenerateUuid</span></a>()</dt>
+        <dd class="functiondesc">
+          <div class="abstract">Returns a new UUID as a long int</div>
+        </dd>
+        <dt class="functiondef"><a name="UuidAsString"><span class="function-name">UuidAsString</span></a>(<span class="argument-name">uuid</span>)</dt>
+        <dd class="functiondesc">
+          <div class="abstract">Formats a long int representing a UUID as a UUID string:
+32 hex digits in hyphenated groups of 8-4-4-4-12.</div>
+        </dd>
+      </dl>
+    </div>
+    <div class="universal-footer">Last modified on 2004-10-04 16:54:56</div>
+  </body>
+</html>

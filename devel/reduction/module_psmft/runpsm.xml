@@ -1,0 +1,99 @@
+  <target name="Stage_runpsm" description="Running PSM">
+   <property file="${mypath}/module_psmft/runpsm.properties"/>
+
+     <envtosysprops/>
+     <esequence>
+
+      <publish>
+            <event ensembleid="${ensemble.id}"
+                   workflowid="Main"
+                   nodeid="Begin Stage_runpsm"
+                   currentState="0">
+               <property name="message" value="Begin Stage_runpsm"/>
+            </event>
+      </publish>
+
+      <print line=" - Begin Stage_runpsm"/>
+
+      <edeclare name="psmout" string="${mypath}/jobs/${uid}_PSM"/>
+
+      <mkdir  dir="$R{psmout}"/>
+
+      <write path="${mypath}/module_psmft/run.cmd" text="true"
+         errorProperty="failed" rethrow="false">
+        <segment string="setenv DESPHOTOSTDSMOD_HOME ${psm_home}" lineBreaks="1"/> 
+        <segment string="setenv JAVA_HOME ${java_ver}" lineBreaks="1"/>
+        <segment string="source ${psm_home}/bin/setup.csh" lineBreaks="1"/>
+        <segment string="${psm.exec} ${psm.args1} ${etc.path}/psmParam_g.par ${psm.args2}" lineBreaks="1"/>
+        <segment string="${psm.exec} ${psm.args1} ${etc.path}/psmParam_r.par ${psm.args2}" lineBreaks="1"/>
+        <segment string="${psm.exec} ${psm.args1} ${etc.path}/psmParam_i.par ${psm.args2}" lineBreaks="1"/>
+        <segment string="${psm.exec} ${psm.args1} ${etc.path}/psmParam_z.par ${psm.args2}" lineBreaks="1"/>
+      </write>   
+      
+      <rtexec inheritedEnv="true" execDir="${mypath}/module_psmft"
+              args="${csh.exec} ${csh.args}" quiet="true">
+        <outMonitor file="$R{psmout}/PSM.log"/>
+        <errMonitor file="$R{psmout}/PSM.log"/>
+      </rtexec>
+
+      <property name="source" value="file://${mypath}/module_psmft"/>
+      <edeclare globalName="sourcePattern1"> 
+         <uripattern baseUri="${source}">
+               <nestedelement include="*.jpg"/>
+         </uripattern>
+      </edeclare>
+      <edeclare name="filelist" null="true"/>
+      <urilist fullScan="true">
+         <nestedelement pattern="$G{sourcePattern1}"/>
+              <configuration>        
+               <attribute name="retainFiles"       value="true"/>
+               <attribute name="retainDirectories" value="false"/>
+               <attribute name="getNames" value="true"/>
+              </configuration>
+      </urilist>
+      <ereturn name="filelist" get="simpleResult"/>         
+          
+      <econdblock type="else-if">
+         <econdtask>
+            <eeval>
+               <statement>
+                 <ecompare long="0">
+                   <predicate long="$R{filelist$I{L}}" comparator="LT"/>
+                 </ecompare>
+               </statement>
+            </eeval>
+                 <esequence>
+                    <eloop counterName="v">
+                      <ecounter>
+                         <expression infix="$R{v} &lt; $R{filelist$I{L}}"/>
+                      </ecounter>
+             
+                         <print line=" * moving $R{filelist$I{$R{v}}} to $R{psmout}"/>
+
+                         <rtexec inheritedEnv="true" execDir="${mypath}/module_psmft"
+                            args="${mv.exec} ${mv.args}" quiet="true">
+                         </rtexec>
+                     
+                    </eloop>
+                 </esequence>
+         </econdtask>
+      </econdblock>
+
+
+      <delete file="${mypath}/module_psmft/run.cmd"/>
+
+      <print line=" - Stage_runpsm done"/>
+      <print line=" "/>
+
+      <publish>
+          <event ensembleid="${ensemble.id}"
+                 workflowid="Main"
+                 nodeid="End Stage_runpsm"
+                 currentState="1">
+               <property name="message" value="End Stage_runpsm"/>
+          </event>
+      </publish>       
+
+     </esequence>
+  </target>
+

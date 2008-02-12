@@ -1,0 +1,101 @@
+<html>
+  <head>
+    <meta content="text/html; charset=iso-8859-1" http-equiv="Content-Type">
+    <title>4Suite API Documentation: Ft.Lib.ImportUtil</title>
+    <link href="modules.css" type="text/css" rel="stylesheet">
+  </head>
+  <body>
+    <div class="universal-header"><span class="universal-header-prefix">&nbsp;&nbsp;&nbsp;</span>&nbsp;<span class="universal-header-prefix">&nbsp;&nbsp;</span>&nbsp;<span class="universal-header-prefix">&nbsp;</span>&nbsp;<a href="../index.html">4Suite<sup>&trade;</sup> API Documentation</a></div>
+    <h1><span class="glyph-arrow">&#9658;</span> Module <span class="this-name"><a href="Ft.html" title="Ft">Ft</a>.<a href="Ft.Lib.html" title="Ft.Lib">Lib</a>.ImportUtil</span></h1>
+    <div class="abstract">Utilites for working with Python PEP 302 import hooks.</div>
+    <pre class="description">Copyright 2006 Fourthought, Inc. (USA).
+Detailed license and copyright information: http://4suite.org/COPYRIGHT
+Project home, documentation, distributions: http://4suite.org/</pre>
+    <div class="summary-section">
+      <table cellpadding="0" cellspacing="0">
+        <tbody>
+          <tr>
+            <td valign="top">
+              <div class="summary-header">Functions:</div>
+              <div class="summary-list"><span class="function-name"><a href="#FindImporter">FindImporter</a></span>, <span class="function-name"><a href="#FindLoader">FindLoader</a></span>, <span class="function-name"><a href="#GetImporter">GetImporter</a></span>, <span class="function-name"><a href="#GetLastModified">GetLastModified</a></span>, <span class="function-name"><a href="#GetResourceFilename">GetResourceFilename</a></span>, <span class="function-name"><a href="#GetResourceLastModified">GetResourceLastModified</a></span>, <span class="function-name"><a href="#GetResourceStream">GetResourceStream</a></span>, <span class="function-name"><a href="#GetResourceString">GetResourceString</a></span>, <span class="function-name"><a href="#GetSearchPath">GetSearchPath</a></span>, <span class="function-name"><a href="#IterModules">IterModules</a></span>, <span class="function-name"><a href="#NormalizeResource">NormalizeResource</a></span>, <span class="function-name"><a href="#OsPathToResource">OsPathToResource</a></span></div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="section">
+      <h2>Functions</h2>
+      <dl class="functions">
+        <dt class="functiondef"><a name="FindImporter"><span class="function-name">FindImporter</span></a>(<span class="argument-name">fullname</span>)</dt>
+        <dd class="functiondesc">
+          <div class="abstract">Find a PEP 302 "loader" object for fullname</div>
+          <pre class="description">If fullname contains dots, path must be the containing package's
+__path__. Returns None if the module cannot be found or imported.</pre>
+        </dd>
+        <dt class="functiondef"><a name="FindLoader"><span class="function-name">FindLoader</span></a> = find_loader(<span class="argument-name">fullname</span>)</dt>
+        <dd class="functiondesc">
+          <div class="abstract">Find a PEP 302 "loader" object for fullname</div>
+          <pre class="description">If fullname contains dots, path must be the containing package's __path__.
+Returns None if the module cannot be found or imported. This function uses
+iter_importers(), and is thus subject to the same limitations regarding
+platform-specific special import locations such as the Windows registry.</pre>
+        </dd>
+        <dt class="functiondef"><a name="GetImporter"><span class="function-name">GetImporter</span></a> = get_importer(<span class="argument-name">path_item</span>)</dt>
+        <dd class="functiondesc">
+          <div class="abstract">Retrieve a PEP 302 importer for the given path item</div>
+          <pre class="description">The returned importer is cached in sys.path_importer_cache
+if it was newly created by a path hook.
+
+If there is no importer, a wrapper around the basic import
+machinery is returned. This wrapper is never inserted into
+the importer cache (None is inserted instead).
+
+The cache (or part of it) can be cleared manually if a
+rescan of sys.path_hooks is necessary.</pre>
+        </dd>
+        <dt class="functiondef"><a name="GetLastModified"><span class="function-name">GetLastModified</span></a>(<span class="argument-name">fullname</span>)</dt>
+        <dd class="functiondesc">
+          <div class="abstract">Returns the last modified timestamp for the given module.</div>
+        </dd>
+        <dt class="functiondef"><a name="GetResourceFilename"><span class="function-name">GetResourceFilename</span></a>(<span class="argument-name">package</span>, <span class="argument-name">resource</span>)</dt>
+        <dd class="functiondesc">
+          <div class="abstract">Returns a true filesystem name for the specified resource.</div>
+        </dd>
+        <dt class="functiondef"><a name="GetResourceLastModified"><span class="function-name">GetResourceLastModified</span></a>(<span class="argument-name">package</span>, <span class="argument-name">resource</span>)</dt>
+        <dd class="functiondesc">
+          <div class="abstract">Return a timestamp indicating the last-modified time of the
+specified resource.  Raises IOError is the pathname cannot be found
+from the loader for 'fullname'.</div>
+        </dd>
+        <dt class="functiondef"><a name="GetResourceStream"><span class="function-name">GetResourceStream</span></a>(<span class="argument-name">package</span>, <span class="argument-name">resource</span>)</dt>
+        <dd class="functiondesc">
+          <div class="abstract">Return a readable stream for specified resource</div>
+        </dd>
+        <dt class="functiondef"><a name="GetResourceString"><span class="function-name">GetResourceString</span></a>(<span class="argument-name">package</span>, <span class="argument-name">resource</span>)</dt>
+        <dd class="functiondesc">
+          <div class="abstract">Return a string containing the contents of the specified resource.</div>
+          <pre class="description">If the pathname is absolute it is retrieved starting at the path of
+the importer for 'fullname'.  Otherwise, it is retrieved relative
+to the module within the loader.</pre>
+        </dd>
+        <dt class="functiondef"><a name="GetSearchPath"><span class="function-name">GetSearchPath</span></a>(<span class="argument-name">fullname</span>)</dt>
+        <dd class="functiondesc"></dd>
+        <dt class="functiondef"><a name="IterModules"><span class="function-name">IterModules</span></a> = iter_modules(<span class="argument-name">path</span><span class="argument-default">=None</span>, <span class="argument-name">prefix</span><span class="argument-default">=''</span>)</dt>
+        <dd class="functiondesc">
+          <div class="abstract">Yields (module_loader, name, ispkg) for all submodules on path,
+or, if path is None, all top-level modules on sys.path.</div>
+          <pre class="description">'path' should be either None or a list of paths to look for
+modules in.
+
+'prefix' is a string to output on the front of every module name
+on output.</pre>
+        </dd>
+        <dt class="functiondef"><a name="NormalizeResource"><span class="function-name">NormalizeResource</span></a>(<span class="argument-name">package</span>, <span class="argument-name">resource</span>)</dt>
+        <dd class="functiondesc"></dd>
+        <dt class="functiondef"><a name="OsPathToResource"><span class="function-name">OsPathToResource</span></a>(<span class="argument-name">pathname</span>)</dt>
+        <dd class="functiondesc"></dd>
+      </dl>
+    </div>
+    <div class="universal-footer">Last modified on 2006-12-08 15:50:53</div>
+  </body>
+</html>

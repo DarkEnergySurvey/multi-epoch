@@ -1,0 +1,88 @@
+<html>
+  <head>
+    <meta content="text/html; charset=iso-8859-1" http-equiv="Content-Type">
+    <title>4Suite API Documentation: Ft.Xml.XPath.Util</title>
+    <link href="modules.css" type="text/css" rel="stylesheet">
+  </head>
+  <body>
+    <div class="universal-header"><span class="universal-header-prefix">&nbsp;&nbsp;&nbsp;</span>&nbsp;<span class="universal-header-prefix">&nbsp;&nbsp;</span>&nbsp;<span class="universal-header-prefix">&nbsp;</span>&nbsp;<a href="../index.html">4Suite<sup>&trade;</sup> API Documentation</a></div>
+    <h1><span class="glyph-arrow">&#9658;</span> Module <span class="this-name"><a href="Ft.html" title="Ft">Ft</a>.<a href="Ft.Xml.html" title="Ft.Xml">Xml</a>.<a href="Ft.Xml.XPath.html" title="Ft.Xml.XPath">XPath</a>.Util</span></h1>
+    <div class="abstract">General utilities for XPath applications</div>
+    <pre class="description">Copyright 2005 Fourthought, Inc. (USA).
+Detailed license and copyright information: http://4suite.org/COPYRIGHT
+Project home, documentation, distributions: http://4suite.org/</pre>
+    <div class="summary-section">
+      <table cellpadding="0" cellspacing="0">
+        <tbody>
+          <tr>
+            <td valign="top">
+              <div class="summary-header">Functions:</div>
+              <div class="summary-list"><span class="function-name"><a href="#Compile">Compile</a></span>, <span class="function-name"><a href="#Evaluate">Evaluate</a></span>, <span class="function-name"><a href="#ExpandQName">ExpandQName</a></span>, <span class="function-name"><a href="#NormalizeNode">NormalizeNode</a></span>, <span class="function-name"><a href="#SimpleEvaluate">SimpleEvaluate</a></span></div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="section">
+      <h2>Functions</h2>
+      <dl class="functions">
+        <dt class="functiondef"><a name="Compile"><span class="function-name">Compile</span></a>(<span class="argument-name">expr</span>)</dt>
+        <dd class="functiondesc">
+          <div class="abstract">Given an XPath expression as a string, returns an object that allows
+an evaluation engine to operate on the expression efficiently.
+This "compiled" expression object can be passed to the Evaluate
+function instead of a string, in order to shorten the amount of time
+needed to evaluate the expression.</div>
+        </dd>
+        <dt class="functiondef"><a name="Evaluate"><span class="function-name">Evaluate</span></a>(<span class="argument-name">expr</span>, <span class="argument-name">contextNode</span><span class="argument-default">=None</span>, <span class="argument-name">context</span><span class="argument-default">=None</span>)</dt>
+        <dd class="functiondesc">
+          <div class="abstract">Evaluates the given XPath expression.</div>
+          <pre class="description">Two arguments are required: the expression (as a string or compiled
+expression object), and a context. The context can be given as a
+Domlette node via the 'contextNode' named argument, or can be given as
+an Ft.Xml.XPath.Context.Context object via the 'context' named
+argument.
+
+If namespace bindings or variable bindings are needed, use a
+Context object. If extension functions are needed, either use a
+Context object, or set the EXTMODULES environment variable to be a
+':'-separated list of names of Python modules that implement
+extension functions.
+
+The return value will be one of the following:
+node-set: list of Domlette node objects (xml.dom.Node based);
+string: Unicode string type;
+number: float type;
+boolean: Ft.Lib.boolean C extension object;
+or a non-XPath object (i.e. as returned by an extension function).</pre>
+        </dd>
+        <dt class="functiondef"><a name="ExpandQName"><span class="function-name">ExpandQName</span></a>(<span class="argument-name">qname</span>, <span class="argument-name">refNode</span><span class="argument-default">=None</span>, <span class="argument-name">namespaces</span><span class="argument-default">=None</span>)</dt>
+        <dd class="functiondesc">
+          <div class="abstract">Expand the given QName in the context of the given node,
+or in the given namespace dictionary.</div>
+          <pre class="description">Returns a 2-tuple consisting of the namespace URI and local name.</pre>
+        </dd>
+        <dt class="functiondef"><a name="NormalizeNode"><span class="function-name">NormalizeNode</span></a>(<span class="argument-name">node</span>)</dt>
+        <dd class="functiondesc">
+          <div class="abstract">NormalizeNode is used to prepare a DOM for XPath evaluation.</div>
+          <pre class="description">1.  Convert CDATA Sections to Text Nodes.
+2.  Normalize all text nodes (adjacent nodes are merged into the first one).</pre>
+        </dd>
+        <dt class="functiondef"><a name="SimpleEvaluate"><span class="function-name">SimpleEvaluate</span></a>(<span class="argument-name">expr</span>, <span class="argument-name">node</span>, <span class="argument-name">explicitNss</span><span class="argument-default">=None</span>)</dt>
+        <dd class="functiondesc">
+          <div class="abstract">Designed to be the most simple/brain-dead interface to using XPath
+Usually invoked through Node objects using:
+  node.xpath(expr[, explicitNss])</div>
+          <pre class="description">expr - XPath expression in string or compiled form
+node - the node to be used as core of the context for evaluating the XPath
+explicitNss - (optional) any additional or overriding namespace mappings
+              in the form of a dictionary of prefix: namespace
+              the base namespace mappings are taken from in-scope
+              declarations on the given node.  This explicit dictionary
+              is suprimposed on the base mappings</pre>
+        </dd>
+      </dl>
+    </div>
+    <div class="universal-footer">Last modified on 2006-04-28 13:54:49</div>
+  </body>
+</html>

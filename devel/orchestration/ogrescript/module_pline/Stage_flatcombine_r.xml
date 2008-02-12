@@ -1,0 +1,27 @@
+   <target name="Stage_flatcombine_r" description="create r band flat correction">
+        <esequence>
+
+             <write path="${local.out}/${flatcombine.log}" text="true"
+                   errorProperty="failed" rethrow="false" append="true">
+                   <segment string=" -- flatcombine results for ${flatr.list}" lineBreaks="1"/>
+             </write>
+
+               <edeclare name="abpm"  string="${bpm.fits.name}"/>
+               <edeclare name="abias" string="${bias.fits.path}/${bias.fits.name}"/>
+               <edeclare name="alist" string="${flatr.list}"/>
+               <edeclare name="afile" string="${flatr.fits.path}/${flatr.fits.name}"/>
+
+
+            <rtexec inheritedEnv="false" execDir="${nite.dir}"
+               args="${flatcombine.exec} ${flatcombine.args}" quiet="true">
+               <errMonitor file="${local.out}/${flatcombine.log}"/>
+               <outMonitor file="${local.out}/${flatcombine.log}"/>
+            </rtexec>
+
+             <write path="${local.out}/${flatcombine.log}" text="true"
+                   errorProperty="failed" rethrow="false" append="true">
+                   <segment string=" -- flatcombine complete " lineBreaks="2"/>
+             </write>
+
+        </esequence>
+   </target>

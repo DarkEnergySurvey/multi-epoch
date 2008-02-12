@@ -1,0 +1,119 @@
+<html>
+  <head>
+    <meta content="text/html; charset=iso-8859-1" http-equiv="Content-Type">
+    <title>4Suite API Documentation: Ft.Xml.cDomlettec</title>
+    <link href="modules.css" type="text/css" rel="stylesheet">
+  </head>
+  <body>
+    <div class="universal-header"><span class="universal-header-prefix">&nbsp;&nbsp;&nbsp;</span>&nbsp;<span class="universal-header-prefix">&nbsp;&nbsp;</span>&nbsp;<span class="universal-header-prefix">&nbsp;</span>&nbsp;<a href="../index.html">4Suite<sup>&trade;</sup> API Documentation</a></div>
+    <h1><span class="glyph-arrow">&#9658;</span> Module <span class="this-name"><a href="Ft.html" title="Ft">Ft</a>.<a href="Ft.Xml.html" title="Ft.Xml">Xml</a>.cDomlettec</span></h1>
+    <div class="abstract">cDomlette implementation: a very fast DOM-like library tailored for use in XPath/XSLT</div>
+    <pre class="description">Copyright 2006 Fourthought, Inc. (USA).
+Detailed license and copyright information: http://4suite.org/COPYRIGHT
+Project home, documentation, distributions: http://4suite.org/</pre>
+    <div class="summary-section">
+      <table cellpadding="0" cellspacing="0">
+        <tbody>
+          <tr>
+            <td valign="top">
+              <div class="summary-header">Functions:</div>
+              <div class="summary-list"><span class="function-name"><a href="#CreateParser">CreateParser</a></span>, <span class="function-name"><a href="#GetAllNs">GetAllNs</a></span>, <span class="function-name"><a href="#NonvalParse">NonvalParse</a></span>, <span class="function-name"><a href="#Parse">Parse</a></span>, <span class="function-name"><a href="#ParseFragment">ParseFragment</a></span>, <span class="function-name"><a href="#SeekNss">SeekNss</a></span>, <span class="function-name"><a href="#TestTree">TestTree</a></span>, <span class="function-name"><a href="#ValParse">ValParse</a></span></div>
+            </td>
+            <td width="7" valign="middle"></td>
+            <td width="1" valign="middle" bgcolor="#C5C5C5"></td>
+            <td width="7" valign="middle"></td>
+            <td valign="top">
+              <div class="summary-header">Globals:</div>
+              <div class="summary-list"><span class="global-name"><a href="#CAPI">CAPI</a></span>, <span class="global-name"><a href="#Expat_CAPI">Expat_CAPI</a></span>, <span class="global-name"><a href="#FEATURE_GENERATOR">FEATURE_GENERATOR</a></span>, <span class="global-name"><a href="#FEATURE_PROCESS_XINCLUDES">FEATURE_PROCESS_XINCLUDES</a></span>, <span class="global-name"><a href="#PROPERTY_WHITESPACE_RULES">PROPERTY_WHITESPACE_RULES</a></span>, <span class="global-name"><a href="#PROPERTY_YIELD_RESULT">PROPERTY_YIELD_RESULT</a></span>, <span class="global-name"><a href="#XPTR_ATTRIBUTE_MATCH">XPTR_ATTRIBUTE_MATCH</a></span>, <span class="global-name"><a href="#XPTR_ELEMENT_COUNT">XPTR_ELEMENT_COUNT</a></span>, <span class="global-name"><a href="#XPTR_ELEMENT_ID">XPTR_ELEMENT_ID</a></span>, <span class="global-name"><a href="#XPTR_ELEMENT_MATCH">XPTR_ELEMENT_MATCH</a></span>, <span class="global-name"><a href="#implementation">implementation</a></span></div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="section">
+      <h2>Functions</h2>
+      <dl class="functions">
+        <dt class="functiondef"><a name="CreateParser"><span class="function-name">CreateParser</span></a>(<span class="argument-name">[readExtDtd]</span>)</dt>
+        <dd class="functiondesc">
+          <div class="abstract">CreateParser([readExtDtd]) -&gt; Parser</div>
+          <pre class="description">Return a new XML parser object.</pre>
+        </dd>
+        <dt class="functiondef"><a name="GetAllNs"><span class="function-name">GetAllNs</span></a>(<span class="argument-name">node</span>)</dt>
+        <dd class="functiondesc">
+          <div class="abstract">GetAllNs(node) -&gt; dict</div>
+          <pre class="description">Get all of the namespaces defined in scope of this node.</pre>
+        </dd>
+        <dt class="functiondef"><a name="NonvalParse"><span class="function-name">NonvalParse</span></a>(<span class="argument-name">isrc[, readExtDtd]</span>)</dt>
+        <dd class="functiondesc">
+          <div class="abstract">NonvalParse(isrc[, readExtDtd]) -&gt; Document</div>
+        </dd>
+        <dt class="functiondef"><a name="Parse"><span class="function-name">Parse</span></a>(<span class="argument-name">isrc[, readExtDtd]</span>)</dt>
+        <dd class="functiondesc">
+          <div class="abstract">Parse(isrc[, readExtDtd]) -&gt; Document</div>
+        </dd>
+        <dt class="functiondef"><a name="ParseFragment"><span class="function-name">ParseFragment</span></a>(<span class="argument-name">isrc[, namespaces]</span>)</dt>
+        <dd class="functiondesc">
+          <div class="abstract">ParseFragment(isrc[, namespaces]) -&gt; Document</div>
+        </dd>
+        <dt class="functiondef"><a name="SeekNss"><span class="function-name">SeekNss</span></a>(<span class="argument-name">node</span>)</dt>
+        <dd class="functiondesc">
+          <div class="abstract">SeekNss(node) -&gt; dict</div>
+          <pre class="description">Traverses the tree to seek an approximate set of defined namespaces.</pre>
+        </dd>
+        <dt class="functiondef"><a name="TestTree"><span class="function-name">TestTree</span></a>(<span class="argument-name"></span>)</dt>
+        <dd class="functiondesc">
+          <div class="abstract">TestTree() -&gt; Document</div>
+          <pre class="description">For regression testing.</pre>
+        </dd>
+        <dt class="functiondef"><a name="ValParse"><span class="function-name">ValParse</span></a>(<span class="argument-name">isrc</span>)</dt>
+        <dd class="functiondesc">
+          <div class="abstract">ValParse(isrc) -&gt; Document</div>
+        </dd>
+      </dl>
+    </div>
+    <div class="section">
+      <h2>Globals</h2>
+      <dl class="globals">
+        <dt class="globaldef"><a name="CAPI"><span class="global-name">CAPI</span></a> = &lt;PyCObject object at 0x20000000006a8f30&gt;</dt>
+        <dd class="globaldesc">
+          <div class="abstract">C objects to be exported from one extension module to another</div>
+          <pre class="description">C objects are used for communication between extension modules.  They
+provide a way for an extension module to export a C interface to other
+extension modules, so that extension modules can use the Python import
+mechanism to link to one another.</pre>
+        </dd>
+        <dt class="globaldef"><a name="Expat_CAPI"><span class="global-name">Expat_CAPI</span></a> = &lt;PyCObject object at 0x20000000006a8bc0&gt;</dt>
+        <dd class="globaldesc">
+          <div class="abstract">C objects to be exported from one extension module to another</div>
+          <pre class="description">C objects are used for communication between extension modules.  They
+provide a way for an extension module to export a C interface to other
+extension modules, so that extension modules can use the Python import
+mechanism to link to one another.</pre>
+        </dd>
+        <dt class="globaldef"><a name="FEATURE_GENERATOR"><span class="global-name">FEATURE_GENERATOR</span></a> = 'http://4suite.org/sax/features/generator'</dt>
+        <dd class="globaldesc"></dd>
+        <dt class="globaldef"><a name="FEATURE_PROCESS_XINCLUDES"><span class="global-name">FEATURE_PROCESS_XINCLUDES</span></a> = 'http://4suite.org/sax/features/process-xincludes'</dt>
+        <dd class="globaldesc"></dd>
+        <dt class="globaldef"><a name="PROPERTY_WHITESPACE_RULES"><span class="global-name">PROPERTY_WHITESPACE_RULES</span></a> = 'http://4suite.org/sax/properties/whitespace-rules'</dt>
+        <dd class="globaldesc"></dd>
+        <dt class="globaldef"><a name="PROPERTY_YIELD_RESULT"><span class="global-name">PROPERTY_YIELD_RESULT</span></a> = 'http://4suite.org/sax/properties/yield-result'</dt>
+        <dd class="globaldesc"></dd>
+        <dt class="globaldef"><a name="XPTR_ATTRIBUTE_MATCH"><span class="global-name">XPTR_ATTRIBUTE_MATCH</span></a> = 3</dt>
+        <dd class="globaldesc"></dd>
+        <dt class="globaldef"><a name="XPTR_ELEMENT_COUNT"><span class="global-name">XPTR_ELEMENT_COUNT</span></a> = 1</dt>
+        <dd class="globaldesc"></dd>
+        <dt class="globaldef"><a name="XPTR_ELEMENT_ID"><span class="global-name">XPTR_ELEMENT_ID</span></a> = 0</dt>
+        <dd class="globaldesc"></dd>
+        <dt class="globaldef"><a name="XPTR_ELEMENT_MATCH"><span class="global-name">XPTR_ELEMENT_MATCH</span></a> = 2</dt>
+        <dd class="globaldesc"></dd>
+        <dt class="globaldef"><a name="implementation"><span class="global-name">implementation</span></a> = &lt;DOMImplementation at 0x20000000006ad090&gt;</dt>
+        <dd class="globaldesc">
+          <div class="abstract">The DOMImplementation interface provides a number of methods for performing
+operations that are independent of any particular instance of the document
+object model.</div>
+        </dd>
+      </dl>
+    </div>
+    <div class="universal-footer">Last modified on 2007-10-05 14:12:42</div>
+  </body>
+</html>

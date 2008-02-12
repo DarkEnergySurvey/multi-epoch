@@ -1,0 +1,103 @@
+/**
+ * PhotomEqSolverRun.java The DES Collaboration  2005
+ */
+package gov.fnal.eag.dtucker.desPhotoStds;
+
+import gov.fnal.eag.dtucker.desPhotoStds.PhotomEqSolver;
+import java.sql.SQLException;
+import java.util.Date;
+
+
+/**
+ * @author dtucker
+ *
+ */
+public class PhotomEqSolverRun {
+
+
+    public static void main (String[] args) {
+
+        System.out.print("arglist:  ");
+        for (int i=0; i< args.length; i++) {
+            System.out.print(args[i] + " ");
+        }
+        System.out.print("\n");
+        
+        PhotomEqSolver ph = new PhotomEqSolver();
+
+        // Process any arguments passed to the main method.
+        // Assume they are ordered "username password nite filter ccdid magLo magHi psmVersion verbose".
+        if (args.length > 0) {
+            String user = args[0];
+            ph.setUser(user);   
+            System.out.println(user);
+        } 
+        if (args.length > 1) {
+            String passwd = args[1];
+            ph.setPasswd(passwd);   
+            System.out.println(passwd);
+        }
+        if (args.length > 2) {
+            String nite = args[2];
+            ph.setNite(nite);
+            System.out.println("nite="+nite);
+        }
+        if (args.length > 3) {
+            String filter = args[3];
+            ph.setFilter(filter);
+            System.out.println("filter="+filter);
+        } 
+        if (args.length > 4) {
+            int ccdid = Integer.parseInt(args[4]);
+            ph.setCcdid(ccdid);
+            System.out.println("ccdid="+ccdid);
+        } 
+        if (args.length > 5) {
+            double magLo = Double.parseDouble(args[5]);
+            ph.setMagLo(magLo);
+            System.out.println("magLo="+magLo);
+        }        
+        if (args.length > 6) {
+            double magHi = Double.parseDouble(args[6]);
+            ph.setMagHi(magHi);
+            System.out.println("magHi="+magHi);
+        } 
+        if (args.length > 7) {
+            String psmVersion = args[7];
+            ph.setPsmVersion(psmVersion);   
+            System.out.println("psmVersion="+psmVersion);
+        } 
+
+        if (args.length > 8) {
+            int verbose = Integer.parseInt(args[8]);
+            ph.setVerbose(verbose);   
+            System.out.println("verbose="+verbose);
+        } 
+       
+        ph.setSqlDriver("oracle.jdbc.driver.OracleDriver");
+        ph.setUrl("jdbc:oracle:thin:@//sky.ncsa.uiuc.edu:1521/");
+        ph.setDbName("des");
+        ph.setStdTable("des_stripe82_stds_v1");
+        ph.setObsTable("OBJECTS");
+        ph.setFilesTable("FILES");
+        ph.setFitTable("des_psmfit_dc01");
+        
+        Date date = new Date();
+        ph.setDate(date);
+        
+        try {
+            ph.solve();
+        } catch (ClassNotFoundException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        } catch (SQLException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        } catch (Exception e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+
+    }
+
+}

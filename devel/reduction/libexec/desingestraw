@@ -1,0 +1,140 @@
+#!/usr/bin/env perl
+########################################################################
+#  $Id$
+#
+#  $Rev::                                  $:  # Revision of last commit.
+#  $LastChangedBy::                        $:  # Author of last commit. 
+#  $LastChangedDate::                      $:  # Date of last commit.
+#
+#  Authors: 
+#         Michelle Gower (mgower@ncsa.uiuc.edu)
+#         Darren Adams (dadams@ncsa.uiuc.edu)
+#
+#  Developed at: 
+#  The National Center for Supercomputing Applications (NCSA).
+#
+#  Copyright (C) 2007 Board of Trustees of the University of Illinois. 
+#  All rights reserved.
+#
+#  DESCRIPTION:
+#  Ingest files table entries for raw data.
+#
+#######################################################################
+
+use strict;
+use warnings;
+
+use FindBin;
+use lib "$FindBin::Bin/../lib";
+use DES::utils::dbutils;
+use DES::desDBI;
+use DES::utils::misc;
+use DES::utils::hist;
+use DES::desconfig;
+
+my $verbose = 1;
+my $configfile;
+my $condorid;
+my $DES_HOME = getHome() or die "Error: Can't determine DES_HOME";
+
+# Check config file:
+if (scalar(@ARGV) == 2)
+{   
+  $configfile = $ARGV[0];
+  $condorid = $ARGV[1];
+}
+else
+{
+  print "Usage: desingestraw configfile condorid\n";
+  exit $FAILURE;
+}
+
+# read sysinfo file
+my $config = new DES::desconfig;
+$config->readConfig($configfile, 0, \*STDERR);
+
+# log condor jobid
+$condorid = sprintf("%d", $condorid);
+logEvent($config, "convert", "j", "ingestraw", "cid", $condorid);
+
+# Get relevant values from configuration.
+my %searchdefs;
+$searchdefs{"stage"} = "convert";
+my $Detector = $config->getValueReq("detector", \%searchdefs);
+my $nite = $config->getValueReq("nite");
+
+# Establish database connection:
+my $desdb = new DES::desDBI;
+
+# Some timing variables.
+my $t1;
+my $t2;
+$t1 = time;
+
+#Get list of files to parse:
+#my @files = <convert_*.out>;
+my @files;
+$desdb->getNiteSrcImageList($nite, \@files);
+foreach (@files) {
+  $_ = 'convert_'.$_.'.out';
+}
+print "\nInserting file information into des database from the following files:\n";
+foreach (@files) {
+  print "$_\n";
+}
+
+# Get size of ARCHIVESITES column:
+my $archive = $config->getValueReq("run_archive_loc", \%searchdefs);
+$searchdefs{"archive"} = $archive;
+my $location_id = $config->getValueReq("location_id", \%searchdefs);
+my $ih = $desdb->column_info( '', 'DES_ADMIN', 'FILES', 'ARCHIVESITES' );
+my $colinfo = $ih->fetchrow_hashref();
+$ih->finish;
+my $asites_size = $$colinfo{'COLUMN_SIZE'};
+
+# Construct ARCHIVESITES string for DB insert.
+#    String of N with Y in location_id position
+print "Size of current ARCHIVESITES column: $asites_size\n";
+print "Location id: $location_id\n";
+my $asites_str = '';
+for(my $i=1; $i<=$asites_size; $i++)  {
+  if ($i == $location_id) {
+    $asites_str = $asites_str.'Y';
+  }
+  else {
+    $asites_str = $asites_str.'N';
+  }
+}
+print "ARCHIVESITES ENTRY: $asites_str\n";
+
+# Parse each file and store DB insert values in memory:
+my @values = ();
+for (my $i=0; $i<=$#files; $i++) {
+  my $file = $files[$i];
+print "file = $file\n";
+  open(FH, "<$file") or die "Cannot open $file.\n";
+  # Gulp entire file:
+  my @lines = <FH>;
+  foreach my $line(@lines) {
+    chomp $line;
+    my @vals = split(/\|/,$line);
+    for (my $i=0; $i<=$#vals; $i++) {
+print "vals[$i] = '", $vals[$i], "'\t";
+      push(@{$values[$i]},$vals[$i]);
+    }
+print "\n\n";
+  }
+  close FH;
+}
+
+for (my $j = 0; $j <= $#values; $j++) {
+   print "$j: ";
+   my $arrref = $values[$j];
+   for (my $k = 0; $k < scalar(@$arrref); $k++) {
+      print "\t'", $$arrref[$k], "'";
+   }
+   print "\n\n";
+}
+$desdb->ingestRawFileInfo($Detector,$asites_str,\@values);
+
+exit $SUCCESS;

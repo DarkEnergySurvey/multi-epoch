@@ -1,0 +1,118 @@
+   <target name="Stage_runadaptive" description="run adaptive moment">
+       <esequence>
+
+        <edeclare name="content_begin"  string="test begin"/>
+        <edeclare name="content_end"    string="test end"/>
+        <econdblock type="else-if">
+          <econdtask>
+            <eeval>
+             <statement>
+                <ecompare string="${platform}">
+                   <predicate string="TG" comparator="EQUALS"/>
+                </ecompare>
+             </statement>
+            </eeval>
+              <esequence>
+                <eassign name="content_begin"  string="Begin Stage_runadaptive for ccd ${ccd.num} data on $G{host} for nite ${nite}"/>
+                <eassign name="content_end"    string="End Stage_runadaptive for ccd ${ccd.num} data on $G{host} for nite ${nite}"/>
+              </esequence>
+          </econdtask>
+              <esequence>
+                <eassign name="content_begin"  string="Begin Stage_runadaptive for ccd ${ccd.num} for nite ${nite}"/>
+                <eassign name="content_end"    string="End Stage_runadaptive for ccd ${ccd.num} for nite ${nite}"/>
+              </esequence>
+        </econdblock>
+
+            <publish>
+              <event ensembleid="${ensemble.id}" workflowid="${jid}"
+                   nodeid="$R{content_begin}" currentState="1">
+                   <property name="message" value="$R{content_begin}"/>
+              </event>
+            </publish>
+
+
+             <write path="${local.out}/${adap.log}" text="true"
+                    errorProperty="failed" rethrow="false" append="true">
+                 <segment string=" -- adaptive moment results for ${scig.list}" lineBreaks="1"/>
+             </write>
+
+             <rtexec inheritedEnv="false" execDir="${nite.dir}/${scig.dir}" nowait="true"
+                     args="${adaptive.exec} ${adaptive.command_g}" quiet="true">
+                     <outMonitor file="${local.out}/${adap.log}"/>
+                     <errMonitor file="${local.out}/${adap.log}"/>
+             </rtexec>
+
+             <echo message="Waiting for output file"/>
+               <waitfor maxwait="90" maxwaitunit="second">
+                 <available file="${checkfile}"/>
+               </waitfor>
+             <echo message="Done waiting for output file"/>
+
+             <write path="${local.out}/${adap.log}" text="true"
+                    errorProperty="failed" rethrow="false" append="true">
+                 <segment string=" -- adaptive moment results for ${scir.list}" lineBreaks="1"/>
+             </write>
+
+             <rtexec inheritedEnv="false" execDir="${nite.dir}/${scir.dir}" nowait="true"
+                     args="${adaptive.exec} ${adaptive.command_r}" quiet="true">
+                     <outMonitor file="${local.out}/${adap.log}"/>
+                     <errMonitor file="${local.out}/${adap.log}"/>
+             </rtexec>
+
+             <echo message="Waiting for output file"/>
+               <waitfor maxwait="90" maxwaitunit="second">
+                 <available file="${checkfile}"/>
+               </waitfor>
+             <echo message="Done waiting for output file"/>
+
+             <write path="${local.out}/${adap.log}" text="true"
+                    errorProperty="failed" rethrow="false" append="true">
+                 <segment string=" -- adaptive moment results for ${scii.list}" lineBreaks="1"/>
+             </write>
+
+             <rtexec inheritedEnv="false" execDir="${nite.dir}/${scii.dir}" nowait="true"
+                     args="${adaptive.exec} ${adaptive.command_i}" quiet="true">
+                     <outMonitor file="${local.out}/${adap.log}"/>
+                     <errMonitor file="${local.out}/${adap.log}"/>
+             </rtexec>
+
+             <echo message="Waiting for output file"/>
+               <waitfor maxwait="90" maxwaitunit="second">
+                 <available file="${checkfile}"/>
+               </waitfor>
+             <echo message="Done waiting for output file"/>
+
+             <write path="${local.out}/${adap.log}" text="true"
+                    errorProperty="failed" rethrow="false" append="true">
+                 <segment string=" -- adaptive moment results for ${sciz.list}" lineBreaks="1"/>
+             </write>
+
+             <rtexec inheritedEnv="false" execDir="${nite.dir}/${sciz.dir}" nowait="true"
+                     args="${adaptive.exec} ${adaptive.command_z}" quiet="true">
+                     <outMonitor file="${local.out}/${adap.log}"/>
+                     <errMonitor file="${local.out}/${adap.log}"/>
+             </rtexec>
+
+             <echo message="Waiting for output file"/>
+               <waitfor maxwait="90" maxwaitunit="second">
+                 <available file="${checkfile}"/>
+               </waitfor>
+             <echo message="Done waiting for output file"/>
+
+            <print line=" - Stage_runadaptive done"/>
+
+
+         <write path="${local.out}/${adap.log}" text="true"
+                         errorProperty="failed" rethrow="false" append="true">
+                         <segment string=" -- adaptive done" lineBreaks="1"/>
+         </write>
+
+         <publish>
+            <event ensembleid="${ensemble.id}" workflowid="${jid}"
+                   nodeid="$R{content_end}" currentState="1">
+                  <property name="message" value="$R{content_end}"/>
+            </event>
+         </publish>
+
+       </esequence>
+   </target>

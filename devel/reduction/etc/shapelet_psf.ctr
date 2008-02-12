@@ -1,0 +1,23 @@
+Load data
+append into table shapelet_psf
+FIELDS TERMINATED BY ','
+trailing nullcols(
+OBJECT_ID      integer external,                           
+MAG_AUTO       decimal external,                                   
+FLAGS          integer external,                                     
+SIGMA          decimal external,                                   
+COEFF1         decimal external,                                    
+COEFF2         decimal external,                                    
+COEFF3         decimal external,                                    
+COEFF4         decimal external,                                    
+COEFF5         decimal external,                                    
+COEFF6         decimal external,                                    
+COEFF7         decimal external,                                    
+COEFF8         decimal external,                                    
+COEFF9         decimal external,                                    
+COEFF10        decimal external,                                    
+COEFF11        decimal external,                                    
+COEFF12        decimal external,                                    
+COEFF13        decimal external,                                   
+COEFF14        decimal external,                                    
+COEFF15        decimal external terminated by whitespace )

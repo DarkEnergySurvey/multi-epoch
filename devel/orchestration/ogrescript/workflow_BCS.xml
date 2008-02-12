@@ -1,0 +1,44 @@
+<?xml version="1.0"?>
+<!DOCTYPE project  [
+  <!ENTITY  Stage_createlists       SYSTEM "module_orchs/createlists.xml">
+  <!ENTITY  Stage_getastrostd       SYSTEM "module_orchs/getastrostd.xml">
+  <!ENTITY  Stage_msetup            SYSTEM "module_orchs/msetup.xml">
+  <!ENTITY  Stage_makexml           SYSTEM "module_orchs/makexml.xml">
+  <!ENTITY  Stage_makexml_postscamp SYSTEM "module_orchs/makexml_postscamp.xml">
+  <!ENTITY  Stage_runjobs           SYSTEM "module_orchs/runjobs.xml">
+
+  <!ENTITY  Stage_scamplist         SYSTEM "module_scamp/scamplist.xml">
+  <!ENTITY  Stage_runscamp          SYSTEM "module_scamp/runscamp.xml">
+
+]>
+
+<project name="pipeline" default="Stage_projects" basedir=".">
+ <property file="edit_BCS.properties"/>
+
+ &Stage_createlists;
+ &Stage_getastrostd;
+ &Stage_msetup;
+ &Stage_makexml;
+ &Stage_makexml_postscamp;
+ &Stage_runjobs;
+
+ &Stage_scamplist;
+ &Stage_runscamp;
+
+ <target name="Stage_BCS"
+       depends="Stage_msetup, Stage_createlists, Stage_makexml, Stage_runjobs"
+       description="BCS Stages">
+ </target>
+
+ <target name="Stage_scamp"
+       depends="Stage_scamplist, Stage_runscamp"
+       description="SCAMP">
+ </target>
+
+ <target name="Stage_postscamp"
+       depends="Stage_makexml_postscamp, Stage_runjobs"
+       description="Post_scamp Stages">
+ </target>
+
+</project>
+ 

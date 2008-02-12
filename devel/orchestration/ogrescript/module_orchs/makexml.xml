@@ -1,0 +1,229 @@
+<define procedure="Stage_makexml" ARG_0="int">
+    <properties file="${mypath}/module_orchs/makexml.properties"/>
+    <env/>
+    <properties sysprops="true"/>
+    <echo stdout="true" message=" - Begin Stage_makexml"/>
+<!--
+            <declare name="appbase"      string="/home/bcs/newflows/pipeline/trunk/reduction"/>
+-->
+    <declare name="appbase" string="${user.dir}"/>
+    <!-- Call perl script to cat all the xml and properties files in -->
+    <!-- ../module_pline  into a single file.  This minimizes the    -->
+    <!-- changes needed to the current code.                         -->
+    <declare name="buildpath" string="bin_${project}"/>
+    <stream-monitor-process execution-dir=".">
+        <command-line>${buildpath}/${builder} ${project}</command-line>
+        <out-monitor>
+            <trigger>
+                <filter pattern=".*"/>
+                <actions>
+                    <stream-file-write-action path="ogre_test.output" append="false"/>
+                </actions>
+            </trigger>
+        </out-monitor>
+    </stream-monitor-process>
+    <if>
+        <equals first="${platform}" second="TG"/>
+        <echo stdout="true" message=" -- Creating xml scripts for ${project} pipeline"/>
+        <echo stdout="true" message=" -- Creating xml scripts for ${project} pipeline"/>
+        <send>
+            <progress-event message="Begin Stage_makexml">
+                <header-property name="some-special-id" value="${ensemble.id}-Main-Begin-Stage_makexml"/>
+            </progress-event>
+        </send>
+        <declare name="end" long="$E{ ${ccd.stop} + 1 }"/>
+        <declare name="i" int="0"/>
+        <for var="i" from="${ccd.start}" condition="$E{${i} &lt; ${end}}">
+            <declare name="in" long="0"/>
+            <add-leading-zeros number="${i}" places="2">
+                <return-value defaultName="zerosAdded" assignedName="in"/>
+            </add-leading-zeros>
+            <delete dir="file:${appbase}/jobs/${uid}/${in}/xml">
+                <configuration>
+                    <property name="delete-fail-on-error" value="false" type="boolean"/>
+                </configuration>
+            </delete>
+            <mkdir uri="file:${appbase}/jobs/${uid}/${in}/xml"/>
+            <echo stdout="true" message=" -- Running Stage_makexml A - Write xml workflow scripts and properties files for CCD${in}"/>
+            <write-segments path="${appbase}/jobs/${uid}/${in}/${project}_${in}.ptest">
+                <segment lineBreaks="1">data.protocol=file</segment>
+                <segment lineBreaks="1"># directory for the given nite</segment>
+                <segment lineBreaks="1">nite=${nite}</segment>
+                <segment lineBreaks="1"># CCD number to work on</segment>
+                <segment lineBreaks="1">ccd.num=${in}</segment>
+                <segment lineBreaks="1">ensemble.id=${ensemble.id}</segment>
+                <segment lineBreaks="1">jid=${uid}_${in}</segment>
+                <segment lineBreaks="1">job.id=${tgrid_homepath_${site}}/${uid}_${in}</segment>
+                <segment lineBreaks="1">arch.dir=${tgrid_archpath_${site}}</segment>
+                <segment lineBreaks="1">base.dir=${tgrid_homepath_${site}}</segment>
+                <segment lineBreaks="1">project=${project}</segment>
+                <segment lineBreaks="1">platform=${platform}</segment>
+                <segment lineBreaks="1">bpmlocation=${bpm.location}</segment>
+                <segment lineBreaks="1">oracle.path=${tgrid_oracle_${site}}/bin</segment>
+                <segment lineBreaks="1"/>
+            </write-segments>
+            <stream-monitor-process execution-dir=".">
+<!--
+                  <command-line>${catpath} ${appbase}/jobs/${uid}/${in}/${project}_${in}.ptest ../module_pline/oldstuff/combine.prop.template.${project}</command-line>
+-->
+                <command-line>${catpath} ${appbase}/jobs/${uid}/${in}/${project}_${in}.ptest module_pline/combine.prop.template.${project}</command-line>
+                <out-monitor>
+                    <trigger>
+                        <filter pattern=".*"/>
+                        <actions>
+                            <stream-file-write-action path="${appbase}/jobs/${uid}/${in}/xml/${project}_${in}.properties" append="false"/>
+                        </actions>
+                    </trigger>
+                </out-monitor>
+            </stream-monitor-process>
+            <write-segments path="${appbase}/jobs/${uid}/${in}/${project}_${in}.test">
+                <segment lineBreaks="1">&lt;project name=&quot;${project}pipeline&quot; default=&quot;Stages&quot; basedir=&quot;.&quot; &gt;</segment>
+                <segment lineBreaks="1">&lt;property file=&quot;${project}_${in}.properties&quot;/&gt;</segment>
+            </write-segments>
+            <stream-monitor-process execution-dir=".">
+<!--
+                  <command-line>${catpath} ${appbase}/jobs/${uid}/${in}/${project}_${in}.test ../module_pline/oldstuff/combine.xml.template</command-line>
+-->
+                <command-line>${catpath} ${appbase}/jobs/${uid}/${in}/${project}_${in}.test module_pline/combine.xml.template</command-line>
+                <out-monitor>
+                    <trigger>
+                        <filter pattern=".*"/>
+                        <actions>
+                            <stream-file-write-action path="${appbase}/jobs/${uid}/${in}/xml/${project}_${in}.xml" append="false"/>
+                        </actions>
+                    </trigger>
+                </out-monitor>
+            </stream-monitor-process>
+            <write-segments path="${appbase}/jobs/${uid}/${in}/xml/${project}_${in}.xml" append="true">
+                <segment lineBreaks="1">  &lt;target name=&quot;Stages&quot; depends=&quot;${stage.list}&quot; description=&quot;Main Reduction Pipeline&quot;&gt;</segment>
+                <segment lineBreaks="1">  &lt;/target&gt;</segment>
+                <segment lineBreaks="1"/>
+                <segment lineBreaks="1">&lt;/project&gt;</segment>
+            </write-segments>
+            <delete dir="file:${appbase}/jobs/${uid}/${in}/${project}_${in}.ptest">
+                <configuration>
+                    <property name="delete-fail-on-error" value="false" type="boolean"/>
+                </configuration>
+            </delete>
+            <delete dir="file:${appbase}/jobs/${uid}/${in}/${project}_${in}.test">
+                <configuration>
+                    <property name="delete-fail-on-error" value="false" type="boolean"/>
+                </configuration>
+            </delete>
+            <echo stdout="true" message=" -- Running Stage_makexml B - GridFTP xml/prop for CCD${in} ... "/>
+            <declare name="srcdir_xml" string="${appbase}/jobs/${uid}/${in}/xml"/>
+            <declare name="targetdir" string="${targetprot}://${tgrid_server_${site}}${tgrid_homepath_${site}}/${uid}_${in}"/>
+<!--
+               <copy sourceDir="${srcdir_xml}" target="${targetdir}"/>
+-->
+            <copy>
+                <source base="file:${srcdir_xml}/">
+                    <include>*</include>
+                </source>
+                <target>file:${targetdir}</target>
+            </copy>
+<!--
+<copy taskName="test_copy" verbose="true">
+        <targetGroup targetURI="${targetdir}">
+               <pattern base="${srcdir_xml}">
+               </pattern>
+        </targetGroup>
+</copy>
+-->
+        </for>
+        <send>
+            <progress-event message="End Stage_makexml">
+                <header-property name="some-special-id" value="${ensemble.id}-Main-End-Stage_makexml"/>
+            </progress-event>
+        </send>
+        <else>
+            <echo stdout="true" message=" -- Creating xml scripts for ${project} pipeline"/>
+            <declare name="end" long="$E{ ${ccd.stop} + 1 }"/>
+            <declare name="i" int="0"/>
+            <for var="i" from="${ccd.start}" condition="$E{${i} &lt; ${end}}">
+                <echo stdout="true" message=" -- Running Stage_makexml - Write xml workflow scripts and properties files for CCD0${i}"/>
+                <echo stdout="true" message=" ----?? ${workplace}/${uid}/xml/${project}_0${i}.ptest "/>
+                <write-segments path="${workplace}/${uid}/xml/${project}_0${i}.ptest">
+                    <segment lineBreaks="1">data.protocol=file</segment>
+                    <segment lineBreaks="1"># directory for the given nite</segment>
+                    <segment lineBreaks="1">nite=${nite}</segment>
+                    <segment lineBreaks="1"># CCD number to work on</segment>
+                    <segment lineBreaks="1">ccd.num=0${i}</segment>
+                    <segment lineBreaks="1">ensemble.id=${ensemble.id}</segment>
+                    <segment lineBreaks="1">jid=${uid}</segment>
+                    <segment lineBreaks="1">job.id=${workplace}/${uid}</segment>
+                    <segment lineBreaks="1">arch.dir=${bcs_archpath}</segment>
+                    <segment lineBreaks="1">base.dir=${workplace}</segment>
+                    <segment lineBreaks="1">ccd.start=${ccd.start}</segment>
+                    <segment lineBreaks="1">project=${project}</segment>
+                    <segment lineBreaks="1">platform=${platform}</segment>
+                    <segment lineBreaks="1">bpmlocation=${bpm.location}</segment>
+                    <segment lineBreaks="1"/>
+                </write-segments>
+                <echo stdout="true" message=" ----?? ${catpath} ${workplace}/${uid}/xml/${project}_0${i}.ptest module_pline/combine.prop.template.${project}"/>
+                <stream-monitor-process execution-dir=".">
+<!--
+                     <command-line>${catpath} ${workplace}/${uid}/xml/${project}_0${i}.ptest module_pline/oldstuff/combine.prop.template.${project}</command-line>
+-->
+                    <command-line>${catpath} ${workplace}/${uid}/xml/${project}_0${i}.ptest module_pline/combine.prop.template.${project}</command-line>
+                    <out-monitor>
+                        <trigger>
+                            <filter pattern=".*"/>
+                            <actions>
+                                <stream-file-write-action path="${workplace}/${uid}/xml/${project}_0${i}.properties" append="false"/>
+                            </actions>
+                        </trigger>
+                    </out-monitor>
+                </stream-monitor-process>
+                <write-segments path="${workplace}/${uid}/xml/${project}_0${i}.test">
+                    <segment lineBreaks="1">&lt;project name=&quot;${project}pipeline&quot; default=&quot;Stages&quot; basedir=&quot;.&quot; &gt;</segment>
+                    <segment lineBreaks="1">&lt;property file=&quot;${project}_0${i}.properties&quot;/&gt;</segment>
+                </write-segments>
+                <stream-monitor-process execution-dir=".">
+<!--
+                     <command-line>${catpath} ${workplace}/${uid}/xml/${project}_0${i}.test module_pline/oldstuff/combine.xml.template</command-line>
+-->
+                    <command-line>${catpath} ${workplace}/${uid}/xml/${project}_0${i}.test module_pline/combine.xml.template</command-line>
+                    <out-monitor>
+                        <trigger>
+                            <filter pattern=".*"/>
+                            <actions>
+                                <stream-file-write-action path="${workplace}/${uid}/xml/${project}_0${i}.xml" append="false"/>
+                            </actions>
+                        </trigger>
+                    </out-monitor>
+                </stream-monitor-process>
+                <write-segments path="${workplace}/${uid}/xml/${project}_0${i}.xml" append="true">
+                    <segment lineBreaks="1">  &lt;target name=&quot;Stages&quot; depends=&quot;${stage.list}&quot; description=&quot;Main Reduction Pipeline&quot;&gt;</segment>
+                    <segment lineBreaks="1">  &lt;/target&gt;</segment>
+                    <segment lineBreaks="1"/>
+                    <segment lineBreaks="1">&lt;/project&gt;</segment>
+                </write-segments>
+                <delete dir="file:${workplace}/${uid}/xml/${project}_0${i}.ptest">
+                    <configuration>
+                        <property name="delete-fail-on-error" value="false" type="boolean"/>
+                    </configuration>
+                </delete>
+                <delete dir="file:${workplace}/${uid}/xml/${project}_0${i}.test">
+                    <configuration>
+                        <property name="delete-fail-on-error" value="false" type="boolean"/>
+                    </configuration>
+                </delete>
+            </for>
+        </else>
+    </if>
+    <!-- Delete the cated files in ../module_pline  -->
+    <delete dir="file:${appbase}/module_pline/combine.xml.template">
+        <configuration>
+            <property name="delete-fail-on-error" value="false" type="boolean"/>
+        </configuration>
+    </delete>
+    <delete dir="file:${appbase}/module_pline/combine.prop.template.${project}">
+        <configuration>
+            <property name="delete-fail-on-error" value="false" type="boolean"/>
+        </configuration>
+    </delete>
+    <echo stdout="true" message=" - Stage_makexml done"/>
+    <echo stdout="true" message=" "/>
+</define>
+

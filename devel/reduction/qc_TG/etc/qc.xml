@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<job>
+  <config>
+    <rootDir>ROOT_DIR_NOT_SET</rootDir>
+    <dataRepository>DATA_DIR_NOT_SET</dataRepository>
+  </config>
+
+  <components>
+
+    <component id="origin">
+      <data>
+        <file value="QC_FITS_IMAGE_NOT_SET" type="fits_image" id="fits_me_image"/>
+        <file value="QC_FITS_CATALOG_NOT_SET" type="fits_image" id="ldac_catalog"/>
+
+      </data>
+    </component>
+
+    <component id="fits2jpeg1">
+      <module>fits2jpeg</module>
+      <input>
+      	<file source="origin" type="fits_image" id="fits_me_image"/>
+      </input>	
+      <config>
+        <scalar id="min_image_value" type="float" value="-109" />
+        <scalar id="max_image_value" type="float" value="367" />
+      </config>
+    </component>
+
+    <component id="addflags1">
+      <module>addflags</module>
+      <input>
+        <file source="origin" type="fits_image" id="fits_me_image"/>
+      	<file source="origin" type="fits_catalog" id="ldac_catalog"/>
+      </input>	
+      <config>
+        <scalar id="mag_lim" type="float" value="12.0" />
+        <scalar id="cs_lim" type="float" value="0.9" />
+        <scalar id="trimmed" type="bool" value="True" />
+      </config>
+    </component>
+
+    <component id="classification1">
+      <module>classification</module>
+      <input>
+      	<file source="addflags1" type="fits_catalog" id="ldac_catalog"/>
+      </input>	
+      <config>
+        <scalar id="sigma_cut" type="float" value="5.0" />
+        <scalar id="band" type="string" value="B" />
+      </config>
+    </component>
+
+    <component id="spatial1">
+      <module>spatial</module>
+      <input>
+      	<file source="addflags1" type="fits_catalog" id="ldac_catalog"/>
+      </input>	
+      <config>
+        <scalar id="sigma_cut" type="float" value="5.0" />
+      </config>
+    </component>
+
+    <component id="psf1">
+      <module>psf</module>
+      <input>
+      	<file source="addflags1" type="fits_catalog" id="ldac_catalog"/>
+      </input>	
+      <config>
+        <scalar id="sigma_cut" type="float" value="5.0" />
+      </config>
+    </component>
+
+    <component id="counts1">
+      <module>counts</module>
+      <input>
+      	<file source="addflags1" type="fits_catalog" id="ldac_catalog"/>
+      </input>	
+      <config>
+        <scalar id="sigma_cut" type="float" value="5.0" />
+      </config>
+    </component>
+
+  </components>
+</job>

@@ -1,0 +1,60 @@
+<html>
+  <head>
+    <meta content="text/html; charset=iso-8859-1" http-equiv="Content-Type">
+    <title>4Suite API Documentation: Ft.Xml.Xslt.TextSax</title>
+    <link href="modules.css" type="text/css" rel="stylesheet">
+  </head>
+  <body>
+    <div class="universal-header"><span class="universal-header-prefix">&nbsp;&nbsp;&nbsp;</span>&nbsp;<span class="universal-header-prefix">&nbsp;&nbsp;</span>&nbsp;<span class="universal-header-prefix">&nbsp;</span>&nbsp;<a href="../index.html">4Suite<sup>&trade;</sup> API Documentation</a></div>
+    <h1><span class="glyph-arrow">&#9658;</span> Module <span class="this-name"><a href="Ft.html" title="Ft">Ft</a>.<a href="Ft.Xml.html" title="Ft.Xml">Xml</a>.<a href="Ft.Xml.Xslt.html" title="Ft.Xml.Xslt">Xslt</a>.TextSax</span></h1>
+    <div class="abstract">Components for reading Text files from a SAX-like producer.
+WWW: http://4suite.org/4DOM         e-mail: support@4suite.org</div>
+    <pre class="description">Copyright (c) 1999-2001 Fourthought Inc, USA.   All Rights Reserved.
+See  http://4suite.org/COPYRIGHT  for license and copyright information</pre>
+    <div class="summary-section">
+      <table cellpadding="0" cellspacing="0">
+        <tbody>
+          <tr>
+            <td valign="top">
+              <div class="summary-header">Classes:</div>
+              <div class="summary-list"><span class="class-name"><a href="#TextGenerator">TextGenerator</a></span></div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="section">
+      <h2>Classes</h2>
+      <dl class="classes">
+        <dt class="classdef"><a name="TextGenerator"></a>class <span class="class-name">TextGenerator</span></dt>
+        <dd class="classdesc">
+          <h3>Methods</h3>
+          <dl class="methods">
+            <dt class="methoddef"><a name="TextGenerator-__init__"><span class="method-name">__init__</span></a>(<span class="argument-name">self</span>, <span class="argument-name">keepAllWs</span><span class="argument-default">=0</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dt class="methoddef"><a name="TextGenerator-characters"><span class="method-name">characters</span></a>(<span class="argument-name">self</span>, <span class="argument-name">ch</span>, <span class="argument-name">start</span>, <span class="argument-name">length</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dt class="methoddef"><a name="TextGenerator-endElement"><span class="method-name">endElement</span></a>(<span class="argument-name">self</span>, <span class="argument-name">name</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dt class="methoddef"><a name="TextGenerator-error"><span class="method-name">error</span></a>(<span class="argument-name">self</span>, <span class="argument-name">exception</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dt class="methoddef"><a name="TextGenerator-fatalError"><span class="method-name">fatalError</span></a>(<span class="argument-name">self</span>, <span class="argument-name">exception</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dt class="methoddef"><a name="TextGenerator-getRootNode"><span class="method-name">getRootNode</span></a>(<span class="argument-name">self</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dt class="methoddef"><a name="TextGenerator-ignorableWhitespace"><span class="method-name">ignorableWhitespace</span></a>(<span class="argument-name">self</span>, <span class="argument-name">ch</span>, <span class="argument-name">start</span>, <span class="argument-name">length</span>)</dt>
+            <dd class="methoddesc">
+              <div class="abstract">If 'keepAllWs' permits, add ignorable white-space as a text node.
+Remember that a Document node cannot contain text nodes directly.
+If the white-space occurs outside the root element, there is no place
+for it in the DOM and it must be discarded.</div>
+            </dd>
+            <dt class="methoddef"><a name="TextGenerator-startElement"><span class="method-name">startElement</span></a>(<span class="argument-name">self</span>, <span class="argument-name">name</span>, <span class="argument-name">attribs</span>)</dt>
+            <dd class="methoddesc"></dd>
+          </dl>
+        </dd>
+      </dl>
+    </div>
+    <div class="universal-footer">Last modified on 2001-12-26 20:53:48</div>
+  </body>
+</html>

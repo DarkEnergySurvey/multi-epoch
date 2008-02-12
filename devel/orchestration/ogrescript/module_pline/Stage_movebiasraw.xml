@@ -1,0 +1,99 @@
+   <target name="Stage_movebiasraw" description="Stage move bias raw">
+     <esequence>
+
+        <edeclare name="content_begin"  string="test begin"/>
+        <edeclare name="content_end"    string="test end"/>
+
+        <econdblock type="else-if">
+          <econdtask>
+            <eeval>
+             <statement>
+                <ecompare string="${platform}">
+                   <predicate string="TG" comparator="EQUALS"/>
+                </ecompare>
+             </statement>
+            </eeval>
+              <esequence>
+                <eassign name="content_begin"  string="Begin Stage_moveraw for ccd ${ccd.num} data on $G{host} for nite ${nite}"/>
+                <eassign name="content_end"    string="End Stage_moveraw for ccd ${ccd.num} data on $G{host} for nite ${nite}"/>
+              </esequence>
+          </econdtask>
+              <esequence>
+                <eassign name="content_begin"  string="Begin Stage_moveraw for ccd ${ccd.num} for nite ${nite}"/>
+                <eassign name="content_end"    string="End Stage_moveraw for ccd ${ccd.num} for nite ${nite}"/>
+              </esequence>
+        </econdblock>
+
+        <publish>
+              <event ensembleid="${ensemble.id}" workflowid="${jid}"
+                   nodeid="$R{content_begin}" currentState="1">
+                   <property name="message" value="$R{content_begin}"/>
+              </event>
+        </publish>
+
+         <edeclare name="listname" string="${bias.list}"/>
+
+         <rtexec inheritedEnv="false" execDir="${nite.dir}"
+                   args="${moveraw.exec} ${moveraw.command1}" quiet="true">
+           <outMonitor file="${nite.dir}/count.dat"/>
+         </rtexec>
+
+         <edeclare name="count" />
+            <read path="${nite.dir}/count.dat" lines="true"/>
+         <ereturn name="count" get="string"/>
+
+         <edeclare name="check_count" string="0"/>
+
+         <econdblock type="else-if">
+           <econdtask>
+              <eeval>
+                <statement>
+                  <ecompare string="$R{count}">
+                    <predicate string="$R{check_count}" comparator="EQUALS"/>
+                  </ecompare>
+                </statement>
+              </eeval>
+                  <esequence>
+                   <delete file="${nite.dir}/count.dat"/>
+                   <write path="${local.out}/${log.name}" text="true"
+                             errorProperty="failed" rethrow="false" append="true">
+                      <segment string=" * no files found in $R{listname}" lineBreaks="1"/>
+                   </write>
+                 </esequence>
+           </econdtask>
+             <esequence>
+
+              <write path="${local.out}/${log.name}" text="true"
+                    errorProperty="failed" rethrow="false" append="true">
+                 <segment string=" -- $R{listname} has $R{count} fits files" lineBreaks="1"/>
+              </write>
+
+              <eloop counterName="i">
+                <ecounter>
+                 <expression infix="$R{i} &lt; $R{count}"/>
+                </ecounter>
+
+                <rtexec inheritedEnv="false" execDir="${nite.dir}"
+                    args="${moveraw.exec} ${moveraw.command2}" quiet="true">
+                </rtexec>
+
+                <edeclare name="rawname" />
+                  <read path="${nite.dir}/fitsname.in" lines="true"/>
+                <ereturn name="rawname" get="string"/>
+
+                <uricopy from="${archive.dir}/$R{rawname}" to="${data.protocol}://${nite.dir}/$R{rawname}"/>
+
+                <write path="${local.out}/${log.name}" text="true"
+                    errorProperty="failed" rethrow="false" append="true">
+                <segment string=" * moving $R{rawname} success" lineBreaks="1"/>
+                </write>
+
+                <delete file="${nite.dir}/fitsname.in"/>
+              </eloop>
+
+              <delete file="${nite.dir}/count.dat"/>
+             </esequence>
+        </econdblock>
+
+     </esequence>
+   </target>

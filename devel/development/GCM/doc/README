@@ -1,0 +1,254 @@
+HOW TO RUN THE GLOBAL CALIBRATIONS MODULE (GCM) ZEROPOINT SOLVER OUTSIDE OF OGRE/ELF
+
+1. Set the DESGCM_HOME environment variable to the
+   top level directory of the DESPhotoStdsMod product. 
+
+   For example:
+
+    (a) on bcs.cosmology.uiuc.edu: 
+        setenv DESGCM_HOME /home/dtucker/pipeline/trunk/development/GCM
+
+    (b) on my Mac OSX laptop:
+        setenv DESGCM_HOME /Users/dtucker/DESDM/pipeline/trunk/development/GCM
+
+
+2. Set the JAVA_HOME environment variable to the top level 
+   directory of java jdk.
+
+   For example: 
+
+    (a) on bcs.cosmology.uiuc.edu:
+        setenv JAVA_HOME /usr/java/jdk1.5.0_11
+
+    (b) on my Mac OSX laptop:
+        setenv JAVA_HOME /System/Library/Frameworks/JavaVM.framework/Versions/1.5/Home
+
+
+3. Change to the $DESGCM_HOME directory:
+       cd $DESGCM_HOME
+
+
+4. Source the setup script (currently, csh only):
+       source bin/setup.csh
+ 
+
+5. Change to the directory in which you will run the GCM.
+
+   For example:
+
+    (a) on bcs.cosmology.uiuc.edu:
+        cd /home/dtucker/GCMTests
+
+    (b) on my Mac OSX laptop: 
+        cd /Users/dtucker/Desktop/DESDMtests/GCMtests/Current
+
+
+7. Create a file of unique star matches from the region-to-region overlaps
+   (or use an already existing file; see Step 8).
+
+   For example, to create this file for the DC3 GSNlite coadd
+   (replacing "XXXXXXX" and "YYYYYYY" respectively with a correct DES DB username and 
+    password):
+
+   java gov.fnal.eag.dtucker.desPhotoStds.GlobalZPSolverPrepRun jdbc:oracle:thin:@charon.ncsa.uiuc.edu:1521: des XXXXXXX YYYYYYY g 15.0 18.0 coadd "DES%" "DES20070814" GlobalZPSolverPrepGSNlite.txt > ./GlobalZPSolverPrepGSNlite.log &
+
+   tail -f output.descoadd.20070814.log   [ctrl-c to escape]
+
+   The arguments for GlobalZPSolverPrepRun are:
+   (1) the URL of the DES Oracle database (jdbc:oracle:thin:@charon.ncsa.uiuc.edu:1521:)
+   (2) the database name (des)
+   (3) the database username (XXXXXXX)
+   (4) the database password (YYYYYYY)
+   (5) the filter (g)
+   (6) the magnitude bright limit (15.0)
+   (7) the magnitude faint limit (18.0)
+   (8) the image type (coadd -- currently only images of type coadd will work)
+   (9) an image name filter ("DES%")
+  (10) the run id descriptor ("DES20070814")
+  (11) the output file name (GlobalZPSolverPrepGSNlite.txt)
+  (12) the imageid for the image that is to be used as the reference 
+       (not used here; if not specified, the first image found by 
+        GlobalZPSolverPrepRun will be set as the reference image)
+
+
+   Likewise, to create this file for the BCS coadd data from October 10, 2007:
+
+   java gov.fnal.eag.dtucker.desPhotoStds.GlobalZPSolverPrepRun jdbc:oracle:thin:@charon.ncsa.uiuc.edu:1521: des XXXXXXX YYYYYYY g 15.0 18.0 coadd "BCS%" "BCS20071001" GlobalZPSolverPrepBCS20071001.txt > ./GlobalZPSolverPrepBCS20071001.log &
+
+
+   For comparison, versions of GlobalZPSolverPrepGSNlite.txt and 
+   GlobalZPSolverPrepBCS20071001.txt can be found in 
+   pipeline/trunk/development/GCM/testdata.  (The version of 
+   GlobalZPSolverPrepBCS20071001.txt in pipeline/trunk/development/GCM/testdata
+   has been modified slightly by hand.)
+
+   NOTE:  CURRENTLY GlobalZPSolverPrepRun USES THE STORED PROCEDURE fMatchImages_coadd
+          AND ONLY FINDS MATCHES IN THE OVERLAPS FOR COADD TILES.  A FUTURE VERSION OF 
+          THIS CODE WILL BE MORE FLEXIBLE.
+
+   GlobalZPSolverPrepRun sets a single image to be the reference image (coadd tile) to 
+   which all other images (coadd tiles) will be calibrated.  By default, this image
+   is the first image that GlobalZPSolverPrepRun finds in the database that is of the
+   correct filter band, image type, image name, and run id, although one may also
+   specify an image as the 12th argument in the GlobalZPSolverPrepRun argument list.
+   One can also modify the resulting ASCII star match list table by hand, as was
+   done for pipeline/trunk/development/GCM/testdata/GlobalZPSolverPrepBCS20071001.txt.
+   In this case, you want to edit the regionQuality1 (column 4) and regionQuality2 
+   (column 13) values for the images (regionids).  A regionQuality of 1 means that 
+   that regionid is a reference image:  its zeropoint offset will be fixed to a value
+   of zero when the GCM zeropoint solver (Step 8) is run.  A regionQuality of 0 means
+   that that regionid's zeropoint offset is to be solved for.  More than one regionid 
+   can be set to a regionQuality of 1.  (For that matter, ALL regionQualities can be
+   set to 1, but, in that case, all the regionids are reference images and none will
+   have their zeropoint offsets solved for.)
+
+   Note that if there are any disconnected "islands" of images that have no overlapping
+   reference images (such as happens with the October 10, 2007 BCS coadds), one may 
+   want to manually designate one of the regionids in each "island" or "group" as a
+   reference image with a regionQuality of 1.  This will make the images in these 
+   groups calibrateable. (See Step 8 below.)  
+
+   Run-times for GlobalZPSolverPrepRun using a 1.67GHz PPC Apple PowerBook G4 laptop
+   are about 2 minutes for the GSNlite data and about 15 minutes for the BCS coadd
+   data from October 10, 2007.
+
+
+
+8. Run the GCM zeropoint solver.
+
+   For example, to run on a simple test case based on Fig. 1 of 
+   Glazebrook et al. (1994, MNRAS, 266, 65):
+   
+   java -Xmx2048M gov.fnal.eag.dtucker.desPhotoStds.GlobalZPSolverRun $DESGCM_HOME/testdata/starMatchFile-glazebrook-newformat.txt ./out-starMatchFile-glazebrook-newformat.txt 1 > ./GlobalZPSolverRunGlazebrook.log &
+
+   The arguments are:
+   (1) the input file of unique star matches ($DESGCM_HOME/testdata/starMatchFile-glazebrook-newformat.txt)
+   (2) the output file (out-starMatchFile-glazebrook-newformat.txt)
+   (3) a verbosity level for output to the screen or stdout (1)
+
+   After running the GCM zeropoint solver, you will find the 
+   following files:
+   (1) out-starMatchFile-glazebrook-newformat.txt, which contains
+       a listing of the offsets to be applied to each region.
+       For the case of the Glazebrook et al. test data, the 
+       contents of the file will look like this:
+
+       #To correct the mags in each regionid, *subtract* the following zeropoints.
+       #regionid     zeropoint     rms 
+       100001          2.967      0.033 
+       100002          2.033      0.033 
+       100003          2.000      0.000 
+       100004          1.000      0.000 
+       100005          0.000      0.000 
+       100006          0.000      0.033 
+       #
+       #rms of solution:    0.026 
+
+   (2) The matrices for the least squares equation AA*XX=BB (plus
+       related matrices), output as FITS images (eventually useful
+       for those 5000x5000 matrices that we will run up against):
+        * matrixAA.fits (the matrix AA)
+        * matrixXX.fits (the matrix XX)
+        * matrixBB.fits (the matrix BB)
+        * matrixAAinv.fits (the inverse of matrix AA)
+        * matrixII.fits (the identity matrix resulting from AA*AAinv)
+
+
+   You can also run the GCM zeropoint solver on the star match files created 
+   in Step 7 above:
+
+   java -Xmx2048M gov.fnal.eag.dtucker.desPhotoStds.GlobalZPSolverRun GlobalZPSolverPrepGSNlite.txt out-GlobalZPSolverPrepGSNlite.txt 1 >  ./GlobalZPSolverRunGSNlite.log &
+
+   java -Xmx2048M gov.fnal.eag.dtucker.desPhotoStds.GlobalZPSolverRun GlobalZPSolverPrepBCS20071001.txt out-GlobalZPSolverPrepBCS20071001.txt 1 >  ./GlobalZPSolverRunBCS20071001.log &
+
+
+   If you have trouble with the versions of GlobalZPSolverPrepGSNlite.txt and
+   GlobalZPSolverPrepBCS20071001.txt that you created in Step 7, you can also
+   try the GCM zeropoint solver against the versions of these files that are
+   included within pipeline/trunk/development/GCM/testdata.
+
+   java -Xmx2048M gov.fnal.eag.dtucker.desPhotoStds.GlobalZPSolverRun $DESGCM_HOME/testdata/GlobalZPSolverPrepGSNlite.txt out-GlobalZPSolverPrepGSNlite.txt 1 >  ./GlobalZPSolverRunGSNlite.log &
+
+   java -Xmx2048M gov.fnal.eag.dtucker.desPhotoStds.GlobalZPSolverRun $DESGCM_HOME/testdata/GlobalZPSolverPrepBCS20071001.txt out-GlobalZPSolverPrepBCS20071001.txt 1 >  ./GlobalZPSolverRunBCS20071001.log &
+
+   Note that images lying within disconnected, uncalibrateable "islands" or groups that
+   have no regionQuality=1 images in their midst will have their zeropoint offsets set 
+   to a value of -9999.  To calibrate these islands/groups, one must designate one or more
+   of the images within each group as a reference image with regionQuality=1.  For instance,
+   in the log file, there is a section with the following output that shows which region ids
+   belong to which "islands" or "groups" (Group: 0, Group: 1, ...); whether or not these 
+   region ids are calibrateable (Calibrateable=1 is yes, -1 is no); what their regionQualties
+   are (CalibFlagOrig = regionQualityID from star match file); and whether the region id will
+   be used as a reference image (CalFlagNew=1), will have its zeropoint offset solved for 
+   (CalFlagNew=0), or will have its zeropoint offset set to -9999 (CalFlagNew=-1; uncalibrateable).
+   Here is this section from the log file for the October 10, 2007 BCS coadd data:  
+   
+0 	 Region: 2009019 	 RA:  79.2482 	 DEC: -52.4167 	 Group: 0 	 Calibrateable: 1 	 CalFlagOrig: 1 	 CalFlagNew: 1
+1 	 Region: 2009027 	 RA:  79.2057 	 DEC: -52.9833 	 Group: 0 	 Calibrateable: 1 	 CalFlagOrig: 0 	 CalFlagNew: 0
+2 	 Region: 2009035 	 RA:  79.1617 	 DEC: -53.55 	 Group: 0 	 Calibrateable: 1 	 CalFlagOrig: 0 	 CalFlagNew: 0
+3 	 Region: 2009043 	 RA:  79.2893 	 DEC: -51.85 	 Group: 1 	 Calibrateable: -1 	 CalFlagOrig: 0 	 CalFlagNew: -1
+4 	 Region: 2009051 	 RA:  80.2066 	 DEC: -51.85 	 Group: 2 	 Calibrateable: -1 	 CalFlagOrig: 0 	 CalFlagNew: -1
+5 	 Region: 2009059 	 RA:  80.1773 	 DEC: -52.4167 	 Group: 3 	 Calibrateable: -1 	 CalFlagOrig: 0 	 CalFlagNew: -1
+6 	 Region: 2009099 	 RA:  80.083 	 DEC: -54.1167 	 Group: 4 	 Calibrateable: -1 	 CalFlagOrig: 0 	 CalFlagNew: -1
+7 	 Region: 2009119 	 RA:  80.0494 	 DEC: -54.6833 	 Group: 5 	 Calibrateable: -1 	 CalFlagOrig: 0 	 CalFlagNew: -1
+8 	 Region: 2009139 	 RA:  80.0146 	 DEC: -55.25 	 Group: 6 	 Calibrateable: -1 	 CalFlagOrig: 0 	 CalFlagNew: -1
+9 	 Region: 2071079 	 RA:  81.1064 	 DEC: -52.4167 	 Group: 7 	 Calibrateable: 1 	 CalFlagOrig: 1 	 CalFlagNew: 1
+13 	 Region: 2094387 	 RA:  82.0355 	 DEC: -52.4167 	 Group: 7 	 Calibrateable: 1 	 CalFlagOrig: 0 	 CalFlagNew: 0
+12 	 Region: 2094379 	 RA:  82.0413 	 DEC: -51.85 	 Group: 7 	 Calibrateable: 1 	 CalFlagOrig: 0 	 CalFlagNew: 0
+14 	 Region: 2094395 	 RA:  82.0294 	 DEC: -52.9833 	 Group: 7 	 Calibrateable: 1 	 CalFlagOrig: 0 	 CalFlagNew: 0
+18 	 Region: 2094839 	 RA:  82.9645 	 DEC: -52.4167 	 Group: 7 	 Calibrateable: 1 	 CalFlagOrig: 0 	 CalFlagNew: 0
+15 	 Region: 2094478 	 RA:  82.0231 	 DEC: -53.55 	 Group: 7 	 Calibrateable: 1 	 CalFlagOrig: 0 	 CalFlagNew: 0
+19 	 Region: 2094859 	 RA:  82.9706 	 DEC: -52.9833 	 Group: 7 	 Calibrateable: 1 	 CalFlagOrig: 0 	 CalFlagNew: 0
+17 	 Region: 2094737 	 RA:  82.9587 	 DEC: -51.85 	 Group: 7 	 Calibrateable: 1 	 CalFlagOrig: 0 	 CalFlagNew: 0
+22 	 Region: 2115619 	 RA:  83.8936 	 DEC: -52.4167 	 Group: 7 	 Calibrateable: 1 	 CalFlagOrig: 0 	 CalFlagNew: 0
+10 	 Region: 2071090 	 RA:  81.0693 	 DEC: -53.55 	 Group: 7 	 Calibrateable: 1 	 CalFlagOrig: 0 	 CalFlagNew: 0
+16 	 Region: 2094654 	 RA:  82.0166 	 DEC: -54.1167 	 Group: 7 	 Calibrateable: 1 	 CalFlagOrig: 0 	 CalFlagNew: 0
+20 	 Region: 2113467 	 RA:  82.9769 	 DEC: -53.55 	 Group: 7 	 Calibrateable: 1 	 CalFlagOrig: 0 	 CalFlagNew: 0
+23 	 Region: 2115639 	 RA:  83.9119 	 DEC: -52.9833 	 Group: 7 	 Calibrateable: 1 	 CalFlagOrig: 0 	 CalFlagNew: 0
+21 	 Region: 2115587 	 RA:  82.9834 	 DEC: -54.1167 	 Group: 7 	 Calibrateable: 1 	 CalFlagOrig: 0 	 CalFlagNew: 0
+24 	 Region: 2115659 	 RA:  83.9307 	 DEC: -53.55 	 Group: 7 	 Calibrateable: 1 	 CalFlagOrig: 0 	 CalFlagNew: 0
+11 	 Region: 2094353 	 RA:  81.0498 	 DEC: -54.1167 	 Group: 8 	 Calibrateable: -1 	 CalFlagOrig: 0 	 CalFlagNew: -1
+25 	 Region: 2115667 	 RA:  83.9502 	 DEC: -54.1167 	 Group: 9 	 Calibrateable: -1 	 CalFlagOrig: 0 	 CalFlagNew: -1
+26 	 Region: 2131587 	 RA:  84.8531 	 DEC: -52.9833 	 Group: 10 	 Calibrateable: -1 	 CalFlagOrig: 0 	 CalFlagNew: -1
+27 	 Region: 2133299 	 RA:  84.8845 	 DEC: -53.55 	 Group: 10 	 Calibrateable: -1 	 CalFlagOrig: 0 	 CalFlagNew: -1
+28 	 Region: 2133307 	 RA:  84.917 	 DEC: -54.1167 	 Group: 10 	 Calibrateable: -1 	 CalFlagOrig: 0 	 CalFlagNew: -1
+29 	 Region: 2133319 	 RA:  349.9999 	 DEC: -55.4833 	 Group: 11 	 Calibrateable: 1 	 CalFlagOrig: 1 	 CalFlagNew: 1
+30 	 Region: 2133339 	 RA:  349.9633 	 DEC: -56.05 	 Group: 11 	 Calibrateable: 1 	 CalFlagOrig: 0 	 CalFlagNew: 0
+32 	 Region: 2133355 	 RA:  350.0352 	 DEC: -54.9167 	 Group: 11 	 Calibrateable: 1 	 CalFlagOrig: 0 	 CalFlagNew: 0
+31 	 Region: 2133347 	 RA:  350.0693 	 DEC: -54.35 	 Group: 11 	 Calibrateable: 1 	 CalFlagOrig: 0 	 CalFlagNew: 0
+33 	 Region: 2133379 	 RA:  350.9999 	 DEC: -55.4833 	 Group: 12 	 Calibrateable: -1 	 CalFlagOrig: 0 	 CalFlagNew: -1
+34 	 Region: 2133387 	 RA:  350.978 	 DEC: -56.05 	 Group: 12 	 Calibrateable: -1 	 CalFlagOrig: 0 	 CalFlagNew: -1
+36 	 Region: 2133407 	 RA:  351.0211 	 DEC: -54.9167 	 Group: 12 	 Calibrateable: -1 	 CalFlagOrig: 0 	 CalFlagNew: -1
+35 	 Region: 2133399 	 RA:  351.0416 	 DEC: -54.35 	 Group: 13 	 Calibrateable: -1 	 CalFlagOrig: 0 	 CalFlagNew: -1
+37 	 Region: 2133419 	 RA:  352.0 	 DEC: -55.4833 	 Group: 14 	 Calibrateable: -1 	 CalFlagOrig: 0 	 CalFlagNew: -1
+40 	 Region: 2133447 	 RA:  352.0071 	 DEC: -54.9167 	 Group: 14 	 Calibrateable: -1 	 CalFlagOrig: 0 	 CalFlagNew: -1
+39 	 Region: 2133439 	 RA:  352.0139 	 DEC: -54.35 	 Group: 14 	 Calibrateable: -1 	 CalFlagOrig: 0 	 CalFlagNew: -1
+38 	 Region: 2133427 	 RA:  351.9927 	 DEC: -56.05 	 Group: 15 	 Calibrateable: -1 	 CalFlagOrig: 0 	 CalFlagNew: -1
+41 	 Region: 2133459 	 RA:  352.9861 	 DEC: -54.35 	 Group: 16 	 Calibrateable: -1 	 CalFlagOrig: 0 	 CalFlagNew: -1
+42 	 Region: 2133467 	 RA:  352.993 	 DEC: -54.9167 	 Group: 17 	 Calibrateable: -1 	 CalFlagOrig: 0 	 CalFlagNew: -1
+43 	 Region: 2134119 	 RA:  353.0073 	 DEC: -56.05 	 Group: 18 	 Calibrateable: -1 	 CalFlagOrig: 0 	 CalFlagNew: -1
+44 	 Region: 2134127 	 RA:  353.9584 	 DEC: -54.35 	 Group: 19 	 Calibrateable: -1 	 CalFlagOrig: 0 	 CalFlagNew: -1
+45 	 Region: 2134139 	 RA:  353.9789 	 DEC: -54.9167 	 Group: 20 	 Calibrateable: -1 	 CalFlagOrig: 0 	 CalFlagNew: -1
+46 	 Region: 2134159 	 RA:  354.0001 	 DEC: -55.4833 	 Group: 20 	 Calibrateable: -1 	 CalFlagOrig: 0 	 CalFlagNew: -1
+50 	 Region: 2151507 	 RA:  355.0001 	 DEC: -55.4833 	 Group: 20 	 Calibrateable: -1 	 CalFlagOrig: 0 	 CalFlagNew: -1
+47 	 Region: 2134179 	 RA:  354.022 	 DEC: -56.05 	 Group: 21 	 Calibrateable: -1 	 CalFlagOrig: 0 	 CalFlagNew: -1
+51 	 Region: 2154925 	 RA:  355.0367 	 DEC: -56.05 	 Group: 21 	 Calibrateable: -1 	 CalFlagOrig: 0 	 CalFlagNew: -1
+48 	 Region: 2148687 	 RA:  354.9307 	 DEC: -54.35 	 Group: 22 	 Calibrateable: -1 	 CalFlagOrig: 0 	 CalFlagNew: -1
+49 	 Region: 2151499 	 RA:  354.9648 	 DEC: -54.9167 	 Group: 23 	 Calibrateable: -1 	 CalFlagOrig: 0 	 CalFlagNew: -1
+
+
+   Note that region id  2009019 and region id 2071079, and region id 2133319 are reference 
+   images for Groups 0, 7, and 11 respectively.  Therefore, the regions ids in Groups 0, 7, 
+   and 11 are calibrateable (Calibrateable = 1).  Other isolated groups of overlapping images, 
+   like Group 10, do not contain a region id with regionQuality = 1 and are thus non-calibrateable.
+   Groups like Group 10 can, however, be made calibrateable, if the regionQuality of one
+   of the group members (like region id 2133299 in Group 10) is manually set to 1 in the 
+   ASCII star match file.  One regionQualities have been edited in the star match file,
+   the GlobalZPSolver can be re-run. 
+
+
+   Run-times for GlobalZPSolverRun using a 1.67GHz PPC Apple PowerBook G4 laptop
+   are mere seconds for both the GSNlite data the BCS coadd data from October 10, 2007,
+   which have relatively small matrices to invert.  For a full blown 5-year DES survey,
+   the run-times are on the order of a couple hours.
+

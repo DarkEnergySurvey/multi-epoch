@@ -1,0 +1,103 @@
+<html>
+  <head>
+    <meta content="text/html; charset=iso-8859-1" http-equiv="Content-Type">
+    <title>4Suite API Documentation: Ft.Lib.DistExt.InstallDocs</title>
+    <link href="modules.css" type="text/css" rel="stylesheet">
+  </head>
+  <body>
+    <div class="universal-header"><span class="universal-header-prefix">&nbsp;&nbsp;&nbsp;</span>&nbsp;<span class="universal-header-prefix">&nbsp;&nbsp;</span>&nbsp;<span class="universal-header-prefix">&nbsp;</span>&nbsp;<a href="../index.html">4Suite<sup>&trade;</sup> API Documentation</a></div>
+    <h1><span class="glyph-arrow">&#9658;</span> Module <span class="this-name"><a href="Ft.html" title="Ft">Ft</a>.<a href="Ft.Lib.html" title="Ft.Lib">Lib</a>.<a href="Ft.Lib.DistExt.html" title="Ft.Lib.DistExt">DistExt</a>.InstallDocs</span></h1>
+    <div class="summary-section">
+      <table cellpadding="0" cellspacing="0">
+        <tbody>
+          <tr>
+            <td valign="top">
+              <div class="summary-header">Classes:</div>
+              <div class="summary-list"><span class="class-name"><a href="#InstallDocs">InstallDocs</a></span>, <span class="class-name"><a href="#Stylesheet">Stylesheet</a></span></div>
+            </td>
+            <td width="7" valign="middle"></td>
+            <td bgcolor="#C5C5C5" valign="middle" width="1"></td>
+            <td width="7" valign="middle"></td>
+            <td valign="top">
+              <div class="summary-header">Globals:</div>
+              <div class="summary-list"><span class="global-name"><a href="#DEBUG">DEBUG</a></span></div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="section">
+      <h2>Classes</h2>
+      <dl class="classes">
+        <dt class="classdef"><a name="InstallDocs"></a>class <span class="class-name">InstallDocs</span><span class="bases">(<span class="class-name"><span class="undocumented">distutils.cmd.Command</span></span>)</span></dt>
+        <dd class="classdesc">
+          <div class="abstract">Base class for install sub-commands which install documentation.</div>
+          <h3>Methods</h3>
+          <dl class="methods">
+            <dt class="methoddef"><a name="InstallDocs-copy_uri"><span class="method-name">copy_uri</span></a>(<span class="argument-name">self</span>, <span class="argument-name">uri</span>, <span class="argument-name">filename</span>)</dt>
+            <dd class="methoddesc">
+              <div class="abstract">Copies the contents of the resource given by 'uri' to 'filename'.</div>
+            </dd>
+            <dt class="methoddef"><a name="InstallDocs-finalize_options"><span class="method-name">finalize_options</span></a>(<span class="argument-name">self</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dd class="overrides"><b>Overrides: </b><span class="inherited-name">finalize_options</span> from class <span class="class-name"><span class="undocumented">Command</span></span></dd>
+            <dt class="methoddef"><a name="InstallDocs-get_documents"><span class="method-name">get_documents</span></a>(<span class="argument-name">self</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dt class="methoddef"><a name="InstallDocs-get_inputs"><span class="method-name">get_inputs</span></a>(<span class="argument-name">self</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dt class="methoddef"><a name="InstallDocs-get_modification_time"><span class="method-name">get_modification_time</span></a>(<span class="argument-name">self</span>, <span class="argument-name">uri</span>, <span class="argument-name">xslt</span><span class="argument-default">=False</span>, <span class="argument-name">_mtimes</span><span class="argument-default">=None</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dt class="methoddef"><a name="InstallDocs-get_outputs"><span class="method-name">get_outputs</span></a>(<span class="argument-name">self</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dt class="methoddef"><a name="InstallDocs-get_source_files"><span class="method-name">get_source_files</span></a>(<span class="argument-name">self</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dt class="methoddef"><a name="InstallDocs-get_stylesheet_extras"><span class="method-name">get_stylesheet_extras</span></a>(<span class="argument-name">self</span>, <span class="argument-name">stylesheet</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dt class="methoddef"><a name="InstallDocs-get_stylesheet_obj"><span class="method-name">get_stylesheet_obj</span></a>(<span class="argument-name">self</span>, <span class="argument-name">stylesheet</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dt class="methoddef"><a name="InstallDocs-initialize_options"><span class="method-name">initialize_options</span></a>(<span class="argument-name">self</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dd class="overrides"><b>Overrides: </b><span class="inherited-name">initialize_options</span> from class <span class="class-name"><span class="undocumented">Command</span></span></dd>
+            <dt class="methoddef"><a name="InstallDocs-render_document"><span class="method-name">render_document</span></a>(<span class="argument-name">self</span>, <span class="argument-name">document</span>, <span class="argument-name">stylesheet</span>, <span class="argument-name">outfile</span>)</dt>
+            <dd class="methoddesc">
+              <div class="abstract">This method is responsible for using 'stylesheet' to transform
+'document' to the file 'outfile'.</div>
+              <pre class="description">Override this method to use a different XSLT rendering engine.</pre>
+            </dd>
+            <dt class="methoddef"><a name="InstallDocs-render_documents"><span class="method-name">render_documents</span></a>(<span class="argument-name">self</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dt class="methoddef"><a name="InstallDocs-run"><span class="method-name">run</span></a>(<span class="argument-name">self</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dd class="overrides"><b>Overrides: </b><span class="inherited-name">run</span> from class <span class="class-name"><span class="undocumented">Command</span></span></dd>
+          </dl>
+          <h3>Methods inherited from class <span class="undocumented">distutils.cmd.Command</span></h3>
+          <div class="inherited"><span class="inherited-name">__getattr__</span>, <span class="inherited-name">__init__</span>, <span class="inherited-name">announce</span>, <span class="inherited-name">copy_file</span>, <span class="inherited-name">copy_tree</span>, <span class="inherited-name">debug_print</span>, <span class="inherited-name">dump_options</span>, <span class="inherited-name">ensure_dirname</span>, <span class="inherited-name">ensure_filename</span>, <span class="inherited-name">ensure_finalized</span>, <span class="inherited-name">ensure_string</span>, <span class="inherited-name">ensure_string_list</span>, <span class="inherited-name">execute</span>, <span class="inherited-name">get_command_name</span>, <span class="inherited-name">get_finalized_command</span>, <span class="inherited-name">get_sub_commands</span>, <span class="inherited-name">make_archive</span>, <span class="inherited-name">make_file</span>, <span class="inherited-name">mkpath</span>, <span class="inherited-name">move_file</span>, <span class="inherited-name">reinitialize_command</span>, <span class="inherited-name">run_command</span>, <span class="inherited-name">set_undefined_options</span>, <span class="inherited-name">spawn</span>, <span class="inherited-name">warn</span></div>
+          <h3>Members</h3>
+          <dl class="members">
+            <dt class="memberdef"><a name="boolean_options"><span class="member-name">boolean_options</span></a> = ['force', 'skip-build']</dt>
+            <dt class="memberdef"><a name="user_options"><span class="member-name">user_options</span></a> = [('install-dir=', 'd', 'directory to install documentation to'), ('build-dir=', 'b', 'build directory (where to install from)'), ('force', 'f', 'force installation (overwrite existing files)'), ('skip-build', None, 'skip the build steps')]</dt>
+          </dl>
+          <h3>Members inherited from class <span class="undocumented">distutils.cmd.Command</span></h3>
+          <div class="inherited"><span class="inherited-name">sub_commands</span></div>
+        </dd>
+        <dt class="classdef"><a name="Stylesheet"></a>class <span class="class-name">Stylesheet</span></dt>
+        <dd class="classdesc">
+          <div class="abstract">Class used to hold various attributes of an XSLT stylesheet.</div>
+          <h3>Methods</h3>
+          <dl class="methods">
+            <dt class="methoddef"><a name="Stylesheet-__init__"><span class="method-name">__init__</span></a>(<span class="argument-name">self</span>, <span class="argument-name">uri</span>, <span class="argument-name">extra_outputs</span><span class="argument-default">=None</span>, <span class="argument-name">mtime</span><span class="argument-default">=None</span>)</dt>
+            <dd class="methoddesc"></dd>
+          </dl>
+        </dd>
+      </dl>
+    </div>
+    <div class="section">
+      <h2>Globals</h2>
+      <dl class="globals">
+        <dt class="globaldef"><a name="DEBUG"><span class="global-name">DEBUG</span></a> = None</dt>
+        <dd class="globaldesc"></dd>
+      </dl>
+    </div>
+    <div class="universal-footer">Last modified on 2006-12-16 13:41:38</div>
+  </body>
+</html>

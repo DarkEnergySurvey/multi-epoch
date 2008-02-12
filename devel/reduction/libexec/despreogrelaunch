@@ -1,0 +1,200 @@
+#!/usr/bin/env perl
+########################################################################
+#  $Id$
+#
+#  $Rev::                                  $:  # Revision of last commit.
+#  $LastChangedBy::                        $:  # Author of last commit. 
+#  $LastChangedDate::                      $:  # Date of last commit.
+#
+#  Authors: 
+#         Michelle Gower (mgower@ncsa.uiuc.edu)
+#         Darren Adams (dadams@ncsa.uiuc.edu)
+#
+#  Developed at: 
+#  The National Center for Supercomputing Applications (NCSA).
+#
+#  Copyright (C) 2007 Board of Trustees of the University of Illinois. 
+#  All rights reserved.
+#
+#  DESCRIPTION:
+#
+#######################################################################
+
+use strict;
+use warnings;
+
+use Getopt::Long;
+use FindBin;
+use lib "$FindBin::Bin/../lib";
+use DES::utils::misc;
+use DES::utils::hist;
+use DES::desconfig;
+use POSIX qw(ceil);
+
+my ($Stat, $Version);
+
+&Getopt::Long::Configure( 'noignorecase', 'no_autoabbrev');
+Getopt::Long::GetOptions(
+   'Version|v' => \$Version
+);
+
+my ($ConfigFile, $Config);
+my ($Stage, $NumJobsConvert, $NumJobsScamp);
+my ($Out, $ExitCode);
+my %SearchDefs;
+
+my $DebugFH;
+open $DebugFH, "> despreogrelaunch.out";
+local *STDOUT = $DebugFH;
+local *STDERR = $DebugFH;
+
+if (scalar(@ARGV) >= 2)
+{
+  $ConfigFile = $ARGV[0];
+  $Stage = $ARGV[1];
+}
+else
+{
+  print "Usage: despreogrelaunch ConfigFile stage ogrestage\n";
+  close $DebugFH;
+  exit $FAILURE;
+}
+
+# read sysinfo file
+$Config = new DES::desconfig;
+$Config->readConfig($ConfigFile, 0, $DebugFH);
+
+my $DESHome = getHome() or die "Error: Can't determine DESHome";
+
+### setup OGRE PropertiesFile
+$SearchDefs{"stage"} = $Stage;
+my $Nite = $Config->getValueReq("nite");
+my $RunID = $Config->getValueReq("runid");
+my $RunSite = $Config->getValueReq("run_site");
+$SearchDefs{"site"} = $RunSite;
+my $CCDStart = $Config->getValueReq("ccd_start", \%SearchDefs);
+my $CCDStop = $Config->getValueReq("ccd_stop", \%SearchDefs);
+my $Platform = $Config->getValueReq("platform", \%SearchDefs);
+my $RunArchiveLoc = $Config->getValueReq("run_archive_loc", \%SearchDefs);
+$SearchDefs{"archive"} = $RunArchiveLoc;
+my $ArchiveRoot = $Config->getValueReq("archive_root", \%SearchDefs);
+#my $runSoftwareLoc = $Config->getValueReq("run_software_loc", \%SearchDefs);
+#$SearchDefs{"software"} = $runSoftwareLoc;
+
+
+# Database entries are shortened form of necessary ogre values.
+# Need to use orge recognized values 
+my $OgreSite;
+if (($RunSite eq "mercury") || ($RunSite eq "cobalt") || 
+    ($RunSite eq "tungsten") || ($RunSite eq "abe")) {
+  $OgreSite = "ncsa_".$RunSite;
+}
+elsif ($RunSite eq "sdsc") {
+  $OgreSite = "sdsc_ia64";
+}
+else {
+  print "Warning\nDidn't recognize run site '$RunSite'.\n";
+  print "Using value directly in edit_TG.properties.\n";
+  $OgreSite = $RunSite;
+}
+
+
+# default to 1 job
+$NumJobsConvert = 1;
+$NumJobsScamp = 1;
+
+my $WallHrs = 1;
+my $StageListProcess = " ";
+my $StageListPostScamp = " ";
+my $HostName = `/bin/hostname -f`;
+chomp($HostName);
+
+
+# Need to make sure jobs directory exists for Ogre stuff
+if (! -d "jobs")
+{
+   mkdir "jobs";
+}
+
+my $WorkflowTemplate = "${DESHome}/workflow_TG.xml";
+my $PropertiesTemplate = "${DESHome}/edit_$Platform.properties.template";
+my $WorkflowFile = "workflow_$Platform.xml";
+my $PropertiesFile = "edit_$Platform.properties";
+
+if (! -r "$WorkflowTemplate")
+{
+   print "ERROR: Could not read workflow template file: $WorkflowTemplate\n";
+   exit $FAILURE;
+}
+
+print "Creating workflow xml file with RunID=${RunID} and Nite=${Nite}...";
+#$Out = `sed -e 's|edit_$Platform.properties|${PropertiesFile}|' -e 's|SYSTEM "|SYSTEM "$DESHome/|' ${WorkflowTemplate} >& ${WorkflowFile}`;
+$Out = `sed -e 's|SYSTEM "|SYSTEM "$DESHome/|' ${WorkflowTemplate} >& ${WorkflowFile}`;
+$ExitCode = $?>>8;
+if ($ExitCode == 0)
+{
+   print "DONE\n";
+}
+else
+{
+   print "ERROR\n";
+   `cat ${WorkflowFile}`;
+   exit $FAILURE;
+}
+
+
+
+if (! -r "$PropertiesTemplate")
+{
+   print "ERROR: Could not read properties template file: $PropertiesTemplate\n";
+   exit $FAILURE;
+}
+
+$WallHrs = $Config->getValueReq("wall_hrs",  \%SearchDefs);
+if ($Stage =~ /^convert/i)
+{
+   $SearchDefs{"stage"} = "convert_ogre";
+   $NumJobsConvert = $Config->getValueReq("num_jobs", \%SearchDefs);
+}
+elsif ($Stage =~ /^process/i)
+{
+   $SearchDefs{"stage"} = "process_ogre";
+   $StageListProcess = $Config->getValueReq("stage_list", \%SearchDefs);
+}
+elsif ($Stage =~ /^scamp/i)
+{
+   $SearchDefs{"stage"} = "scamp_ogre";
+   $NumJobsScamp = $Config->getValueReq("num_jobs", \%SearchDefs);
+}
+elsif ($Stage =~ /^postscamp/i)
+{
+   $SearchDefs{"stage"} = "postscamp_ogre";
+   $StageListPostScamp = $Config->getValueReq("stage_list", \%SearchDefs);
+}
+
+my $WallMins = ceil($WallHrs * 60); 
+
+print "Creating properties file with RunID=${RunID} and Nite=${Nite}...";
+$Out = `sed -e 's|site=|site=$OgreSite|' -e 's|orchestration\.node=|orchestration\.node=$HostName|' -e 's|mypath=|mypath=$DESHome|' -e 's|tgrid_archpath_$OgreSite=|tgrid_archpath_$OgreSite=$ArchiveRoot|' -e 's|archive.node=|archive.node=$RunArchiveLoc|' -e 's|nite=|nite=$Nite|' -e 's|uid_in=|uid_in=$RunID|' -e 's|ccd.start=|ccd.start=${CCDStart}|' -e 's|ccd.stop=|ccd.stop=${CCDStop}|' -e 's|maxwalltime=|maxwalltime=$WallMins|' -e 's|maxcputime=|maxcputime=$WallMins|' -e 's|ingestion.jobs=|ingestion.jobs=$NumJobsConvert|' -e 's|scamplist.number=|scamplist.number=$NumJobsScamp|' -e 's|stage.list=|stage.list=$StageListProcess|' -e 's|stage_postscamp.list=|stage_postscamp.list=$StageListPostScamp|' ${PropertiesTemplate} >& ${PropertiesFile}`;
+
+$ExitCode = $?>>8;
+if ($ExitCode == 0)
+{
+   print "DONE\n";
+}
+else
+{
+   print "ERROR\n";
+   `cat ${PropertiesFile}`;
+   exit $FAILURE;
+}
+
+close $DebugFH;
+
+# info in Config is stored under stage names of stage_ogre
+# to do DES logging use just stage
+$Stage =~ s/_ogre//;
+logEvent($Config, "$Stage", "j", "mngr", "pretask");
+
+exit $SUCCESS;
+

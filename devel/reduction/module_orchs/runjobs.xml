@@ -1,0 +1,251 @@
+  <target name="Stage_runjobs" description="Running pipeline reductions">
+   <property file="${mypath}/module_orchs/runjobs.properties"/>
+
+    <envtosysprops/>
+
+     <esequence>
+
+      <publish>
+            <event ensembleid="${ensemble.id}"
+                   workflowid="Main"
+                   nodeid="Begin Stage_runjobs"
+                   currentState="0">
+               <property name="message" value="Begin Stage_runjobs"/>
+            </event>
+      </publish>
+
+      <print line=" - Begin Stage_runjobs"/>
+
+      <edeclare name="appbase"      string="${user.dir}"/>
+
+      <econdblock type="else-if">
+        <econdtask>
+          <eeval>
+             <statement>
+               <ecompare string="${platform}">
+                     <predicate string="TG" comparator="EQUALS"/>
+                 </ecompare>
+               </statement>
+          </eeval>
+              <esequence>
+
+                <print line=" -- Running parallel jobs for ${project} pipeline"/>
+
+                <print line=" -- Submit jobs to the TeraGrid "/>
+
+                <edeclare name="condor_home"     null="true"/>
+                <getsysprop name="condor.home"/>
+                <ereturn name="condor_home"      get="value"/>
+
+                <edeclare name="appbase"      string="${user.dir}"/>
+                <edeclare name="currentuser"  string="${user.name}"/>
+                <edeclare name="condorsubmit" string="$R{condor_home}/bin/condor_submit"/>
+                <!-- Define tage unique to this nite and stage and condor_q command to return only those jobs. --> 
+                <edeclare name="ogretag" string='"process_${nite}"'/>
+                <edeclare name="condorq"      string="$R{condor_home}/bin/condor_q -constraint 'ogretag==$R{ogretag}'"/>
+                <edeclare name="mxc" string="maxCputime=${maxcputime}"/>
+                <edeclare name="mxw" string="maxWallTime=${maxwalltime}"/>
+                <edeclare name="fastio" string="host_types=fastio"/>
+
+                <edeclare name="line1" string="universe=globus"/>
+                <edeclare name="line2" string="executable=${tgrid_ogre_${site}}/bin/launch"/>  
+                <edeclare name="line2B" string="globusrsl = ($R{mxw})(max_memory=${maxmem})(environment=(OGRE_HOME ${tgrid_ogre_${site}}) (JAVA_HOME ${tgrid_java_${site}}) (ORACLE_BASE ${tgrid_oraclebase_${site}}) (ORACLE_HOME ${tgrid_oracle_${site}}))"/>
+
+                <edeclare name="line4" string="transfer_executable=false"/>
+                <edeclare name="line5" string="globusscheduler=${tgrid_jobserver_${site}}/${jobmanager_${site}}"/>
+
+                <edeclare name="line10" string="queue"/>
+
+
+                <edeclare name="end" long="$E{ ${ccd.stop} + 1 }"/> 
+
+                <!-- Write condor_q command to a script -->
+                <edeclare name="sline1" string='#!/bin/bash'/>
+                <edeclare name="sline2" string="$R{condorq}"/>
+                <write path="$R{appbase}/jobs/${uid}/getcondorq_process" text="true"
+                       errorProperty="failed" rethrow="false">
+                      <segment string="$R{sline1}" lineBreaks="1"/>
+                      <segment string="$R{sline2}" lineBreaks="1"/>
+                </write>
+                <rtexec inheritedEnv="true" execDir="$R{appbase}/jobs/${uid}" args="${chmodpath} 755 getcondorq_process" quiet="true">
+                </rtexec>
+                <edeclare name="getcondorq" string="$R{appbase}/jobs/${uid}/getcondorq_process"/>
+
+
+
+
+                <!-- Getting the current number of condor jobs -->
+                <rtexec inheritedEnv="true" execDir="$R{appbase}"
+                       args="$R{getcondorq}" quiet="true">
+                    <outMonitor file="$R{appbase}/jobs/${uid}/condorq.out" append="false">
+                     <filterQueue>
+                       <rTStreamFilter pattern="$R{currentuser}" line="multiline"/>
+                     </filterQueue>
+                    </outMonitor>
+                    <errMonitor file="$R{appbase}/jobs/${uid}/condorq.err" append="false"/>
+                </rtexec>
+                <esleep timeout="1000"/>
+
+                <edeclare name="stacklevel" int="0"/>
+                <read path="$R{appbase}/jobs/${uid}/condorq.out" lines="true"/>
+                <ereturn name="stacklevel" get="lineCount"/>
+
+	        <print line=" -- Condor stack currently has $R{stacklevel} process jobs for nite: ${nite}. " />
+
+
+                <eloop counterName="i" initialValue="${ccd.start}">
+                 <ecounter>
+                   <expression infix="$R{i} &lt; $R{end}"/>
+                 </ecounter>           
+
+                 <!-- convert 1,...,9 to 01,...,09 -->
+                 <econdblock type="else-if">
+                  <econdtask>
+                   <eeval>
+                     <statement> 
+                       <ecompare long="$R{i}">
+                         <predicate long="10" comparator="LT"/>
+                       </ecompare> 
+                     </statement>
+                   </eeval>
+                     <edeclare globalName="in" string="0$R{i}"/>
+                  </econdtask>
+                     <edeclare globalName="in" long="$R{i}"/>
+                 </econdblock>
+  
+                 <print line=" -- Stage_runjobs loop : Writing ${uid}/$R{in}/$R{in}.condor for nite=${nite} "/>
+
+                 <edeclare name="line3" string="arguments=${project}_$R{in}.xml ${run.stage}"/>
+
+                 <edeclare name="line6" string="output=jobs/${uid}/$R{in}/$R{in}_condor.out"/>
+                 <edeclare name="line7" string="error=jobs/${uid}/$R{in}/$R{in}_condor.err"/>
+                 <edeclare name="line8" string="log=jobs/${uid}/$R{in}/$R{in}_condor.log"/>
+                 <edeclare name="line9" string="remote_initialdir=${tgrid_homepath_${site}}/${uid}_$R{in}/xml"/>
+                 <!-- Tag for this stage's condor jobs. -->
+                 <edeclare name="line9B" string='+ogretag=$R{ogretag}'/>
+                 <edeclare name="line9C" string="notification = never"/>
+
+                 <write path="$R{appbase}/jobs/${uid}/$R{in}/$R{in}.condor" text="true"
+                       errorProperty="failed" rethrow="false">
+                      <segment string="$R{line1}" lineBreaks="1"/>
+                      <segment string="$R{line2}" lineBreaks="1"/>
+                      <segment string="$R{line2B}" lineBreaks="1"/>
+                      <segment string="$R{line3}" lineBreaks="1"/>
+                      <segment string="$R{line4}" lineBreaks="1"/>
+                      <segment string="$R{line5}" lineBreaks="1"/>
+                      <segment string="$R{line6}" lineBreaks="1"/>
+                      <segment string="$R{line7}" lineBreaks="1"/>
+                      <segment string="$R{line8}" lineBreaks="1"/>
+                      <segment string="$R{line9}" lineBreaks="1"/>
+                      <segment string="$R{line9B}" lineBreaks="1"/>
+                      <segment string="$R{line9C}" lineBreaks="1"/>
+                      <segment string="$R{line10}" tabs="1"/>
+                 </write>
+
+                 <print line=" -- --------------------"/>
+
+
+
+                 <print line=" -- Submitting ${uid}/$R{in}/$R{in}.condor  "/>
+                 <rtexec inheritedEnv="true" execDir="$R{appbase}"
+                        args="$R{condorsubmit} $R{appbase}/jobs/${uid}/$R{in}/$R{in}.condor"
+                        quiet="true">
+                     <outMonitor file="$R{appbase}/jobs/${uid}/$R{in}/$R{in}.out"/>
+                     <errMonitor file="$R{appbase}/jobs/${uid}/$R{in}/$R{in}.err"/>
+                 </rtexec>
+                 <esleep timeout="2800"/>
+
+                 <print line=" -- $R{in}: Let's wait a bit "/>
+                 <esleep timeout="2800"/>
+
+	        </eloop>
+
+                <print line=" -- --------------------"/>
+
+                <edeclare name="linecount" int="500"/>
+                <eloop counterName="j">
+                  <ecounter>
+<!--		    <expression infix="( ( $R{j} &lt; 2800 ) &amp;&amp; ( $R{linecount} &gt; $R{stacklevel} ) )"/>
+ Change to prevent premature abort.-->
+		    <expression infix="( $R{linecount} &gt; $R{stacklevel} )"/>
+                  </ecounter>
+                  <esleep timeout="28000"/>
+
+                  <rtexec inheritedEnv="true" execDir="$R{appbase}"
+                           args="$R{getcondorq}" quiet="true">
+                       <outMonitor file="$R{appbase}/jobs/${uid}/$R{in}/condorq.out" append="false">
+                           <filterQueue>
+                              <rTStreamFilter pattern="$R{currentuser}" line="multiline"/>
+                           </filterQueue>
+                       </outMonitor>
+                       <errMonitor file="$R{appbase}/jobs/${uid}/$R{in}/condorq.err" append="false"/>
+                  </rtexec>
+
+                  <esleep timeout="28000"/>
+
+                  <read path="$R{appbase}/jobs/${uid}/$R{in}/condorq.out" lines="true"/>
+                  <ereturn name="linecount" get="lineCount"/>
+
+                  <print line="      -- Condor stack has $R{linecount} process jobs for nite: ${nite}. ($R{j})"/>
+
+             </eloop>
+
+             <print line=" -- Condor Queue is clear. "/>
+         
+            </esequence>
+        </econdtask>
+               <esequence>
+
+                 <print line=" -- Running sequential jobs for ${project} pipeline"/>
+
+                 <edeclare name="end" long="$E{ ${ccd.stop} + 1 }"/> 
+
+                 <eloop counterName="i" initialValue="${ccd.start}">
+                  <ecounter>
+                   <expression infix="$R{i} &lt; $R{end}"/>
+                 </ecounter>           
+                 
+                 <!-- convert 1,...,9 to 01,...,09 -->
+                 <econdblock type="else-if">
+                  <econdtask>
+                   <eeval>
+                     <statement> 
+                       <ecompare long="$R{i}">
+                         <predicate long="10" comparator="LT"/>
+                       </ecompare> 
+                     </statement>
+                   </eeval>
+                     <edeclare globalName="in" string="0$R{i}"/>
+                  </econdtask>
+                     <edeclare globalName="in" long="$R{i}"/>
+                 </econdblock>
+
+                  <print line=" -- Processing CCD$R{in}..."/>
+
+                  <rtexec inheritedEnv="true" execDir="${workplace}/${uid}"
+                       args="${ogre.launch} ${ogre.command}"
+                        quiet="true">
+                     <outMonitor file="${workplace}/${uid}/data/${nite}/log/OGRE.log"/>
+                     <errMonitor file="${workplace}/${uid}/data/${nite}/log/OGRE.log"/>
+                 </rtexec>
+
+                </eloop>
+
+            </esequence>
+     </econdblock>
+
+     <print line=" - Stage_runjobs done"/>
+     <print line=" "/>
+
+     <publish>
+          <event ensembleid="${ensemble.id}"
+                 workflowid="Main"
+                 nodeid="End Stage_runjobs"
+                 currentState="1">
+               <property name="message" value="End Stage_runjobs"/>
+          </event>
+     </publish>       
+
+    </esequence>
+  </target>
+

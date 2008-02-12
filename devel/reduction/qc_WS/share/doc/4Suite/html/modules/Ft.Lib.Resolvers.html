@@ -1,0 +1,95 @@
+<html>
+  <head>
+    <meta content="text/html; charset=iso-8859-1" http-equiv="Content-Type">
+    <title>4Suite API Documentation: Ft.Lib.Resolvers</title>
+    <link href="modules.css" type="text/css" rel="stylesheet">
+  </head>
+  <body>
+    <div class="universal-header"><span class="universal-header-prefix">&nbsp;&nbsp;&nbsp;</span>&nbsp;<span class="universal-header-prefix">&nbsp;&nbsp;</span>&nbsp;<span class="universal-header-prefix">&nbsp;</span>&nbsp;<a href="../index.html">4Suite<sup>&trade;</sup> API Documentation</a></div>
+    <h1><span class="glyph-arrow">&#9658;</span> Module <span class="this-name"><a href="Ft.html" title="Ft">Ft</a>.<a href="Ft.Lib.html" title="Ft.Lib">Lib</a>.Resolvers</span></h1>
+    <div class="abstract">Specialized and useful URI resolvers</div>
+    <pre class="description">Copyright 2005 Fourthought, Inc. (USA).
+Detailed license and copyright information: http://4suite.org/COPYRIGHT
+Project home, documentation, distributions: http://4suite.org/</pre>
+    <div class="summary-section">
+      <table cellpadding="0" cellspacing="0">
+        <tbody>
+          <tr>
+            <td valign="top">
+              <div class="summary-header">Classes:</div>
+              <div class="summary-list"><span class="class-name"><a href="#FacadeResolver">FacadeResolver</a></span>, <span class="class-name"><a href="#SchemeRegistryResolver">SchemeRegistryResolver</a></span></div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="section">
+      <h2>Classes</h2>
+      <dl class="classes">
+        <dt class="classdef"><a name="FacadeResolver"></a>class <span class="class-name">FacadeResolver</span><span class="bases">(<span class="class-name"><a href="Ft.Lib.Uri.html#FtUriResolver">Ft.Lib.Uri.FtUriResolver</a></span>)</span></dt>
+        <dd class="classdesc">
+          <div class="abstract">A type of resolver that can be used to create a facade or cache of
+resources by keeping a dictionary of URI to result mappings.  When a
+URI is provided for resolution, the mapping is first checked, and a
+stream is constructed by wrapping the mapping value string.
+If no match is found in the mapping, fall back to the standard
+resolver logic.</div>
+          <pre class="description">You can manipulate the mapping directly using the "cache" attribute.</pre>
+          <h3>Methods</h3>
+          <dl class="methods">
+            <dt class="methoddef"><a name="FacadeResolver-__init__"><span class="method-name">__init__</span></a>(<span class="argument-name">self</span>, <span class="argument-name">cache</span><span class="argument-default">=None</span>, <span class="argument-name">observer</span><span class="argument-default">=None</span>)</dt>
+            <dd class="methoddesc">
+              <div class="abstract">cache - a dictionary with mapings from URI to value (as an object
+to be converted to a UTF-8 encoded string)
+observer - callable object invoked on each resolution request</div>
+            </dd>
+            <dd class="overrides"><b>Overrides: </b><span class="inherited-name"><a href="Ft.Lib.Uri.html#FtUriResolver-__init__">__init__</a></span> from class <span class="class-name"><a href="Ft.Lib.Uri.html#FtUriResolver">FtUriResolver</a></span></dd>
+            <dt class="methoddef"><a name="FacadeResolver-resolve"><span class="method-name">resolve</span></a>(<span class="argument-name">self</span>, <span class="argument-name">uri</span>, <span class="argument-name">base</span><span class="argument-default">=None</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dd class="overrides"><b>Overrides: </b><span class="inherited-name"><a href="Ft.Lib.Uri.html#FtUriResolver-resolve">resolve</a></span> from class <span class="class-name"><a href="Ft.Lib.Uri.html#FtUriResolver">FtUriResolver</a></span></dd>
+          </dl>
+          <h3>Methods inherited from class <a href="Ft.Lib.Uri.html#FtUriResolver">Ft.Lib.Uri.FtUriResolver</a></h3>
+          <div class="inherited"><span class="inherited-name"><a href="Ft.Lib.Uri.html#FtUriResolver-normalize">normalize</a></span></div>
+          <h3>Methods inherited from class <a href="Ft.Lib.Uri.html#UriResolverBase">Ft.Lib.Uri.UriResolverBase</a></h3>
+          <div class="inherited"><span class="inherited-name"><a href="Ft.Lib.Uri.html#UriResolverBase-generate">generate</a></span></div>
+        </dd>
+        <dt class="classdef"><a name="SchemeRegistryResolver"></a>class <span class="class-name">SchemeRegistryResolver</span><span class="bases">(<span class="class-name"><a href="Ft.Lib.Uri.html#FtUriResolver">Ft.Lib.Uri.FtUriResolver</a></span>)</span></dt>
+        <dd class="classdesc">
+          <div class="abstract">A type of resolver that allows developers to register different callable
+objects to handle different URI schemes.  The default action if there
+is nothing registered for the scheme will be to fall back to
+UriResolverBase behavior *unless* you have in the mapping a special
+scheme None.  The callable object that is the value on that key will
+then be used as the default for all unknown schemes.</div>
+          <pre class="description">The expected function signature for scheme call-backs matches
+UriResolverBase.resolve, without the instance argument:
+
+resolve(uri, base=None)
+
+Reminder: Since this does not include self, if you are registering
+a method, use the method instance (i.e. myresolver().handler
+rather than myresolver.handler)
+
+You can manipulate the mapping directly using the "handlers" attribute.</pre>
+          <h3>Methods</h3>
+          <dl class="methods">
+            <dt class="methoddef"><a name="SchemeRegistryResolver-__init__"><span class="method-name">__init__</span></a>(<span class="argument-name">self</span>, <span class="argument-name">handlers</span><span class="argument-default">=None</span>)</dt>
+            <dd class="methoddesc">
+              <div class="abstract">handlers - a Python dictionary with scheme names as keys (e.g. "http")
+and callable objects as values</div>
+            </dd>
+            <dd class="overrides"><b>Overrides: </b><span class="inherited-name"><a href="Ft.Lib.Uri.html#FtUriResolver-__init__">__init__</a></span> from class <span class="class-name"><a href="Ft.Lib.Uri.html#FtUriResolver">FtUriResolver</a></span></dd>
+            <dt class="methoddef"><a name="SchemeRegistryResolver-resolve"><span class="method-name">resolve</span></a>(<span class="argument-name">self</span>, <span class="argument-name">uri</span>, <span class="argument-name">base</span><span class="argument-default">=None</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dd class="overrides"><b>Overrides: </b><span class="inherited-name"><a href="Ft.Lib.Uri.html#FtUriResolver-resolve">resolve</a></span> from class <span class="class-name"><a href="Ft.Lib.Uri.html#FtUriResolver">FtUriResolver</a></span></dd>
+          </dl>
+          <h3>Methods inherited from class <a href="Ft.Lib.Uri.html#FtUriResolver">Ft.Lib.Uri.FtUriResolver</a></h3>
+          <div class="inherited"><span class="inherited-name"><a href="Ft.Lib.Uri.html#FtUriResolver-normalize">normalize</a></span></div>
+          <h3>Methods inherited from class <a href="Ft.Lib.Uri.html#UriResolverBase">Ft.Lib.Uri.UriResolverBase</a></h3>
+          <div class="inherited"><span class="inherited-name"><a href="Ft.Lib.Uri.html#UriResolverBase-generate">generate</a></span></div>
+        </dd>
+      </dl>
+    </div>
+    <div class="universal-footer">Last modified on 2005-04-18 16:46:56</div>
+  </body>
+</html>

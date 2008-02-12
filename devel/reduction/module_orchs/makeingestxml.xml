@@ -1,0 +1,139 @@
+  <target name="Stage_makeingestxml" description="Create main xml scripts">
+   <property file="${mypath}/module_orchs/makeingestxml.properties"/>
+
+     <esequence>
+
+      <print line=" - Begin Stage_makeingestxml"/>
+
+      <edeclare name="appbase"      string="${user.dir}"/>
+
+      <print line=" -- Creating xml scripts for ${project} convert and ingest"/>
+
+      <publish>
+        <event ensembleid="${ensemble.id}"
+               workflowid="Main"
+               nodeid="Begin Stage_makeingestxml"
+               currentState="0">
+          <property name="message" value="Begin Stage_makeingestxml"/>
+        </event>
+      </publish>
+
+      <edeclare name="end" long="$E{ ${ingestion.jobs} + 1 }"/> 
+
+      <eloop counterName="i" initialValue="1">
+        <ecounter>
+            <expression infix="$R{i} &lt; $R{end}"/>
+        </ecounter>           
+
+        <!-- convert 1,...,9 to 01,...,09 -->
+        <econdblock type="else-if">
+          <econdtask>
+            <eeval>
+               <statement> 
+                   <ecompare long="$R{i}">
+                      <predicate long="10" comparator="LT"/>
+                   </ecompare> 
+               </statement>
+            </eeval>
+                  <edeclare globalName="in" string="0$R{i}"/>
+          </econdtask>
+                  <edeclare globalName="in" long="$R{i}"/>
+        </econdblock>
+
+
+        <print line=" -- Running Stage_makeingestxml- writing scripts for job $R{in}"/>
+
+        <econdblock type="else-if">
+          <econdtask>
+           <eeval>
+             <statement>
+               <ecompare string="${platform}">
+                     <predicate string="TG" comparator="EQUALS"/>
+                 </ecompare>
+               </statement>
+            </eeval>
+              <esequence>
+
+                 <write path="$R{appbase}/${ingest.dir}/convert_ingest_$R{in}.paramtemp" text="true"
+                   errorProperty="failed" rethrow="false">
+                  <segment string="data.protocol=file" lineBreaks="1"/> 
+                  <segment string="# selected nite" lineBreaks="1"/>
+                  <segment string="nite=${nite}" lineBreaks="1"/>
+                  <segment string="# Image list to work on" lineBreaks="1"/> 
+                  <segment string="imlist.num=$R{in}" lineBreaks="1"/> 
+                  <segment string="ensemble.id=${ensemble.id}" lineBreaks="1"/> 
+                  <segment string="jid=${uid}_$R{in}" lineBreaks="1"/> 
+                  <segment string="job.id=${tgrid_homepath_${site}}/${uid}_$R{in}" lineBreaks="1"/> 
+                  <segment string="arch.dir=${tgrid_archpath_${site}}" lineBreaks="1"/> 
+                  <segment string="base.dir=${tgrid_archpath_${site}}" lineBreaks="1"/> 
+                  <segment string="project=${project}" lineBreaks="1"/> 
+                  <segment string="detector=${detector}" lineBreaks="1"/> 
+                  <segment string="platform=${platform}" lineBreaks="1"/> 
+                  <segment string="photflag=${photflag}" lineBreaks="1"/> 
+                  <segment string="oracle.path=${tgrid_oracle_${site}}/bin" lineBreaks="1"/> 
+                  <segment string="archive.node=${archive.node}" lineBreaks="1"/> 
+                  <segment string=" " lineBreaks="1"/> 
+                 </write>
+  
+              </esequence>
+          </econdtask>
+              <esequence>
+
+                 <write path="$R{appbase}/${ingest.dir}/convert_ingest_$R{in}.paramtemp" text="true"
+                   errorProperty="failed" rethrow="false">
+                  <segment string="data.protocol=file" lineBreaks="1"/> 
+                  <segment string="# directory for the given nite" lineBreaks="1"/>
+                  <segment string="nite=${nite}" lineBreaks="1"/>
+                  <segment string="# Image list to work on" lineBreaks="1"/> 
+                  <segment string="imlist.num=$R{in}" lineBreaks="1"/> 
+                  <segment string="ensemble.id=${ensemble.id}" lineBreaks="1"/> 
+                  <segment string="arch.dir=${WS_archpath}" lineBreaks="1"/> 
+                  <segment string="project=${project}" lineBreaks="1"/> 
+                  <segment string="platform=${platform}" lineBreaks="1"/> 
+                  <segment string="detector=${detector}" lineBreaks="1"/> 
+                  <segment string="photflag=${photflag}" lineBreaks="1"/> 
+                  <segment string="mypath=${mypath}" lineBreaks="1"/> 
+                  <segment string="ingest.dir=${ingest.dir}" lineBreaks="1"/> 
+                  <segment string="chmodpath=${chmodpath}" lineBreaks="1"/> 
+                  <segment string="archive.node=${archive.node}" lineBreaks="1"/> 
+                  <segment string=" " lineBreaks="1"/> 
+                 </write>
+
+              </esequence>
+        </econdblock>
+
+        <rtexec inheritedEnv="true" execDir="." args="${catpath} ${ingest.dir}/convert_ingest_$R{in}.paramtemp ${mypath}/module_pline/convert_ingest.prop.template" quiet="true">
+               <outMonitor file="$R{appbase}/${ingest.dir}/log/convert_ingest_$R{in}.properties"/>
+        </rtexec>
+
+
+        <write path="$R{appbase}/${ingest.dir}/convert_ingest_$R{in}.xmltemp" text="true"
+               errorProperty="failed" rethrow="false">
+          <segment string="&lt;project name=&quot;${project} convert and ingest pipeline&quot; default=&quot;Stage_convert_ingest&quot; basedir=&quot;.&quot; &gt;" lineBreaks="1"/> 
+          <segment string="&lt;property file=&quot;convert_ingest_$R{in}.properties&quot;/&gt;" lineBreaks="1"/>
+        </write>
+
+        <rtexec inheritedEnv="true" execDir="." args="${catpath} $R{appbase}/${ingest.dir}/convert_ingest_$R{in}.xmltemp ${mypath}/module_pline/convert_ingest.xml.template" quiet="true">
+               <outMonitor file="$R{appbase}/${ingest.dir}/log/convert_ingest_$R{in}.xml"/>
+        </rtexec>
+
+        <delete file="$R{appbase}/${ingest.dir}/convert_ingest_$R{in}.paramtemp"/>
+        <delete file="$R{appbase}/${ingest.dir}/convert_ingest_$R{in}.xmltemp"/>
+ 
+      </eloop>
+
+      <publish>
+         <event ensembleid="${ensemble.id}"
+                workflowid="Main"
+                nodeid="End Stage_makeingestxml"
+                currentState="0">
+            <property name="message" value="End Stage_makeingestxml"/>
+         </event>
+     </publish>
+
+     <print line=" - Stage_makeingestxml done"/>
+     <print line=" "/>
+
+    </esequence>
+  </target>
+

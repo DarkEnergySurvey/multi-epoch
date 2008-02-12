@@ -1,0 +1,118 @@
+<html>
+  <head>
+    <meta content="text/html; charset=iso-8859-1" http-equiv="Content-Type">
+    <title>4Suite API Documentation: Ft.Lib.DistExt.BuildScripts</title>
+    <link href="modules.css" type="text/css" rel="stylesheet">
+  </head>
+  <body>
+    <div class="universal-header"><span class="universal-header-prefix">&nbsp;&nbsp;&nbsp;</span>&nbsp;<span class="universal-header-prefix">&nbsp;&nbsp;</span>&nbsp;<span class="universal-header-prefix">&nbsp;</span>&nbsp;<a href="../index.html">4Suite<sup>&trade;</sup> API Documentation</a></div>
+    <h1><span class="glyph-arrow">&#9658;</span> Module <span class="this-name"><a href="Ft.html" title="Ft">Ft</a>.<a href="Ft.Lib.html" title="Ft.Lib">Lib</a>.<a href="Ft.Lib.DistExt.html" title="Ft.Lib.DistExt">DistExt</a>.BuildScripts</span></h1>
+    <div class="summary-section">
+      <table cellpadding="0" cellspacing="0">
+        <tbody>
+          <tr>
+            <td valign="top">
+              <div class="summary-header">Classes:</div>
+              <div class="summary-list"><span class="class-name"><a href="#BuildScripts">BuildScripts</a></span>, <span class="class-name"><a href="#ScriptInfo">ScriptInfo</a></span></div>
+            </td>
+            <td width="7" valign="middle"></td>
+            <td width="1" valign="middle" bgcolor="#C5C5C5"></td>
+            <td width="7" valign="middle"></td>
+            <td valign="top">
+              <div class="summary-header">Globals:</div>
+              <div class="summary-list"><span class="global-name"><a href="#SHELL_SCRIPT_BODY">SHELL_SCRIPT_BODY</a></span></div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="section">
+      <h2>Classes</h2>
+      <dl class="classes">
+        <dt class="classdef"><a name="BuildScripts"></a>class <span class="class-name">BuildScripts</span><span class="bases">(<span class="class-name"><span class="undocumented">distutils.cmd.Command</span></span>)</span></dt>
+        <dd class="classdesc">
+          <h3>Methods</h3>
+          <dl class="methods">
+            <dt class="methoddef"><a name="BuildScripts-build_executable"><span class="method-name">build_executable</span></a>(<span class="argument-name">self</span>, <span class="argument-name">executable</span>)</dt>
+            <dd class="methoddesc">
+              <div class="abstract">Builds a compiled executable.
+For all systems, the executable is created in the same fashion as
+the Python interpreter executable.</div>
+            </dd>
+            <dt class="methoddef"><a name="BuildScripts-build_executables"><span class="method-name">build_executables</span></a>(<span class="argument-name">self</span>, <span class="argument-name">executables</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dt class="methoddef"><a name="BuildScripts-build_script"><span class="method-name">build_script</span></a>(<span class="argument-name">self</span>, <span class="argument-name">script</span>)</dt>
+            <dd class="methoddesc">
+              <div class="abstract">Builds a CommandLineApp script.
+On POSIX systems, this is a generated shell script.  For Windows,
+it is a compiled executable with the generated file appended to the
+end of the stub.</div>
+            </dd>
+            <dt class="methoddef"><a name="BuildScripts-build_scripts"><span class="method-name">build_scripts</span></a>(<span class="argument-name">self</span>, <span class="argument-name">scripts</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dt class="methoddef"><a name="BuildScripts-finalize_options"><span class="method-name">finalize_options</span></a>(<span class="argument-name">self</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dd class="overrides"><b>Overrides: </b><span class="inherited-name">finalize_options</span> from class <span class="class-name"><span class="undocumented">Command</span></span></dd>
+            <dt class="methoddef"><a name="BuildScripts-get_outputs"><span class="method-name">get_outputs</span></a>(<span class="argument-name">self</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dt class="methoddef"><a name="BuildScripts-get_python_executable"><span class="method-name">get_python_executable</span></a>(<span class="argument-name">self</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dt class="methoddef"><a name="BuildScripts-get_script_filename"><span class="method-name">get_script_filename</span></a>(<span class="argument-name">self</span>, <span class="argument-name">script</span>)</dt>
+            <dd class="methoddesc">
+              <div class="abstract">Convert the name of a script into the name of the file which it
+will be run from.</div>
+            </dd>
+            <dt class="methoddef"><a name="BuildScripts-get_source_files"><span class="method-name">get_source_files</span></a>(<span class="argument-name">self</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dt class="methoddef"><a name="BuildScripts-initialize_options"><span class="method-name">initialize_options</span></a>(<span class="argument-name">self</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dd class="overrides"><b>Overrides: </b><span class="inherited-name">initialize_options</span> from class <span class="class-name"><span class="undocumented">Command</span></span></dd>
+            <dt class="methoddef"><a name="BuildScripts-run"><span class="method-name">run</span></a>(<span class="argument-name">self</span>)</dt>
+            <dd class="methoddesc">
+              <div class="abstract">Create the proper script for the current platform.</div>
+            </dd>
+            <dd class="overrides"><b>Overrides: </b><span class="inherited-name">run</span> from class <span class="class-name"><span class="undocumented">Command</span></span></dd>
+          </dl>
+          <h3>Methods inherited from class <span class="undocumented">distutils.cmd.Command</span></h3>
+          <div class="inherited"><span class="inherited-name">__getattr__</span>, <span class="inherited-name">__init__</span>, <span class="inherited-name">announce</span>, <span class="inherited-name">copy_file</span>, <span class="inherited-name">copy_tree</span>, <span class="inherited-name">debug_print</span>, <span class="inherited-name">dump_options</span>, <span class="inherited-name">ensure_dirname</span>, <span class="inherited-name">ensure_filename</span>, <span class="inherited-name">ensure_finalized</span>, <span class="inherited-name">ensure_string</span>, <span class="inherited-name">ensure_string_list</span>, <span class="inherited-name">execute</span>, <span class="inherited-name">get_command_name</span>, <span class="inherited-name">get_finalized_command</span>, <span class="inherited-name">get_sub_commands</span>, <span class="inherited-name">make_archive</span>, <span class="inherited-name">make_file</span>, <span class="inherited-name">mkpath</span>, <span class="inherited-name">move_file</span>, <span class="inherited-name">reinitialize_command</span>, <span class="inherited-name">run_command</span>, <span class="inherited-name">set_undefined_options</span>, <span class="inherited-name">spawn</span>, <span class="inherited-name">warn</span></div>
+          <h3>Members</h3>
+          <dl class="members">
+            <dt class="memberdef"><a name="boolean_options"><span class="member-name">boolean_options</span></a> = ['force', 'debug']</dt>
+            <dt class="memberdef"><a name="command_name"><span class="member-name">command_name</span></a> = 'build_scripts'</dt>
+            <dt class="memberdef"><a name="description"><span class="member-name">description</span></a> = '"build" scripts'</dt>
+            <dt class="memberdef"><a name="help_options"><span class="member-name">help_options</span></a> = [('help-compiler', None, 'list available compilers', &lt;function show_compilers at 0xb793e294&gt;)]</dt>
+            <dt class="memberdef"><a name="user_options"><span class="member-name">user_options</span></a> = [('build-dir=', 'd', 'directory to "build" (copy) to'), ('build-temp=', 't', 'directory for temporary files (build by-products)'), ('force', 'f', 'forcibly build everything (ignore file timestamps'), ('debug', 'g', 'compile/link with debugging information'), ('compiler=', 'c', 'specify the compiler type')]</dt>
+          </dl>
+          <h3>Members inherited from class <span class="undocumented">distutils.cmd.Command</span></h3>
+          <div class="inherited"><span class="inherited-name">sub_commands</span></div>
+        </dd>
+        <dt class="classdef"><a name="ScriptInfo"></a>class <span class="class-name">ScriptInfo</span><span class="bases">(<span class="class-name"><a href="Ft.Lib.DistExt.ImageHlp.html#Struct">Ft.Lib.DistExt.ImageHlp.Struct</a></span>)</span></dt>
+        <dd class="classdesc">
+          <div class="abstract">Representation of the SCRIPT_INFO resource in the stub executable.</div>
+          <h3>Methods inherited from class <a href="Ft.Lib.DistExt.ImageHlp.html#Struct">Ft.Lib.DistExt.ImageHlp.Struct</a></h3>
+          <div class="inherited"><span class="inherited-name"><a href="Ft.Lib.DistExt.ImageHlp.html#Struct-__init__">__init__</a></span>, <span class="inherited-name"><a href="Ft.Lib.DistExt.ImageHlp.html#Struct-__repr__">__repr__</a></span>, <span class="inherited-name"><a href="Ft.Lib.DistExt.ImageHlp.html#Struct-load">load</a></span>, <span class="inherited-name"><a href="Ft.Lib.DistExt.ImageHlp.html#Struct-pack">pack</a></span></div>
+          <h3>Methods inherited from class <span class="undocumented">object</span></h3>
+          <div class="inherited"><span class="inherited-name">__delattr__</span>, <span class="inherited-name">__getattribute__</span>, <span class="inherited-name">__hash__</span>, <span class="inherited-name">__new__</span>, <span class="inherited-name">__reduce__</span>, <span class="inherited-name">__reduce_ex__</span>, <span class="inherited-name">__setattr__</span>, <span class="inherited-name">__str__</span></div>
+          <h3>Members</h3>
+          <dl class="members">
+            <dt class="memberdef"><a name="__fields__"><span class="member-name">__fields__</span></a> = [(&lt;class 'Ft.Lib.DistExt.ImageHlp.Dword'&gt;, 'Signature'), (&lt;class 'Ft.Lib.DistExt.ImageHlp.Word'&gt;, 'MajorPythonVersion'), (&lt;class 'Ft.Lib.DistExt.ImageHlp.Word'&gt;, 'MinorPythonVersion'), (&lt;class 'Ft.Lib.DistExt.ImageHlp.Word'&gt;, 'Subsystem'), (&lt;class 'Ft.Lib.DistExt.ImageHlp.Word'&gt;, 'Characteristics'), (&lt;class 'Ft.Lib.DistExt.ImageHlp.Word'&gt;, 'ScriptAddress'), (&lt;class 'Ft.Lib.DistExt.ImageHlp.Word'&gt;, 'ScriptSize')]</dt>
+            <dt class="memberdef"><a name="__format__"><span class="member-name">__format__</span></a> = '&lt;LHHHHHH'</dt>
+            <dt class="memberdef"><a name="__size__"><span class="member-name">__size__</span></a> = 16</dt>
+          </dl>
+          <h3>Members inherited from class <a href="Ft.Lib.DistExt.ImageHlp.html#Struct">Ft.Lib.DistExt.ImageHlp.Struct</a></h3>
+          <div class="inherited"><span class="inherited-name"><a href="Ft.Lib.DistExt.ImageHlp.html#Struct-__dict__">__dict__</a></span>, <span class="inherited-name"><a href="Ft.Lib.DistExt.ImageHlp.html#Struct-__metaclass__">__metaclass__</a></span>, <span class="inherited-name"><a href="Ft.Lib.DistExt.ImageHlp.html#Struct-__weakref__">__weakref__</a></span></div>
+          <h3>Members inherited from class <span class="undocumented">object</span></h3>
+          <div class="inherited"><span class="inherited-name">__class__</span></div>
+        </dd>
+      </dl>
+    </div>
+    <div class="section">
+      <h2>Globals</h2>
+      <dl class="globals">
+        <dt class="globaldef"><a name="SHELL_SCRIPT_BODY"><span class="global-name">SHELL_SCRIPT_BODY</span></a> = '#!%(executable)s\n# %(name)s script generated by ...module)s.%(function)s()\nraise SystemExit(status)\n'</dt>
+        <dd class="globaldesc"></dd>
+      </dl>
+    </div>
+    <div class="universal-footer">Last modified on 2006-11-15 12:40:23</div>
+  </body>
+</html>

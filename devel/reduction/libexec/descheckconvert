@@ -1,0 +1,131 @@
+#!/usr/bin/env perl
+########################################################################
+#  $Id$
+#
+#  $Rev::                                  $:  # Revision of last commit.
+#  $LastChangedBy::                        $:  # Author of last commit. 
+#  $LastChangedDate::                      $:  # Date of last commit.
+#
+#  Authors: 
+#         Michelle Gower (mgower@ncsa.uiuc.edu)
+#         Darren Adams (dadams@ncsa.uiuc.edu)
+#
+#  Developed at: 
+#  The National Center for Supercomputing Applications (NCSA).
+#
+#  Copyright (C) 2007 Board of Trustees of the University of Illinois. 
+#  All rights reserved.
+#
+#  DESCRIPTION:
+#
+#######################################################################
+
+use strict;
+use warnings;
+
+use Getopt::Long;
+use FindBin;
+use lib "$FindBin::Bin/../lib";
+use DES::utils::misc;
+use DES::utils::hist;
+use DES::utils::posttasks;
+use DES::desconfig;
+
+my $version;
+&Getopt::Long::Configure( 'noignorecase', 'no_autoabbrev');
+Getopt::Long::GetOptions(
+   'version|v' => \$version
+);
+
+my $debugfh;
+open $debugfh, "> descheckconvert_$$.out";
+local *STDOUT = $debugfh;
+local *STDERR = $debugfh;
+
+my $DES_HOME = getHome() or die "Error: Can't determine DES_HOME";
+
+if (defined($version))
+{
+  printVersion();
+  exit 0;
+}
+
+if ((scalar(@ARGV) < 2) || (3 < scalar(@ARGV)))
+{
+  print STDERR "Usage: descheckconvert [-version] configfile imgname [exitcode]\n";
+  close $debugfh;
+  exit 1;
+}
+
+my  $configfile = $ARGV[0];
+my  $imgname = $ARGV[1];
+my  $exitcode = 0;
+if (scalar(@ARGV) == 3)
+{
+  $exitcode = $ARGV[2];
+}
+
+
+close $debugfh;
+open $debugfh, "> descheckconvert_$imgname.out";
+local *STDOUT = $debugfh;
+local *STDERR = $debugfh;
+
+print "descheckconvert: configfile = '$configfile'\n";
+print "descheckconvert: imgname = '$imgname'\n";
+print "descheckconvert: exitcode = '$exitcode'\n\n";
+
+
+# read sysinfo file
+my $config = new DES::desconfig;
+$config->readConfig($configfile, 0, \*STDERR);
+
+# try to log batch job id
+my ($line,$batchjobid);
+
+$line = `grep "DES: JOBID" convertjob_$imgname.out 2>&1`;
+($batchjobid) = $line =~ m/DES:\s+JOBID\s+=\s+(\S+)/;
+if ($batchjobid =~ /\d/)
+{
+   logEvent($config, "convert","j","$imgname", "jobid", $batchjobid);
+}
+
+posttasks($config, "convert","j","$imgname", $exitcode);
+logEvent($config, "convert","c","$imgname", "pretask");
+
+
+# get destination info 
+my $nite = $config->getValueReq("nite");
+my %searchdefs;
+$searchdefs{"stage"} = "convert";
+my $run_archive_location=$config->getValueReq("run_archive_loc", \%searchdefs);
+$searchdefs{"archive"} = $run_archive_location;
+my $archive_root=$config->getValueReq("archive_root", \%searchdefs);
+my $archive_site=$config->getValueReq("site_name", \%searchdefs);
+$searchdefs{"site"} = $archive_site;
+my $gridftphost = $config->getValueReq("gridftp_host", \%searchdefs);
+my $gridftpport = $config->getValue("gridftp_port", \%searchdefs);
+
+my $out = `uberftp -P $gridftpport $gridftphost "cd $archive_root/raw/$nite/raw/$imgname; ls" 2>&1`;
+my $exitval = $?>>8;
+
+my @lsout = split /\n/, $out;
+my $count = 0;
+foreach my $line (@lsout)
+{
+#   -rw-r-----  1  mgower  agp  34485120 Oct 17 09:23  decam--11--39-g-4_01.fits
+   if ($line =~ /${imgname}_.*\.fits/)
+   {
+      $count++;
+   }
+}
+
+if ($count != 62)
+{
+   $exitcode = $FAILURE;
+}
+
+posttasks($config, "convert", "c","$imgname", $exitcode);
+close $debugfh;
+
+exit $exitcode;

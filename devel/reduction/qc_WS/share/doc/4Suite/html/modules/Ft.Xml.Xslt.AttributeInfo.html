@@ -1,0 +1,683 @@
+<html>
+  <head>
+    <meta content="text/html; charset=iso-8859-1" http-equiv="Content-Type">
+    <title>4Suite API Documentation: Ft.Xml.Xslt.AttributeInfo</title>
+    <link href="modules.css" type="text/css" rel="stylesheet">
+  </head>
+  <body>
+    <div class="universal-header"><span class="universal-header-prefix">&nbsp;&nbsp;&nbsp;</span>&nbsp;<span class="universal-header-prefix">&nbsp;&nbsp;</span>&nbsp;<span class="universal-header-prefix">&nbsp;</span>&nbsp;<a href="../index.html">4Suite<sup>&trade;</sup> API Documentation</a></div>
+    <h1><span class="glyph-arrow">&#9658;</span> Module <span class="this-name"><a href="Ft.html" title="Ft">Ft</a>.<a href="Ft.Xml.html" title="Ft.Xml">Xml</a>.<a href="Ft.Xml.Xslt.html" title="Ft.Xml.Xslt">Xslt</a>.AttributeInfo</span></h1>
+    <div class="abstract">Classes that support validation and evaluation of attribute values in
+XSLT instruction elements</div>
+    <pre class="description">Copyright 2003 Fourthought, Inc. (USA).
+Detailed license and copyright information: http://4suite.org/COPYRIGHT
+Project home, documentation, distributions: http://4suite.org/</pre>
+    <div class="summary-section">
+      <table cellpadding="0" cellspacing="0">
+        <tbody>
+          <tr>
+            <td valign="top">
+              <div class="summary-header">Classes:</div>
+              <div class="summary-list"><span class="class-name"><a href="#AnyAvt">AnyAvt</a></span>, <span class="class-name"><a href="#AttributeInfo">AttributeInfo</a></span>, <span class="class-name"><a href="#Avt">Avt</a></span>, <span class="class-name"><a href="#BooleanExpression">BooleanExpression</a></span>, <span class="class-name"><a href="#Char">Char</a></span>, <span class="class-name"><a href="#CharAvt">CharAvt</a></span>, <span class="class-name"><a href="#Choice">Choice</a></span>, <span class="class-name"><a href="#ChoiceAvt">ChoiceAvt</a></span>, <span class="class-name"><a href="#Expression">Expression</a></span>, <span class="class-name"><a href="#ExpressionWrapper">ExpressionWrapper</a></span>, <span class="class-name"><a href="#Id">Id</a></span>, <span class="class-name"><a href="#IdAvt">IdAvt</a></span>, <span class="class-name"><a href="#NCName">NCName</a></span>, <span class="class-name"><a href="#NCNameAvt">NCNameAvt</a></span>, <span class="class-name"><a href="#NMToken">NMToken</a></span>, <span class="class-name"><a href="#NMTokenAvt">NMTokenAvt</a></span>, <span class="class-name"><a href="#NodeSetExpression">NodeSetExpression</a></span>, <span class="class-name"><a href="#Number">Number</a></span>, <span class="class-name"><a href="#NumberAvt">NumberAvt</a></span>, <span class="class-name"><a href="#NumberExpression">NumberExpression</a></span>, <span class="class-name"><a href="#Pattern">Pattern</a></span>, <span class="class-name"><a href="#Prefix">Prefix</a></span>, <span class="class-name"><a href="#PrefixAvt">PrefixAvt</a></span>, <span class="class-name"><a href="#Prefixes">Prefixes</a></span>, <span class="class-name"><a href="#PrefixesAvt">PrefixesAvt</a></span>, <span class="class-name"><a href="#QName">QName</a></span>, <span class="class-name"><a href="#QNameAvt">QNameAvt</a></span>, <span class="class-name"><a href="#QNameButNotNCName">QNameButNotNCName</a></span>, <span class="class-name"><a href="#QNames">QNames</a></span>, <span class="class-name"><a href="#QNamesAvt">QNamesAvt</a></span>, <span class="class-name"><a href="#RawQName">RawQName</a></span>, <span class="class-name"><a href="#RawQNameAvt">RawQNameAvt</a></span>, <span class="class-name"><a href="#String">String</a></span>, <span class="class-name"><a href="#StringAvt">StringAvt</a></span>, <span class="class-name"><a href="#StringExpression">StringExpression</a></span>, <span class="class-name"><a href="#Token">Token</a></span>, <span class="class-name"><a href="#TokenAvt">TokenAvt</a></span>, <span class="class-name"><a href="#Tokens">Tokens</a></span>, <span class="class-name"><a href="#TokensAvt">TokensAvt</a></span>, <span class="class-name"><a href="#UriReference">UriReference</a></span>, <span class="class-name"><a href="#UriReferenceAvt">UriReferenceAvt</a></span>, <span class="class-name"><a href="#YesNo">YesNo</a></span>, <span class="class-name"><a href="#YesNoAvt">YesNoAvt</a></span></div>
+            </td>
+            <td width="7" valign="middle"></td>
+            <td bgcolor="#C5C5C5" valign="middle" width="1"></td>
+            <td width="7" valign="middle"></td>
+            <td valign="top">
+              <div class="summary-header">Globals:</div>
+              <div class="summary-list"><span class="global-name"><a href="#EMPTY_NAMESPACE">EMPTY_NAMESPACE</a></span>, <span class="global-name"><a href="#XMLNS_NAMESPACE">XMLNS_NAMESPACE</a></span>, <span class="global-name"><a href="#XML_NAMESPACE">XML_NAMESPACE</a></span></div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="section">
+      <h2>Classes</h2>
+      <dl class="classes">
+        <dt class="classdef"><a name="AnyAvt"></a>class <span class="class-name">AnyAvt</span><span class="bases">(<span class="class-name"><a href="Ft.Xml.Xslt.AttributeInfo.html#Avt">Avt</a></span>, <span class="class-name"><a href="Ft.Xml.Xslt.AttributeInfo.html#AttributeInfo">AttributeInfo</a></span>)</span></dt>
+        <dd class="classdesc">
+          <h3>Methods inherited from class <a href="Ft.Xml.Xslt.AttributeInfo.html#Avt">Avt</a></h3>
+          <div class="inherited"><span class="inherited-name"><a href="Ft.Xml.Xslt.AttributeInfo.html#Avt-__str__">__str__</a></span>, <span class="inherited-name"><a href="Ft.Xml.Xslt.AttributeInfo.html#Avt-prepare">prepare</a></span></div>
+          <h3>Methods inherited from class <a href="Ft.Xml.Xslt.AttributeInfo.html#AttributeInfo">AttributeInfo</a></h3>
+          <div class="inherited"><span class="inherited-name"><a href="Ft.Xml.Xslt.AttributeInfo.html#AttributeInfo-__init__">__init__</a></span>, <span class="inherited-name"><a href="Ft.Xml.Xslt.AttributeInfo.html#AttributeInfo-reprocess">reprocess</a></span>, <span class="inherited-name"><a href="Ft.Xml.Xslt.AttributeInfo.html#AttributeInfo-validate">validate</a></span></div>
+          <h3>Members</h3>
+          <dl class="members">
+            <dt class="memberdef"><a name="display"><span class="member-name">display</span></a> = 'any avt'</dt>
+          </dl>
+        </dd>
+        <dt class="classdef"><a name="AttributeInfo"></a>class <span class="class-name">AttributeInfo</span></dt>
+        <dd class="classdesc">
+          <h3>Methods</h3>
+          <dl class="methods">
+            <dt class="methoddef"><a name="AttributeInfo-__init__"><span class="method-name">__init__</span></a>(<span class="argument-name">self</span>, <span class="argument-name">required</span><span class="argument-default">=0</span>, <span class="argument-name">default</span><span class="argument-default">=None</span>, <span class="argument-name">description</span><span class="argument-default">=''</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dt class="methoddef"><a name="AttributeInfo-__str__"><span class="method-name">__str__</span></a>(<span class="argument-name">self</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dt class="methoddef"><a name="AttributeInfo-prepare"><span class="method-name">prepare</span></a>(<span class="argument-name">self</span>, <span class="argument-name">element</span>, <span class="argument-name">value</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dt class="methoddef"><a name="AttributeInfo-reprocess"><span class="method-name">reprocess</span></a> = <a href="#AttributeInfo-prepare">prepare</a>(<span class="argument-name">self</span>, <span class="argument-name">element</span>, <span class="argument-name">value</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dt class="methoddef"><a name="AttributeInfo-validate"><span class="method-name">validate</span></a>(<span class="argument-name">self</span>, <span class="argument-name">validation</span>)</dt>
+            <dd class="methoddesc"></dd>
+          </dl>
+          <h3>Members</h3>
+          <dl class="members">
+            <dt class="memberdef"><a name="display"><span class="member-name">display</span></a> = 'unknown'</dt>
+          </dl>
+        </dd>
+        <dt class="classdef"><a name="Avt"></a>class <span class="class-name">Avt</span></dt>
+        <dd class="classdesc">
+          <h3>Methods</h3>
+          <dl class="methods">
+            <dt class="methoddef"><a name="Avt-__str__"><span class="method-name">__str__</span></a>(<span class="argument-name">self</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dt class="methoddef"><a name="Avt-prepare"><span class="method-name">prepare</span></a>(<span class="argument-name">self</span>, <span class="argument-name">element</span>, <span class="argument-name">value</span>)</dt>
+            <dd class="methoddesc"></dd>
+          </dl>
+        </dd>
+        <dt class="classdef"><a name="BooleanExpression"></a>class <span class="class-name">BooleanExpression</span><span class="bases">(<span class="class-name"><a href="Ft.Xml.Xslt.AttributeInfo.html#Expression">Expression</a></span>)</span></dt>
+        <dd class="classdesc">
+          <h3>Methods inherited from class <a href="Ft.Xml.Xslt.AttributeInfo.html#Expression">Expression</a></h3>
+          <div class="inherited"><span class="inherited-name"><a href="Ft.Xml.Xslt.AttributeInfo.html#Expression-prepare">prepare</a></span></div>
+          <h3>Methods inherited from class <a href="Ft.Xml.Xslt.AttributeInfo.html#AttributeInfo">AttributeInfo</a></h3>
+          <div class="inherited"><span class="inherited-name"><a href="Ft.Xml.Xslt.AttributeInfo.html#AttributeInfo-__init__">__init__</a></span>, <span class="inherited-name"><a href="Ft.Xml.Xslt.AttributeInfo.html#AttributeInfo-__str__">__str__</a></span>, <span class="inherited-name"><a href="Ft.Xml.Xslt.AttributeInfo.html#AttributeInfo-reprocess">reprocess</a></span>, <span class="inherited-name"><a href="Ft.Xml.Xslt.AttributeInfo.html#AttributeInfo-validate">validate</a></span></div>
+          <h3>Members</h3>
+          <dl class="members">
+            <dt class="memberdef"><a name="display"><span class="member-name">display</span></a> = 'boolean-expression'</dt>
+          </dl>
+        </dd>
+        <dt class="classdef"><a name="Char"></a>class <span class="class-name">Char</span><span class="bases">(<span class="class-name"><a href="Ft.Xml.Xslt.AttributeInfo.html#AttributeInfo">AttributeInfo</a></span>)</span></dt>
+        <dd class="classdesc">
+          <div class="abstract">A string value with a length of one</div>
+          <h3>Methods</h3>
+          <dl class="methods">
+            <dt class="methoddef"><a name="Char-prepare"><span class="method-name">prepare</span></a>(<span class="argument-name">self</span>, <span class="argument-name">element</span>, <span class="argument-name">value</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dd class="overrides"><b>Overrides: </b><span class="inherited-name"><a href="Ft.Xml.Xslt.AttributeInfo.html#AttributeInfo-prepare">prepare</a></span> from class <span class="class-name"><a href="Ft.Xml.Xslt.AttributeInfo.html#AttributeInfo">AttributeInfo</a></span></dd>
+            <dt class="methoddef"><a name="Char-reprocess"><span class="method-name">reprocess</span></a> = <a href="#Char-prepare">prepare</a>(<span class="argument-name">self</span>, <span class="argument-name">element</span>, <span class="argument-name">value</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dd class="overrides"><b>Overrides: </b><span class="inherited-name"><a href="Ft.Xml.Xslt.AttributeInfo.html#AttributeInfo-reprocess">reprocess</a></span> from class <span class="class-name"><a href="Ft.Xml.Xslt.AttributeInfo.html#AttributeInfo">AttributeInfo</a></span></dd>
+          </dl>
+          <h3>Methods inherited from class <a href="Ft.Xml.Xslt.AttributeInfo.html#AttributeInfo">AttributeInfo</a></h3>
+          <div class="inherited"><span class="inherited-name"><a href="Ft.Xml.Xslt.AttributeInfo.html#AttributeInfo-__init__">__init__</a></span>, <span class="inherited-name"><a href="Ft.Xml.Xslt.AttributeInfo.html#AttributeInfo-__str__">__str__</a></span>, <span class="inherited-name"><a href="Ft.Xml.Xslt.AttributeInfo.html#AttributeInfo-validate">validate</a></span></div>
+          <h3>Members</h3>
+          <dl class="members">
+            <dt class="memberdef"><a name="display"><span class="member-name">display</span></a> = 'char'</dt>
+          </dl>
+        </dd>
+        <dt class="classdef"><a name="CharAvt"></a>class <span class="class-name">CharAvt</span><span class="bases">(<span class="class-name"><a href="Ft.Xml.Xslt.AttributeInfo.html#Avt">Avt</a></span>, <span class="class-name"><a href="Ft.Xml.Xslt.AttributeInfo.html#Char">Char</a></span>)</span></dt>
+        <dd class="classdesc">
+          <h3>Methods inherited from class <a href="Ft.Xml.Xslt.AttributeInfo.html#Avt">Avt</a></h3>
+          <div class="inherited"><span class="inherited-name"><a href="Ft.Xml.Xslt.AttributeInfo.html#Avt-__str__">__str__</a></span>, <span class="inherited-name"><a href="Ft.Xml.Xslt.AttributeInfo.html#Avt-prepare">prepare</a></span></div>
+          <h3>Methods inherited from class <a href="Ft.Xml.Xslt.AttributeInfo.html#Char">Char</a></h3>
+          <div class="inherited"><span class="inherited-name"><a href="Ft.Xml.Xslt.AttributeInfo.html#Char-reprocess">reprocess</a></span></div>
+          <h3>Methods inherited from class <a href="Ft.Xml.Xslt.AttributeInfo.html#AttributeInfo">AttributeInfo</a></h3>
+          <div class="inherited"><span class="inherited-name"><a href="Ft.Xml.Xslt.AttributeInfo.html#AttributeInfo-__init__">__init__</a></span>, <span class="inherited-name"><a href="Ft.Xml.Xslt.AttributeInfo.html#AttributeInfo-validate">validate</a></span></div>
+          <h3>Members inherited from class <a href="Ft.Xml.Xslt.AttributeInfo.html#Char">Char</a></h3>
+          <div class="inherited"><span class="inherited-name"><a href="Ft.Xml.Xslt.AttributeInfo.html#Char-display">display</a></span></div>
+        </dd>
+        <dt class="classdef"><a name="Choice"></a>class <span class="class-name">Choice</span><span class="bases">(<span class="class-name"><a href="Ft.Xml.Xslt.AttributeInfo.html#AttributeInfo">AttributeInfo</a></span>)</span></dt>
+        <dd class="classdesc">
+          <h3>Methods</h3>
+          <dl class="methods">
+            <dt class="methoddef"><a name="Choice-__init__"><span class="method-name">__init__</span></a>(<span class="argument-name">self</span>, <span class="argument-name">values</span>, <span class="argument-name">required</span><span class="argument-default">=0</span>, <span class="argument-name">default</span><span class="argument-default">=None</span>, <span class="argument-name">description</span><span class="argument-default">=''</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dd class="overrides"><b>Overrides: </b><span class="inherited-name"><a href="Ft.Xml.Xslt.AttributeInfo.html#AttributeInfo-__init__">__init__</a></span> from class <span class="class-name"><a href="Ft.Xml.Xslt.AttributeInfo.html#AttributeInfo">AttributeInfo</a></span></dd>
+            <dt class="methoddef"><a name="Choice-__str__"><span class="method-name">__str__</span></a>(<span class="argument-name">self</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dd class="overrides"><b>Overrides: </b><span class="inherited-name"><a href="Ft.Xml.Xslt.AttributeInfo.html#AttributeInfo-__str__">__str__</a></span> from class <span class="class-name"><a href="Ft.Xml.Xslt.AttributeInfo.html#AttributeInfo">AttributeInfo</a></span></dd>
+            <dt class="methoddef"><a name="Choice-prepare"><span class="method-name">prepare</span></a>(<span class="argument-name">self</span>, <span class="argument-name">element</span>, <span class="argument-name">value</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dd class="overrides"><b>Overrides: </b><span class="inherited-name"><a href="Ft.Xml.Xslt.AttributeInfo.html#AttributeInfo-prepare">prepare</a></span> from class <span class="class-name"><a href="Ft.Xml.Xslt.AttributeInfo.html#AttributeInfo">AttributeInfo</a></span></dd>
+            <dt class="methoddef"><a name="Choice-reprocess"><span class="method-name">reprocess</span></a> = <a href="#Choice-prepare">prepare</a>(<span class="argument-name">self</span>, <span class="argument-name">element</span>, <span class="argument-name">value</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dd class="overrides"><b>Overrides: </b><span class="inherited-name"><a href="Ft.Xml.Xslt.AttributeInfo.html#AttributeInfo-reprocess">reprocess</a></span> from class <span class="class-name"><a href="Ft.Xml.Xslt.AttributeInfo.html#AttributeInfo">AttributeInfo</a></span></dd>
+          </dl>
+          <h3>Methods inherited from class <a href="Ft.Xml.Xslt.AttributeInfo.html#AttributeInfo">AttributeInfo</a></h3>
+          <div class="inherited"><span class="inherited-name"><a href="Ft.Xml.Xslt.AttributeInfo.html#AttributeInfo-validate">validate</a></span></div>
+          <h3>Members inherited from class <a href="Ft.Xml.Xslt.AttributeInfo.html#AttributeInfo">AttributeInfo</a></h3>
+          <div class="inherited"><span class="inherited-name"><a href="Ft.Xml.Xslt.AttributeInfo.html#AttributeInfo-display">display</a></span></div>
+        </dd>
+        <dt class="classdef"><a name="ChoiceAvt"></a>class <span class="class-name">ChoiceAvt</span><span class="bases">(<span class="class-name"><a href="Ft.Xml.Xslt.AttributeInfo.html#Avt">Avt</a></span>, <span class="class-name"><a href="Ft.Xml.Xslt.AttributeInfo.html#Choice">Choice</a></span>)</span></dt>
+        <dd class="classdesc">
+          <h3>Methods</h3>
+          <dl class="methods">
+            <dt class="methoddef"><a name="ChoiceAvt-__str__"><span class="method-name">__str__</span></a>(<span class="argument-name">self</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dd class="overrides"><b>Overrides: </b><span class="inherited-name"><a href="Ft.Xml.Xslt.AttributeInfo.html#Avt-__str__">__str__</a></span> from class <span class="class-name"><a href="Ft.Xml.Xslt.AttributeInfo.html#Avt">Avt</a></span></dd>
+          </dl>
+          <h3>Methods inherited from class <a href="Ft.Xml.Xslt.AttributeInfo.html#Avt">Avt</a></h3>
+          <div class="inherited"><span class="inherited-name"><a href="Ft.Xml.Xslt.AttributeInfo.html#Avt-prepare">prepare</a></span></div>
+          <h3>Methods inherited from class <a href="Ft.Xml.Xslt.AttributeInfo.html#Choice">Choice</a></h3>
+          <div class="inherited"><span class="inherited-name"><a href="Ft.Xml.Xslt.AttributeInfo.html#Choice-__init__">__init__</a></span>, <span class="inherited-name"><a href="Ft.Xml.Xslt.AttributeInfo.html#Choice-reprocess">reprocess</a></span></div>
+          <h3>Methods inherited from class <a href="Ft.Xml.Xslt.AttributeInfo.html#AttributeInfo">AttributeInfo</a></h3>
+          <div class="inherited"><span class="inherited-name"><a href="Ft.Xml.Xslt.AttributeInfo.html#AttributeInfo-validate">validate</a></span></div>
+          <h3>Members inherited from class <a href="Ft.Xml.Xslt.AttributeInfo.html#AttributeInfo">AttributeInfo</a></h3>
+          <div class="inherited"><span class="inherited-name"><a href="Ft.Xml.Xslt.AttributeInfo.html#AttributeInfo-display">display</a></span></div>
+        </dd>
+        <dt class="classdef"><a name="Expression"></a>class <span class="class-name">Expression</span><span class="bases">(<span class="class-name"><a href="Ft.Xml.Xslt.AttributeInfo.html#AttributeInfo">AttributeInfo</a></span>)</span></dt>
+        <dd class="classdesc">
+          <div class="abstract">An attribute whose value is used as an XPath expression</div>
+          <h3>Methods</h3>
+          <dl class="methods">
+            <dt class="methoddef"><a name="Expression-prepare"><span class="method-name">prepare</span></a>(<span class="argument-name">self</span>, <span class="argument-name">element</span>, <span class="argument-name">value</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dd class="overrides"><b>Overrides: </b><span class="inherited-name"><a href="Ft.Xml.Xslt.AttributeInfo.html#AttributeInfo-prepare">prepare</a></span> from class <span class="class-name"><a href="Ft.Xml.Xslt.AttributeInfo.html#AttributeInfo">AttributeInfo</a></span></dd>
+          </dl>
+          <h3>Methods inherited from class <a href="Ft.Xml.Xslt.AttributeInfo.html#AttributeInfo">AttributeInfo</a></h3>
+          <div class="inherited"><span class="inherited-name"><a href="Ft.Xml.Xslt.AttributeInfo.html#AttributeInfo-__init__">__init__</a></span>, <span class="inherited-name"><a href="Ft.Xml.Xslt.AttributeInfo.html#AttributeInfo-__str__">__str__</a></span>, <span class="inherited-name"><a href="Ft.Xml.Xslt.AttributeInfo.html#AttributeInfo-reprocess">reprocess</a></span>, <span class="inherited-name"><a href="Ft.Xml.Xslt.AttributeInfo.html#AttributeInfo-validate">validate</a></span></div>
+          <h3>Members</h3>
+          <dl class="members">
+            <dt class="memberdef"><a name="display"><span class="member-name">display</span></a> = 'expression'</dt>
+          </dl>
+        </dd>
+        <dt class="classdef"><a name="ExpressionWrapper"></a>class <span class="class-name">ExpressionWrapper</span></dt>
+        <dd class="classdesc">
+          <h3>Methods</h3>
+          <dl class="methods">
+            <dt class="methoddef"><a name="ExpressionWrapper-__getattr__"><span class="method-name">__getattr__</span></a>(<span class="argument-name">self</span>, <span class="argument-name">attr</span>)</dt>
+            <dd class="methoddesc">
+              <div class="abstract">Make this behave as if it was the expression object itself.</div>
+            </dd>
+            <dt class="methoddef"><a name="ExpressionWrapper-__getstate__"><span class="method-name">__getstate__</span></a>(<span class="argument-name">self</span>)</dt>
+            <dd class="methoddesc">
+              <div class="abstract"># Provide the copy/pickle helpers so as to not get them from the
+# wrapped expression.</div>
+            </dd>
+            <dt class="methoddef"><a name="ExpressionWrapper-__init__"><span class="method-name">__init__</span></a>(<span class="argument-name">self</span>, <span class="argument-name">expression</span>, <span class="argument-name">element</span>, <span class="argument-name">original</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dt class="methoddef"><a name="ExpressionWrapper-__nonzero__"><span class="method-name">__nonzero__</span></a>(<span class="argument-name">self</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dt class="methoddef"><a name="ExpressionWrapper-__setstate__"><span class="method-name">__setstate__</span></a>(<span class="argument-name">self</span>, <span class="argument-name">state</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dt class="methoddef"><a name="ExpressionWrapper-evaluate"><span class="method-name">evaluate</span></a>(<span class="argument-name">self</span>, <span class="argument-name">context</span>)</dt>
+            <dd class="methoddesc"></dd>
+          </dl>
+        </dd>
+        <dt class="classdef"><a name="Id"></a>class <span class="class-name">Id</span><span class="bases">(<span class="class-name"><a href="Ft.Xml.Xslt.AttributeInfo.html#AttributeInfo">AttributeInfo</a></span>)</span></dt>
+        <dd class="classdesc">
+          <h3>Methods</h3>
+          <dl class="methods">
+            <dt class="methoddef"><a name="Id-prepare"><span class="method-name">prepare</span></a>(<span class="argument-name">self</span>, <span class="argument-name">element</span>, <span class="argument-name">value</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dd class="overrides"><b>Overrides: </b><span class="inherited-name"><a href="Ft.Xml.Xslt.AttributeInfo.html#AttributeInfo-prepare">prepare</a></span> from class <span class="class-name"><a href="Ft.Xml.Xslt.AttributeInfo.html#AttributeInfo">AttributeInfo</a></span></dd>
+            <dt class="methoddef"><a name="Id-reprocess"><span class="method-name">reprocess</span></a> = <a href="#Id-prepare">prepare</a>(<span class="argument-name">self</span>, <span class="argument-name">element</span>, <span class="argument-name">value</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dd class="overrides"><b>Overrides: </b><span class="inherited-name"><a href="Ft.Xml.Xslt.AttributeInfo.html#AttributeInfo-reprocess">reprocess</a></span> from class <span class="class-name"><a href="Ft.Xml.Xslt.AttributeInfo.html#AttributeInfo">AttributeInfo</a></span></dd>
+          </dl>
+          <h3>Methods inherited from class <a href="Ft.Xml.Xslt.AttributeInfo.html#AttributeInfo">AttributeInfo</a></h3>
+          <div class="inherited"><span class="inherited-name"><a href="Ft.Xml.Xslt.AttributeInfo.html#AttributeInfo-__init__">__init__</a></span>, <span class="inherited-name"><a href="Ft.Xml.Xslt.AttributeInfo.html#AttributeInfo-__str__">__str__</a></span>, <span class="inherited-name"><a href="Ft.Xml.Xslt.AttributeInfo.html#AttributeInfo-validate">validate</a></span></div>
+          <h3>Members</h3>
+          <dl class="members">
+            <dt class="memberdef"><a name="display"><span class="member-name">display</span></a> = 'id'</dt>
+          </dl>
+        </dd>
+        <dt class="classdef"><a name="IdAvt"></a>class <span class="class-name">IdAvt</span><span class="bases">(<span class="class-name"><a href="Ft.Xml.Xslt.AttributeInfo.html#Avt">Avt</a></span>, <span class="class-name"><a href="Ft.Xml.Xslt.AttributeInfo.html#Id">Id</a></span>)</span></dt>
+        <dd class="classdesc">
+          <h3>Methods inherited from class <a href="Ft.Xml.Xslt.AttributeInfo.html#Avt">Avt</a></h3>
+          <div class="inherited"><span class="inherited-name"><a href="Ft.Xml.Xslt.AttributeInfo.html#Avt-__str__">__str__</a></span>, <span class="inherited-name"><a href="Ft.Xml.Xslt.AttributeInfo.html#Avt-prepare">prepare</a></span></div>
+          <h3>Methods inherited from class <a href="Ft.Xml.Xslt.AttributeInfo.html#Id">Id</a></h3>
+          <div class="inherited"><span class="inherited-name"><a href="Ft.Xml.Xslt.AttributeInfo.html#Id-reprocess">reprocess</a></span></div>
+          <h3>Methods inherited from class <a href="Ft.Xml.Xslt.AttributeInfo.html#AttributeInfo">AttributeInfo</a></h3>
+          <div class="inherited"><span class="inherited-name"><a href="Ft.Xml.Xslt.AttributeInfo.html#AttributeInfo-__init__">__init__</a></span>, <span class="inherited-name"><a href="Ft.Xml.Xslt.AttributeInfo.html#AttributeInfo-validate">validate</a></span></div>
+          <h3>Members inherited from class <a href="Ft.Xml.Xslt.AttributeInfo.html#Id">Id</a></h3>
+          <div class="inherited"><span class="inherited-name"><a href="Ft.Xml.Xslt.AttributeInfo.html#Id-display">display</a></span></div>
+        </dd>
+        <dt class="classdef"><a name="NCName"></a>class <span class="class-name">NCName</span><span class="bases">(<span class="class-name"><a href="Ft.Xml.Xslt.AttributeInfo.html#AttributeInfo">AttributeInfo</a></span>)</span></dt>
+        <dd class="classdesc">
+          <h3>Methods</h3>
+          <dl class="methods">
+            <dt class="methoddef"><a name="NCName-prepare"><span class="method-name">prepare</span></a>(<span class="argument-name">self</span>, <span class="argument-name">element</span>, <span class="argument-name">value</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dd class="overrides"><b>Overrides: </b><span class="inherited-name"><a href="Ft.Xml.Xslt.AttributeInfo.html#AttributeInfo-prepare">prepare</a></span> from class <span class="class-name"><a href="Ft.Xml.Xslt.AttributeInfo.html#AttributeInfo">AttributeInfo</a></span></dd>
+            <dt class="methoddef"><a name="NCName-reprocess"><span class="method-name">reprocess</span></a> = <a href="#NCName-prepare">prepare</a>(<span class="argument-name">self</span>, <span class="argument-name">element</span>, <span class="argument-name">value</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dd class="overrides"><b>Overrides: </b><span class="inherited-name"><a href="Ft.Xml.Xslt.AttributeInfo.html#AttributeInfo-reprocess">reprocess</a></span> from class <span class="class-name"><a href="Ft.Xml.Xslt.AttributeInfo.html#AttributeInfo">AttributeInfo</a></span></dd>
+          </dl>
+          <h3>Methods inherited from class <a href="Ft.Xml.Xslt.AttributeInfo.html#AttributeInfo">AttributeInfo</a></h3>
+          <div class="inherited"><span class="inherited-name"><a href="Ft.Xml.Xslt.AttributeInfo.html#AttributeInfo-__init__">__init__</a></span>, <span class="inherited-name"><a href="Ft.Xml.Xslt.AttributeInfo.html#AttributeInfo-__str__">__str__</a></span>, <span class="inherited-name"><a href="Ft.Xml.Xslt.AttributeInfo.html#AttributeInfo-validate">validate</a></span></div>
+          <h3>Members</h3>
+          <dl class="members">
+            <dt class="memberdef"><a name="display"><span class="member-name">display</span></a> = 'ncname'</dt>
+          </dl>
+        </dd>
+        <dt class="classdef"><a name="NCNameAvt"></a>class <span class="class-name">NCNameAvt</span><span class="bases">(<span class="class-name"><a href="Ft.Xml.Xslt.AttributeInfo.html#Avt">Avt</a></span>, <span class="class-name"><a href="Ft.Xml.Xslt.AttributeInfo.html#NCName">NCName</a></span>)</span></dt>
+        <dd class="classdesc">
+          <h3>Methods inherited from class <a href="Ft.Xml.Xslt.AttributeInfo.html#Avt">Avt</a></h3>
+          <div class="inherited"><span class="inherited-name"><a href="Ft.Xml.Xslt.AttributeInfo.html#Avt-__str__">__str__</a></span>, <span class="inherited-name"><a href="Ft.Xml.Xslt.AttributeInfo.html#Avt-prepare">prepare</a></span></div>
+          <h3>Methods inherited from class <a href="Ft.Xml.Xslt.AttributeInfo.html#NCName">NCName</a></h3>
+          <div class="inherited"><span class="inherited-name"><a href="Ft.Xml.Xslt.AttributeInfo.html#NCName-reprocess">reprocess</a></span></div>
+          <h3>Methods inherited from class <a href="Ft.Xml.Xslt.AttributeInfo.html#AttributeInfo">AttributeInfo</a></h3>
+          <div class="inherited"><span class="inherited-name"><a href="Ft.Xml.Xslt.AttributeInfo.html#AttributeInfo-__init__">__init__</a></span>, <span class="inherited-name"><a href="Ft.Xml.Xslt.AttributeInfo.html#AttributeInfo-validate">validate</a></span></div>
+          <h3>Members inherited from class <a href="Ft.Xml.Xslt.AttributeInfo.html#NCName">NCName</a></h3>
+          <div class="inherited"><span class="inherited-name"><a href="Ft.Xml.Xslt.AttributeInfo.html#NCName-display">display</a></span></div>
+        </dd>
+        <dt class="classdef"><a name="NMToken"></a>class <span class="class-name">NMToken</span><span class="bases">(<span class="class-name"><a href="Ft.Xml.Xslt.AttributeInfo.html#AttributeInfo">AttributeInfo</a></span>)</span></dt>
+        <dd class="classdesc">
+          <h3>Methods</h3>
+          <dl class="methods">
+            <dt class="methoddef"><a name="NMToken-prepare"><span class="method-name">prepare</span></a>(<span class="argument-name">self</span>, <span class="argument-name">element</span>, <span class="argument-name">value</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dd class="overrides"><b>Overrides: </b><span class="inherited-name"><a href="Ft.Xml.Xslt.AttributeInfo.html#AttributeInfo-prepare">prepare</a></span> from class <span class="class-name"><a href="Ft.Xml.Xslt.AttributeInfo.html#AttributeInfo">AttributeInfo</a></span></dd>
+            <dt class="methoddef"><a name="NMToken-reprocess"><span class="method-name">reprocess</span></a> = <a href="#NMToken-prepare">prepare</a>(<span class="argument-name">self</span>, <span class="argument-name">element</span>, <span class="argument-name">value</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dd class="overrides"><b>Overrides: </b><span class="inherited-name"><a href="Ft.Xml.Xslt.AttributeInfo.html#AttributeInfo-reprocess">reprocess</a></span> from class <span class="class-name"><a href="Ft.Xml.Xslt.AttributeInfo.html#AttributeInfo">AttributeInfo</a></span></dd>
+          </dl>
+          <h3>Methods inherited from class <a href="Ft.Xml.Xslt.AttributeInfo.html#AttributeInfo">AttributeInfo</a></h3>
+          <div class="inherited"><span class="inherited-name"><a href="Ft.Xml.Xslt.AttributeInfo.html#AttributeInfo-__init__">__init__</a></span>, <span class="inherited-name"><a href="Ft.Xml.Xslt.AttributeInfo.html#AttributeInfo-__str__">__str__</a></span>, <span class="inherited-name"><a href="Ft.Xml.Xslt.AttributeInfo.html#AttributeInfo-validate">validate</a></span></div>
+          <h3>Members</h3>
+          <dl class="members">
+            <dt class="memberdef"><a name="display"><span class="member-name">display</span></a> = 'nmtoken'</dt>
+          </dl>
+        </dd>
+        <dt class="classdef"><a name="NMTokenAvt"></a>class <span class="class-name">NMTokenAvt</span><span class="bases">(<span class="class-name"><a href="Ft.Xml.Xslt.AttributeInfo.html#Avt">Avt</a></span>, <span class="class-name"><a href="Ft.Xml.Xslt.AttributeInfo.html#NMToken">NMToken</a></span>)</span></dt>
+        <dd class="classdesc">
+          <h3>Methods inherited from class <a href="Ft.Xml.Xslt.AttributeInfo.html#Avt">Avt</a></h3>
+          <div class="inherited"><span class="inherited-name"><a href="Ft.Xml.Xslt.AttributeInfo.html#Avt-__str__">__str__</a></span>, <span class="inherited-name"><a href="Ft.Xml.Xslt.AttributeInfo.html#Avt-prepare">prepare</a></span></div>
+          <h3>Methods inherited from class <a href="Ft.Xml.Xslt.AttributeInfo.html#NMToken">NMToken</a></h3>
+          <div class="inherited"><span class="inherited-name"><a href="Ft.Xml.Xslt.AttributeInfo.html#NMToken-reprocess">reprocess</a></span></div>
+          <h3>Methods inherited from class <a href="Ft.Xml.Xslt.AttributeInfo.html#AttributeInfo">AttributeInfo</a></h3>
+          <div class="inherited"><span class="inherited-name"><a href="Ft.Xml.Xslt.AttributeInfo.html#AttributeInfo-__init__">__init__</a></span>, <span class="inherited-name"><a href="Ft.Xml.Xslt.AttributeInfo.html#AttributeInfo-validate">validate</a></span></div>
+          <h3>Members inherited from class <a href="Ft.Xml.Xslt.AttributeInfo.html#NMToken">NMToken</a></h3>
+          <div class="inherited"><span class="inherited-name"><a href="Ft.Xml.Xslt.AttributeInfo.html#NMToken-display">display</a></span></div>
+        </dd>
+        <dt class="classdef"><a name="NodeSetExpression"></a>class <span class="class-name">NodeSetExpression</span><span class="bases">(<span class="class-name"><a href="Ft.Xml.Xslt.AttributeInfo.html#Expression">Expression</a></span>)</span></dt>
+        <dd class="classdesc">
+          <h3>Methods inherited from class <a href="Ft.Xml.Xslt.AttributeInfo.html#Expression">Expression</a></h3>
+          <div class="inherited"><span class="inherited-name"><a href="Ft.Xml.Xslt.AttributeInfo.html#Expression-prepare">prepare</a></span></div>
+          <h3>Methods inherited from class <a href="Ft.Xml.Xslt.AttributeInfo.html#AttributeInfo">AttributeInfo</a></h3>
+          <div class="inherited"><span class="inherited-name"><a href="Ft.Xml.Xslt.AttributeInfo.html#AttributeInfo-__init__">__init__</a></span>, <span class="inherited-name"><a href="Ft.Xml.Xslt.AttributeInfo.html#AttributeInfo-__str__">__str__</a></span>, <span class="inherited-name"><a href="Ft.Xml.Xslt.AttributeInfo.html#AttributeInfo-reprocess">reprocess</a></span>, <span class="inherited-name"><a href="Ft.Xml.Xslt.AttributeInfo.html#AttributeInfo-validate">validate</a></span></div>
+          <h3>Members</h3>
+          <dl class="members">
+            <dt class="memberdef"><a name="display"><span class="member-name">display</span></a> = 'node-set-expression'</dt>
+          </dl>
+        </dd>
+        <dt class="classdef"><a name="Number"></a>class <span class="class-name">Number</span><span class="bases">(<span class="class-name"><a href="Ft.Xml.Xslt.AttributeInfo.html#AttributeInfo">AttributeInfo</a></span>)</span></dt>
+        <dd class="classdesc">
+          <h3>Methods</h3>
+          <dl class="methods">
+            <dt class="methoddef"><a name="Number-prepare"><span class="method-name">prepare</span></a>(<span class="argument-name">self</span>, <span class="argument-name">element</span>, <span class="argument-name">value</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dd class="overrides"><b>Overrides: </b><span class="inherited-name"><a href="Ft.Xml.Xslt.AttributeInfo.html#AttributeInfo-prepare">prepare</a></span> from class <span class="class-name"><a href="Ft.Xml.Xslt.AttributeInfo.html#AttributeInfo">AttributeInfo</a></span></dd>
+            <dt class="methoddef"><a name="Number-reprocess"><span class="method-name">reprocess</span></a> = <a href="#Number-prepare">prepare</a>(<span class="argument-name">self</span>, <span class="argument-name">element</span>, <span class="argument-name">value</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dd class="overrides"><b>Overrides: </b><span class="inherited-name"><a href="Ft.Xml.Xslt.AttributeInfo.html#AttributeInfo-reprocess">reprocess</a></span> from class <span class="class-name"><a href="Ft.Xml.Xslt.AttributeInfo.html#AttributeInfo">AttributeInfo</a></span></dd>
+          </dl>
+          <h3>Methods inherited from class <a href="Ft.Xml.Xslt.AttributeInfo.html#AttributeInfo">AttributeInfo</a></h3>
+          <div class="inherited"><span class="inherited-name"><a href="Ft.Xml.Xslt.AttributeInfo.html#AttributeInfo-__init__">__init__</a></span>, <span class="inherited-name"><a href="Ft.Xml.Xslt.AttributeInfo.html#AttributeInfo-__str__">__str__</a></span>, <span class="inherited-name"><a href="Ft.Xml.Xslt.AttributeInfo.html#AttributeInfo-validate">validate</a></span></div>
+          <h3>Members</h3>
+          <dl class="members">
+            <dt class="memberdef"><a name="display"><span class="member-name">display</span></a> = 'number'</dt>
+          </dl>
+        </dd>
+        <dt class="classdef"><a name="NumberAvt"></a>class <span class="class-name">NumberAvt</span><span class="bases">(<span class="class-name"><a href="Ft.Xml.Xslt.AttributeInfo.html#Avt">Avt</a></span>, <span class="class-name"><a href="Ft.Xml.Xslt.AttributeInfo.html#Number">Number</a></span>)</span></dt>
+        <dd class="classdesc">
+          <h3>Methods</h3>
+          <dl class="methods">
+            <dt class="methoddef"><a name="NumberAvt-reprocess"><span class="method-name">reprocess</span></a> = prepare(<span class="argument-name">self</span>, <span class="argument-name">element</span>, <span class="argument-name">value</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dd class="overrides"><b>Overrides: </b><span class="inherited-name"><a href="Ft.Xml.Xslt.AttributeInfo.html#Number-reprocess">reprocess</a></span> from class <span class="class-name"><a href="Ft.Xml.Xslt.AttributeInfo.html#Number">Number</a></span></dd>
+          </dl>
+          <h3>Methods inherited from class <a href="Ft.Xml.Xslt.AttributeInfo.html#Avt">Avt</a></h3>
+          <div class="inherited"><span class="inherited-name"><a href="Ft.Xml.Xslt.AttributeInfo.html#Avt-__str__">__str__</a></span>, <span class="inherited-name"><a href="Ft.Xml.Xslt.AttributeInfo.html#Avt-prepare">prepare</a></span></div>
+          <h3>Methods inherited from class <a href="Ft.Xml.Xslt.AttributeInfo.html#AttributeInfo">AttributeInfo</a></h3>
+          <div class="inherited"><span class="inherited-name"><a href="Ft.Xml.Xslt.AttributeInfo.html#AttributeInfo-__init__">__init__</a></span>, <span class="inherited-name"><a href="Ft.Xml.Xslt.AttributeInfo.html#AttributeInfo-validate">validate</a></span></div>
+          <h3>Members inherited from class <a href="Ft.Xml.Xslt.AttributeInfo.html#Number">Number</a></h3>
+          <div class="inherited"><span class="inherited-name"><a href="Ft.Xml.Xslt.AttributeInfo.html#Number-display">display</a></span></div>
+        </dd>
+        <dt class="classdef"><a name="NumberExpression"></a>class <span class="class-name">NumberExpression</span><span class="bases">(<span class="class-name"><a href="Ft.Xml.Xslt.AttributeInfo.html#Expression">Expression</a></span>)</span></dt>
+        <dd class="classdesc">
+          <h3>Methods inherited from class <a href="Ft.Xml.Xslt.AttributeInfo.html#Expression">Expression</a></h3>
+          <div class="inherited"><span class="inherited-name"><a href="Ft.Xml.Xslt.AttributeInfo.html#Expression-prepare">prepare</a></span></div>
+          <h3>Methods inherited from class <a href="Ft.Xml.Xslt.AttributeInfo.html#AttributeInfo">AttributeInfo</a></h3>
+          <div class="inherited"><span class="inherited-name"><a href="Ft.Xml.Xslt.AttributeInfo.html#AttributeInfo-__init__">__init__</a></span>, <span class="inherited-name"><a href="Ft.Xml.Xslt.AttributeInfo.html#AttributeInfo-__str__">__str__</a></span>, <span class="inherited-name"><a href="Ft.Xml.Xslt.AttributeInfo.html#AttributeInfo-reprocess">reprocess</a></span>, <span class="inherited-name"><a href="Ft.Xml.Xslt.AttributeInfo.html#AttributeInfo-validate">validate</a></span></div>
+          <h3>Members</h3>
+          <dl class="members">
+            <dt class="memberdef"><a name="display"><span class="member-name">display</span></a> = 'number-expression'</dt>
+          </dl>
+        </dd>
+        <dt class="classdef"><a name="Pattern"></a>class <span class="class-name">Pattern</span><span class="bases">(<span class="class-name"><a href="Ft.Xml.Xslt.AttributeInfo.html#AttributeInfo">AttributeInfo</a></span>)</span></dt>
+        <dd class="classdesc">
+          <div class="abstract">An attribute whose value is used as an XPattern expression</div>
+          <h3>Methods</h3>
+          <dl class="methods">
+            <dt class="methoddef"><a name="Pattern-prepare"><span class="method-name">prepare</span></a>(<span class="argument-name">self</span>, <span class="argument-name">element</span>, <span class="argument-name">value</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dd class="overrides"><b>Overrides: </b><span class="inherited-name"><a href="Ft.Xml.Xslt.AttributeInfo.html#AttributeInfo-prepare">prepare</a></span> from class <span class="class-name"><a href="Ft.Xml.Xslt.AttributeInfo.html#AttributeInfo">AttributeInfo</a></span></dd>
+          </dl>
+          <h3>Methods inherited from class <a href="Ft.Xml.Xslt.AttributeInfo.html#AttributeInfo">AttributeInfo</a></h3>
+          <div class="inherited"><span class="inherited-name"><a href="Ft.Xml.Xslt.AttributeInfo.html#AttributeInfo-__init__">__init__</a></span>, <span class="inherited-name"><a href="Ft.Xml.Xslt.AttributeInfo.html#AttributeInfo-__str__">__str__</a></span>, <span class="inherited-name"><a href="Ft.Xml.Xslt.AttributeInfo.html#AttributeInfo-reprocess">reprocess</a></span>, <span class="inherited-name"><a href="Ft.Xml.Xslt.AttributeInfo.html#AttributeInfo-validate">validate</a></span></div>
+          <h3>Members</h3>
+          <dl class="members">
+            <dt class="memberdef"><a name="display"><span class="member-name">display</span></a> = 'pattern'</dt>
+          </dl>
+        </dd>
+        <dt class="classdef"><a name="Prefix"></a>class <span class="class-name">Prefix</span><span class="bases">(<span class="class-name"><a href="Ft.Xml.Xslt.AttributeInfo.html#AttributeInfo">AttributeInfo</a></span>)</span></dt>
+        <dd class="classdesc">
+          <h3>Methods</h3>
+          <dl class="methods">
+            <dt class="methoddef"><a name="Prefix-prepare"><span class="method-name">prepare</span></a>(<span class="argument-name">self</span>, <span class="argument-name">element</span>, <span class="argument-name">value</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dd class="overrides"><b>Overrides: </b><span class="inherited-name"><a href="Ft.Xml.Xslt.AttributeInfo.html#AttributeInfo-prepare">prepare</a></span> from class <span class="class-name"><a href="Ft.Xml.Xslt.AttributeInfo.html#AttributeInfo">AttributeInfo</a></span></dd>
+            <dt class="methoddef"><a name="Prefix-reprocess"><span class="method-name">reprocess</span></a> = <a href="#Prefix-prepare">prepare</a>(<span class="argument-name">self</span>, <span class="argument-name">element</span>, <span class="argument-name">value</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dd class="overrides"><b>Overrides: </b><span class="inherited-name"><a href="Ft.Xml.Xslt.AttributeInfo.html#AttributeInfo-reprocess">reprocess</a></span> from class <span class="class-name"><a href="Ft.Xml.Xslt.AttributeInfo.html#AttributeInfo">AttributeInfo</a></span></dd>
+          </dl>
+          <h3>Methods inherited from class <a href="Ft.Xml.Xslt.AttributeInfo.html#AttributeInfo">AttributeInfo</a></h3>
+          <div class="inherited"><span class="inherited-name"><a href="Ft.Xml.Xslt.AttributeInfo.html#AttributeInfo-__init__">__init__</a></span>, <span class="inherited-name"><a href="Ft.Xml.Xslt.AttributeInfo.html#AttributeInfo-__str__">__str__</a></span>, <span class="inherited-name"><a href="Ft.Xml.Xslt.AttributeInfo.html#AttributeInfo-validate">validate</a></span></div>
+          <h3>Members</h3>
+          <dl class="members">
+            <dt class="memberdef"><a name="display"><span class="member-name">display</span></a> = 'prefix'</dt>
+          </dl>
+        </dd>
+        <dt class="classdef"><a name="PrefixAvt"></a>class <span class="class-name">PrefixAvt</span><span class="bases">(<span class="class-name"><a href="Ft.Xml.Xslt.AttributeInfo.html#Avt">Avt</a></span>, <span class="class-name"><a href="Ft.Xml.Xslt.AttributeInfo.html#Prefix">Prefix</a></span>)</span></dt>
+        <dd class="classdesc">
+          <h3>Methods inherited from class <a href="Ft.Xml.Xslt.AttributeInfo.html#Avt">Avt</a></h3>
+          <div class="inherited"><span class="inherited-name"><a href="Ft.Xml.Xslt.AttributeInfo.html#Avt-__str__">__str__</a></span>, <span class="inherited-name"><a href="Ft.Xml.Xslt.AttributeInfo.html#Avt-prepare">prepare</a></span></div>
+          <h3>Methods inherited from class <a href="Ft.Xml.Xslt.AttributeInfo.html#Prefix">Prefix</a></h3>
+          <div class="inherited"><span class="inherited-name"><a href="Ft.Xml.Xslt.AttributeInfo.html#Prefix-reprocess">reprocess</a></span></div>
+          <h3>Methods inherited from class <a href="Ft.Xml.Xslt.AttributeInfo.html#AttributeInfo">AttributeInfo</a></h3>
+          <div class="inherited"><span class="inherited-name"><a href="Ft.Xml.Xslt.AttributeInfo.html#AttributeInfo-__init__">__init__</a></span>, <span class="inherited-name"><a href="Ft.Xml.Xslt.AttributeInfo.html#AttributeInfo-validate">validate</a></span></div>
+          <h3>Members inherited from class <a href="Ft.Xml.Xslt.AttributeInfo.html#Prefix">Prefix</a></h3>
+          <div class="inherited"><span class="inherited-name"><a href="Ft.Xml.Xslt.AttributeInfo.html#Prefix-display">display</a></span></div>
+        </dd>
+        <dt class="classdef"><a name="Prefixes"></a>class <span class="class-name">Prefixes</span><span class="bases">(<span class="class-name"><a href="Ft.Xml.Xslt.AttributeInfo.html#Prefix">Prefix</a></span>)</span></dt>
+        <dd class="classdesc">
+          <div class="abstract">A whitespace separated list of prefixes (see Prefix for more information)</div>
+          <h3>Methods</h3>
+          <dl class="methods">
+            <dt class="methoddef"><a name="Prefixes-prepare"><span class="method-name">prepare</span></a>(<span class="argument-name">self</span>, <span class="argument-name">element</span>, <span class="argument-name">value</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dd class="overrides"><b>Overrides: </b><span class="inherited-name"><a href="Ft.Xml.Xslt.AttributeInfo.html#Prefix-prepare">prepare</a></span> from class <span class="class-name"><a href="Ft.Xml.Xslt.AttributeInfo.html#Prefix">Prefix</a></span></dd>
+            <dt class="methoddef"><a name="Prefixes-reprocess"><span class="method-name">reprocess</span></a> = <a href="#Prefixes-prepare">prepare</a>(<span class="argument-name">self</span>, <span class="argument-name">element</span>, <span class="argument-name">value</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dd class="overrides"><b>Overrides: </b><span class="inherited-name"><a href="Ft.Xml.Xslt.AttributeInfo.html#Prefix-reprocess">reprocess</a></span> from class <span class="class-name"><a href="Ft.Xml.Xslt.AttributeInfo.html#Prefix">Prefix</a></span></dd>
+          </dl>
+          <h3>Methods inherited from class <a href="Ft.Xml.Xslt.AttributeInfo.html#AttributeInfo">AttributeInfo</a></h3>
+          <div class="inherited"><span class="inherited-name"><a href="Ft.Xml.Xslt.AttributeInfo.html#AttributeInfo-__init__">__init__</a></span>, <span class="inherited-name"><a href="Ft.Xml.Xslt.AttributeInfo.html#AttributeInfo-__str__">__str__</a></span>, <span class="inherited-name"><a href="Ft.Xml.Xslt.AttributeInfo.html#AttributeInfo-validate">validate</a></span></div>
+          <h3>Members</h3>
+          <dl class="members">
+            <dt class="memberdef"><a name="display"><span class="member-name">display</span></a> = 'prefixes'</dt>
+          </dl>
+        </dd>
+        <dt class="classdef"><a name="PrefixesAvt"></a>class <span class="class-name">PrefixesAvt</span><span class="bases">(<span class="class-name"><a href="Ft.Xml.Xslt.AttributeInfo.html#Avt">Avt</a></span>, <span class="class-name"><a href="Ft.Xml.Xslt.AttributeInfo.html#Prefixes">Prefixes</a></span>)</span></dt>
+        <dd class="classdesc">
+          <h3>Methods inherited from class <a href="Ft.Xml.Xslt.AttributeInfo.html#Avt">Avt</a></h3>
+          <div class="inherited"><span class="inherited-name"><a href="Ft.Xml.Xslt.AttributeInfo.html#Avt-__str__">__str__</a></span>, <span class="inherited-name"><a href="Ft.Xml.Xslt.AttributeInfo.html#Avt-prepare">prepare</a></span></div>
+          <h3>Methods inherited from class <a href="Ft.Xml.Xslt.AttributeInfo.html#Prefixes">Prefixes</a></h3>
+          <div class="inherited"><span class="inherited-name"><a href="Ft.Xml.Xslt.AttributeInfo.html#Prefixes-reprocess">reprocess</a></span></div>
+          <h3>Methods inherited from class <a href="Ft.Xml.Xslt.AttributeInfo.html#AttributeInfo">AttributeInfo</a></h3>
+          <div class="inherited"><span class="inherited-name"><a href="Ft.Xml.Xslt.AttributeInfo.html#AttributeInfo-__init__">__init__</a></span>, <span class="inherited-name"><a href="Ft.Xml.Xslt.AttributeInfo.html#AttributeInfo-validate">validate</a></span></div>
+          <h3>Members inherited from class <a href="Ft.Xml.Xslt.AttributeInfo.html#Prefixes">Prefixes</a></h3>
+          <div class="inherited"><span class="inherited-name"><a href="Ft.Xml.Xslt.AttributeInfo.html#Prefixes-display">display</a></span></div>
+        </dd>
+        <dt class="classdef"><a name="QName"></a>class <span class="class-name">QName</span><span class="bases">(<span class="class-name"><a href="Ft.Xml.Xslt.AttributeInfo.html#AttributeInfo">AttributeInfo</a></span>)</span></dt>
+        <dd class="classdesc">
+          <h3>Methods</h3>
+          <dl class="methods">
+            <dt class="methoddef"><a name="QName-prepare"><span class="method-name">prepare</span></a>(<span class="argument-name">self</span>, <span class="argument-name">element</span>, <span class="argument-name">value</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dd class="overrides"><b>Overrides: </b><span class="inherited-name"><a href="Ft.Xml.Xslt.AttributeInfo.html#AttributeInfo-prepare">prepare</a></span> from class <span class="class-name"><a href="Ft.Xml.Xslt.AttributeInfo.html#AttributeInfo">AttributeInfo</a></span></dd>
+            <dt class="methoddef"><a name="QName-reprocess"><span class="method-name">reprocess</span></a> = <a href="#QName-prepare">prepare</a>(<span class="argument-name">self</span>, <span class="argument-name">element</span>, <span class="argument-name">value</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dd class="overrides"><b>Overrides: </b><span class="inherited-name"><a href="Ft.Xml.Xslt.AttributeInfo.html#AttributeInfo-reprocess">reprocess</a></span> from class <span class="class-name"><a href="Ft.Xml.Xslt.AttributeInfo.html#AttributeInfo">AttributeInfo</a></span></dd>
+          </dl>
+          <h3>Methods inherited from class <a href="Ft.Xml.Xslt.AttributeInfo.html#AttributeInfo">AttributeInfo</a></h3>
+          <div class="inherited"><span class="inherited-name"><a href="Ft.Xml.Xslt.AttributeInfo.html#AttributeInfo-__init__">__init__</a></span>, <span class="inherited-name"><a href="Ft.Xml.Xslt.AttributeInfo.html#AttributeInfo-__str__">__str__</a></span>, <span class="inherited-name"><a href="Ft.Xml.Xslt.AttributeInfo.html#AttributeInfo-validate">validate</a></span></div>
+          <h3>Members</h3>
+          <dl class="members">
+            <dt class="memberdef"><a name="display"><span class="member-name">display</span></a> = 'qname'</dt>
+          </dl>
+        </dd>
+        <dt class="classdef"><a name="QNameAvt"></a>class <span class="class-name">QNameAvt</span><span class="bases">(<span class="class-name"><a href="Ft.Xml.Xslt.AttributeInfo.html#Avt">Avt</a></span>, <span class="class-name"><a href="Ft.Xml.Xslt.AttributeInfo.html#QName">QName</a></span>)</span></dt>
+        <dd class="classdesc">
+          <h3>Methods inherited from class <a href="Ft.Xml.Xslt.AttributeInfo.html#Avt">Avt</a></h3>
+          <div class="inherited"><span class="inherited-name"><a href="Ft.Xml.Xslt.AttributeInfo.html#Avt-__str__">__str__</a></span>, <span class="inherited-name"><a href="Ft.Xml.Xslt.AttributeInfo.html#Avt-prepare">prepare</a></span></div>
+          <h3>Methods inherited from class <a href="Ft.Xml.Xslt.AttributeInfo.html#QName">QName</a></h3>
+          <div class="inherited"><span class="inherited-name"><a href="Ft.Xml.Xslt.AttributeInfo.html#QName-reprocess">reprocess</a></span></div>
+          <h3>Methods inherited from class <a href="Ft.Xml.Xslt.AttributeInfo.html#AttributeInfo">AttributeInfo</a></h3>
+          <div class="inherited"><span class="inherited-name"><a href="Ft.Xml.Xslt.AttributeInfo.html#AttributeInfo-__init__">__init__</a></span>, <span class="inherited-name"><a href="Ft.Xml.Xslt.AttributeInfo.html#AttributeInfo-validate">validate</a></span></div>
+          <h3>Members inherited from class <a href="Ft.Xml.Xslt.AttributeInfo.html#QName">QName</a></h3>
+          <div class="inherited"><span class="inherited-name"><a href="Ft.Xml.Xslt.AttributeInfo.html#QName-display">display</a></span></div>
+        </dd>
+        <dt class="classdef"><a name="QNameButNotNCName"></a>class <span class="class-name">QNameButNotNCName</span><span class="bases">(<span class="class-name"><a href="Ft.Xml.Xslt.AttributeInfo.html#AttributeInfo">AttributeInfo</a></span>)</span></dt>
+        <dd class="classdesc">
+          <h3>Methods</h3>
+          <dl class="methods">
+            <dt class="methoddef"><a name="QNameButNotNCName-prepare"><span class="method-name">prepare</span></a>(<span class="argument-name">self</span>, <span class="argument-name">element</span>, <span class="argument-name">value</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dd class="overrides"><b>Overrides: </b><span class="inherited-name"><a href="Ft.Xml.Xslt.AttributeInfo.html#AttributeInfo-prepare">prepare</a></span> from class <span class="class-name"><a href="Ft.Xml.Xslt.AttributeInfo.html#AttributeInfo">AttributeInfo</a></span></dd>
+            <dt class="methoddef"><a name="QNameButNotNCName-reprocess"><span class="method-name">reprocess</span></a> = <a href="#QNameButNotNCName-prepare">prepare</a>(<span class="argument-name">self</span>, <span class="argument-name">element</span>, <span class="argument-name">value</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dd class="overrides"><b>Overrides: </b><span class="inherited-name"><a href="Ft.Xml.Xslt.AttributeInfo.html#AttributeInfo-reprocess">reprocess</a></span> from class <span class="class-name"><a href="Ft.Xml.Xslt.AttributeInfo.html#AttributeInfo">AttributeInfo</a></span></dd>
+          </dl>
+          <h3>Methods inherited from class <a href="Ft.Xml.Xslt.AttributeInfo.html#AttributeInfo">AttributeInfo</a></h3>
+          <div class="inherited"><span class="inherited-name"><a href="Ft.Xml.Xslt.AttributeInfo.html#AttributeInfo-__init__">__init__</a></span>, <span class="inherited-name"><a href="Ft.Xml.Xslt.AttributeInfo.html#AttributeInfo-__str__">__str__</a></span>, <span class="inherited-name"><a href="Ft.Xml.Xslt.AttributeInfo.html#AttributeInfo-validate">validate</a></span></div>
+          <h3>Members</h3>
+          <dl class="members">
+            <dt class="memberdef"><a name="display"><span class="member-name">display</span></a> = 'qname-but-not-ncname'</dt>
+          </dl>
+        </dd>
+        <dt class="classdef"><a name="QNames"></a>class <span class="class-name">QNames</span><span class="bases">(<span class="class-name"><a href="Ft.Xml.Xslt.AttributeInfo.html#QName">QName</a></span>)</span></dt>
+        <dd class="classdesc">
+          <div class="abstract">A whitespace separated list of qnames (see QName for description of a qname)</div>
+          <h3>Methods</h3>
+          <dl class="methods">
+            <dt class="methoddef"><a name="QNames-prepare"><span class="method-name">prepare</span></a>(<span class="argument-name">self</span>, <span class="argument-name">element</span>, <span class="argument-name">value</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dd class="overrides"><b>Overrides: </b><span class="inherited-name"><a href="Ft.Xml.Xslt.AttributeInfo.html#QName-prepare">prepare</a></span> from class <span class="class-name"><a href="Ft.Xml.Xslt.AttributeInfo.html#QName">QName</a></span></dd>
+            <dt class="methoddef"><a name="QNames-reprocess"><span class="method-name">reprocess</span></a> = <a href="#QNames-prepare">prepare</a>(<span class="argument-name">self</span>, <span class="argument-name">element</span>, <span class="argument-name">value</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dd class="overrides"><b>Overrides: </b><span class="inherited-name"><a href="Ft.Xml.Xslt.AttributeInfo.html#QName-reprocess">reprocess</a></span> from class <span class="class-name"><a href="Ft.Xml.Xslt.AttributeInfo.html#QName">QName</a></span></dd>
+          </dl>
+          <h3>Methods inherited from class <a href="Ft.Xml.Xslt.AttributeInfo.html#AttributeInfo">AttributeInfo</a></h3>
+          <div class="inherited"><span class="inherited-name"><a href="Ft.Xml.Xslt.AttributeInfo.html#AttributeInfo-__init__">__init__</a></span>, <span class="inherited-name"><a href="Ft.Xml.Xslt.AttributeInfo.html#AttributeInfo-__str__">__str__</a></span>, <span class="inherited-name"><a href="Ft.Xml.Xslt.AttributeInfo.html#AttributeInfo-validate">validate</a></span></div>
+          <h3>Members</h3>
+          <dl class="members">
+            <dt class="memberdef"><a name="display"><span class="member-name">display</span></a> = 'qnames'</dt>
+          </dl>
+        </dd>
+        <dt class="classdef"><a name="QNamesAvt"></a>class <span class="class-name">QNamesAvt</span><span class="bases">(<span class="class-name"><a href="Ft.Xml.Xslt.AttributeInfo.html#Avt">Avt</a></span>, <span class="class-name"><a href="Ft.Xml.Xslt.AttributeInfo.html#QNames">QNames</a></span>)</span></dt>
+        <dd class="classdesc">
+          <h3>Methods inherited from class <a href="Ft.Xml.Xslt.AttributeInfo.html#Avt">Avt</a></h3>
+          <div class="inherited"><span class="inherited-name"><a href="Ft.Xml.Xslt.AttributeInfo.html#Avt-__str__">__str__</a></span>, <span class="inherited-name"><a href="Ft.Xml.Xslt.AttributeInfo.html#Avt-prepare">prepare</a></span></div>
+          <h3>Methods inherited from class <a href="Ft.Xml.Xslt.AttributeInfo.html#QNames">QNames</a></h3>
+          <div class="inherited"><span class="inherited-name"><a href="Ft.Xml.Xslt.AttributeInfo.html#QNames-reprocess">reprocess</a></span></div>
+          <h3>Methods inherited from class <a href="Ft.Xml.Xslt.AttributeInfo.html#AttributeInfo">AttributeInfo</a></h3>
+          <div class="inherited"><span class="inherited-name"><a href="Ft.Xml.Xslt.AttributeInfo.html#AttributeInfo-__init__">__init__</a></span>, <span class="inherited-name"><a href="Ft.Xml.Xslt.AttributeInfo.html#AttributeInfo-validate">validate</a></span></div>
+          <h3>Members inherited from class <a href="Ft.Xml.Xslt.AttributeInfo.html#QNames">QNames</a></h3>
+          <div class="inherited"><span class="inherited-name"><a href="Ft.Xml.Xslt.AttributeInfo.html#QNames-display">display</a></span></div>
+        </dd>
+        <dt class="classdef"><a name="RawQName"></a>class <span class="class-name">RawQName</span><span class="bases">(<span class="class-name"><a href="Ft.Xml.Xslt.AttributeInfo.html#QName">QName</a></span>)</span></dt>
+        <dd class="classdesc">
+          <h3>Methods</h3>
+          <dl class="methods">
+            <dt class="methoddef"><a name="RawQName-prepare"><span class="method-name">prepare</span></a>(<span class="argument-name">self</span>, <span class="argument-name">element</span>, <span class="argument-name">value</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dd class="overrides"><b>Overrides: </b><span class="inherited-name"><a href="Ft.Xml.Xslt.AttributeInfo.html#QName-prepare">prepare</a></span> from class <span class="class-name"><a href="Ft.Xml.Xslt.AttributeInfo.html#QName">QName</a></span></dd>
+            <dt class="methoddef"><a name="RawQName-reprocess"><span class="method-name">reprocess</span></a> = <a href="#RawQName-prepare">prepare</a>(<span class="argument-name">self</span>, <span class="argument-name">element</span>, <span class="argument-name">value</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dd class="overrides"><b>Overrides: </b><span class="inherited-name"><a href="Ft.Xml.Xslt.AttributeInfo.html#QName-reprocess">reprocess</a></span> from class <span class="class-name"><a href="Ft.Xml.Xslt.AttributeInfo.html#QName">QName</a></span></dd>
+          </dl>
+          <h3>Methods inherited from class <a href="Ft.Xml.Xslt.AttributeInfo.html#AttributeInfo">AttributeInfo</a></h3>
+          <div class="inherited"><span class="inherited-name"><a href="Ft.Xml.Xslt.AttributeInfo.html#AttributeInfo-__init__">__init__</a></span>, <span class="inherited-name"><a href="Ft.Xml.Xslt.AttributeInfo.html#AttributeInfo-__str__">__str__</a></span>, <span class="inherited-name"><a href="Ft.Xml.Xslt.AttributeInfo.html#AttributeInfo-validate">validate</a></span></div>
+          <h3>Members inherited from class <a href="Ft.Xml.Xslt.AttributeInfo.html#QName">QName</a></h3>
+          <div class="inherited"><span class="inherited-name"><a href="Ft.Xml.Xslt.AttributeInfo.html#QName-display">display</a></span></div>
+        </dd>
+        <dt class="classdef"><a name="RawQNameAvt"></a>class <span class="class-name">RawQNameAvt</span><span class="bases">(<span class="class-name"><a href="Ft.Xml.Xslt.AttributeInfo.html#Avt">Avt</a></span>, <span class="class-name"><a href="Ft.Xml.Xslt.AttributeInfo.html#RawQName">RawQName</a></span>)</span></dt>
+        <dd class="classdesc">
+          <h3>Methods inherited from class <a href="Ft.Xml.Xslt.AttributeInfo.html#Avt">Avt</a></h3>
+          <div class="inherited"><span class="inherited-name"><a href="Ft.Xml.Xslt.AttributeInfo.html#Avt-__str__">__str__</a></span>, <span class="inherited-name"><a href="Ft.Xml.Xslt.AttributeInfo.html#Avt-prepare">prepare</a></span></div>
+          <h3>Methods inherited from class <a href="Ft.Xml.Xslt.AttributeInfo.html#RawQName">RawQName</a></h3>
+          <div class="inherited"><span class="inherited-name"><a href="Ft.Xml.Xslt.AttributeInfo.html#RawQName-reprocess">reprocess</a></span></div>
+          <h3>Methods inherited from class <a href="Ft.Xml.Xslt.AttributeInfo.html#AttributeInfo">AttributeInfo</a></h3>
+          <div class="inherited"><span class="inherited-name"><a href="Ft.Xml.Xslt.AttributeInfo.html#AttributeInfo-__init__">__init__</a></span>, <span class="inherited-name"><a href="Ft.Xml.Xslt.AttributeInfo.html#AttributeInfo-validate">validate</a></span></div>
+          <h3>Members inherited from class <a href="Ft.Xml.Xslt.AttributeInfo.html#QName">QName</a></h3>
+          <div class="inherited"><span class="inherited-name"><a href="Ft.Xml.Xslt.AttributeInfo.html#QName-display">display</a></span></div>
+        </dd>
+        <dt class="classdef"><a name="String"></a>class <span class="class-name">String</span><span class="bases">(<span class="class-name"><a href="Ft.Xml.Xslt.AttributeInfo.html#AttributeInfo">AttributeInfo</a></span>)</span></dt>
+        <dd class="classdesc">
+          <h3>Methods inherited from class <a href="Ft.Xml.Xslt.AttributeInfo.html#AttributeInfo">AttributeInfo</a></h3>
+          <div class="inherited"><span class="inherited-name"><a href="Ft.Xml.Xslt.AttributeInfo.html#AttributeInfo-__init__">__init__</a></span>, <span class="inherited-name"><a href="Ft.Xml.Xslt.AttributeInfo.html#AttributeInfo-__str__">__str__</a></span>, <span class="inherited-name"><a href="Ft.Xml.Xslt.AttributeInfo.html#AttributeInfo-prepare">prepare</a></span>, <span class="inherited-name"><a href="Ft.Xml.Xslt.AttributeInfo.html#AttributeInfo-reprocess">reprocess</a></span>, <span class="inherited-name"><a href="Ft.Xml.Xslt.AttributeInfo.html#AttributeInfo-validate">validate</a></span></div>
+          <h3>Members</h3>
+          <dl class="members">
+            <dt class="memberdef"><a name="display"><span class="member-name">display</span></a> = 'string'</dt>
+          </dl>
+        </dd>
+        <dt class="classdef"><a name="StringAvt"></a>class <span class="class-name">StringAvt</span><span class="bases">(<span class="class-name"><a href="Ft.Xml.Xslt.AttributeInfo.html#Avt">Avt</a></span>, <span class="class-name"><a href="Ft.Xml.Xslt.AttributeInfo.html#String">String</a></span>)</span></dt>
+        <dd class="classdesc">
+          <h3>Methods inherited from class <a href="Ft.Xml.Xslt.AttributeInfo.html#Avt">Avt</a></h3>
+          <div class="inherited"><span class="inherited-name"><a href="Ft.Xml.Xslt.AttributeInfo.html#Avt-__str__">__str__</a></span>, <span class="inherited-name"><a href="Ft.Xml.Xslt.AttributeInfo.html#Avt-prepare">prepare</a></span></div>
+          <h3>Methods inherited from class <a href="Ft.Xml.Xslt.AttributeInfo.html#AttributeInfo">AttributeInfo</a></h3>
+          <div class="inherited"><span class="inherited-name"><a href="Ft.Xml.Xslt.AttributeInfo.html#AttributeInfo-__init__">__init__</a></span>, <span class="inherited-name"><a href="Ft.Xml.Xslt.AttributeInfo.html#AttributeInfo-reprocess">reprocess</a></span>, <span class="inherited-name"><a href="Ft.Xml.Xslt.AttributeInfo.html#AttributeInfo-validate">validate</a></span></div>
+          <h3>Members inherited from class <a href="Ft.Xml.Xslt.AttributeInfo.html#String">String</a></h3>
+          <div class="inherited"><span class="inherited-name"><a href="Ft.Xml.Xslt.AttributeInfo.html#String-display">display</a></span></div>
+        </dd>
+        <dt class="classdef"><a name="StringExpression"></a>class <span class="class-name">StringExpression</span><span class="bases">(<span class="class-name"><a href="Ft.Xml.Xslt.AttributeInfo.html#Expression">Expression</a></span>)</span></dt>
+        <dd class="classdesc">
+          <h3>Methods inherited from class <a href="Ft.Xml.Xslt.AttributeInfo.html#Expression">Expression</a></h3>
+          <div class="inherited"><span class="inherited-name"><a href="Ft.Xml.Xslt.AttributeInfo.html#Expression-prepare">prepare</a></span></div>
+          <h3>Methods inherited from class <a href="Ft.Xml.Xslt.AttributeInfo.html#AttributeInfo">AttributeInfo</a></h3>
+          <div class="inherited"><span class="inherited-name"><a href="Ft.Xml.Xslt.AttributeInfo.html#AttributeInfo-__init__">__init__</a></span>, <span class="inherited-name"><a href="Ft.Xml.Xslt.AttributeInfo.html#AttributeInfo-__str__">__str__</a></span>, <span class="inherited-name"><a href="Ft.Xml.Xslt.AttributeInfo.html#AttributeInfo-reprocess">reprocess</a></span>, <span class="inherited-name"><a href="Ft.Xml.Xslt.AttributeInfo.html#AttributeInfo-validate">validate</a></span></div>
+          <h3>Members</h3>
+          <dl class="members">
+            <dt class="memberdef"><a name="display"><span class="member-name">display</span></a> = 'string-expression'</dt>
+          </dl>
+        </dd>
+        <dt class="classdef"><a name="Token"></a>class <span class="class-name">Token</span><span class="bases">(<span class="class-name"><a href="Ft.Xml.Xslt.AttributeInfo.html#AttributeInfo">AttributeInfo</a></span>)</span></dt>
+        <dd class="classdesc">
+          <div class="abstract">An attribute whose value is used as an XPath NameTest</div>
+          <h3>Methods</h3>
+          <dl class="methods">
+            <dt class="methoddef"><a name="Token-prepare"><span class="method-name">prepare</span></a>(<span class="argument-name">self</span>, <span class="argument-name">element</span>, <span class="argument-name">value</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dd class="overrides"><b>Overrides: </b><span class="inherited-name"><a href="Ft.Xml.Xslt.AttributeInfo.html#AttributeInfo-prepare">prepare</a></span> from class <span class="class-name"><a href="Ft.Xml.Xslt.AttributeInfo.html#AttributeInfo">AttributeInfo</a></span></dd>
+            <dt class="methoddef"><a name="Token-reprocess"><span class="method-name">reprocess</span></a> = <a href="#Token-prepare">prepare</a>(<span class="argument-name">self</span>, <span class="argument-name">element</span>, <span class="argument-name">value</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dd class="overrides"><b>Overrides: </b><span class="inherited-name"><a href="Ft.Xml.Xslt.AttributeInfo.html#AttributeInfo-reprocess">reprocess</a></span> from class <span class="class-name"><a href="Ft.Xml.Xslt.AttributeInfo.html#AttributeInfo">AttributeInfo</a></span></dd>
+          </dl>
+          <h3>Methods inherited from class <a href="Ft.Xml.Xslt.AttributeInfo.html#AttributeInfo">AttributeInfo</a></h3>
+          <div class="inherited"><span class="inherited-name"><a href="Ft.Xml.Xslt.AttributeInfo.html#AttributeInfo-__init__">__init__</a></span>, <span class="inherited-name"><a href="Ft.Xml.Xslt.AttributeInfo.html#AttributeInfo-__str__">__str__</a></span>, <span class="inherited-name"><a href="Ft.Xml.Xslt.AttributeInfo.html#AttributeInfo-validate">validate</a></span></div>
+          <h3>Members</h3>
+          <dl class="members">
+            <dt class="memberdef"><a name="display"><span class="member-name">display</span></a> = 'token'</dt>
+          </dl>
+        </dd>
+        <dt class="classdef"><a name="TokenAvt"></a>class <span class="class-name">TokenAvt</span><span class="bases">(<span class="class-name"><a href="Ft.Xml.Xslt.AttributeInfo.html#Avt">Avt</a></span>, <span class="class-name"><a href="Ft.Xml.Xslt.AttributeInfo.html#Token">Token</a></span>)</span></dt>
+        <dd class="classdesc">
+          <h3>Methods inherited from class <a href="Ft.Xml.Xslt.AttributeInfo.html#Avt">Avt</a></h3>
+          <div class="inherited"><span class="inherited-name"><a href="Ft.Xml.Xslt.AttributeInfo.html#Avt-__str__">__str__</a></span>, <span class="inherited-name"><a href="Ft.Xml.Xslt.AttributeInfo.html#Avt-prepare">prepare</a></span></div>
+          <h3>Methods inherited from class <a href="Ft.Xml.Xslt.AttributeInfo.html#Token">Token</a></h3>
+          <div class="inherited"><span class="inherited-name"><a href="Ft.Xml.Xslt.AttributeInfo.html#Token-reprocess">reprocess</a></span></div>
+          <h3>Methods inherited from class <a href="Ft.Xml.Xslt.AttributeInfo.html#AttributeInfo">AttributeInfo</a></h3>
+          <div class="inherited"><span class="inherited-name"><a href="Ft.Xml.Xslt.AttributeInfo.html#AttributeInfo-__init__">__init__</a></span>, <span class="inherited-name"><a href="Ft.Xml.Xslt.AttributeInfo.html#AttributeInfo-validate">validate</a></span></div>
+          <h3>Members inherited from class <a href="Ft.Xml.Xslt.AttributeInfo.html#Token">Token</a></h3>
+          <div class="inherited"><span class="inherited-name"><a href="Ft.Xml.Xslt.AttributeInfo.html#Token-display">display</a></span></div>
+        </dd>
+        <dt class="classdef"><a name="Tokens"></a>class <span class="class-name">Tokens</span><span class="bases">(<span class="class-name"><a href="Ft.Xml.Xslt.AttributeInfo.html#Token">Token</a></span>)</span></dt>
+        <dd class="classdesc">
+          <div class="abstract">A whitespace separated list of tokens (see Token for description of a token)</div>
+          <h3>Methods</h3>
+          <dl class="methods">
+            <dt class="methoddef"><a name="Tokens-prepare"><span class="method-name">prepare</span></a>(<span class="argument-name">self</span>, <span class="argument-name">element</span>, <span class="argument-name">value</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dd class="overrides"><b>Overrides: </b><span class="inherited-name"><a href="Ft.Xml.Xslt.AttributeInfo.html#Token-prepare">prepare</a></span> from class <span class="class-name"><a href="Ft.Xml.Xslt.AttributeInfo.html#Token">Token</a></span></dd>
+            <dt class="methoddef"><a name="Tokens-reprocess"><span class="method-name">reprocess</span></a> = <a href="#Tokens-prepare">prepare</a>(<span class="argument-name">self</span>, <span class="argument-name">element</span>, <span class="argument-name">value</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dd class="overrides"><b>Overrides: </b><span class="inherited-name"><a href="Ft.Xml.Xslt.AttributeInfo.html#Token-reprocess">reprocess</a></span> from class <span class="class-name"><a href="Ft.Xml.Xslt.AttributeInfo.html#Token">Token</a></span></dd>
+          </dl>
+          <h3>Methods inherited from class <a href="Ft.Xml.Xslt.AttributeInfo.html#AttributeInfo">AttributeInfo</a></h3>
+          <div class="inherited"><span class="inherited-name"><a href="Ft.Xml.Xslt.AttributeInfo.html#AttributeInfo-__init__">__init__</a></span>, <span class="inherited-name"><a href="Ft.Xml.Xslt.AttributeInfo.html#AttributeInfo-__str__">__str__</a></span>, <span class="inherited-name"><a href="Ft.Xml.Xslt.AttributeInfo.html#AttributeInfo-validate">validate</a></span></div>
+          <h3>Members</h3>
+          <dl class="members">
+            <dt class="memberdef"><a name="display"><span class="member-name">display</span></a> = 'tokens'</dt>
+          </dl>
+        </dd>
+        <dt class="classdef"><a name="TokensAvt"></a>class <span class="class-name">TokensAvt</span><span class="bases">(<span class="class-name"><a href="Ft.Xml.Xslt.AttributeInfo.html#Avt">Avt</a></span>, <span class="class-name"><a href="Ft.Xml.Xslt.AttributeInfo.html#Tokens">Tokens</a></span>)</span></dt>
+        <dd class="classdesc">
+          <h3>Methods inherited from class <a href="Ft.Xml.Xslt.AttributeInfo.html#Avt">Avt</a></h3>
+          <div class="inherited"><span class="inherited-name"><a href="Ft.Xml.Xslt.AttributeInfo.html#Avt-__str__">__str__</a></span>, <span class="inherited-name"><a href="Ft.Xml.Xslt.AttributeInfo.html#Avt-prepare">prepare</a></span></div>
+          <h3>Methods inherited from class <a href="Ft.Xml.Xslt.AttributeInfo.html#Tokens">Tokens</a></h3>
+          <div class="inherited"><span class="inherited-name"><a href="Ft.Xml.Xslt.AttributeInfo.html#Tokens-reprocess">reprocess</a></span></div>
+          <h3>Methods inherited from class <a href="Ft.Xml.Xslt.AttributeInfo.html#AttributeInfo">AttributeInfo</a></h3>
+          <div class="inherited"><span class="inherited-name"><a href="Ft.Xml.Xslt.AttributeInfo.html#AttributeInfo-__init__">__init__</a></span>, <span class="inherited-name"><a href="Ft.Xml.Xslt.AttributeInfo.html#AttributeInfo-validate">validate</a></span></div>
+          <h3>Members inherited from class <a href="Ft.Xml.Xslt.AttributeInfo.html#Tokens">Tokens</a></h3>
+          <div class="inherited"><span class="inherited-name"><a href="Ft.Xml.Xslt.AttributeInfo.html#Tokens-display">display</a></span></div>
+        </dd>
+        <dt class="classdef"><a name="UriReference"></a>class <span class="class-name">UriReference</span><span class="bases">(<span class="class-name"><a href="Ft.Xml.Xslt.AttributeInfo.html#AttributeInfo">AttributeInfo</a></span>)</span></dt>
+        <dd class="classdesc">
+          <h3>Methods</h3>
+          <dl class="methods">
+            <dt class="methoddef"><a name="UriReference-__init__"><span class="method-name">__init__</span></a>(<span class="argument-name">self</span>, <span class="argument-name">required</span><span class="argument-default">=0</span>, <span class="argument-name">default</span><span class="argument-default">=None</span>, <span class="argument-name">description</span><span class="argument-default">=''</span>, <span class="argument-name">isNsName</span><span class="argument-default">=0</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dd class="overrides"><b>Overrides: </b><span class="inherited-name"><a href="Ft.Xml.Xslt.AttributeInfo.html#AttributeInfo-__init__">__init__</a></span> from class <span class="class-name"><a href="Ft.Xml.Xslt.AttributeInfo.html#AttributeInfo">AttributeInfo</a></span></dd>
+            <dt class="methoddef"><a name="UriReference-prepare"><span class="method-name">prepare</span></a>(<span class="argument-name">self</span>, <span class="argument-name">element</span>, <span class="argument-name">value</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dd class="overrides"><b>Overrides: </b><span class="inherited-name"><a href="Ft.Xml.Xslt.AttributeInfo.html#AttributeInfo-prepare">prepare</a></span> from class <span class="class-name"><a href="Ft.Xml.Xslt.AttributeInfo.html#AttributeInfo">AttributeInfo</a></span></dd>
+            <dt class="methoddef"><a name="UriReference-reprocess"><span class="method-name">reprocess</span></a> = <a href="#UriReference-prepare">prepare</a>(<span class="argument-name">self</span>, <span class="argument-name">element</span>, <span class="argument-name">value</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dd class="overrides"><b>Overrides: </b><span class="inherited-name"><a href="Ft.Xml.Xslt.AttributeInfo.html#AttributeInfo-reprocess">reprocess</a></span> from class <span class="class-name"><a href="Ft.Xml.Xslt.AttributeInfo.html#AttributeInfo">AttributeInfo</a></span></dd>
+          </dl>
+          <h3>Methods inherited from class <a href="Ft.Xml.Xslt.AttributeInfo.html#AttributeInfo">AttributeInfo</a></h3>
+          <div class="inherited"><span class="inherited-name"><a href="Ft.Xml.Xslt.AttributeInfo.html#AttributeInfo-__str__">__str__</a></span>, <span class="inherited-name"><a href="Ft.Xml.Xslt.AttributeInfo.html#AttributeInfo-validate">validate</a></span></div>
+          <h3>Members</h3>
+          <dl class="members">
+            <dt class="memberdef"><a name="display"><span class="member-name">display</span></a> = 'uri-reference'</dt>
+          </dl>
+        </dd>
+        <dt class="classdef"><a name="UriReferenceAvt"></a>class <span class="class-name">UriReferenceAvt</span><span class="bases">(<span class="class-name"><a href="Ft.Xml.Xslt.AttributeInfo.html#Avt">Avt</a></span>, <span class="class-name"><a href="Ft.Xml.Xslt.AttributeInfo.html#UriReference">UriReference</a></span>)</span></dt>
+        <dd class="classdesc">
+          <h3>Methods inherited from class <a href="Ft.Xml.Xslt.AttributeInfo.html#Avt">Avt</a></h3>
+          <div class="inherited"><span class="inherited-name"><a href="Ft.Xml.Xslt.AttributeInfo.html#Avt-__str__">__str__</a></span>, <span class="inherited-name"><a href="Ft.Xml.Xslt.AttributeInfo.html#Avt-prepare">prepare</a></span></div>
+          <h3>Methods inherited from class <a href="Ft.Xml.Xslt.AttributeInfo.html#UriReference">UriReference</a></h3>
+          <div class="inherited"><span class="inherited-name"><a href="Ft.Xml.Xslt.AttributeInfo.html#UriReference-__init__">__init__</a></span>, <span class="inherited-name"><a href="Ft.Xml.Xslt.AttributeInfo.html#UriReference-reprocess">reprocess</a></span></div>
+          <h3>Methods inherited from class <a href="Ft.Xml.Xslt.AttributeInfo.html#AttributeInfo">AttributeInfo</a></h3>
+          <div class="inherited"><span class="inherited-name"><a href="Ft.Xml.Xslt.AttributeInfo.html#AttributeInfo-validate">validate</a></span></div>
+          <h3>Members inherited from class <a href="Ft.Xml.Xslt.AttributeInfo.html#UriReference">UriReference</a></h3>
+          <div class="inherited"><span class="inherited-name"><a href="Ft.Xml.Xslt.AttributeInfo.html#UriReference-display">display</a></span></div>
+        </dd>
+        <dt class="classdef"><a name="YesNo"></a>class <span class="class-name">YesNo</span><span class="bases">(<span class="class-name"><a href="Ft.Xml.Xslt.AttributeInfo.html#AttributeInfo">AttributeInfo</a></span>)</span></dt>
+        <dd class="classdesc">
+          <h3>Methods</h3>
+          <dl class="methods">
+            <dt class="methoddef"><a name="YesNo-prepare"><span class="method-name">prepare</span></a>(<span class="argument-name">self</span>, <span class="argument-name">element</span>, <span class="argument-name">value</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dd class="overrides"><b>Overrides: </b><span class="inherited-name"><a href="Ft.Xml.Xslt.AttributeInfo.html#AttributeInfo-prepare">prepare</a></span> from class <span class="class-name"><a href="Ft.Xml.Xslt.AttributeInfo.html#AttributeInfo">AttributeInfo</a></span></dd>
+            <dt class="methoddef"><a name="YesNo-reprocess"><span class="method-name">reprocess</span></a> = <a href="#YesNo-prepare">prepare</a>(<span class="argument-name">self</span>, <span class="argument-name">element</span>, <span class="argument-name">value</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dd class="overrides"><b>Overrides: </b><span class="inherited-name"><a href="Ft.Xml.Xslt.AttributeInfo.html#AttributeInfo-reprocess">reprocess</a></span> from class <span class="class-name"><a href="Ft.Xml.Xslt.AttributeInfo.html#AttributeInfo">AttributeInfo</a></span></dd>
+          </dl>
+          <h3>Methods inherited from class <a href="Ft.Xml.Xslt.AttributeInfo.html#AttributeInfo">AttributeInfo</a></h3>
+          <div class="inherited"><span class="inherited-name"><a href="Ft.Xml.Xslt.AttributeInfo.html#AttributeInfo-__init__">__init__</a></span>, <span class="inherited-name"><a href="Ft.Xml.Xslt.AttributeInfo.html#AttributeInfo-__str__">__str__</a></span>, <span class="inherited-name"><a href="Ft.Xml.Xslt.AttributeInfo.html#AttributeInfo-validate">validate</a></span></div>
+          <h3>Members</h3>
+          <dl class="members">
+            <dt class="memberdef"><a name="display"><span class="member-name">display</span></a> = '"yes" | "no"'</dt>
+          </dl>
+        </dd>
+        <dt class="classdef"><a name="YesNoAvt"></a>class <span class="class-name">YesNoAvt</span><span class="bases">(<span class="class-name"><a href="Ft.Xml.Xslt.AttributeInfo.html#Avt">Avt</a></span>, <span class="class-name"><a href="Ft.Xml.Xslt.AttributeInfo.html#YesNo">YesNo</a></span>)</span></dt>
+        <dd class="classdesc">
+          <h3>Methods inherited from class <a href="Ft.Xml.Xslt.AttributeInfo.html#Avt">Avt</a></h3>
+          <div class="inherited"><span class="inherited-name"><a href="Ft.Xml.Xslt.AttributeInfo.html#Avt-__str__">__str__</a></span>, <span class="inherited-name"><a href="Ft.Xml.Xslt.AttributeInfo.html#Avt-prepare">prepare</a></span></div>
+          <h3>Methods inherited from class <a href="Ft.Xml.Xslt.AttributeInfo.html#YesNo">YesNo</a></h3>
+          <div class="inherited"><span class="inherited-name"><a href="Ft.Xml.Xslt.AttributeInfo.html#YesNo-reprocess">reprocess</a></span></div>
+          <h3>Methods inherited from class <a href="Ft.Xml.Xslt.AttributeInfo.html#AttributeInfo">AttributeInfo</a></h3>
+          <div class="inherited"><span class="inherited-name"><a href="Ft.Xml.Xslt.AttributeInfo.html#AttributeInfo-__init__">__init__</a></span>, <span class="inherited-name"><a href="Ft.Xml.Xslt.AttributeInfo.html#AttributeInfo-validate">validate</a></span></div>
+          <h3>Members inherited from class <a href="Ft.Xml.Xslt.AttributeInfo.html#YesNo">YesNo</a></h3>
+          <div class="inherited"><span class="inherited-name"><a href="Ft.Xml.Xslt.AttributeInfo.html#YesNo-display">display</a></span></div>
+        </dd>
+      </dl>
+    </div>
+    <div class="section">
+      <h2>Globals</h2>
+      <dl class="globals">
+        <dt class="globaldef"><a name="EMPTY_NAMESPACE"><span class="global-name">EMPTY_NAMESPACE</span></a> = None</dt>
+        <dd class="globaldesc"></dd>
+        <dt class="globaldef"><a name="XMLNS_NAMESPACE"><span class="global-name">XMLNS_NAMESPACE</span></a> = u'http://www.w3.org/2000/xmlns/'</dt>
+        <dd class="globaldesc"></dd>
+        <dt class="globaldef"><a name="XML_NAMESPACE"><span class="global-name">XML_NAMESPACE</span></a> = u'http://www.w3.org/XML/1998/namespace'</dt>
+        <dd class="globaldesc"></dd>
+      </dl>
+    </div>
+    <div class="universal-footer">Last modified on 2006-08-17 13:09:45</div>
+  </body>
+</html>

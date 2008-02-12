@@ -1,0 +1,189 @@
+<html>
+  <head>
+    <meta content="text/html; charset=iso-8859-1" http-equiv="Content-Type">
+    <title>4Suite API Documentation: Ft.Xml.Xslt.StylesheetTree</title>
+    <link href="modules.css" type="text/css" rel="stylesheet">
+  </head>
+  <body>
+    <div class="universal-header"><span class="universal-header-prefix">&nbsp;&nbsp;&nbsp;</span>&nbsp;<span class="universal-header-prefix">&nbsp;&nbsp;</span>&nbsp;<span class="universal-header-prefix">&nbsp;</span>&nbsp;<a href="../index.html">4Suite<sup>&trade;</sup> API Documentation</a></div>
+    <h1><span class="glyph-arrow">&#9658;</span> Module <span class="this-name"><a href="Ft.html" title="Ft">Ft</a>.<a href="Ft.Xml.html" title="Ft.Xml">Xml</a>.<a href="Ft.Xml.Xslt.html" title="Ft.Xml.Xslt">Xslt</a>.StylesheetTree</span></h1>
+    <div class="abstract">Node classes for the stylesheet tree</div>
+    <pre class="description">Copyright 2004 Fourthought, Inc. (USA).
+Detailed license and copyright information: http://4suite.org/COPYRIGHT
+Project home, documentation, distributions: http://4suite.org/</pre>
+    <div class="summary-section">
+      <table cellpadding="0" cellspacing="0">
+        <tbody>
+          <tr>
+            <td valign="top">
+              <div class="summary-header">Classes:</div>
+              <div class="summary-list"><span class="class-name"><a href="#XsltElement">XsltElement</a></span>, <span class="class-name"><a href="#XsltNode">XsltNode</a></span>, <span class="class-name"><a href="#XsltRoot">XsltRoot</a></span>, <span class="class-name"><a href="#XsltText">XsltText</a></span></div>
+            </td>
+            <td width="7" valign="middle"></td>
+            <td bgcolor="#C5C5C5" valign="middle" width="1"></td>
+            <td width="7" valign="middle"></td>
+            <td valign="top">
+              <div class="summary-header">Globals:</div>
+              <div class="summary-list"><span class="global-name"><a href="#EMPTY_NAMESPACE">EMPTY_NAMESPACE</a></span>, <span class="global-name"><a href="#XSL_NAMESPACE">XSL_NAMESPACE</a></span></div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="section">
+      <h2>Classes</h2>
+      <dl class="classes">
+        <dt class="classdef"><a name="XsltElement"></a>class <span class="class-name">XsltElement</span><span class="bases">(<span class="class-name"><a href="Ft.Xml.Xslt.StylesheetTree.html#XsltNode">XsltNode</a></span>)</span></dt>
+        <dd class="classdesc">
+          <div class="abstract"># implements default behaviour for extension elements</div>
+          <h3>Methods</h3>
+          <dl class="methods">
+            <dt class="methoddef"><a name="XsltElement-__init__"><span class="method-name">__init__</span></a>(<span class="argument-name">self</span>, <span class="argument-name">root</span>, <span class="argument-name">namespaceUri</span>, <span class="argument-name">localName</span>, <span class="argument-name">baseUri</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dt class="methoddef"><a name="XsltElement-__str__"><span class="method-name">__str__</span></a>(<span class="argument-name">self</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dt class="methoddef"><a name="XsltElement-appendChild"><span class="method-name">appendChild</span></a>(<span class="argument-name">self</span>, <span class="argument-name">child</span>)</dt>
+            <dd class="methoddesc">
+              <div class="abstract">INTERNAL USE ONLY</div>
+            </dd>
+            <dt class="methoddef"><a name="XsltElement-expandQName"><span class="method-name">expandQName</span></a>(<span class="argument-name">self</span>, <span class="argument-name">qname</span>, <span class="argument-name">refNode</span><span class="argument-default">=None</span>)</dt>
+            <dd class="methoddesc">
+              <div class="abstract">DEPRECATED: specify an attribute in 'legalAttrs' instead.</div>
+            </dd>
+            <dt class="methoddef"><a name="XsltElement-insertChild"><span class="method-name">insertChild</span></a>(<span class="argument-name">self</span>, <span class="argument-name">index</span>, <span class="argument-name">child</span>)</dt>
+            <dd class="methoddesc">
+              <div class="abstract">INTERNAL USE ONLY</div>
+            </dd>
+            <dt class="methoddef"><a name="XsltElement-instantiate"><span class="method-name">instantiate</span></a>(<span class="argument-name">self</span>, <span class="argument-name">context</span>, <span class="argument-name">processor</span>)</dt>
+            <dd class="methoddesc">
+              <div class="abstract">Implements default behavior of instantiating each child in the order
+that they appear in the stylesheet.</div>
+            </dd>
+            <dd class="overrides"><b>Overrides: </b><span class="inherited-name"><a href="Ft.Xml.Xslt.StylesheetTree.html#XsltNode-instantiate">instantiate</a></span> from class <span class="class-name"><a href="Ft.Xml.Xslt.StylesheetTree.html#XsltNode">XsltNode</a></span></dd>
+            <dt class="methoddef"><a name="XsltElement-parseAVT"><span class="method-name">parseAVT</span></a>(<span class="argument-name">self</span>, <span class="argument-name">avt</span>)</dt>
+            <dd class="methoddesc">
+              <div class="abstract">DEPRECATED: specify an attribute in 'legalAttrs' instead.</div>
+            </dd>
+            <dt class="methoddef"><a name="XsltElement-parseExpression"><span class="method-name">parseExpression</span></a>(<span class="argument-name">self</span>, <span class="argument-name">expression</span>)</dt>
+            <dd class="methoddesc">
+              <div class="abstract">DEPRECATED: specify an attribute in 'legalAttrs' instead.</div>
+            </dd>
+            <dt class="methoddef"><a name="XsltElement-parsePattern"><span class="method-name">parsePattern</span></a>(<span class="argument-name">self</span>, <span class="argument-name">pattern</span>)</dt>
+            <dd class="methoddesc">
+              <div class="abstract">DEPRECATED: specify an attribute in 'legalAttrs' instead.</div>
+            </dd>
+            <dt class="methoddef"><a name="XsltElement-processChildren"><span class="method-name">processChildren</span></a>(<span class="argument-name">self</span>, <span class="argument-name">context</span>, <span class="argument-name">processor</span>)</dt>
+            <dd class="methoddesc">
+              <div class="abstract">Iterates over the children, instantiating them in the order that they
+appear in the stylesheet.</div>
+            </dd>
+            <dt class="methoddef"><a name="XsltElement-splitQName"><span class="method-name">splitQName</span></a>(<span class="argument-name">self</span>, <span class="argument-name">qname</span>)</dt>
+            <dd class="methoddesc">
+              <div class="abstract">DEPRECATED: specify an attribute in 'legalAttrs' instead.</div>
+            </dd>
+          </dl>
+          <h3>Methods inherited from class <a href="Ft.Xml.Xslt.StylesheetTree.html#XsltNode">XsltNode</a></h3>
+          <div class="inherited"><span class="inherited-name"><a href="Ft.Xml.Xslt.StylesheetTree.html#XsltNode-idle">idle</a></span>, <span class="inherited-name"><a href="Ft.Xml.Xslt.StylesheetTree.html#XsltNode-isLastChild">isLastChild</a></span>, <span class="inherited-name"><a href="Ft.Xml.Xslt.StylesheetTree.html#XsltNode-isPseudoNode">isPseudoNode</a></span>, <span class="inherited-name"><a href="Ft.Xml.Xslt.StylesheetTree.html#XsltNode-pprint">pprint</a></span>, <span class="inherited-name"><a href="Ft.Xml.Xslt.StylesheetTree.html#XsltNode-prime">prime</a></span>, <span class="inherited-name"><a href="Ft.Xml.Xslt.StylesheetTree.html#XsltNode-setup">setup</a></span></div>
+          <h3>Members</h3>
+          <dl class="members">
+            <dt class="memberdef"><a name="category"><span class="member-name">category</span></a> = 2</dt>
+            <dt class="memberdef"><a name="content"><span class="member-name">content</span></a> = &lt;Ft.Xml.Xslt.ContentInfo.Rep instance&gt;</dt>
+            <dt class="memberdef"><a name="legalAttrs"><span class="member-name">legalAttrs</span></a> = None</dt>
+            <dt class="memberdef"><a name="validator"><span class="member-name">validator</span></a> = &lt;Ft.Xml.Xslt.ContentInfo.Validator instance&gt;</dt>
+          </dl>
+          <h3>Members inherited from class <a href="Ft.Xml.Xslt.StylesheetTree.html#XsltNode">XsltNode</a></h3>
+          <div class="inherited"><span class="inherited-name"><a href="Ft.Xml.Xslt.StylesheetTree.html#XsltNode-attributes">attributes</a></span>, <span class="inherited-name"><a href="Ft.Xml.Xslt.StylesheetTree.html#XsltNode-baseUri">baseUri</a></span>, <span class="inherited-name"><a href="Ft.Xml.Xslt.StylesheetTree.html#XsltNode-children">children</a></span>, <span class="inherited-name"><a href="Ft.Xml.Xslt.StylesheetTree.html#XsltNode-columnNumber">columnNumber</a></span>, <span class="inherited-name"><a href="Ft.Xml.Xslt.StylesheetTree.html#XsltNode-doesIdle">doesIdle</a></span>, <span class="inherited-name"><a href="Ft.Xml.Xslt.StylesheetTree.html#XsltNode-doesPrime">doesPrime</a></span>, <span class="inherited-name"><a href="Ft.Xml.Xslt.StylesheetTree.html#XsltNode-doesSetup">doesSetup</a></span>, <span class="inherited-name"><a href="Ft.Xml.Xslt.StylesheetTree.html#XsltNode-expandedName">expandedName</a></span>, <span class="inherited-name"><a href="Ft.Xml.Xslt.StylesheetTree.html#XsltNode-importIndex">importIndex</a></span>, <span class="inherited-name"><a href="Ft.Xml.Xslt.StylesheetTree.html#XsltNode-lineNumber">lineNumber</a></span>, <span class="inherited-name"><a href="Ft.Xml.Xslt.StylesheetTree.html#XsltNode-nodeName">nodeName</a></span>, <span class="inherited-name"><a href="Ft.Xml.Xslt.StylesheetTree.html#XsltNode-parent">parent</a></span>, <span class="inherited-name"><a href="Ft.Xml.Xslt.StylesheetTree.html#XsltNode-root">root</a></span></div>
+        </dd>
+        <dt class="classdef"><a name="XsltNode"></a>class <span class="class-name">XsltNode</span></dt>
+        <dd class="classdesc">
+          <h3>Methods</h3>
+          <dl class="methods">
+            <dt class="methoddef"><a name="XsltNode-idle"><span class="method-name">idle</span></a>(<span class="argument-name">self</span>, <span class="argument-name">processor</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dt class="methoddef"><a name="XsltNode-instantiate"><span class="method-name">instantiate</span></a>(<span class="argument-name">self</span>, <span class="argument-name">context</span>, <span class="argument-name">processor</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dt class="methoddef"><a name="XsltNode-isLastChild"><span class="method-name">isLastChild</span></a>(<span class="argument-name">self</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dt class="methoddef"><a name="XsltNode-isPseudoNode"><span class="method-name">isPseudoNode</span></a>(<span class="argument-name">self</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dt class="methoddef"><a name="XsltNode-pprint"><span class="method-name">pprint</span></a>(<span class="argument-name">self</span>, <span class="argument-name">_indent</span><span class="argument-default">=''</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dt class="methoddef"><a name="XsltNode-prime"><span class="method-name">prime</span></a>(<span class="argument-name">self</span>, <span class="argument-name">processor</span>, <span class="argument-name">context</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dt class="methoddef"><a name="XsltNode-setup"><span class="method-name">setup</span></a>(<span class="argument-name">self</span>)</dt>
+            <dd class="methoddesc"></dd>
+          </dl>
+          <h3>Members</h3>
+          <dl class="members">
+            <dt class="memberdef"><a name="attributes"><span class="member-name">attributes</span></a> = None</dt>
+            <dt class="memberdef"><a name="baseUri"><span class="member-name">baseUri</span></a> = ''</dt>
+            <dt class="memberdef"><a name="children"><span class="member-name">children</span></a> = None</dt>
+            <dt class="memberdef"><a name="columnNumber"><span class="member-name">columnNumber</span></a> = '??'</dt>
+            <dt class="memberdef"><a name="doesIdle"><span class="member-name">doesIdle</span></a> = False</dt>
+            <dt class="memberdef"><a name="doesPrime"><span class="member-name">doesPrime</span></a> = False</dt>
+            <dt class="memberdef"><a name="doesSetup"><span class="member-name">doesSetup</span></a> = False</dt>
+            <dt class="memberdef"><a name="expandedName"><span class="member-name">expandedName</span></a> = (None, None)</dt>
+            <dt class="memberdef"><a name="importIndex"><span class="member-name">importIndex</span></a> = -1</dt>
+            <dt class="memberdef"><a name="lineNumber"><span class="member-name">lineNumber</span></a> = '??'</dt>
+            <dt class="memberdef"><a name="nodeName"><span class="member-name">nodeName</span></a> = None</dt>
+            <dt class="memberdef"><a name="parent"><span class="member-name">parent</span></a> = None</dt>
+            <dt class="memberdef"><a name="root"><span class="member-name">root</span></a> = None</dt>
+          </dl>
+        </dd>
+        <dt class="classdef"><a name="XsltRoot"></a>class <span class="class-name">XsltRoot</span><span class="bases">(<span class="class-name"><a href="Ft.Xml.Xslt.StylesheetTree.html#XsltNode">XsltNode</a></span>)</span></dt>
+        <dd class="classdesc">
+          <h3>Methods</h3>
+          <dl class="methods">
+            <dt class="methoddef"><a name="XsltRoot-__init__"><span class="method-name">__init__</span></a>(<span class="argument-name">self</span>, <span class="argument-name">baseUri</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dt class="methoddef"><a name="XsltRoot-__str__"><span class="method-name">__str__</span></a>(<span class="argument-name">self</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dt class="methoddef"><a name="XsltRoot-appendChild"><span class="method-name">appendChild</span></a>(<span class="argument-name">self</span>, <span class="argument-name">child</span>)</dt>
+            <dd class="methoddesc"></dd>
+          </dl>
+          <h3>Methods inherited from class <a href="Ft.Xml.Xslt.StylesheetTree.html#XsltNode">XsltNode</a></h3>
+          <div class="inherited"><span class="inherited-name"><a href="Ft.Xml.Xslt.StylesheetTree.html#XsltNode-idle">idle</a></span>, <span class="inherited-name"><a href="Ft.Xml.Xslt.StylesheetTree.html#XsltNode-instantiate">instantiate</a></span>, <span class="inherited-name"><a href="Ft.Xml.Xslt.StylesheetTree.html#XsltNode-isLastChild">isLastChild</a></span>, <span class="inherited-name"><a href="Ft.Xml.Xslt.StylesheetTree.html#XsltNode-isPseudoNode">isPseudoNode</a></span>, <span class="inherited-name"><a href="Ft.Xml.Xslt.StylesheetTree.html#XsltNode-pprint">pprint</a></span>, <span class="inherited-name"><a href="Ft.Xml.Xslt.StylesheetTree.html#XsltNode-prime">prime</a></span>, <span class="inherited-name"><a href="Ft.Xml.Xslt.StylesheetTree.html#XsltNode-setup">setup</a></span></div>
+          <h3>Members</h3>
+          <dl class="members">
+            <dt class="memberdef"><a name="content"><span class="member-name">content</span></a> = &lt;Ft.Xml.Xslt.ContentInfo.Alt instance&gt;</dt>
+            <dt class="memberdef"><a name="nodeName"><span class="member-name">nodeName</span></a> = u'#document'</dt>
+            <dt class="memberdef"><a name="validator"><span class="member-name">validator</span></a> = &lt;Ft.Xml.Xslt.ContentInfo.Validator instance&gt;</dt>
+          </dl>
+          <h3>Members inherited from class <a href="Ft.Xml.Xslt.StylesheetTree.html#XsltNode">XsltNode</a></h3>
+          <div class="inherited"><span class="inherited-name"><a href="Ft.Xml.Xslt.StylesheetTree.html#XsltNode-attributes">attributes</a></span>, <span class="inherited-name"><a href="Ft.Xml.Xslt.StylesheetTree.html#XsltNode-baseUri">baseUri</a></span>, <span class="inherited-name"><a href="Ft.Xml.Xslt.StylesheetTree.html#XsltNode-children">children</a></span>, <span class="inherited-name"><a href="Ft.Xml.Xslt.StylesheetTree.html#XsltNode-columnNumber">columnNumber</a></span>, <span class="inherited-name"><a href="Ft.Xml.Xslt.StylesheetTree.html#XsltNode-doesIdle">doesIdle</a></span>, <span class="inherited-name"><a href="Ft.Xml.Xslt.StylesheetTree.html#XsltNode-doesPrime">doesPrime</a></span>, <span class="inherited-name"><a href="Ft.Xml.Xslt.StylesheetTree.html#XsltNode-doesSetup">doesSetup</a></span>, <span class="inherited-name"><a href="Ft.Xml.Xslt.StylesheetTree.html#XsltNode-expandedName">expandedName</a></span>, <span class="inherited-name"><a href="Ft.Xml.Xslt.StylesheetTree.html#XsltNode-importIndex">importIndex</a></span>, <span class="inherited-name"><a href="Ft.Xml.Xslt.StylesheetTree.html#XsltNode-lineNumber">lineNumber</a></span>, <span class="inherited-name"><a href="Ft.Xml.Xslt.StylesheetTree.html#XsltNode-parent">parent</a></span>, <span class="inherited-name"><a href="Ft.Xml.Xslt.StylesheetTree.html#XsltNode-root">root</a></span></div>
+        </dd>
+        <dt class="classdef"><a name="XsltText"></a>class <span class="class-name">XsltText</span><span class="bases">(<span class="class-name"><a href="Ft.Xml.Xslt.StylesheetTree.html#XsltNode">XsltNode</a></span>)</span></dt>
+        <dd class="classdesc">
+          <h3>Methods</h3>
+          <dl class="methods">
+            <dt class="methoddef"><a name="XsltText-__init__"><span class="method-name">__init__</span></a>(<span class="argument-name">self</span>, <span class="argument-name">root</span>, <span class="argument-name">baseUri</span>, <span class="argument-name">data</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dt class="methoddef"><a name="XsltText-__str__"><span class="method-name">__str__</span></a>(<span class="argument-name">self</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dt class="methoddef"><a name="XsltText-instantiate"><span class="method-name">instantiate</span></a>(<span class="argument-name">self</span>, <span class="argument-name">context</span>, <span class="argument-name">processor</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dd class="overrides"><b>Overrides: </b><span class="inherited-name"><a href="Ft.Xml.Xslt.StylesheetTree.html#XsltNode-instantiate">instantiate</a></span> from class <span class="class-name"><a href="Ft.Xml.Xslt.StylesheetTree.html#XsltNode">XsltNode</a></span></dd>
+          </dl>
+          <h3>Methods inherited from class <a href="Ft.Xml.Xslt.StylesheetTree.html#XsltNode">XsltNode</a></h3>
+          <div class="inherited"><span class="inherited-name"><a href="Ft.Xml.Xslt.StylesheetTree.html#XsltNode-idle">idle</a></span>, <span class="inherited-name"><a href="Ft.Xml.Xslt.StylesheetTree.html#XsltNode-isLastChild">isLastChild</a></span>, <span class="inherited-name"><a href="Ft.Xml.Xslt.StylesheetTree.html#XsltNode-isPseudoNode">isPseudoNode</a></span>, <span class="inherited-name"><a href="Ft.Xml.Xslt.StylesheetTree.html#XsltNode-pprint">pprint</a></span>, <span class="inherited-name"><a href="Ft.Xml.Xslt.StylesheetTree.html#XsltNode-prime">prime</a></span>, <span class="inherited-name"><a href="Ft.Xml.Xslt.StylesheetTree.html#XsltNode-setup">setup</a></span></div>
+          <h3>Members</h3>
+          <dl class="members">
+            <dt class="memberdef"><a name="nodeName"><span class="member-name">nodeName</span></a> = u'#text'</dt>
+          </dl>
+          <h3>Members inherited from class <a href="Ft.Xml.Xslt.StylesheetTree.html#XsltNode">XsltNode</a></h3>
+          <div class="inherited"><span class="inherited-name"><a href="Ft.Xml.Xslt.StylesheetTree.html#XsltNode-attributes">attributes</a></span>, <span class="inherited-name"><a href="Ft.Xml.Xslt.StylesheetTree.html#XsltNode-baseUri">baseUri</a></span>, <span class="inherited-name"><a href="Ft.Xml.Xslt.StylesheetTree.html#XsltNode-children">children</a></span>, <span class="inherited-name"><a href="Ft.Xml.Xslt.StylesheetTree.html#XsltNode-columnNumber">columnNumber</a></span>, <span class="inherited-name"><a href="Ft.Xml.Xslt.StylesheetTree.html#XsltNode-doesIdle">doesIdle</a></span>, <span class="inherited-name"><a href="Ft.Xml.Xslt.StylesheetTree.html#XsltNode-doesPrime">doesPrime</a></span>, <span class="inherited-name"><a href="Ft.Xml.Xslt.StylesheetTree.html#XsltNode-doesSetup">doesSetup</a></span>, <span class="inherited-name"><a href="Ft.Xml.Xslt.StylesheetTree.html#XsltNode-expandedName">expandedName</a></span>, <span class="inherited-name"><a href="Ft.Xml.Xslt.StylesheetTree.html#XsltNode-importIndex">importIndex</a></span>, <span class="inherited-name"><a href="Ft.Xml.Xslt.StylesheetTree.html#XsltNode-lineNumber">lineNumber</a></span>, <span class="inherited-name"><a href="Ft.Xml.Xslt.StylesheetTree.html#XsltNode-parent">parent</a></span>, <span class="inherited-name"><a href="Ft.Xml.Xslt.StylesheetTree.html#XsltNode-root">root</a></span></div>
+        </dd>
+      </dl>
+    </div>
+    <div class="section">
+      <h2>Globals</h2>
+      <dl class="globals">
+        <dt class="globaldef"><a name="EMPTY_NAMESPACE"><span class="global-name">EMPTY_NAMESPACE</span></a> = None</dt>
+        <dd class="globaldesc"></dd>
+        <dt class="globaldef"><a name="XSL_NAMESPACE"><span class="global-name">XSL_NAMESPACE</span></a> = u'http://www.w3.org/1999/XSL/Transform'</dt>
+        <dd class="globaldesc"></dd>
+      </dl>
+    </div>
+    <div class="universal-footer">Last modified on 2005-08-30 18:52:10</div>
+  </body>
+</html>

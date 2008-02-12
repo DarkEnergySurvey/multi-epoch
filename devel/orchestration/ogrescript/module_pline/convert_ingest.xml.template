@@ -1,0 +1,36 @@
+
+   <!-- Running convert_ingest.c -->
+   <target name="Stage_convert_ingest" description="convert_ingest">
+       <esequence>
+         <write path="${rawlog.dir}/${convert_ingest.log}" text="true" 
+                         errorProperty="failed" rethrow="false" append="true"> 
+	                 <segment string=" -- beginning convert_ingest " lineBreaks="1"/>
+         </write>
+
+	    
+
+             <rtexec inheritedEnv="false" execDir="${arch.dir}/raw/${nite}" 
+                     args="/bin/chmod -R 755 bin" quiet="true">
+                     <outMonitor file="${rawlog.dir}/${convert_ingest.log}"/>
+                     <errMonitor file="${rawlog.dir}/${convert_ingest.log}"/>
+             </rtexec>
+
+             <rtexec inheritedEnv="false" execDir="${arch.dir}" 
+                     args="${convert_ingest.exec} ${convert_ingest.args}" quiet="true">
+                     <outMonitor file="${rawlog.dir}/${convert_ingest.log}"/>
+                     <errMonitor file="${rawlog.dir}/${convert_ingest.log}"/>
+             </rtexec>
+
+ 	    <print line=" - Stage_convert_ingest done"/>	
+
+         <write path="${rawlog.dir}/${convert_ingest.log}" text="true" 
+                         errorProperty="failed" rethrow="false" append="true"> 
+	                 <segment string=" -- convert_ingest done" lineBreaks="1"/>
+         </write>
+
+       </esequence>
+
+   </target>
+
+</project>
+

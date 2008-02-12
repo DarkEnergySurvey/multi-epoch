@@ -1,0 +1,96 @@
+<html>
+  <head>
+    <meta content="text/html; charset=iso-8859-1" http-equiv="Content-Type">
+    <title>4Suite API Documentation: Ft.Xml.Xslt.Exslt.Sets</title>
+    <link href="modules.css" type="text/css" rel="stylesheet">
+  </head>
+  <body>
+    <div class="universal-header"><span class="universal-header-prefix">&nbsp;&nbsp;&nbsp;</span>&nbsp;<span class="universal-header-prefix">&nbsp;&nbsp;</span>&nbsp;<span class="universal-header-prefix">&nbsp;</span>&nbsp;<a href="../index.html">4Suite<sup>&trade;</sup> API Documentation</a></div>
+    <h1><span class="glyph-arrow">&#9658;</span> Module <span class="this-name"><a href="Ft.html" title="Ft">Ft</a>.<a href="Ft.Xml.html" title="Ft.Xml">Xml</a>.<a href="Ft.Xml.Xslt.html" title="Ft.Xml.Xslt">Xslt</a>.<a href="Ft.Xml.Xslt.Exslt.html" title="Ft.Xml.Xslt.Exslt">Exslt</a>.Sets</span></h1>
+    <div class="abstract">EXSLT 2.0 - Sets (http://www.exslt.org/set/index.html)
+WWW: http://4suite.org/XSLT        e-mail: support@4suite.org</div>
+    <pre class="description">Copyright (c) 2001 Fourthought Inc, USA.   All Rights Reserved.
+See  http://4suite.org/COPYRIGHT  for license and copyright information</pre>
+    <div class="summary-section">
+      <table cellpadding="0" cellspacing="0">
+        <tbody>
+          <tr>
+            <td valign="top">
+              <div class="summary-header">Functions:</div>
+              <div class="summary-list"><span class="function-name"><a href="#Difference">Difference</a></span>, <span class="function-name"><a href="#Distinct">Distinct</a></span>, <span class="function-name"><a href="#HasSameNode">HasSameNode</a></span>, <span class="function-name"><a href="#Intersection">Intersection</a></span>, <span class="function-name"><a href="#Leading">Leading</a></span>, <span class="function-name"><a href="#Trailing">Trailing</a></span></div>
+            </td>
+            <td width="7" valign="middle"></td>
+            <td bgcolor="#C5C5C5" valign="middle" width="1"></td>
+            <td width="7" valign="middle"></td>
+            <td valign="top">
+              <div class="summary-header">Globals:</div>
+              <div class="summary-list"><span class="global-name"><a href="#EXSL_SETS_NS">EXSL_SETS_NS</a></span>, <span class="global-name"><a href="#ExtElements">ExtElements</a></span>, <span class="global-name"><a href="#ExtFunctions">ExtFunctions</a></span>, <span class="global-name"><a href="#ExtNamespaces">ExtNamespaces</a></span></div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="section">
+      <h2>Functions</h2>
+      <dl class="functions">
+        <dt class="functiondef"><a name="Difference"><span class="function-name">Difference</span></a>(<span class="argument-name">context</span>, <span class="argument-name">nodes1</span>, <span class="argument-name">nodes2</span>)</dt>
+        <dd class="functiondesc">
+          <div class="abstract">The set:difference function returns the difference between two node
+sets - those nodes that are in the node set passed as the first argument
+that are not in the node set passed as the second argument.</div>
+        </dd>
+        <dt class="functiondef"><a name="Distinct"><span class="function-name">Distinct</span></a>(<span class="argument-name">context</span>, <span class="argument-name">nodeset</span>)</dt>
+        <dd class="functiondesc">
+          <div class="abstract">The set:distinct function returns a subset of the nodes contained in the
+node-set NS passed as the first argument. Specifically, it selects a node
+N if there is no node in NS that has the same string value as N, and that
+precedes N in document order.</div>
+        </dd>
+        <dt class="functiondef"><a name="HasSameNode"><span class="function-name">HasSameNode</span></a>(<span class="argument-name">context</span>, <span class="argument-name">ns1</span>, <span class="argument-name">ns2</span>)</dt>
+        <dd class="functiondesc">
+          <div class="abstract">The set:has-same-node function returns true if the node set passed as the
+first argument shares any nodes with the node set passed as the second
+argument. If there are no nodes that are in both node sets, then it
+returns false.</div>
+        </dd>
+        <dt class="functiondef"><a name="Intersection"><span class="function-name">Intersection</span></a>(<span class="argument-name">context</span>, <span class="argument-name">ns1</span>, <span class="argument-name">ns2</span>)</dt>
+        <dd class="functiondesc">
+          <div class="abstract">The set:intersection function returns a node set comprising the nodes that
+are within both the node sets passed as arguments to it.</div>
+        </dd>
+        <dt class="functiondef"><a name="Leading"><span class="function-name">Leading</span></a>(<span class="argument-name">context</span>, <span class="argument-name">ns1</span>, <span class="argument-name">ns2</span>)</dt>
+        <dd class="functiondesc">
+          <div class="abstract">The set:leading function returns the nodes in the node set passed as the
+first argument that precede, in document order, the first node in the node
+set passed as the second argument. If the first node in the second node
+set is not contained in the first node set, then an empty node set is
+returned. If the second node set is empty, then the first node set is
+returned.</div>
+        </dd>
+        <dt class="functiondef"><a name="Trailing"><span class="function-name">Trailing</span></a>(<span class="argument-name">context</span>, <span class="argument-name">ns1</span>, <span class="argument-name">ns2</span>)</dt>
+        <dd class="functiondesc">
+          <div class="abstract">The set:trailing function returns the nodes in the node set passed as the
+first argument that follow, in document order, the first node in the node
+set passed as the second argument. If the first node in the second node
+set is not contained in the first node set, then an empty node set is
+returned. If the second node set is empty, then the first node set is
+returned.</div>
+        </dd>
+      </dl>
+    </div>
+    <div class="section">
+      <h2>Globals</h2>
+      <dl class="globals">
+        <dt class="globaldef"><a name="EXSL_SETS_NS"><span class="global-name">EXSL_SETS_NS</span></a> = 'http://exslt.org/sets'</dt>
+        <dd class="globaldesc"></dd>
+        <dt class="globaldef"><a name="ExtElements"><span class="global-name">ExtElements</span></a> = {}</dt>
+        <dd class="globaldesc"></dd>
+        <dt class="globaldef"><a name="ExtFunctions"><span class="global-name">ExtFunctions</span></a> = {('http://exslt.org/sets', 'difference'): &lt;function Difference&gt;, ('http://exslt.org/sets', 'distinct'): &lt;function Distinct&gt;, ('http://exslt.org/sets', 'has-same-node'): &lt;function HasSameNode&gt;, ('http://exslt.org/sets', 'intersection'): &lt;function Intersection&gt;, ('http://exslt.org/sets', 'leading'): &lt;function Leading&gt;, ('http://exslt.org/sets', 'trailing'): &lt;function Trailing&gt;}</dt>
+        <dd class="globaldesc"></dd>
+        <dt class="globaldef"><a name="ExtNamespaces"><span class="global-name">ExtNamespaces</span></a> = {'http://exslt.org/sets': 'set'}</dt>
+        <dd class="globaldesc"></dd>
+      </dl>
+    </div>
+    <div class="universal-footer">Last modified on 2005-04-18 16:47:00</div>
+  </body>
+</html>

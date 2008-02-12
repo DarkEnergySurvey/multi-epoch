@@ -1,0 +1,99 @@
+<html>
+  <head>
+    <meta content="text/html; charset=iso-8859-1" http-equiv="Content-Type">
+    <title>4Suite API Documentation: Ft.Xml.XPath._4xpath</title>
+    <link href="modules.css" type="text/css" rel="stylesheet">
+  </head>
+  <body>
+    <div class="universal-header"><span class="universal-header-prefix">&nbsp;&nbsp;&nbsp;</span>&nbsp;<span class="universal-header-prefix">&nbsp;&nbsp;</span>&nbsp;<span class="universal-header-prefix">&nbsp;</span>&nbsp;<a href="../index.html">4Suite<sup>&trade;</sup> API Documentation</a></div>
+    <h1><span class="glyph-arrow">&#9658;</span> Module <span class="this-name"><a href="Ft.html" title="Ft">Ft</a>.<a href="Ft.Xml.html" title="Ft.Xml">Xml</a>.<a href="Ft.Xml.XPath.html" title="Ft.Xml.XPath">XPath</a>._4xpath</span></h1>
+    <div class="abstract">Implementation of '4xpath' command
+(functions defined here are used by the Ft.Lib.CommandLine framework)</div>
+    <pre class="description">Copyright 2006 Fourthought, Inc. (USA).
+Detailed license and copyright information: http://4suite.org/COPYRIGHT
+Project home, documentation, distributions: http://4suite.org/</pre>
+    <div class="summary-section">
+      <table cellpadding="0" cellspacing="0">
+        <tbody>
+          <tr>
+            <td valign="top">
+              <div class="summary-header">Classes:</div>
+              <div class="summary-list"><span class="class-name"><a href="#XPathCommandLineApp">XPathCommandLineApp</a></span></div>
+            </td>
+            <td width="7" valign="middle"></td>
+            <td bgcolor="#C5C5C5" valign="middle" width="1"></td>
+            <td width="7" valign="middle"></td>
+            <td valign="top">
+              <div class="summary-header">Functions:</div>
+              <div class="summary-list"><span class="function-name"><a href="#Run">Run</a></span></div>
+            </td>
+            <td width="7" valign="middle"></td>
+            <td bgcolor="#C5C5C5" valign="middle" width="1"></td>
+            <td width="7" valign="middle"></td>
+            <td valign="top">
+              <div class="summary-header">Globals:</div>
+              <div class="summary-list"><span class="global-name"><a href="#MAX_PYTHON_RECURSION_DEPTH">MAX_PYTHON_RECURSION_DEPTH</a></span>, <span class="global-name"><a href="#g_nssBindingPattern">g_nssBindingPattern</a></span>, <span class="global-name"><a href="#g_paramBindingPattern">g_paramBindingPattern</a></span></div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="section">
+      <h2>Classes</h2>
+      <dl class="classes">
+        <dt class="classdef"><a name="XPathCommandLineApp"></a>class <span class="class-name">XPathCommandLineApp</span><span class="bases">(<span class="class-name"><a href="Ft.Lib.CommandLine.CommandLineApp.html#CommandLineApp">Ft.Lib.CommandLine.CommandLineApp.CommandLineApp</a></span>)</span></dt>
+        <dd class="classdesc">
+          <h3>Methods</h3>
+          <dl class="methods">
+            <dt class="methoddef"><a name="XPathCommandLineApp-run"><span class="method-name">run</span></a>(<span class="argument-name">self</span>, <span class="argument-name">options</span>, <span class="argument-name">arguments</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dd class="overrides"><b>Overrides: </b><span class="inherited-name"><a href="Ft.Lib.CommandLine.CommandLineApp.html#CommandLineApp-run">run</a></span> from class <span class="class-name"><a href="Ft.Lib.CommandLine.CommandLineApp.html#CommandLineApp">CommandLineApp</a></span></dd>
+            <dt class="methoddef"><a name="XPathCommandLineApp-validate_arguments"><span class="method-name">validate_arguments</span></a>(<span class="argument-name">self</span>, <span class="argument-name">args</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dd class="overrides"><b>Overrides: </b><span class="inherited-name"><a href="Ft.Lib.CommandLine.CommandLineApp.html#CommandLineApp-validate_arguments">validate_arguments</a></span> from class <span class="class-name"><a href="Ft.Lib.CommandLine.CommandLineApp.html#CommandLineApp">CommandLineApp</a></span></dd>
+          </dl>
+          <h3>Methods inherited from class <a href="Ft.Lib.CommandLine.CommandLineApp.html#CommandLineApp">Ft.Lib.CommandLine.CommandLineApp.CommandLineApp</a></h3>
+          <div class="inherited"><span class="inherited-name"><a href="Ft.Lib.CommandLine.CommandLineApp.html#CommandLineApp-__init__">__init__</a></span>, <span class="inherited-name"><a href="Ft.Lib.CommandLine.CommandLineApp.html#CommandLineApp-gen_command_tree">gen_command_tree</a></span>, <span class="inherited-name"><a href="Ft.Lib.CommandLine.CommandLineApp.html#CommandLineApp-gen_usage">gen_usage</a></span>, <span class="inherited-name"><a href="Ft.Lib.CommandLine.CommandLineApp.html#CommandLineApp-get_help_doc_info">get_help_doc_info</a></span>, <span class="inherited-name"><a href="Ft.Lib.CommandLine.CommandLineApp.html#CommandLineApp-main">main</a></span>, <span class="inherited-name"><a href="Ft.Lib.CommandLine.CommandLineApp.html#CommandLineApp-parse_command_line">parse_command_line</a></span>, <span class="inherited-name"><a href="Ft.Lib.CommandLine.CommandLineApp.html#CommandLineApp-run_commands">run_commands</a></span>, <span class="inherited-name"><a href="Ft.Lib.CommandLine.CommandLineApp.html#CommandLineApp-validate_options">validate_options</a></span></div>
+          <h3>Methods inherited from class <a href="Ft.Lib.CommandLine.Command.html#Command">Ft.Lib.CommandLine.Command.Command</a></h3>
+          <div class="inherited"><span class="inherited-name"><a href="Ft.Lib.CommandLine.Command.html#Command-break_parent_relationship">break_parent_relationship</a></span>, <span class="inherited-name"><a href="Ft.Lib.CommandLine.Command.html#Command-build_parent_relationship">build_parent_relationship</a></span>, <span class="inherited-name"><a href="Ft.Lib.CommandLine.Command.html#Command-flatten_command_tree">flatten_command_tree</a></span></div>
+          <h3>Members</h3>
+          <dl class="members">
+            <dt class="memberdef"><a name="arguments"><span class="member-name">arguments</span></a> = [&lt;Ft.Lib.CommandLine.Arguments.RequiredArgument instance&gt;, &lt;Ft.Lib.CommandLine.Arguments.RequiredArgument instance&gt;]</dt>
+            <dt class="memberdef"><a name="description"><span class="member-name">description</span></a> = '4XPath command-line application'</dt>
+            <dt class="memberdef"><a name="name"><span class="member-name">name</span></a> = '4xpath'</dt>
+            <dt class="memberdef"><a name="options"><span class="member-name">options</span></a> = [[--define=&lt;NAME=VALUE&gt;], [--namespace=&lt;PREFIX=NAMESPACE&gt;], [--stacktrace-on-error], [--string]]</dt>
+            <dt class="memberdef"><a name="project_name"><span class="member-name">project_name</span></a> = '4Suite-XML'</dt>
+            <dt class="memberdef"><a name="project_url"><span class="member-name">project_url</span></a> = 'http://4suite.org/'</dt>
+            <dt class="memberdef"><a name="project_version"><span class="member-name">project_version</span></a> = '1.0rc5'</dt>
+            <dt class="memberdef"><a name="summary"><span class="member-name">summary</span></a> = 'command-line tool for performing XPath queries on XML documents'</dt>
+          </dl>
+          <h3>Members inherited from class <a href="Ft.Lib.CommandLine.CommandLineApp.html#CommandLineApp">Ft.Lib.CommandLine.CommandLineApp.CommandLineApp</a></h3>
+          <div class="inherited"><span class="inherited-name"><a href="Ft.Lib.CommandLine.CommandLineApp.html#CommandLineApp-commands">commands</a></span>, <span class="inherited-name"><a href="Ft.Lib.CommandLine.CommandLineApp.html#CommandLineApp-example">example</a></span>, <span class="inherited-name"><a href="Ft.Lib.CommandLine.CommandLineApp.html#CommandLineApp-global_options">global_options</a></span></div>
+        </dd>
+      </dl>
+    </div>
+    <div class="section">
+      <h2>Functions</h2>
+      <dl class="functions">
+        <dt class="functiondef"><a name="Run"><span class="function-name">Run</span></a>(<span class="argument-name">options</span>, <span class="argument-name">args</span>)</dt>
+        <dd class="functiondesc"></dd>
+      </dl>
+    </div>
+    <div class="section">
+      <h2>Globals</h2>
+      <dl class="globals">
+        <dt class="globaldef"><a name="MAX_PYTHON_RECURSION_DEPTH"><span class="global-name">MAX_PYTHON_RECURSION_DEPTH</span></a> = 10000</dt>
+        <dd class="globaldesc"></dd>
+        <dt class="globaldef"><a name="g_nssBindingPattern"><span class="global-name">g_nssBindingPattern</span></a> = &lt;_sre.SRE_Pattern object&gt;</dt>
+        <dd class="globaldesc">
+          <div class="abstract">Compiled regular expression objects</div>
+        </dd>
+        <dt class="globaldef"><a name="g_paramBindingPattern"><span class="global-name">g_paramBindingPattern</span></a> = &lt;_sre.SRE_Pattern object&gt;</dt>
+        <dd class="globaldesc">
+          <div class="abstract">Compiled regular expression objects</div>
+        </dd>
+      </dl>
+    </div>
+    <div class="universal-footer">Last modified on 2006-10-16 15:52:39</div>
+  </body>
+</html>

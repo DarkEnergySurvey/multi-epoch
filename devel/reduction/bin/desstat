@@ -1,0 +1,654 @@
+#!/usr/bin/env perl
+########################################################################
+#  $Id$
+#
+#  $Rev::                                  $:  # Revision of last commit.
+#  $LastChangedBy::                        $:  # Author of last commit. 
+#  $LastChangedDate::                      $:  # Date of last commit.
+#
+#  Authors: 
+#         Michelle Gower (mgower@ncsa.uiuc.edu)
+#         Darren Adams (dadams@ncsa.uiuc.edu)
+#
+#  Developed at: 
+#  The National Center for Supercomputing Applications (NCSA)
+#  with useful conversations with Jordi Cohen and Jim Phillips from the
+#  Theoretical and Computation Biophysics Group at the University
+#  of Illinois at Urbana-Champaign.
+#
+#  Copyright (C) 2007 Board of Trustees of the University of Illinois. 
+#  All rights reserved.
+#
+#  DESCRIPTION:
+#
+#######################################################################
+
+use strict;
+use warnings;
+
+use File::stat;
+use POSIX qw(floor);
+use File::Basename;
+use Getopt::Long;
+use Pod::Usage;
+use Time::Local;
+use FindBin;
+use lib "$FindBin::Bin/../lib";
+use DES::utils::misc;
+use DES::utils::hist;
+use NCSA::utils::condor;
+use DES::desconfig;
+
+
+my (%QJobs, %Key2ClusterId, %jobs, %job);
+my (@TopLevelJobs, @Orphans);
+my ($allusers, $User, $ShowHoldReason, $help, $allids, $optl, $opts, $version, $man);
+
+&Getopt::Long::Configure( 'noignorecase', 'no_autoabbrev');
+Getopt::Long::GetOptions(
+      'allusers|all' => \$allusers,
+      'user|u=s' => \$User,
+      'err'     => \$ShowHoldReason,
+      'help|h'        => \$help,
+      'allids'   => \$allids,
+      'long|l'   => \$optl,
+      'summary|s'   => \$opts,
+      'version|v' => \$version,
+      'man' => \$man
+);
+
+pod2usage(-exitval =>1, -verbose => 1, -input => "$FindBin::Bin/../doc/desstat.pod") if $help;
+pod2usage(-exitval =>1, -verbose => 2, -input => "$FindBin::Bin/../doc/desstat.pod") if $man;
+
+#if (defined($help) || (scalar(@ARGV) > 2) ) {
+#  printUsage();
+#}
+
+my $DESHome = getHome() or die "Error: Can't determine DESHome";
+
+
+if (defined($version)) {
+  printVersion();
+  exit 0;
+}
+
+# save current time for calculating runtimes
+my $CurrTime = time;
+my $Nite = "";
+my $UniqName = "";
+my $JobID = "";
+my $RunID = "";
+
+if (scalar(@ARGV) == 1)
+{
+   if ($ARGV[0] =~ /\D/)
+   {
+      $Nite = $ARGV[0];
+      $UniqName = $Nite
+   }
+   else
+   {
+      $JobID = $ARGV[0];
+   }
+}
+elsif (scalar(@ARGV) == 2)
+{
+   $Nite = $ARGV[0];
+   $RunID = $ARGV[1]; 
+   $UniqName = $Nite."_".$RunID;
+}
+
+# warn user if proxy expiring
+my $Out = `grid-proxy-info -timeleft 2>&1`;
+if (($Out =~ /ERROR/) || ($Out == -1)) {
+  print STDERR "****************************** \n";
+  print STDERR "*** ALERT:  Proxy has expired.\n";
+  print STDERR "****************************** \n\n";
+}
+elsif ($Out < 600) {
+  print STDERR "******************************* \n";
+  print STDERR "*** WARNING: Proxy is expiring.\n";
+  print STDERR "******************************* \n\n";
+}
+
+print "\n";
+
+
+my $constraintstr = "des_isdesjob ";
+if ((defined($Nite)) && ($Nite =~ /\S/))
+{
+   $constraintstr .= "&& des_nite == \"$Nite\" ";
+}
+if ((defined($RunID)) && ($RunID =~ /\S/))
+{
+   $constraintstr .= "&& des_runid == \"$RunID\" ";
+}
+
+#if (defined($allusers)) {
+#   $User = "";
+#}
+
+if (!defined($User)) {
+  $User = $ENV{"USER"};
+}
+
+if (defined($JobID)) {
+   $Out = `condor_q -l -constraint '$constraintstr' $JobID 2>&1`;
+}
+else {
+   $Out = `condor_q -l -constraint '$constraintstr' $User 2>&1`;
+}
+
+#print "condor_q out = \n";
+#print "$Out\n\n\n";
+
+%QJobs = parseCondorQOutput($Out);
+
+
+# Create lookup table to find condor_q job from Stage info
+my $JobCnt = 0;
+foreach my $j (keys %QJobs) {
+  my $KeyStr = makeKeyStr("", $QJobs{"$j"}{"des_nite"}, 
+                           $QJobs{"$j"}{"des_runid"}, 
+                           $QJobs{"$j"}{"des_runsite"},
+                           $QJobs{"$j"}{"des_stage"},
+                           $QJobs{"$j"}{"des_substage"},
+                           'j');
+#print "saving $j = '$KeyStr'\n";
+  $Key2ClusterId{"$KeyStr"} = $j;
+  $JobCnt++;
+}
+  
+
+if ($JobCnt == 0) {
+  if ($UniqName !~ /\S/) { 
+     print "No DES jobs\n\n";
+     exit 1; 
+  }
+  elsif (! -d "DESjobs/$UniqName") {
+     print "Cannot find information about $UniqName\n";
+     print "Try running desstat without any arguments to see if in the queue.\n";
+     print "If it is in the queue, check for typos in nite and runid on command line.\n";
+     print "If not, your current working directory must be the main submission directory.\n\n";
+     exit 1; 
+  }
+  else {
+     # read config file to get nite and runid
+     my $Configfile = "DESjobs/$UniqName/internal/$UniqName.descfg";
+     my $Config = new DES::desconfig;
+     $Config->readConfig($Configfile, 0, \*STDERR);
+
+     my $RunSite = $Config->getValue("run_site");
+     my $Iwd = $Config->getValue("internaldir");
+     undef $Config;
+
+     my $st = stat($Configfile);
+     my $uid = $st->uid;
+     my @pwinfo = getpwuid($uid);
+     my $Owner = $pwinfo[0];
+     my @StageInfo;
+
+     processDESLog($UniqName, $Iwd, \@StageInfo);
+
+     if (defined($optl)) {
+        printHeader();
+        printLong(\@StageInfo, $Nite, $RunID, $Owner);
+     }
+     else {
+        # when printing info for finished job, only 2 choices
+        # long or summary
+        $opts = 1;
+        printHeader();
+        printSummary(\@StageInfo, $Nite, $RunID, $Owner);
+     }
+  }
+}
+else {
+   # foreach job in condor_q output (QJobs)
+   # storing final info in jobs hash table
+   foreach my $j (keys %QJobs) {
+      $QJobs{"$j"}{"numchildren"}=0;
+   }
+   foreach my $j (sort {$QJobs{$a}{"qdate"} cmp $QJobs{$b}{"qdate"}} keys %QJobs) {
+      if (exists($QJobs{"$j"}{"des_isdesjob"})) {
+         if (basename($QJobs{"$j"}{"cmd"}) =~ /dagman/) {
+
+            if ((defined($QJobs{"$j"}{"dagmanjobid"})) && ($QJobs{"$j"}{"dagmanjobid"} =~ /\d/)) {
+               my $DagID = $QJobs{"$j"}{"dagmanjobid"};
+               $QJobs{"$DagID"}{"numchildren"}++;
+               push(@{$QJobs{"$DagID"}{"children"}}, $j);
+            }
+            else {
+               push(@TopLevelJobs, $j);
+            }
+         } # dagman job
+         else {
+            my $DagID = $QJobs{"$j"}{"dagmanjobid"};
+
+            # check to see if dagman parent is still running
+            #if ($QJobs{"$DagID"}{"clusterid"} !~ /\d/)
+            if (exists($QJobs{"$DagID"})) {
+               $QJobs{"$DagID"}{"numchildren"}++;
+               push(@{$QJobs{"$DagID"}{"children"}}, $j);
+            }
+            else {
+               push (@Orphans, $j);
+            }
+         }
+      } # is a DES job
+   } # foreach job
+
+
+   printHeader();
+   foreach my $j (sort @TopLevelJobs) {
+      $UniqName = $QJobs{"$j"}{"des_nite"}."_".$QJobs{"$j"}{"des_runid"};
+      my $Iwd = $QJobs{"$j"}{"iwd"};
+      my @StageInfo;
+      if (defined($optl)) {
+         processDESLog($UniqName, $Iwd, \@StageInfo);
+         printLong(\@StageInfo, $QJobs{"$j"}{"des_nite"},  $QJobs{"$j"}{"des_runid"},  $QJobs{"$j"}{"owner"});
+         
+      }
+      elsif (defined($opts)) {
+         processDESLog($UniqName, $Iwd, \@StageInfo);
+         printSummary(\@StageInfo, $QJobs{"$j"}{"des_nite"},  $QJobs{"$j"}{"des_runid"},  $QJobs{"$j"}{"owner"});
+         print "\n";
+      }
+      else {
+         printSingle($j, " ");
+      }
+      @StageInfo = (); 
+   }
+
+   foreach my $j (sort @Orphans) {
+      printSingle($j, "X");
+   }
+   
+}
+
+print "\n";
+
+exit 0;
+
+sub printHeader {
+  if (defined($opts)) {
+     printf("%25s %12s %8s %15s %12s\n", 
+            "NITE_RUNID","STAT","OWNER", "RunSite", "RUNTIME");
+     print "==============================================================================\n";
+  }
+  elsif (defined($optl)) {
+     printf("%5s %1s %25s %15s %1s %15s %5s %8s %15s %12s %8s\n", 
+     "ID", "T","NITE_RUNID","Stage","S","SubStage","STAT","OWNER", "RunSite", "RUNTIME", "BATCHID");
+     print "========================================================================================================================\n";
+  }
+  else {
+     printf("%5s %1s %25s %15s %1s %15s %8s %8s %15s\n", 
+     "ID", "T","NITE_RUNID","Stage","S","SubStage","STAT","OWNER", "RunSite");
+     print "======================================================================================================\n";
+  }
+}
+
+
+#==============================================================================
+#==============================================================================
+sub printSingle {
+   my $j = shift;
+   my $JobType = shift;
+
+   # find child job
+   my $Job = $j;
+   my $Level = 0;
+   while ($QJobs{"$Job"}{"numchildren"} == 1)
+   {
+      $Job = $QJobs{"$Job"}{"children"}[0];
+   }
+
+   my $Nite = "";
+   if (defined($QJobs{"$Job"}{"des_nite"})) {
+      $Nite = $QJobs{"$Job"}{"des_nite"};
+   }
+   my $RunID = "";
+   if (defined($QJobs{"$Job"}{"des_runid"})) {
+      $RunID = $QJobs{"$Job"}{"des_runid"};
+   }
+   my $UniqName = $Nite."_".$RunID;
+
+   my $RunSite = "";
+   if (defined($QJobs{"$Job"}{"des_runsite"})) {
+      $RunSite = $QJobs{"$Job"}{"des_runsite"};
+   }
+
+   my $Stage = "";
+   if (defined($QJobs{"$Job"}{"des_stage"})) {
+      $Stage = $QJobs{"$Job"}{"des_stage"};
+   }
+
+   my $SubStage = "";
+   if (defined($QJobs{"$Job"}{"des_substage"})) {
+      $SubStage = $QJobs{"$Job"}{"des_substage"};
+   }
+
+   my $Status = getStatusStr($Job);
+
+   my $Count="";
+   if ($QJobs{"$Job"}{"numchildren"} > 0) {
+      $Count = "(".$QJobs{"$Job"}{"numchildren"}.")";
+      my $SameStage=1;
+      my $SameStat=1;
+      my $Childjob = $QJobs{"$Job"}{"children"}[0];
+      my $ChildStage = $QJobs{"$Childjob"}{"des_stage"};
+      my $ChildStat =  getStatusStr($Childjob);
+      my %ChStat = ();
+      $ChStat{"PEND"} = 0;
+      $ChStat{"UNSUB"} = 0;
+      $ChStat{"RUN"} = 0;
+      for (my $i = 0; $i < $QJobs{"$Job"}{"numchildren"}; $i++) {
+         $Childjob = $QJobs{"$Job"}{"children"}[$i];
+         if ($ChildStage ne $QJobs{"$Childjob"}{"des_stage"}) {
+            $SameStage = 0;
+         } 
+         if ($ChildStat ne getStatusStr($Childjob)) {
+            $SameStat = 0;
+         } 
+         $ChStat{getStatusStr($Childjob)}++;
+      } 
+      if ($SameStage == 1) {
+         $Stage = $ChildStage;
+      }
+      $Status = "(".sprintf("%d",$ChStat{"PEND"}+$ChStat{"UNSUB"})."/".sprintf("%d",$ChStat{"RUN"}).")";   
+      %ChStat = ();
+   }
+   $Count = "";
+
+   my $SubStageType;
+   if (defined($Stage) && ($Stage =~ /check/)) {
+      $SubStageType = "C";
+   }
+   else {
+      $SubStageType = "J";
+   }
+
+   my $Owner = "";
+   if (defined($QJobs{"$Job"}{"owner"})) {
+      $Owner = $QJobs{"$Job"}{"owner"};
+   }
+
+#print "j = $j\t";
+#print "jobtype = $JobType\t";
+#print "uniqname = $UniqName\t";
+#print "stage = $Stage\t";
+#print "substagetype = $SubStageType\t";
+#print "substage = $SubStage\t";
+#print "Status = $Status\t";
+#print "Owner = $Owner\t";
+#print "RunSite = $RunSite\n";
+   
+   printf("%5s %1s %25s %15s %1s %15s %8s %8s %15s\n", 
+          $j,
+          $JobType,
+          substr($UniqName,0, 25),
+          substr($Stage, 0, 15),
+          $SubStageType,
+          substr($SubStage, 0, 15),
+          substr($Status,0,8),
+          substr($Owner, 0, 8),
+          substr($RunSite, 0, 15),
+   );
+   if (defined($ShowHoldReason)) {
+      if ($QJobs{"$Job"}{"holdreason"} =~ /\S/) {
+         printf("%5s %s\n", "", $QJobs{"$Job"}{"holdreason"});
+      }
+   }
+}
+
+#==============================================================================
+#==============================================================================
+sub processDESLog {
+   my $UniqName = shift;
+   my $Iwd = shift;
+   my $StageInfoArrRef = shift;
+
+   parseHistLog($UniqName, $Iwd, $StageInfoArrRef);
+
+   # if job is still in condor_q, get status from there
+   foreach (my $i = 0; $i < scalar(@$StageInfoArrRef); $i++) {
+      if (defined($$StageInfoArrRef[$i]{"clusterid"}) && ($$StageInfoArrRef[$i]{"clusterid"} !~ /\d/)) {
+         my $KeyStr = makeKeyStr("",$$StageInfoArrRef[$i]{"nite"},
+                                 $$StageInfoArrRef[$i]{"runid"},
+                                 $$StageInfoArrRef[$i]{"runsite"},
+                                 $$StageInfoArrRef[$i]{"stage"},
+                                 $$StageInfoArrRef[$i]{"substage"},
+                                 $$StageInfoArrRef[$i]{"substagetype"});
+#print "looking up '$KeyStr'\n";
+         if (defined($Key2ClusterId{"$KeyStr"})) {
+#print "found ClusterId = ", $Key2ClusterId{"$KeyStr"}, "\n";
+            $$StageInfoArrRef[$i]{"clusterid"} = $Key2ClusterId{"$KeyStr"};
+         }
+      }
+   }
+}
+
+
+#==============================================================================
+#==============================================================================
+sub printLong {
+  my $StageInfo = shift;
+  my $Nite = shift;
+  my $RunID = shift;
+  my $Owner = shift;
+  my ($JobStat, $SubStage, $SubStageType, $RunTime, $Type, $Name, $Stage, $ClusterID);
+
+  for (my $i = 0; $i < scalar(@$StageInfo); $i++) {
+      $Stage = $StageInfo->[$i]{"stage"};
+      $Name = $Nite."_".$RunID;
+      $ClusterID = $StageInfo->[$i]{"clusterid"};
+
+      $Type = " ";
+      $JobStat =  getStatusStr($ClusterID);
+      if ($JobStat eq "UNK") { 
+         if ($StageInfo->[$i]{"exitval"} == $SUCCESS) {
+            $JobStat = "DONE";
+         }
+         else {
+            $JobStat = "FAIL";
+         }
+      }
+   
+      $SubStage = $StageInfo->[$i]{"substage"};
+      $SubStageType = $StageInfo->[$i]{"substagetype"};
+      if (($Stage =~ /analysis/) && ($SubStage =~ /mngr/) && ($SubStageType eq "j")) {
+         $RunTime = "(".diffTimes($StageInfo->[$i]{"endtime"}, $StageInfo->[$i]{"starttime"}).")";
+         if (defined($QJobs{"$ClusterID"}) && defined($QJobs{"$ClusterID"}{"clusterid"})) {
+            $Type = "M";
+         }
+      }
+      else {
+         $RunTime = " ".diffTimes($StageInfo->[$i]{"endtime"}, $StageInfo->[$i]{"starttime"})." ";
+      }
+
+      printf("%5s %1s %25s %15s %1s %15s %5s %8s %15s %12s %8s\n",
+          substr($ClusterID, 0, 5),
+          $Type,
+          substr($Name, 0, 25),
+          substr($Stage, 0, 15),
+          substr($SubStageType, 0, 1), 
+          substr($SubStage, 0, 15),
+          substr($JobStat, 0, 8),
+          substr($Owner, 0, 8),
+          substr($StageInfo->[$i]{"runsite"}, 0, 15),
+          substr($RunTime, 0, 12),
+          substr($StageInfo->[$i]{"jobid"}, 0, 8),
+      );
+   }
+}
+
+
+#==============================================================================
+#==============================================================================
+sub printSummary {
+   my $StageInfo = shift;
+   my $Nite = shift;
+   my $RunID = shift;
+   my $Owner = shift;
+   my $SumRunTime = 0;
+   my @SumOrder = ();
+   my $AnalysisNum = 0;
+   my ($ClusterID, $KeyStr, %Summary, $JobStat);
+
+   for (my $i = 0; $i < scalar(@$StageInfo); $i++) {
+      if (($StageInfo->[$i]{"stage"} eq "analysis") && ($StageInfo->[$i]{"substage"} eq "mngr")) {
+         $AnalysisNum = $StageInfo->[$i]{"clusterid"};
+      }
+      $KeyStr = makeKeyStr($AnalysisNum, $Nite, $RunID, 
+                 $StageInfo->[$i]{"runsite"}, "", "", "");
+      if (!defined($Summary{"$KeyStr"}{"uniqname"})) {
+         push(@SumOrder, $KeyStr);
+      }
+      $Summary{"$KeyStr"}{"uniqname"} = $StageInfo->[$i]{"uniqname"};
+      $Summary{"$KeyStr"}{"runsite"} = $StageInfo->[$i]{"runsite"};
+      if ($StageInfo->[$i]{"substage"} !~ /mngr/) {
+         $Summary{"$KeyStr"}{"sumruntime"} = SumRunTimes($Summary{"$KeyStr"}{"sumruntime"}, diffTimes($StageInfo->[$i]{"endtime"},$StageInfo->[$i]{"starttime"}));
+      }
+
+      $ClusterID = $StageInfo->[$i]{"clusterid"};
+      $JobStat =  getStatusStr($ClusterID);
+      if ($JobStat eq "UNK") {
+         if ($StageInfo->[$i]{"exitval"} != $FAILURE) {
+            $JobStat = "DONE";
+         }
+         else {
+            $JobStat = "FAIL";
+         }
+      }
+
+      $Summary{"$KeyStr"}{"jobstat"} = $JobStat;
+   }
+
+   foreach my $Key (@SumOrder) {
+      my $Name = $Nite."_".$RunID;
+      printf("%30s %8s %8s %15s %12s\n",
+             substr($Name, 0, 30),
+             substr($Summary{"$Key"}{"jobstat"}, 0, 8), 
+             substr($Owner,0,8),
+             substr($Summary{"$Key"}{"runsite"}, 0, 15),
+             substr($Summary{"$Key"}{"sumruntime"}, 0, 12)
+      );
+   }
+}
+
+
+
+#==============================================================================
+#==============================================================================
+sub getStatusStr {
+  my $JobNum = shift;
+  my $StatusStr = "UNK";
+  
+#  # Condor Job Status: 1 = Idle, 2 = Running, 3 = Removed, 4 = Completed, and 5 = Held
+  my @StatusArray = ("","PEND","RUN","DEL","DONE","ERR");
+  my $StatusNum = 0;
+
+  if (defined($JobNum)) {
+     if (defined($QJobs{"$JobNum"}) && defined($QJobs{"$JobNum"}{"jobstatus"})) {
+        $StatusNum = $QJobs{"$JobNum"}{"jobstatus"};
+        if ($StatusNum < scalar(@StatusArray))
+        {
+           $StatusStr = $StatusArray[$StatusNum];
+        }
+     }
+
+     if ($StatusNum == 1) {
+        my $GlobusStatus = $QJobs{"$JobNum"}{"globusstatus"};
+        if ($GlobusStatus == 1) {
+          $StatusStr = "PEND"; 
+        }
+        elsif ($GlobusStatus == 2) {
+          $StatusStr = "RUN";
+        }
+        elsif ($GlobusStatus == 32) {
+          $StatusStr = "UNSUB";
+        }
+     }
+  }
+
+  return $StatusStr;
+}
+
+#==============================================================================
+# date arguments in format MM/DD/YYYY HH:MM:SS
+#==============================================================================
+sub diffTimes {
+   my ($Date1,$Date2);
+   my ($Mon, $MDay, $Year, $Hours, $Min, $Secs);
+   my ($Difference, $Seconds, $Minutes, $Days);  
+   
+   $Date1 = shift;
+   $Date2 = shift;
+   if (!defined($Date1) || ($Date1 !~ /\d/)) {
+      $Date1 = $CurrTime;
+   }
+   else {
+      ($Mon, $MDay, $Year, $Hours, $Min, $Secs) = $Date1 =~ /(\d+)\/(\d+)\/(\d+)\s+(\d+):(\d+):(\d+)/;
+      $Date1 = timelocal($Secs, $Min, $Hours, $MDay, $Mon-1, $Year-1900);
+   }
+   ($Mon, $MDay, $Year, $Hours, $Min, $Secs) = $Date2 =~ /(\d+)\/(\d+)\/(\d+)\s+(\d+):(\d+):(\d+)/;
+   $Date2 = timelocal($Secs, $Min, $Hours, $MDay, $Mon-1, $Year-1900);
+
+   $Difference = $Date1 - $Date2;
+#printf("diff = $Difference\n");
+
+   $Seconds    =  $Difference % 60;
+   $Difference = ($Difference - $Seconds) / 60;
+   $Minutes    =  $Difference % 60;
+   $Difference = ($Difference - $Minutes) / 60;
+   $Hours      =  $Difference % 24;
+   $Difference = ($Difference - $Hours)   / 24;
+   $Days       =  $Difference % 7;
+
+   # round up Minutes
+   if ($Seconds > 0) {
+      $Minutes++;
+   }
+   
+   return sprintf("%d+%02d:%02d", $Days, $Hours, $Minutes);
+}
+
+#==============================================================================
+#==============================================================================
+sub SumRunTimes {
+   my $RunTime1 = shift;
+   my $RunTime2 = shift;
+   my $Diff = "0:00:00";
+   my $Days1 = 0; my $Hrs1 = 0; my $Mins1 = 0;
+   my $Days2 = 0; my $Hrs2 = 0; my $Mins2 = 0;
+
+   if (defined($RunTime1) && defined($RunTime2)) {
+      if ($RunTime1 =~ m/(\d+)\+(\d\d):(\d\d)/) {
+         $Days1 = $1;
+         $Hrs1 = $2;
+         $Mins1 = $3;
+      }
+      if ($RunTime2 =~ m/(\d+)\+(\d\d):(\d\d)/) {
+         $Days1 = $2;
+         $Hrs1 = $2;
+         $Mins1 = $2;
+      }
+      my $Mins3 = $Mins1 + $Mins2;
+      my $Hrs3 = $Hrs1 + $Hrs2 + floor($Mins3/60);
+      $Mins3 = $Mins3 % 60;
+      my $Days3 = $Days1 + $Days2 + floor($Hrs3/24);
+      $Hrs3 = $Hrs3 % 24;
+
+      $Diff = sprintf("%d+%02d:%02d", $Days3, $Hrs3, $Mins3);
+   }
+   return $Diff;
+}
+
+
+#==============================================================================
+#==============================================================================
+
+sub printUsage {
+   print STDERR "Usage: desstat [-h] [-v] [-u username|-allusers] [-err] [-l|-s] [nite runid | jobid]\n";
+   exit 0;
+}

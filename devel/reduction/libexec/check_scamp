@@ -1,0 +1,82 @@
+#!/usr/bin/perl
+#######################################################################
+# $Id$
+#
+#  $Rev::                                  $:  # Revision of last commit.
+#  $LastChangedBy::                        $:  # Author of last commit. 
+#  $LastChangedDate::                      $:  # Date of last commit.
+#
+#######################################################################
+use strict;
+use warnings;
+use Getopt::Long;                      # Process command line arguments.
+use FindBin;
+use lib "$FindBin::Bin/../lib";        # Need to hardwire if moved from ...reduction/libexec
+use DES::desDBI;                       # DES database tools.
+
+#######################################
+# Get command line arguments and verify:
+my ($Version,$Quiet,$Nite,$RunID);
+Getopt::Long::GetOptions(
+      'version|v' => \$Version,
+      'quiet|q'  => \$Quiet,
+      'nite|n=s' => \$Nite,
+      'runid|r=s' => \$RunID
+);
+# Verify RunID:
+die "Error: runid is not set, abort\n" if (! $RunID);
+# Verify Nite:
+die "Error: Nite is not set, abort\n" if (! $Nite);
+
+#######################################
+# Declare some variables and establish 
+# database connection.
+my $dbq;
+# Get database connection object with automatic connection 
+# via .desdm file with all inherited DBI methods:
+my $desdb = new DES::desDBI;
+
+#######################################
+# Get reduced imagenames:
+$dbq = "select distinct(imagename) from files where nite='$Nite' AND runiddesc like '$RunID%' and imagetype='reduced' order by imagename";
+# Just getting one column, so just grab array of first column:
+my @ImageNames =  @{$desdb->selectcol_arrayref($dbq)};
+printf ("Found %s reduced images.\n",scalar(@ImageNames));
+
+#######################################
+# Get scampnum etc. for remap images:
+$dbq = "select distinct(scampnum),imagename,scampflg,scampchi from files where nite='$Nite' and runiddesc like '$RunID%' and imagetype='remap' order by imagename";
+# Grab as a hash of hash references with imagename as the key:
+my %RemapList = %{$desdb->selectall_hashref($dbq, 'IMAGENAME')};
+printf ("Found %s remap images.\n",scalar(keys(%RemapList)));
+
+#######################################
+# Match reduced images to remap list:
+printf("IMAGENAME\t\tSCAMPFLG\tSCAMPNUM\tSCAMPCHI\n");
+for(my $i=0; $i<=$#ImageNames;$i++) {
+  my $imname = $ImageNames[$i];
+  # If values exist for given reduction image name grab the rest of the values and print:
+  if (exists $RemapList{$imname}) {
+    # Get values from query hash:
+    my $scampflag = $RemapList{$imname}->{SCAMPFLG};
+    my $scampnum = $RemapList{$imname}->{SCAMPNUM};
+    my $scampchi = $RemapList{$imname}->{SCAMPCHI};
+    if(length($imname)>15) {
+      printf("%s\t%d\t\t%d\t\t%2.2f\n",$imname,$scampflag,$scampnum,$scampchi);
+    }
+    else {
+      printf("%s\t\t%d\t\t%d\t\t%2.2f\n",$imname,$scampflag,$scampnum,$scampchi);
+    }
+
+  }
+  else {
+    if(length($imname)>15) {
+      printf("%s\t-\t\t---\t\t---\n",$imname);
+    }
+    else {
+      printf("%s\t\t-\t\t---\t\t---\n",$imname);
+    }
+  }
+}
+
+exit 0;

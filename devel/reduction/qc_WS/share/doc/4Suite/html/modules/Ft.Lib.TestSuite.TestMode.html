@@ -1,0 +1,72 @@
+<html>
+  <head>
+    <meta content="text/html; charset=iso-8859-1" http-equiv="Content-Type">
+    <title>4Suite API Documentation: Ft.Lib.TestSuite.TestMode</title>
+    <link href="modules.css" type="text/css" rel="stylesheet">
+  </head>
+  <body>
+    <div class="universal-header"><span class="universal-header-prefix">&nbsp;&nbsp;&nbsp;</span>&nbsp;<span class="universal-header-prefix">&nbsp;&nbsp;</span>&nbsp;<span class="universal-header-prefix">&nbsp;</span>&nbsp;<a href="../index.html">4Suite<sup>&trade;</sup> API Documentation</a></div>
+    <h1><span class="glyph-arrow">&#9658;</span> Module <span class="this-name"><a href="Ft.html" title="Ft">Ft</a>.<a href="Ft.Lib.html" title="Ft.Lib">Lib</a>.<a href="Ft.Lib.TestSuite.html" title="Ft.Lib.TestSuite">TestSuite</a>.TestMode</span></h1>
+    <div class="abstract">Provides the TestMode base class for testing modes.</div>
+    <pre class="description">Copyright 2002 Fourthought, Inc. (USA).
+Detailed license and copyright information: http://4suite.org/COPYRIGHT
+Project home, documentation, distributions: http://4suite.org/</pre>
+    <div class="summary-section">
+      <table cellpadding="0" cellspacing="0">
+        <tbody>
+          <tr>
+            <td valign="top">
+              <div class="summary-header">Classes:</div>
+              <div class="summary-list"><span class="class-name"><a href="#DefaultMode">DefaultMode</a></span>, <span class="class-name"><a href="#TestMode">TestMode</a></span></div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="section">
+      <h2>Classes</h2>
+      <dl class="classes">
+        <dt class="classdef"><a name="DefaultMode"></a>class <span class="class-name">DefaultMode</span><span class="bases">(<span class="class-name"><a href="Ft.Lib.TestSuite.TestMode.html#TestMode">TestMode</a></span>)</span></dt>
+        <dd class="classdesc">
+          <h3>Methods</h3>
+          <dl class="methods">
+            <dt class="methoddef"><a name="DefaultMode-__init__"><span class="method-name">__init__</span></a>(<span class="argument-name">self</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dd class="overrides"><b>Overrides: </b><span class="inherited-name"><a href="Ft.Lib.TestSuite.TestMode.html#TestMode-__init__">__init__</a></span> from class <span class="class-name"><a href="Ft.Lib.TestSuite.TestMode.html#TestMode">TestMode</a></span></dd>
+            <dt class="methoddef"><a name="DefaultMode-finish"><span class="method-name">finish</span></a>(<span class="argument-name">self</span>, <span class="argument-name">tester</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dd class="overrides"><b>Overrides: </b><span class="inherited-name"><a href="Ft.Lib.TestSuite.TestMode.html#TestMode-finish">finish</a></span> from class <span class="class-name"><a href="Ft.Lib.TestSuite.TestMode.html#TestMode">TestMode</a></span></dd>
+            <dt class="methoddef"><a name="DefaultMode-initialize"><span class="method-name">initialize</span></a>(<span class="argument-name">self</span>, <span class="argument-name">tester</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dd class="overrides"><b>Overrides: </b><span class="inherited-name"><a href="Ft.Lib.TestSuite.TestMode.html#TestMode-initialize">initialize</a></span> from class <span class="class-name"><a href="Ft.Lib.TestSuite.TestMode.html#TestMode">TestMode</a></span></dd>
+            <dt class="methoddef"><a name="DefaultMode-start"><span class="method-name">start</span></a>(<span class="argument-name">self</span>, <span class="argument-name">tester</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dd class="overrides"><b>Overrides: </b><span class="inherited-name"><a href="Ft.Lib.TestSuite.TestMode.html#TestMode-start">start</a></span> from class <span class="class-name"><a href="Ft.Lib.TestSuite.TestMode.html#TestMode">TestMode</a></span></dd>
+          </dl>
+        </dd>
+        <dt class="classdef"><a name="TestMode"></a>class <span class="class-name">TestMode</span></dt>
+        <dd class="classdesc">
+          <h3>Methods</h3>
+          <dl class="methods">
+            <dt class="methoddef"><a name="TestMode-__init__"><span class="method-name">__init__</span></a>(<span class="argument-name">self</span>, <span class="argument-name">name</span>, <span class="argument-name">default</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dt class="methoddef"><a name="TestMode-finish"><span class="method-name">finish</span></a>(<span class="argument-name">self</span>, <span class="argument-name">tester</span>)</dt>
+            <dd class="methoddesc">
+              <div class="abstract">Called when all tests have run to completion (or exception).</div>
+            </dd>
+            <dt class="methoddef"><a name="TestMode-initialize"><span class="method-name">initialize</span></a>(<span class="argument-name">self</span>, <span class="argument-name">tester</span>)</dt>
+            <dd class="methoddesc">
+              <div class="abstract">Called the first time this mode is used. A return value of false
+signals that this mode is not to be used.</div>
+            </dd>
+            <dt class="methoddef"><a name="TestMode-start"><span class="method-name">start</span></a>(<span class="argument-name">self</span>, <span class="argument-name">tester</span>)</dt>
+            <dd class="methoddesc">
+              <div class="abstract">Called before beginning any tests.</div>
+            </dd>
+          </dl>
+        </dd>
+      </dl>
+    </div>
+    <div class="universal-footer">Last modified on 2002-07-18 12:15:58</div>
+  </body>
+</html>

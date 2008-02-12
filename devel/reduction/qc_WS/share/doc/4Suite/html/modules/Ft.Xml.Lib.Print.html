@@ -1,0 +1,177 @@
+<html>
+  <head>
+    <meta content="text/html; charset=iso-8859-1" http-equiv="Content-Type">
+    <title>4Suite API Documentation: Ft.Xml.Lib.Print</title>
+    <link href="modules.css" type="text/css" rel="stylesheet">
+  </head>
+  <body>
+    <div class="universal-header"><span class="universal-header-prefix">&nbsp;&nbsp;&nbsp;</span>&nbsp;<span class="universal-header-prefix">&nbsp;&nbsp;</span>&nbsp;<span class="universal-header-prefix">&nbsp;</span>&nbsp;<a href="../index.html">4Suite<sup>&trade;</sup> API Documentation</a></div>
+    <h1><span class="glyph-arrow">&#9658;</span> Module <span class="this-name"><a href="Ft.html" title="Ft">Ft</a>.<a href="Ft.Xml.html" title="Ft.Xml">Xml</a>.<a href="Ft.Xml.Lib.html" title="Ft.Xml.Lib">Lib</a>.Print</span></h1>
+    <div class="abstract">This module supports document serialization in XML or HTML syntax.</div>
+    <pre class="description">Copyright 2005 Fourthought, Inc. (USA).
+Detailed license and copyright information: http://4suite.org/COPYRIGHT
+Project home, documentation, distributions: http://4suite.org/</pre>
+    <div class="summary-section">
+      <table cellpadding="0" cellspacing="0">
+        <tbody>
+          <tr>
+            <td valign="top">
+              <div class="summary-header">Classes:</div>
+              <div class="summary-list"><span class="class-name"><a href="#PrintVisitor">PrintVisitor</a></span></div>
+            </td>
+            <td width="7" valign="middle"></td>
+            <td bgcolor="#C5C5C5" valign="middle" width="1"></td>
+            <td width="7" valign="middle"></td>
+            <td valign="top">
+              <div class="summary-header">Functions:</div>
+              <div class="summary-list"><span class="function-name"><a href="#CanonicalPrint">CanonicalPrint</a></span>, <span class="function-name"><a href="#PrettyPrint">PrettyPrint</a></span>, <span class="function-name"><a href="#Print">Print</a></span></div>
+            </td>
+            <td width="7" valign="middle"></td>
+            <td bgcolor="#C5C5C5" valign="middle" width="1"></td>
+            <td width="7" valign="middle"></td>
+            <td valign="top">
+              <div class="summary-header">Globals:</div>
+              <div class="summary-list"><span class="global-name"><a href="#XMLNS_NAMESPACE">XMLNS_NAMESPACE</a></span>, <span class="global-name"><a href="#XML_NAMESPACE">XML_NAMESPACE</a></span></div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="section">
+      <h2>Classes</h2>
+      <dl class="classes">
+        <dt class="classdef"><a name="PrintVisitor"></a>class <span class="class-name">PrintVisitor</span></dt>
+        <dd class="classdesc">
+          <div class="abstract">Provides functions to recursively walk a DOM or Domlette object and
+generate SAX-like event calls for each node encountered. See the
+printer classes (XMLPrinter, HTMLPrinter, etc.) for the event
+handlers.</div>
+          <h3>Methods</h3>
+          <dl class="methods">
+            <dt class="methoddef"><a name="PrintVisitor-__init__"><span class="method-name">__init__</span></a>(<span class="argument-name">self</span>, <span class="argument-name">stream</span>, <span class="argument-name">encoding</span>, <span class="argument-name">nsHints</span><span class="argument-default">=None</span>, <span class="argument-name">isHtml</span><span class="argument-default">=False</span>, <span class="argument-name">indent</span><span class="argument-default">=False</span>, <span class="argument-name">canonical</span><span class="argument-default">=False</span>, <span class="argument-name">addedAttributes</span><span class="argument-default">=None</span>, <span class="argument-name">removedNsDecls</span><span class="argument-default">=None</span>)</dt>
+            <dd class="methoddesc">
+              <div class="abstract">Initializes an instance of the class, selecting the appropriate
+printer to use, depending on the isHtml and indent flags.
+nsHints, if given, is a dictionary of namespace mappings that
+help determine if namespace declarations need to be emitted when
+visiting the first Element node.</div>
+            </dd>
+            <dt class="methoddef"><a name="PrintVisitor-visit"><span class="method-name">visit</span></a>(<span class="argument-name">self</span>, <span class="argument-name">node</span>)</dt>
+            <dd class="methoddesc">
+              <div class="abstract">Starts walking the tree at the given node.</div>
+            </dd>
+            <dt class="methoddef"><a name="PrintVisitor-visitAttribute"><span class="method-name">visitAttribute</span></a>(<span class="argument-name">self</span>, <span class="argument-name">node</span>)</dt>
+            <dd class="methoddesc">
+              <div class="abstract">Called when an Attribute node is encountered. Generates an
+attribute event for the printer.</div>
+            </dd>
+            <dt class="methoddef"><a name="PrintVisitor-visitCDATASection"><span class="method-name">visitCDATASection</span></a>(<span class="argument-name">self</span>, <span class="argument-name">node</span>)</dt>
+            <dd class="methoddesc">
+              <div class="abstract">Called when a CDATASection node is encountered. Generates a
+cdataSection event for the printer.</div>
+            </dd>
+            <dt class="methoddef"><a name="PrintVisitor-visitComment"><span class="method-name">visitComment</span></a>(<span class="argument-name">self</span>, <span class="argument-name">node</span>)</dt>
+            <dd class="methoddesc">
+              <div class="abstract">Called when a Comment node is encountered. Generates a comment
+event for the printer.</div>
+            </dd>
+            <dt class="methoddef"><a name="PrintVisitor-visitDocument"><span class="method-name">visitDocument</span></a>(<span class="argument-name">self</span>, <span class="argument-name">node</span>)</dt>
+            <dd class="methoddesc">
+              <div class="abstract">Called when a Document node is encountered. Just proceeds to the
+associated DocumentType node, if any, and then to the node's
+children.</div>
+            </dd>
+            <dt class="methoddef"><a name="PrintVisitor-visitDocumentFragment"><span class="method-name">visitDocumentFragment</span></a>(<span class="argument-name">self</span>, <span class="argument-name">node</span>)</dt>
+            <dd class="methoddesc">
+              <div class="abstract">Called when a DocumentFragment node is encountered. Just
+proceeds to the node's children.</div>
+            </dd>
+            <dt class="methoddef"><a name="PrintVisitor-visitDocumentType"><span class="method-name">visitDocumentType</span></a>(<span class="argument-name">self</span>, <span class="argument-name">node</span>)</dt>
+            <dd class="methoddesc">
+              <div class="abstract">Called when a DocumentType node is encountered. Generates a
+doctype event for the printer.</div>
+            </dd>
+            <dt class="methoddef"><a name="PrintVisitor-visitElement"><span class="method-name">visitElement</span></a>(<span class="argument-name">self</span>, <span class="argument-name">node</span>)</dt>
+            <dd class="methoddesc">
+              <div class="abstract">Called when an Element node is encountered. Generates for the
+printer a startElement event, events for the node's children
+(including attributes), and an endElement event.</div>
+            </dd>
+            <dt class="methoddef"><a name="PrintVisitor-visitNotImplemented"><span class="method-name">visitNotImplemented</span></a>(<span class="argument-name">self</span>, <span class="argument-name">node</span>)</dt>
+            <dd class="methoddesc">
+              <div class="abstract">Called when an known but unsupported type of node is
+encountered, always raising a NotImplementedError exception. The
+unsupported node types are those that require DTD subset
+support: entity nodes, entity reference nodes, and notation
+nodes.</div>
+            </dd>
+            <dt class="methoddef"><a name="PrintVisitor-visitProcessingInstruction"><span class="method-name">visitProcessingInstruction</span></a>(<span class="argument-name">self</span>, <span class="argument-name">node</span>)</dt>
+            <dd class="methoddesc">
+              <div class="abstract">Called when a ProcessingInstruction node is encountered.
+Generates a processingInstruction event for the printer.</div>
+            </dd>
+            <dt class="methoddef"><a name="PrintVisitor-visitText"><span class="method-name">visitText</span></a>(<span class="argument-name">self</span>, <span class="argument-name">node</span>)</dt>
+            <dd class="methoddesc">
+              <div class="abstract">Called when a Text node is encountered. Generates a text event
+for the printer.</div>
+            </dd>
+          </dl>
+        </dd>
+      </dl>
+    </div>
+    <div class="section">
+      <h2>Functions</h2>
+      <dl class="functions">
+        <dt class="functiondef"><a name="CanonicalPrint"><span class="function-name">CanonicalPrint</span></a>(<span class="argument-name">root</span>, <span class="argument-name">stream</span><span class="argument-default">=&lt;open file '&lt;stdout&gt;', mode 'w' at 0xb7da7068&gt;</span>, <span class="argument-name">exclusive</span><span class="argument-default">=False</span>, <span class="argument-name">inclusivePrefixes</span><span class="argument-default">=None</span>)</dt>
+        <dd class="functiondesc">
+          <div class="abstract">Given a Node instance assumed to be the root of an XML DOM or Domlette
+tree, this function serializes the document to the given stream or
+stdout, using c14n serialization, according to
+http://www.w3.org/TR/xml-c14n (the default) or
+http://www.w3.org/TR/xml-exc-c14n/
+This function does nothing if root is not a Node.</div>
+          <pre class="description">exclusive - if true, apply exclusive c14n according to
+    http://www.w3.org/TR/xml-exc-c14n/
+inclusivePrefixes - if exclusive is True, use this as a list of namespaces
+    representing the "InclusiveNamespacesPrefixList" list in exclusive c14n
+
+Please import this from Ft.Xml.Domlette
+rather than directly from Ft.Xml.Lib.</pre>
+        </dd>
+        <dt class="functiondef"><a name="PrettyPrint"><span class="function-name">PrettyPrint</span></a>(<span class="argument-name">root</span>, <span class="argument-name">stream</span><span class="argument-default">=&lt;open file '&lt;stdout&gt;', mode 'w' at 0xb7da7068&gt;</span>, <span class="argument-name">encoding</span><span class="argument-default">='UTF-8'</span>, <span class="argument-name">asHtml</span><span class="argument-default">=None</span>)</dt>
+        <dd class="functiondesc">
+          <div class="abstract">Given a Node instance assumed to be the root of a DOM or Domlette
+tree, this function serializes the document to the given stream or
+stdout, using the given encoding (UTF-8 is the default). Extra
+whitespace is added to the output for visual formatting. The asHtml
+flag can be used to force HTML-style serialization of an XML DOM.
+Otherwise, the DOM type (HTML or XML) is automatically determined.
+This function does nothing if root is not a Node.</div>
+          <pre class="description">Please import this from Ft.Xml.Domlette
+rather than directly from Ft.Xml.Lib.</pre>
+        </dd>
+        <dt class="functiondef"><a name="Print"><span class="function-name">Print</span></a>(<span class="argument-name">root</span>, <span class="argument-name">stream</span><span class="argument-default">=&lt;open file '&lt;stdout&gt;', mode 'w' at 0xb7da7068&gt;</span>, <span class="argument-name">encoding</span><span class="argument-default">='UTF-8'</span>, <span class="argument-name">asHtml</span><span class="argument-default">=None</span>)</dt>
+        <dd class="functiondesc">
+          <div class="abstract">Given a Node instance assumed to be the root of a DOM or Domlette
+tree, this function serializes the document to the given stream or
+stdout, using the given encoding (UTF-8 is the default). The asHtml
+flag can be used to force HTML-style serialization of an XML DOM.
+Otherwise, the DOM type (HTML or XML) is automatically determined.
+This function does nothing if root is not a Node.</div>
+          <pre class="description">It is preferable that users import this from Ft.Xml.Domlette
+rather than directly from Ft.Xml.Lib.</pre>
+        </dd>
+      </dl>
+    </div>
+    <div class="section">
+      <h2>Globals</h2>
+      <dl class="globals">
+        <dt class="globaldef"><a name="XMLNS_NAMESPACE"><span class="global-name">XMLNS_NAMESPACE</span></a> = u'http://www.w3.org/2000/xmlns/'</dt>
+        <dd class="globaldesc"></dd>
+        <dt class="globaldef"><a name="XML_NAMESPACE"><span class="global-name">XML_NAMESPACE</span></a> = u'http://www.w3.org/XML/1998/namespace'</dt>
+        <dd class="globaldesc"></dd>
+      </dl>
+    </div>
+    <div class="universal-footer">Last modified on 2006-10-16 13:13:51</div>
+  </body>
+</html>

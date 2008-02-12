@@ -1,0 +1,271 @@
+###########################
+#  Stage_astrometry 
+############################
+
+# astrometry refinement
+ast.log=astrometry_${ccd.num}.log
+ast.exec=${bin.path}/astrometry
+ast.command_g=${scigout.list} -binpath ${bin.path} -etcpath ${etc.path} -weight_threshold 0.0 -detect_threshold 2.5 -saturation -crossid_radius 2.0
+ast.command_r=${scirout.list} -binpath ${bin.path} -etcpath ${etc.path} -weight_threshold 0.0 -detect_threshold 2.5 -saturation -crossid_radius 2.0
+ast.command_i=${sciiout.list} -binpath ${bin.path} -etcpath ${etc.path} -weight_threshold 0.0 -detect_threshold 2.5 -saturation -crossid_radius 2.0
+ast.command_z=${scizout.list} -binpath ${bin.path} -etcpath ${etc.path} -weight_threshold 0.0 -detect_threshold 2.5 -saturation -crossid_radius 2.0
+
+
+############################
+#  Stage_catforscamp 
+############################
+
+# catalogue for scamp 
+catforscamp.log=catforscamp_${ccd.num}.log
+catforscamp.exec=${bin.path}/runSExtractor 
+catforscamp.command_g=${scigout.list} ${bin.path} ${etc.path} -scamp -weight_threshold 0.0 -detect_threshold 2.5 -saturation
+catforscamp.command_r=${scirout.list} ${bin.path} ${etc.path} -scamp -weight_threshold 0.0 -detect_threshold 2.5 -saturation
+catforscamp.command_i=${sciiout.list} ${bin.path} ${etc.path} -scamp -weight_threshold 0.0 -detect_threshold 2.5 -saturation
+catforscamp.command_z=${scizout.list} ${bin.path} ${etc.path} -scamp -weight_threshold 0.0 -detect_threshold 2.5 -saturation
+
+############################
+#  Stage_copybpm
+############################
+
+# copybpm
+
+bpm.dir=${bpmlocation}
+bpm.name=bpm_${ccd.num}.fits
+bpm.fits.name=${local.calib}/${calib.bpm}/bpm_${ccd.num}.fits
+
+############################
+#  Stage_done
+############################
+
+done.log=done_${ccd.num}.log
+
+############################
+#  Stage_fileingest and Stage_fileingest_scamp
+############################
+
+# ingestion part (Files Table)
+
+input.list=${local.out}/AllFits_${ccd.num}.list
+output.dat=${local.out}/Files_indat_${ccd.num}.txt
+
+fitspattern1=*_${ccd.num}.*.fits
+fitspattern0=*_${ccd.num}_cat.fits
+
+inputscamp.list=${local.out}/AllFits_scamp_${ccd.num}.list
+outputscamp.dat=${local.out}/Files_indat_scamp_${ccd.num}.txt
+
+fitspattern_scamp=*_${ccd.num}_im.fits
+
+files.table=Files
+files.index=files
+
+imageingest.exec=${bin.path}/image_ingest
+imageingest.args=${input.list} ${output.dat} -ccd ${ccd.num} 
+imageingest.log=${local.out}/image_ingest_${ccd.num}.log
+
+imageingest_scamp.args=${inputscamp.list} ${outputscamp.dat} -ccd ${ccd.num} 
+imageingest_scamp.log=${local.out}/image_ingest_scamp_${ccd.num}.log
+
+param1=pipeline
+param2=dc01user
+
+# sqlplus calling
+sql.exec=${oracle.path}/sqlplus 
+sql.command=-S ${param1}/${param2}@charon.ncsa.uiuc.edu:1521/DES @ $R{sql.script}
+
+# sqlldr input/output
+file.control.file=${nite.dir}/${log.dir}/Files.ctr
+file.sqlldr.log=${nite.dir}/${log.dir}/Files_sqlldr_${ccd.num}.log
+file.sqlldr.bad=${nite.dir}/${log.dir}/Files_sqlldr_${ccd.num}.bad
+
+
+# sqlldr calling
+sqlldr.exec=${oracle.path}/sqlldr
+sqlldr.command=${param1}/${param2}@charon.ncsa.uiuc.edu:1521/DES readsize=20000000 bindsize=20000000 rows=10000 control=$R{control.file} data=$R{ingest.dat} log=$R{sqlldr.log} bad=$R{sqlldr.bad}
+
+############################
+#  Stage_fileingest and Stage_fileingest_scamp
+############################
+
+# ingestion part (Files Table)
+
+input.list=${local.out}/AllFits_${ccd.num}.list
+output.dat=${local.out}/Files_indat_${ccd.num}.txt
+
+fitspattern1=*_${ccd.num}.*.fits
+fitspattern0=*_${ccd.num}_cat.fits
+
+inputscamp.list=${local.out}/AllFits_scamp_${ccd.num}.list
+outputscamp.dat=${local.out}/Files_indat_scamp_${ccd.num}.txt
+
+fitspattern_scamp=*_${ccd.num}_im.fits
+
+files.table=Files
+files.index=files
+
+imageingest.exec=${bin.path}/image_ingest
+imageingest.args=${input.list} ${output.dat} -ccd ${ccd.num} 
+imageingest.log=${local.out}/image_ingest_${ccd.num}.log
+
+imageingest_scamp.args=${inputscamp.list} ${outputscamp.dat} -ccd ${ccd.num} 
+imageingest_scamp.log=${local.out}/image_ingest_scamp_${ccd.num}.log
+
+param1=pipeline
+param2=dc01user
+
+# sqlplus calling
+sql.exec=${oracle.path}/sqlplus 
+sql.command=-S ${param1}/${param2}@charon.ncsa.uiuc.edu:1521/DES @ $R{sql.script}
+
+# sqlldr input/output
+file.control.file=${nite.dir}/${log.dir}/Files.ctr
+file.sqlldr.log=${nite.dir}/${log.dir}/Files_sqlldr_${ccd.num}.log
+file.sqlldr.bad=${nite.dir}/${log.dir}/Files_sqlldr_${ccd.num}.bad
+
+
+# sqlldr calling
+sqlldr.exec=${oracle.path}/sqlldr
+sqlldr.command=${param1}/${param2}@charon.ncsa.uiuc.edu:1521/DES readsize=20000000 bindsize=20000000 rows=10000 control=$R{control.file} data=$R{ingest.dat} log=$R{sqlldr.log} bad=$R{sqlldr.bad}
+
+
+############################
+#  Stage_flatcombine
+############################
+
+# create flat
+flatcombine.log=flatcombine_${ccd.num}.log
+flatcombine.exec=${bin.path}/flatcombine
+#flatcombine.args=$R{alist} $R{afile} -median -bias $R{abias} -bpm $R{abpm} -variance 
+flatcombine.args=$R{alist} $R{afile} -median -bias $R{abias} -bpm $R{abpm} -variance 
+flatg.fits.path=${local.calib}/${calib.flatg}
+flatg.fits.name=flat_g_${ccd.num}.fits
+flatr.fits.path=${local.calib}/${calib.flatr}
+flatr.fits.name=flat_r_${ccd.num}.fits
+flati.fits.path=${local.calib}/${calib.flati}
+flati.fits.name=flat_i_${ccd.num}.fits
+flatz.fits.path=${local.calib}/${calib.flatz}
+flatz.fits.name=flat_z_${ccd.num}.fits
+############################
+#  Stage_imcorrect
+############################
+
+# running imcorrect
+imcorr.log=imcorrect_${ccd.num}.log
+imcorr.exec=${bin.path}/imcorrect
+imcorr.scig=${scig.list} -output ${scigout.list} -overscan -bias ${bias.fits.path}/${bias.fits.name} -flatten ${flatg.fits.path}/${flatg.fits.name} -bpm ${bpm.fits.name} -variance -interpolate_col 2.0
+imcorr.scir=${scir.list} -output ${scirout.list} -overscan -bias ${bias.fits.path}/${bias.fits.name} -flatten ${flatr.fits.path}/${flatr.fits.name} -bpm ${bpm.fits.name} -variance -interpolate_col 2.0
+imcorr.scii=${scii.list} -output ${sciiout.list} -overscan -bias ${bias.fits.path}/${bias.fits.name} -flatten ${flati.fits.path}/${flati.fits.name} -bpm ${bpm.fits.name} -variance -interpolate_col 2.0
+imcorr.sciz=${sciz.list} -output ${scizout.list} -overscan -bias ${bias.fits.path}/${bias.fits.name} -flatten ${flatz.fits.path}/${flatz.fits.name} -bpm ${bpm.fits.name} -variance -interpolate_col 2.0
+
+############################
+#  Stage_makedirs 
+############################
+
+# make subdirs in raw, g, r, i and z from the list
+
+makedirs.log=makedirs_${ccd.num}.log
+makedirs.exec=${bin.path}/makedirs
+
+makedirs.outscig=log/scienceout_g_${ccd.num}.list
+makedirs.outscir=log/scienceout_r_${ccd.num}.list
+makedirs.outscii=log/scienceout_i_${ccd.num}.list
+makedirs.outsciz=log/scienceout_z_${ccd.num}.list
+############################
+#  Stage_moveraw
+############################
+
+# move raw data
+log.name=copybpm_${ccd.num}.log
+
+moveraw.exec=${bin.path}/getfitsfromlist
+moveraw.command1=$R{listname} 
+moveraw.command2=$R{listname} -num $R{i} 
+
+# --- no common properties for Stage_pubentry ---
+
+# --- no common properties for Stage_pubexit ---
+
+############################
+#  Stage_objectingest
+############################
+
+inputcat.list=${local.out}/AllCat_${ccd.num}.list
+
+catpattern1=*_${ccd.num}.*_cat.fits
+catpattern0=*_${ccd.num}_cat.fits
+
+object.table=objects
+object.index=objects
+
+objs.control.file=${etc.path}/Objects.ctr
+#objs.control.file=${nite.dir}/${log.dir}/Objects.ctr
+objs.data.file=${nite.dir}/${log.dir}/Objects_${ccd.num}.data
+
+catingest.exec=${bin.path}/runCatalog_ingest
+catingest.args=${inputcat.list} -bin ${bin.path} -sqlldr_ctrl ${objs.control.file} -sqlldr_data ${objs.data.file} -sqlldr_multiingest 12 -ccd ${ccd.num}
+catingest.log=${local.out}/catalog_ingest_${ccd.num}.log
+ 
+############################
+#  Stage_remap
+############################
+
+# remap using swarp
+remap.log=remap_${ccd.num}.log
+remap.exec=${bin.path}/runSWarp_remap
+remap.args=$R{input.list} -nite ${nite} -band $R{band} -project ${project} -binpath ${bin.path} -etcpath ${etc.path} -imagepath ${nite.dir}  -outlist $R{output.list}
+
+############################
+#  Stage_rmraw
+############################
+
+# clean up raw
+cleanup.exec=/bin/rm
+cleanup.command=-r ${local.raw}
+############################
+#  Stage_runadaptive
+############################
+
+# adaptive moment
+adap.log=adaptive_${ccd.num}.log
+adaptive.exec=${bin.path}/runadaptive
+adaptive.command_g=${scigout.list} ${bin.path}
+adaptive.command_r=${scirout.list} ${bin.path}
+adaptive.command_i=${sciiout.list} ${bin.path}
+adaptive.command_z=${scizout.list} ${bin.path}
+
+checkfile=*/*adaptive.fits
+
+############################
+#  Stage_runcat
+############################
+
+# cataloguer
+cat.log=cataloguer_${ccd.num}.log
+cat.exec=${bin.path}/runSExtractor
+cat.command_g=${scigout.list} ${bin.path} ${etc.path} -nite ${nite} -band g -project ${project} -remap -no_bpm
+cat.command_r=${scirout.list} ${bin.path} ${etc.path} -nite ${nite} -band r -project ${project} -remap -no_bpm
+cat.command_i=${sciiout.list} ${bin.path} ${etc.path} -nite ${nite} -band i -project ${project} -remap -no_bpm
+cat.command_z=${scizout.list} ${bin.path} ${etc.path} -nite ${nite} -band z -project ${project} -remap -no_bpm
+
+############################
+#  Stage_runfitscombine
+############################
+
+# running fitscombine
+fits.log=fitscombine_${ccd.num}.log
+fits.exec=${bin.path}/runFitscombine
+fits.command_g=${scigout.list} ${local.out}/remap_g_${ccd.num}.list -bin ${bin.path} -cleanup
+fits.command_r=${scirout.list} ${local.out}/remap_r_${ccd.num}.list -bin ${bin.path} -cleanup
+fits.command_i=${sciiout.list} ${local.out}/remap_i_${ccd.num}.list -bin ${bin.path} -cleanup
+fits.command_z=${scizout.list} ${local.out}/remap_z_${ccd.num}.list -bin ${bin.path} -cleanup
+
+############################
+#  Stage_zerocombine
+############################
+
+# create bias
+zerocombine.log=zerocombine_${ccd.num}.log
+zerocombine.exec=${bin.path}/zerocombine
+zerocombine.args=$R{alist} $R{afile} -median
+bias.fits.path=${local.calib}/${calib.bias}
+bias.fits.name=bias_${ccd.num}.fits

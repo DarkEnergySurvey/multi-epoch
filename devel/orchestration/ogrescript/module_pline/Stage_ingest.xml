@@ -1,0 +1,400 @@
+  <target name="Stage_ingest" description="ingest to the database">
+    <esequence>
+
+        <edeclare name="content_begin"  string="test begin"/>
+        <edeclare name="content_end"    string="test end"/>
+
+        <econdblock type="else-if">
+          <econdtask>
+            <eeval>
+             <statement>
+                <ecompare string="${platform}">
+                   <predicate string="TG" comparator="EQUALS"/>
+                </ecompare>
+             </statement>
+            </eeval>
+              <esequence>
+                <eassign name="content_begin"  string="Begin Stage_ingest for ccd ${ccd.num} data on $G{host} for nite ${nite}"/>
+                <eassign name="content_end"    string="End Stage_ingest for ccd ${ccd.num} data on $G{host} for nite ${nite}"/>
+              </esequence>
+          </econdtask>
+              <esequence>
+                <eassign name="content_begin"  string="Begin Stage_ingest for ccd ${ccd.num} for nite ${nite}"/>
+                <eassign name="content_end"    string="End Stage_ingest for ccd ${ccd.num} for nite ${nite}"/>
+              </esequence>
+        </econdblock>
+
+            <publish>
+              <event ensembleid="${ensemble.id}" workflowid="${jid}"
+                   nodeid="$R{content_begin}" currentState="1">
+                   <property name="message" value="$R{content_begin}"/>
+              </event>
+            </publish>
+
+      <print line=" -- Begin image_ingest for CCD ${ccd.num}"/>
+
+      <write path="maximageid.sql" text="true"
+           errorProperty="failed" rethrow="false">
+         <segment string="SET ECHO OFF NEWP 0 SPA 1 PAGES 0 FEED OFF HEAD OFF TRIMS ON;" lineBreaks="1" />
+         <segment string="SPOOL maximageid.txt;" lineBreaks="1" />
+         <segment string="select max(imageid) from ${files.table};" lineBreaks="1" />
+         <segment string="SPOOL off;" lineBreaks="1" />
+         <segment string="exit" lineBreaks="1" />
+      </write>
+
+      <edeclare name="sql.script" string="maximageid.sql"/>
+
+      <rtexec inheritedEnv="true" execDir="${user.dir}"
+               args="${sql.exec} ${sql.command}" quiet="true">
+      </rtexec>
+
+      <edeclare globalname="maxID"/>
+      <read path="maximageid.txt" lines="true"/>
+      <ereturn name="maxID" get="string"/>
+
+      <print line=" -- maximum imageID for ${files.table} table before ingestion is $G{maxID}"/>
+      <print line="   "/>
+
+      <delete file="${user.dir}/maximageid.sql"/>
+      <delete file="${user.dir}/maximageid.txt"/>
+    </esequence>
+
+    <esequence>
+
+      <edeclare name="list.dir" string="${local.out}"/>
+      <property name="source" value="file://${job.id}"/>
+
+      <delete file="${input.list}" quiet="true"/>
+      <delete file="${inputcat.list}" quiet="true"/>
+      <delete file="${output.dat}" quiet="true"/>
+      <delete file="${output.cat}" quiet="true"/>
+
+      <edeclare globalname="imageid" string="$G{maxID}"/>
+
+      <eloop counterName="i">
+          <ecounter>
+               <expression infix="$R{i} &lt; 4"/>
+          </ecounter>
+
+        <econdblock type="else-if">
+          <econdtask>
+            <eeval>
+               <statement>
+                 <ecompare long="0">
+                       <predicate long="$R{i}" comparator="EQUALS"/>
+                   </ecompare>
+                 </statement>
+            </eeval>
+                <edeclare globalname="band" string="g"/>
+          </econdtask>
+        </econdblock>
+
+        <econdblock type="else-if">
+          <econdtask>
+            <eeval>
+               <statement>
+                 <ecompare long="1">
+                       <predicate long="$R{i}" comparator="EQUALS"/>
+                   </ecompare>
+                 </statement>
+            </eeval>
+                <edeclare globalname="band" string="r"/>
+          </econdtask>
+        </econdblock>
+
+        <econdblock type="else-if">
+          <econdtask>
+            <eeval>
+               <statement>
+                 <ecompare long="2">
+                       <predicate long="$R{i}" comparator="EQUALS"/>
+                   </ecompare>
+                 </statement>
+            </eeval>
+                <edeclare globalname="band" string="i"/>
+          </econdtask>
+        </econdblock>
+
+        <econdblock type="else-if">
+          <econdtask>
+            <eeval>
+               <statement>
+                 <ecompare long="3">
+                       <predicate long="$R{i}" comparator="EQUALS"/>
+                   </ecompare>
+                 </statement>
+            </eeval>
+                <edeclare globalname="band" string="z"/>
+          </econdtask>
+        </econdblock>
+
+        <print line=" -- doing $G{band}-band ..."/>
+
+        <edeclare name="source1" string="data/${nite}/$G{band}/"/>
+
+
+        <edeclare globalName="sourcePattern2">
+          <uripattern baseUri="${source}/$R{source1}">
+              <nestedelement include="*"/>
+          </uripattern>
+        </edeclare>
+        <edeclare name="dirlist" null="true"/>
+        <urilist fullScan="true">
+           <nestedelement pattern="$G{sourcePattern2}"/>
+             <configuration>
+                 <attribute name="retainFiles"       value="false"/>
+                 <attribute name="retainDirectories" value="true"/>
+                 <attribute name="getNames" value="true"/>
+             </configuration>
+        </urilist>
+        <ereturn name="dirlist" get="simpleResult"/>
+
+        <eloop counterName="w">
+          <ecounter>
+               <expression infix="$R{w} &lt; $R{dirlist$I{L}}"/>
+          </ecounter>
+
+           <edeclare globalName="sourcePattern1">
+             <uripattern baseUri="${source}/$R{source1}/$R{dirlist$I{$R{w}}}">
+               <nestedelement include="${imgpattern}"/>
+             </uripattern>
+           </edeclare>
+           <edeclare name="filelist" null="true"/>
+           <urilist fullScan="true">
+             <nestedelement pattern="$G{sourcePattern1}"/>
+               <configuration>
+                 <attribute name="retainFiles"       value="true"/>
+                 <attribute name="retainDirectories" value="false"/>
+                 <attribute name="getNames" value="true"/>
+               </configuration>
+           </urilist>
+           <ereturn name="filelist" get="simpleResult"/>
+
+           <edeclare globalName="sourcePattern3">
+             <uripattern baseUri="${source}/$R{source1}/$R{dirlist$I{$R{w}}}">
+               <nestedelement include="${catpattern}"/>
+             </uripattern>
+           </edeclare>
+           <edeclare name="catlist" null="true"/>
+           <urilist fullScan="true">
+             <nestedelement pattern="$G{sourcePattern3}"/>
+               <configuration>
+                 <attribute name="retainFiles"       value="true"/>
+                 <attribute name="retainDirectories" value="false"/>
+                 <attribute name="getNames" value="true"/>
+               </configuration>
+           </urilist>
+           <ereturn name="catlist" get="simpleResult"/>
+
+           <econdblock type="else-if">
+             <econdtask>
+              <eeval>
+               <statement>
+                 <ecompare long="0">
+                       <predicate long="$R{filelist$I{L}}" comparator="LT"/>
+                   </ecompare>
+                 </statement>
+              </eeval>
+                <esequence>
+                   <eloop counterName="v">
+                     <ecounter>
+                       <expression infix="$R{v} &lt; $R{filelist$I{L}}"/>
+                     </ecounter>
+
+                     <edeclare name="imageid1" long="$E{ $G{imageid} + 1 }"/>
+
+                     <print line=" * Found $R{source1}$R{dirlist$I{$R{w}}}/$R{filelist$I{$R{v}}}"/>
+
+                     <write path="${input.list}" text="true"
+                        errorProperty="failed" rethrow="false" append="true">
+                       <segment string="${jid}/$R{source1}$R{dirlist$I{$R{w}}}/$R{filelist$I{$R{v}}}" lineBreaks="1" />
+                     </write>
+
+                     <write path="${inputcat.list}" text="true"
+                        errorProperty="failed" rethrow="false" append="true">
+                       <segment string="${jid}/$R{source1}$R{dirlist$I{$R{w}}}/$R{catlist$I{$R{v}}}" lineBreaks="1" />
+                     </write>
+
+                     <rtexec inheritedEnv="false" execDir="${base.dir}"
+                         args="${ingestformat.exec} ${ingestformat.args}" quiet="true">
+                       <outMonitor file="${output.cat}"/>
+                     </rtexec>
+
+                     <print line=" * Ingesting ${output.cat} into ${object.table} table."/>
+                     <delete file="${objs.control.file}" quiet="true"/>
+                     <edeclare name="ingest.dat" string="${output.cat}"/>
+                     <edeclare name="control.file" string="${objs.control.file}"/>
+                     <edeclare name="sqlldr.log" string="${objs.sqlldr.log}"/>
+                     <edeclare name="sqlldr.bad" string="${objs.sqlldr.bad}"/>
+
+                     <write path="$R{control.file}" text="true"
+                        errorProperty="failed" rethrow="false">
+                       <segment string="Load data" lineBreaks="1" />
+                       <segment string="append into table ${object.table}" lineBreaks="1" />
+                       <segment string="FIELDS TERMINATED BY '|'" lineBreaks="1" />
+                       <segment string="trailing nullcols(" lineBreaks="1" />
+                       <segment string="EQUINOX   decimal external," lineBreaks="1" />
+                       <segment string="BAND     char," lineBreaks="1" />
+                       <segment string="IMAGEID  integer external," lineBreaks="1" />
+                       <segment string="ZEROPOINT  decimal external," lineBreaks="1" />
+                       <segment string="ERRZEROPOINT  decimal external," lineBreaks="1" />
+                       <segment string="OBJECT_NUMBER   integer external," lineBreaks="1" />
+                       <segment string="MAG_AUTO   decimal external," lineBreaks="1" />
+                       <segment string="MAGERR_AUTO decimal external," lineBreaks="1" />
+                       <segment string="MAG_APER_1   decimal external," lineBreaks="1" />
+                       <segment string="MAGERR_APER_1  decimal external," lineBreaks="1" />
+                       <segment string="MAG_APER_2   decimal external," lineBreaks="1" />
+                       <segment string="MAGERR_APER_2  decimal external," lineBreaks="1" />
+                       <segment string="MAG_APER_3   decimal external," lineBreaks="1" />
+                       <segment string="MAGERR_APER_3  decimal external," lineBreaks="1" />
+                       <segment string="MAG_APER_4   decimal external," lineBreaks="1" />
+                       <segment string="MAGERR_APER_4  decimal external," lineBreaks="1" />
+                       <segment string="MAG_APER_5   decimal external," lineBreaks="1" />
+                       <segment string="MAGERR_APER_5  decimal external," lineBreaks="1" />
+                       <segment string="MAG_APER_6   decimal external," lineBreaks="1" />
+                       <segment string="MAGERR_APER_6  decimal external," lineBreaks="1" />
+                       <segment string="ALPHA_J2000   decimal external," lineBreaks="1" />
+                       <segment string="DELTA_J2000   decimal external," lineBreaks="1" />
+                       <segment string="ALPHAPEAK_J2000   decimal external," lineBreaks="1" />
+                       <segment string="DELTAPEAK_J2000   decimal external," lineBreaks="1" />
+                       <segment string="X2_WORLD   decimal external," lineBreaks="1" />
+                       <segment string="ERRX2_WORLD   decimal external," lineBreaks="1" />
+                       <segment string="Y2_WORLD  decimal external," lineBreaks="1" />
+                       <segment string="ERRY2_WORLD   decimal external," lineBreaks="1" />
+                       <segment string="XY_WORLD   decimal external," lineBreaks="1" />
+                       <segment string="ERRXY_WORLD  decimal external," lineBreaks="1" />
+                       <segment string="THRESHOLD  decimal external," lineBreaks="1" />
+                       <segment string="X_IMAGE  decimal external," lineBreaks="1" />
+                       <segment string="Y_IMAGE   decimal external," lineBreaks="1" />
+                       <segment string="XMIN_IMAGE  integer external," lineBreaks="1" />
+                       <segment string="YMIN_IMAGE   integer external," lineBreaks="1" />
+                       <segment string="XMAX_IMAGE   integer  external," lineBreaks="1" />
+                       <segment string="YMAX_IMAGE   integer external," lineBreaks="1" />
+                       <segment string="X2_IMAGE   decimal external," lineBreaks="1" />
+                       <segment string="ERRX2_IMAGE  decimal external," lineBreaks="1" />
+                       <segment string="Y2_IMAGE  decimal external," lineBreaks="1" />
+                       <segment string="ERRY2_IMAGE  decimal external," lineBreaks="1" />
+                       <segment string="XY_IMAGE  decimal external," lineBreaks="1" />
+                       <segment string="ERRXY_IMAGE  decimal external," lineBreaks="1" />
+                       <segment string="A_IMAGE   decimal external," lineBreaks="1" />
+                       <segment string="ERRA_IMAGE   decimal external," lineBreaks="1" />
+                       <segment string="B_IMAGE  decimal external," lineBreaks="1" />
+                       <segment string="ERRB_IMAGE   decimal external," lineBreaks="1" />
+                       <segment string="THETA_IMAGE  decimal external," lineBreaks="1" />
+                       <segment string="ERRTHETA_IMAGE  decimal external," lineBreaks="1" />
+                       <segment string="ELLIPTICITY   decimal external," lineBreaks="1" />
+                       <segment string="CLASS_STAR   decimal external," lineBreaks="1" />
+                       <segment string="FLAGS   integer external terminated by whitespace," lineBreaks="1" />
+                       <segment string="OBJECT_ID  &quot;objects_seq.nextval&quot;" lineBreaks="1" />
+                       <segment string="HTMID    integer &quot;fEqToHtm(:ALPHA_J2000,:DELTA_J2000)&quot;," lineBreaks="1" />
+                       <segment string="CX       decimal external &quot;fEqToX(:ALPHA_J2000, :DELTA_J2000)&quot;," lineBreaks="1" />
+                       <segment string="CY       decimal external &quot;fEqToY(:ALPHA_J2000, :DELTA_J2000)&quot;," lineBreaks="1" />
+                       <segment string="CZ       decimal external &quot;fEqToZ(:ALPHA_J2000, :DELTA_J2000)&quot;)" lineBreaks="1" />
+                     </write>
+
+                     <rtexec inheritedEnv="false" execDir="${user.dir}"
+                         args="${sqlldr.exec} ${sqlldr.command}" quiet="true">
+                     </rtexec>
+
+                     <delete file="$R{ingest.dat}" quiet="true"/>
+
+                     <edeclare globalname="imageid" long="$E{ $R{imageid1}  }"/>
+                   </eloop>
+                </esequence>
+             </econdtask>
+           </econdblock>
+
+        </eloop>
+       </eloop>
+      </esequence>
+
+      <esequence>
+      <print line=" "/>
+      <print line=" -- ingesting ${output.dat} into ${files.table} table."/>
+
+      <rtexec inheritedEnv="false" execDir="${base.dir}"
+                args="${imageingest.exec} ${imageingest.args}" quiet="true">
+            <outMonitor file="${imageingest.log}"/>
+      </rtexec>
+
+      <edeclare name="ingest.dat" string="${output.dat}"/>
+      <edeclare name="control.file" string="${file.control.file}"/>
+      <edeclare name="sqlldr.log" string="${file.sqlldr.log}"/>
+      <edeclare name="sqlldr.bad" string="${file.sqlldr.bad}"/>
+
+       <write path="$R{control.file}" text="true"
+           errorProperty="failed" rethrow="false">
+         <segment string="Load data" lineBreaks="1" />
+         <segment string="append into table ${files.table}" lineBreaks="1" />
+         <segment string="FIELDS TERMINATED BY '|'" lineBreaks="1" />
+         <segment string="trailing nullcols(" lineBreaks="1" />
+         <segment string="RA        decimal external," lineBreaks="1" />
+         <segment string="DEC       decimal external," lineBreaks="1" />
+         <segment string="RADECEQ   decimal external," lineBreaks="1" />
+         <segment string="File_Date char ," lineBreaks="1" />
+         <segment string="GAIN_A    decimal external," lineBreaks="1" />
+         <segment string="RDNOISE_A decimal external," lineBreaks="1" />
+         <segment string="GAIN_B    decimal external," lineBreaks="1" />
+         <segment string="RDNOISE_B decimal external," lineBreaks="1" />
+         <segment string="Airmass   decimal external," lineBreaks="1" />
+         <segment string="Band      char ," lineBreaks="1" />
+         <segment string="ImageType char ," lineBreaks="1" />
+         <segment string="IMAGENAME char ," lineBreaks="1" />
+         <segment string="RUNIDDESC char ," lineBreaks="1" />
+         <segment string="TILENAME  char ," lineBreaks="1" />
+         <segment string="Nite      char ," lineBreaks="1" />
+         <segment string="CCD_Number integer external," lineBreaks="1" />
+         <segment string="exptime    decimal external," lineBreaks="1" />
+         <segment string="DARKTIME   decimal external," lineBreaks="1" />
+         <segment string="OBJECT      char ," lineBreaks="1" />
+         <segment string="OBSERVATORY char ," lineBreaks="1" />
+         <segment string="TELESCOPE   char ," lineBreaks="1" />
+         <segment string="HOURANGLE   char ," lineBreaks="1" />
+         <segment string="ZENITHD     char ," lineBreaks="1" />
+         <segment string="DETECTOR    char ," lineBreaks="1" />
+         <segment string="OBSERVER    char ," lineBreaks="1" />
+         <segment string="PROPID      char ," lineBreaks="1" />
+         <segment string="WEATHERDATE char ," lineBreaks="1" />
+         <segment string="WINDSPD     char ," lineBreaks="1" />
+         <segment string="WINDDIR     char ," lineBreaks="1" />
+         <segment string="AMBTEMP     char ," lineBreaks="1" />
+         <segment string="HUMIDITY    char ," lineBreaks="1" />
+         <segment string="PRESSURE    char ," lineBreaks="1" />
+         <segment string="DIMMSEEING  char ," lineBreaks="1" />
+         <segment string="EQUINOX   decimal external," lineBreaks="1" />
+         <segment string="WCSDIM    integer external," lineBreaks="1" />
+         <segment string="CTYPE1  char ," lineBreaks="1" />
+         <segment string="CTYPE2  char ," lineBreaks="1" />
+         <segment string="CRVAL1    decimal external," lineBreaks="1" />
+         <segment string="CRVAL2    decimal external," lineBreaks="1" />
+         <segment string="CRPIX1    decimal external," lineBreaks="1" />
+         <segment string="CRPIX2    decimal external," lineBreaks="1" />
+         <segment string="CD1_1    decimal external," lineBreaks="1" />
+         <segment string="CD2_1    decimal external," lineBreaks="1" />
+         <segment string="CD1_2    decimal external," lineBreaks="1" />
+         <segment string="CD2_2    decimal external," lineBreaks="1" />
+         <segment string="NPIX1    integer external," lineBreaks="1" />
+         <segment string="NPIX2    integer external," lineBreaks="1" />
+         <segment string="IMAGEID &quot;files_seq.nextval&quot;," lineBreaks="1" />
+         <segment string="HTMID    integer &quot;fEqToHtm(:RA,:DEC)&quot;," lineBreaks="1" />
+         <segment string="CX       decimal external &quot;fEqToX(:RA, :DEC)&quot;," lineBreaks="1" />
+         <segment string="CY       decimal external &quot;fEqToY(:RA, :DEC)&quot;," lineBreaks="1" />
+         <segment string="CZ       decimal external &quot;fEqToZ(:RA, :DEC)&quot;)" lineBreaks="1" />
+
+       </write>
+
+       <rtexec inheritedEnv="false" execDir="${user.dir}"
+                args="${sqlldr.exec} ${sqlldr.command}" quiet="true">
+       </rtexec>
+
+       <print line=" -- Stage_ingest done"/>
+
+         <publish>
+            <event ensembleid="${ensemble.id}" workflowid="${jid}"
+                   nodeid="$R{content_end}" currentState="1">
+                  <property name="message" value="$R{content_end}"/>
+            </event>
+         </publish>
+
+       </esequence>
+  </target>

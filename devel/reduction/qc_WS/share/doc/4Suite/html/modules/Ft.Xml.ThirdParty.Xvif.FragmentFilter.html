@@ -1,0 +1,445 @@
+<html>
+  <head>
+    <meta content="text/html; charset=iso-8859-1" http-equiv="Content-Type">
+    <title>4Suite API Documentation: Ft.Xml.ThirdParty.Xvif.FragmentFilter</title>
+    <link href="modules.css" type="text/css" rel="stylesheet">
+  </head>
+  <body>
+    <div class="universal-header"><span class="universal-header-prefix">&nbsp;&nbsp;&nbsp;</span>&nbsp;<span class="universal-header-prefix">&nbsp;&nbsp;</span>&nbsp;<span class="universal-header-prefix">&nbsp;</span>&nbsp;<a href="../index.html">4Suite<sup>&trade;</sup> API Documentation</a></div>
+    <h1><span class="glyph-arrow">&#9658;</span> Module <span class="this-name"><a href="Ft.html" title="Ft">Ft</a>.<a href="Ft.Xml.html" title="Ft.Xml">Xml</a>.<a href="Ft.Xml.ThirdParty.html" title="Ft.Xml.ThirdParty">ThirdParty</a>.<a href="Ft.Xml.ThirdParty.Xvif.html" title="Ft.Xml.ThirdParty.Xvif">Xvif</a>.FragmentFilter</span></h1>
+    <div class="abstract"># $Header: /var/local/cvsroot/4Suite/Ft/Xml/ThirdParty/Xvif/FragmentFilter.py,v 1.3 2004/10/12 22:59:14 uogbuji Exp $</div>
+    <div class="summary-section">
+      <table cellpadding="0" cellspacing="0">
+        <tbody>
+          <tr>
+            <td valign="top">
+              <div class="summary-header">Classes:</div>
+              <div class="summary-list"><span class="class-name"><a href="#ApplyTo">ApplyTo</a></span>, <span class="class-name"><a href="#Attribute">Attribute</a></span>, <span class="class-name"><a href="#Chars">Chars</a></span>, <span class="class-name"><a href="#Element">Element</a></span>, <span class="class-name"><a href="#FilterContext">FilterContext</a></span>, <span class="class-name"><a href="#FragmentFilter">FragmentFilter</a></span>, <span class="class-name"><a href="#FragmentRule">FragmentRule</a></span>, <span class="class-name"><a href="#FragmentRules">FragmentRules</a></span>, <span class="class-name"><a href="#Produce">Produce</a></span>, <span class="class-name"><a href="#PseudoMatch">PseudoMatch</a></span>, <span class="class-name"><a href="#RulesLoader">RulesLoader</a></span>, <span class="class-name"><a href="#Skip">Skip</a></span></div>
+            </td>
+            <td width="7" valign="middle"></td>
+            <td bgcolor="#C5C5C5" valign="middle" width="1"></td>
+            <td width="7" valign="middle"></td>
+            <td valign="top">
+              <div class="summary-header">Globals:</div>
+              <div class="summary-list"><span class="global-name"><a href="#InvalidFragmentException">InvalidFragmentException</a></span>, <span class="global-name"><a href="#InvalidRuleException">InvalidRuleException</a></span>, <span class="global-name"><a href="#XMLNS_NAMESPACE">XMLNS_NAMESPACE</a></span>, <span class="global-name"><a href="#ascii_letters">ascii_letters</a></span>, <span class="global-name"><a href="#ascii_lowercase">ascii_lowercase</a></span>, <span class="global-name"><a href="#ascii_uppercase">ascii_uppercase</a></span>, <span class="global-name"><a href="#digits">digits</a></span>, <span class="global-name"><a href="#hexdigits">hexdigits</a></span>, <span class="global-name"><a href="#letters">letters</a></span>, <span class="global-name"><a href="#lowercase">lowercase</a></span>, <span class="global-name"><a href="#octdigits">octdigits</a></span>, <span class="global-name"><a href="#printable">printable</a></span>, <span class="global-name"><a href="#punctuation">punctuation</a></span>, <span class="global-name"><a href="#uppercase">uppercase</a></span>, <span class="global-name"><a href="#whitespace">whitespace</a></span></div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="section">
+      <h2>Classes</h2>
+      <dl class="classes">
+        <dt class="classdef"><a name="ApplyTo"></a>class <span class="class-name">ApplyTo</span><span class="bases">(<span class="class-name"><span class="undocumented">Ft.Xml.ThirdParty.Xvif.FragmentFilter._Callback</span></span>)</span></dt>
+        <dd class="classdesc">
+          <div class="abstract">&lt;!ELEMENT applyTo (element | attribute +)&gt;</div>
+          <h3>Methods</h3>
+          <dl class="methods">
+            <dt class="methoddef"><a name="ApplyTo-__init__"><span class="method-name">__init__</span></a>(<span class="argument-name">self</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dd class="overrides"><b>Overrides: </b><span class="inherited-name"><a href="Ft.Xml.ThirdParty.Xvif.FragmentFilter.html#_Callback-__init__">__init__</a></span> from class <span class="class-name"><span class="undocumented">_Callback</span></span></dd>
+            <dt class="methoddef"><a name="ApplyTo-endElementNS"><span class="method-name">endElementNS</span></a>(<span class="argument-name">self</span>, <span class="argument-name">rules</span>, (<span class="argument-name">uri</span>, <span class="argument-name">name</span>), <span class="argument-name">qname</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dd class="overrides"><b>Overrides: </b><span class="inherited-name"><a href="Ft.Xml.ThirdParty.Xvif.FragmentFilter.html#_Callback-endElementNS">endElementNS</a></span> from class <span class="class-name"><span class="undocumented">_Callback</span></span></dd>
+            <dt class="methoddef"><a name="ApplyTo-match"><span class="method-name">match</span></a>(<span class="argument-name">self</span>, <span class="argument-name">uri</span>, <span class="argument-name">name</span>, <span class="argument-name">ruleClass</span>)</dt>
+            <dd class="methoddesc"></dd>
+          </dl>
+          <h3>Methods inherited from class <span class="undocumented">Ft.Xml.ThirdParty.Xvif.FragmentFilter._Callback</span></h3>
+          <dl class="methods">
+            <dt class="methoddef"><a name="_Callback-append"><span class="method-name">append</span></a>(<span class="argument-name">self</span>, <span class="argument-name">child</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dt class="methoddef"><a name="_Callback-characters"><span class="method-name">characters</span></a>(<span class="argument-name">self</span>, <span class="argument-name">content</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dt class="methoddef"><a name="_Callback-startElementNS"><span class="method-name">startElementNS</span></a>(<span class="argument-name">self</span>, <span class="argument-name">rulesLoader</span>, <span class="argument-name">name</span>, <span class="argument-name">qname</span>, <span class="argument-name">attrs</span>)</dt>
+            <dd class="methoddesc"></dd>
+          </dl>
+        </dd>
+        <dt class="classdef"><a name="Attribute"></a>class <span class="class-name">Attribute</span><span class="bases">(<span class="class-name"><span class="undocumented">Ft.Xml.ThirdParty.Xvif.FragmentFilter._Callback</span></span>)</span></dt>
+        <dd class="classdesc">
+          <div class="abstract">&lt;!ELEMENT attribute EMPTY&gt;
+&lt;!ATTLIST attribute
+      nsURI  CDATA ""
+    localName CDATA #REQUIRED
+    prefix CDATA #IMPLIED
+    content CDATA #IMPLIED
+&gt;</div>
+          <h3>Methods</h3>
+          <dl class="methods">
+            <dt class="methoddef"><a name="Attribute-__init__"><span class="method-name">__init__</span></a>(<span class="argument-name">self</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dd class="overrides"><b>Overrides: </b><span class="inherited-name"><a href="Ft.Xml.ThirdParty.Xvif.FragmentFilter.html#_Callback-__init__">__init__</a></span> from class <span class="class-name"><span class="undocumented">_Callback</span></span></dd>
+            <dt class="methoddef"><a name="Attribute-endElementNS"><span class="method-name">endElementNS</span></a>(<span class="argument-name">self</span>, <span class="argument-name">rules</span>, (<span class="argument-name">nsURI</span>, <span class="argument-name">localName</span>), <span class="argument-name">qName</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dd class="overrides"><b>Overrides: </b><span class="inherited-name"><a href="Ft.Xml.ThirdParty.Xvif.FragmentFilter.html#_Callback-endElementNS">endElementNS</a></span> from class <span class="class-name"><span class="undocumented">_Callback</span></span></dd>
+            <dt class="methoddef"><a name="Attribute-getProduceAttribute"><span class="method-name">getProduceAttribute</span></a>(<span class="argument-name">self</span>, <span class="argument-name">filter</span>, <span class="argument-name">content</span>, <span class="argument-name">attrs</span>, <span class="argument-name">brk</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dt class="methoddef"><a name="Attribute-produce"><span class="method-name">produce</span></a>(<span class="argument-name">self</span>, <span class="argument-name">filter</span>, <span class="argument-name">content</span>, <span class="argument-name">brk</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dt class="methoddef"><a name="Attribute-set_localName"><span class="method-name">set_localName</span></a>(<span class="argument-name">self</span>, <span class="argument-name">rules</span>, <span class="argument-name">value</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dt class="methoddef"><a name="Attribute-set_nsURI"><span class="method-name">set_nsURI</span></a>(<span class="argument-name">self</span>, <span class="argument-name">rules</span>, <span class="argument-name">value</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dt class="methoddef"><a name="Attribute-set_prefix"><span class="method-name">set_prefix</span></a>(<span class="argument-name">self</span>, <span class="argument-name">rules</span>, <span class="argument-name">value</span>)</dt>
+            <dd class="methoddesc"></dd>
+          </dl>
+          <h3>Methods inherited from class <span class="undocumented">Ft.Xml.ThirdParty.Xvif.FragmentFilter._Callback</span></h3>
+          <dl class="methods">
+            <dt class="methoddef"><a name="_Callback-append"><span class="method-name">append</span></a>(<span class="argument-name">self</span>, <span class="argument-name">child</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dt class="methoddef"><a name="_Callback-characters"><span class="method-name">characters</span></a>(<span class="argument-name">self</span>, <span class="argument-name">content</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dt class="methoddef"><a name="_Callback-startElementNS"><span class="method-name">startElementNS</span></a>(<span class="argument-name">self</span>, <span class="argument-name">rulesLoader</span>, <span class="argument-name">name</span>, <span class="argument-name">qname</span>, <span class="argument-name">attrs</span>)</dt>
+            <dd class="methoddesc"></dd>
+          </dl>
+        </dd>
+        <dt class="classdef"><a name="Chars"></a>class <span class="class-name">Chars</span><span class="bases">(<span class="class-name"><span class="undocumented">Ft.Xml.ThirdParty.Xvif.FragmentFilter._Callback</span></span>)</span></dt>
+        <dd class="classdesc">
+          <div class="abstract">&lt;!ELEMENT chars EMPTY&gt;
+&lt;!ATTLIST chars
+      before CDATA #IMPLIED
+    after CDATA #IMPLIED
+&gt;</div>
+          <h3>Methods</h3>
+          <dl class="methods">
+            <dt class="methoddef"><a name="Chars-__init__"><span class="method-name">__init__</span></a>(<span class="argument-name">self</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dd class="overrides"><b>Overrides: </b><span class="inherited-name"><a href="Ft.Xml.ThirdParty.Xvif.FragmentFilter.html#_Callback-__init__">__init__</a></span> from class <span class="class-name"><span class="undocumented">_Callback</span></span></dd>
+            <dt class="methoddef"><a name="Chars-getProduceAttribute"><span class="method-name">getProduceAttribute</span></a>(<span class="argument-name">self</span>, <span class="argument-name">filter</span>, <span class="argument-name">content</span>, <span class="argument-name">attrs</span>, <span class="argument-name">brk</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dt class="methoddef"><a name="Chars-produce"><span class="method-name">produce</span></a>(<span class="argument-name">self</span>, <span class="argument-name">filter</span>, <span class="argument-name">content</span>, <span class="argument-name">brk</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dt class="methoddef"><a name="Chars-set_after"><span class="method-name">set_after</span></a>(<span class="argument-name">self</span>, <span class="argument-name">rules</span>, <span class="argument-name">value</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dt class="methoddef"><a name="Chars-set_before"><span class="method-name">set_before</span></a>(<span class="argument-name">self</span>, <span class="argument-name">rules</span>, <span class="argument-name">value</span>)</dt>
+            <dd class="methoddesc"></dd>
+          </dl>
+          <h3>Methods inherited from class <span class="undocumented">Ft.Xml.ThirdParty.Xvif.FragmentFilter._Callback</span></h3>
+          <dl class="methods">
+            <dt class="methoddef"><a name="_Callback-append"><span class="method-name">append</span></a>(<span class="argument-name">self</span>, <span class="argument-name">child</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dt class="methoddef"><a name="_Callback-characters"><span class="method-name">characters</span></a>(<span class="argument-name">self</span>, <span class="argument-name">content</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dt class="methoddef"><a name="_Callback-endElementNS"><span class="method-name">endElementNS</span></a>(<span class="argument-name">self</span>, <span class="argument-name">rulesLoader</span>, <span class="argument-name">name</span>, <span class="argument-name">qname</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dt class="methoddef"><a name="_Callback-startElementNS"><span class="method-name">startElementNS</span></a>(<span class="argument-name">self</span>, <span class="argument-name">rulesLoader</span>, <span class="argument-name">name</span>, <span class="argument-name">qname</span>, <span class="argument-name">attrs</span>)</dt>
+            <dd class="methoddesc"></dd>
+          </dl>
+        </dd>
+        <dt class="classdef"><a name="Element"></a>class <span class="class-name">Element</span><span class="bases">(<span class="class-name"><span class="undocumented">Ft.Xml.ThirdParty.Xvif.FragmentFilter._Callback</span></span>)</span></dt>
+        <dd class="classdesc">
+          <div class="abstract">&lt;!ELEMENT element (attribute*)&gt;
+&lt;!ATTLIST element
+      nsURI  CDATA ""
+    localName CDATA #REQUIRED
+       prefix CDATA #IMPLIED
+      before CDATA #IMPLIED
+    after CDATA #IMPLIED
+       beforeInside CDATA #IMPLIED
+      afterInside CDATA #IMPLIED
+&gt;</div>
+          <h3>Methods</h3>
+          <dl class="methods">
+            <dt class="methoddef"><a name="Element-__init__"><span class="method-name">__init__</span></a>(<span class="argument-name">self</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dd class="overrides"><b>Overrides: </b><span class="inherited-name"><a href="Ft.Xml.ThirdParty.Xvif.FragmentFilter.html#_Callback-__init__">__init__</a></span> from class <span class="class-name"><span class="undocumented">_Callback</span></span></dd>
+            <dt class="methoddef"><a name="Element-endElementNS"><span class="method-name">endElementNS</span></a>(<span class="argument-name">self</span>, <span class="argument-name">rules</span>, (<span class="argument-name">nsURI</span>, <span class="argument-name">localName</span>), <span class="argument-name">qName</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dd class="overrides"><b>Overrides: </b><span class="inherited-name"><a href="Ft.Xml.ThirdParty.Xvif.FragmentFilter.html#_Callback-endElementNS">endElementNS</a></span> from class <span class="class-name"><span class="undocumented">_Callback</span></span></dd>
+            <dt class="methoddef"><a name="Element-getProduceAttribute"><span class="method-name">getProduceAttribute</span></a>(<span class="argument-name">self</span>, <span class="argument-name">filter</span>, <span class="argument-name">content</span>, <span class="argument-name">attrs</span>, <span class="argument-name">brk</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dt class="methoddef"><a name="Element-produce"><span class="method-name">produce</span></a>(<span class="argument-name">self</span>, <span class="argument-name">filter</span>, <span class="argument-name">content</span>, <span class="argument-name">brk</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dt class="methoddef"><a name="Element-set_localName"><span class="method-name">set_localName</span></a>(<span class="argument-name">self</span>, <span class="argument-name">rules</span>, <span class="argument-name">value</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dt class="methoddef"><a name="Element-set_nsURI"><span class="method-name">set_nsURI</span></a>(<span class="argument-name">self</span>, <span class="argument-name">rules</span>, <span class="argument-name">value</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dt class="methoddef"><a name="Element-set_prefix"><span class="method-name">set_prefix</span></a>(<span class="argument-name">self</span>, <span class="argument-name">rules</span>, <span class="argument-name">value</span>)</dt>
+            <dd class="methoddesc"></dd>
+          </dl>
+          <h3>Methods inherited from class <span class="undocumented">Ft.Xml.ThirdParty.Xvif.FragmentFilter._Callback</span></h3>
+          <dl class="methods">
+            <dt class="methoddef"><a name="_Callback-append"><span class="method-name">append</span></a>(<span class="argument-name">self</span>, <span class="argument-name">child</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dt class="methoddef"><a name="_Callback-characters"><span class="method-name">characters</span></a>(<span class="argument-name">self</span>, <span class="argument-name">content</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dt class="methoddef"><a name="_Callback-startElementNS"><span class="method-name">startElementNS</span></a>(<span class="argument-name">self</span>, <span class="argument-name">rulesLoader</span>, <span class="argument-name">name</span>, <span class="argument-name">qname</span>, <span class="argument-name">attrs</span>)</dt>
+            <dd class="methoddesc"></dd>
+          </dl>
+        </dd>
+        <dt class="classdef"><a name="FilterContext"></a>class <span class="class-name">FilterContext</span></dt>
+        <dd class="classdesc">
+          <h3>Methods</h3>
+          <dl class="methods">
+            <dt class="methoddef"><a name="FilterContext-__init__"><span class="method-name">__init__</span></a>(<span class="argument-name">self</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dt class="methoddef"><a name="FilterContext-appendContent"><span class="method-name">appendContent</span></a>(<span class="argument-name">self</span>, <span class="argument-name">content</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dt class="methoddef"><a name="FilterContext-appendTemporaryPrefix"><span class="method-name">appendTemporaryPrefix</span></a>(<span class="argument-name">self</span>, <span class="argument-name">prefix</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dt class="methoddef"><a name="FilterContext-setAttrs"><span class="method-name">setAttrs</span></a>(<span class="argument-name">self</span>, <span class="argument-name">attrs</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dt class="methoddef"><a name="FilterContext-setMatch"><span class="method-name">setMatch</span></a>(<span class="argument-name">self</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dt class="methoddef"><a name="FilterContext-setRule"><span class="method-name">setRule</span></a>(<span class="argument-name">self</span>, <span class="argument-name">rule</span>)</dt>
+            <dd class="methoddesc"></dd>
+          </dl>
+        </dd>
+        <dt class="classdef"><a name="FragmentFilter"></a>class <span class="class-name">FragmentFilter</span><span class="bases">(<span class="class-name"><span class="undocumented">xml.sax.saxutils.XMLFilterBase</span></span>)</span></dt>
+        <dd class="classdesc">
+          <h3>Methods</h3>
+          <dl class="methods">
+            <dt class="methoddef"><a name="FragmentFilter-__init__"><span class="method-name">__init__</span></a>(<span class="argument-name">self</span>, <span class="argument-name">rules</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dd class="overrides"><b>Overrides: </b><span class="inherited-name">__init__</span> from class <span class="class-name"><span class="undocumented">XMLFilterBase</span></span></dd>
+            <dt class="methoddef"><a name="FragmentFilter-characters"><span class="method-name">characters</span></a>(<span class="argument-name">self</span>, <span class="argument-name">content</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dd class="overrides"><b>Overrides: </b><span class="inherited-name">characters</span> from class <span class="class-name"><span class="undocumented">XMLFilterBase</span></span></dd>
+            <dt class="methoddef"><a name="FragmentFilter-context"><span class="method-name">context</span></a>(<span class="argument-name">self</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dt class="methoddef"><a name="FragmentFilter-endAttribute"><span class="method-name">endAttribute</span></a>(<span class="argument-name">self</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dt class="methoddef"><a name="FragmentFilter-endElementNS"><span class="method-name">endElementNS</span></a>(<span class="argument-name">self</span>, (<span class="argument-name">uri</span>, <span class="argument-name">name</span>), <span class="argument-name">qname</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dd class="overrides"><b>Overrides: </b><span class="inherited-name">endElementNS</span> from class <span class="class-name"><span class="undocumented">XMLFilterBase</span></span></dd>
+            <dt class="methoddef"><a name="FragmentFilter-endPrefixMapping"><span class="method-name">endPrefixMapping</span></a>(<span class="argument-name">self</span>, <span class="argument-name">prefix</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dd class="overrides"><b>Overrides: </b><span class="inherited-name">endPrefixMapping</span> from class <span class="class-name"><span class="undocumented">XMLFilterBase</span></span></dd>
+            <dt class="methoddef"><a name="FragmentFilter-findPrefix"><span class="method-name">findPrefix</span></a>(<span class="argument-name">self</span>, <span class="argument-name">uri</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dt class="methoddef"><a name="FragmentFilter-popContext"><span class="method-name">popContext</span></a>(<span class="argument-name">self</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dt class="methoddef"><a name="FragmentFilter-pushContext"><span class="method-name">pushContext</span></a>(<span class="argument-name">self</span>, <span class="argument-name">ctx</span><span class="argument-default">=None</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dt class="methoddef"><a name="FragmentFilter-startAttribute"><span class="method-name">startAttribute</span></a>(<span class="argument-name">self</span>, <span class="argument-name">uri</span>, <span class="argument-name">name</span>, <span class="argument-name">prefix</span>, <span class="argument-name">content</span>, <span class="argument-name">attrs</span>, <span class="argument-name">brk</span><span class="argument-default">=0</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dt class="methoddef"><a name="FragmentFilter-startElementNS"><span class="method-name">startElementNS</span></a>(<span class="argument-name">self</span>, (<span class="argument-name">uri</span>, <span class="argument-name">name</span>), <span class="argument-name">qname</span>, <span class="argument-name">attrs</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dd class="overrides"><b>Overrides: </b><span class="inherited-name">startElementNS</span> from class <span class="class-name"><span class="undocumented">XMLFilterBase</span></span></dd>
+            <dt class="methoddef"><a name="FragmentFilter-startPrefixMapping"><span class="method-name">startPrefixMapping</span></a>(<span class="argument-name">self</span>, <span class="argument-name">prefix</span>, <span class="argument-name">uri</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dd class="overrides"><b>Overrides: </b><span class="inherited-name">startPrefixMapping</span> from class <span class="class-name"><span class="undocumented">XMLFilterBase</span></span></dd>
+          </dl>
+          <h3>Methods inherited from class <span class="undocumented">xml.sax.saxutils.XMLFilterBase</span></h3>
+          <div class="inherited"><span class="inherited-name">endDocument</span>, <span class="inherited-name">endElement</span>, <span class="inherited-name">error</span>, <span class="inherited-name">fatalError</span>, <span class="inherited-name">getFeature</span>, <span class="inherited-name">getProperty</span>, <span class="inherited-name">ignorableWhitespace</span>, <span class="inherited-name">notationDecl</span>, <span class="inherited-name">parse</span>, <span class="inherited-name">processingInstruction</span>, <span class="inherited-name">resolveEntity</span>, <span class="inherited-name">setDocumentLocator</span>, <span class="inherited-name">setFeature</span>, <span class="inherited-name">setLocale</span>, <span class="inherited-name">setProperty</span>, <span class="inherited-name">skippedEntity</span>, <span class="inherited-name">startDocument</span>, <span class="inherited-name">startElement</span>, <span class="inherited-name">unparsedEntityDecl</span>, <span class="inherited-name">warning</span></div>
+          <h3>Methods inherited from class <span class="undocumented">xml.sax.saxlib.XMLFilter</span></h3>
+          <div class="inherited"><span class="inherited-name">getParent</span>, <span class="inherited-name">setParent</span></div>
+          <h3>Methods inherited from class <span class="undocumented">xml.sax.xmlreader.XMLReader</span></h3>
+          <div class="inherited"><span class="inherited-name">getContentHandler</span>, <span class="inherited-name">getDTDHandler</span>, <span class="inherited-name">getEntityResolver</span>, <span class="inherited-name">getErrorHandler</span>, <span class="inherited-name">setContentHandler</span>, <span class="inherited-name">setDTDHandler</span>, <span class="inherited-name">setEntityResolver</span>, <span class="inherited-name">setErrorHandler</span></div>
+        </dd>
+        <dt class="classdef"><a name="FragmentRule"></a>class <span class="class-name">FragmentRule</span><span class="bases">(<span class="class-name"><span class="undocumented">Ft.Xml.ThirdParty.Xvif.FragmentFilter._Callback</span></span>)</span></dt>
+        <dd class="classdesc">
+          <div class="abstract">&lt;!ELEMENT fragmentRule (applyTo, produce)&gt;
+&lt;!ATTLIST fragmentRule
+      pattern CDATA #REQUIRED
+    repeat (true | false) "false"
+    skipFirst (true | false) "true" ???
+    break (true | false) "true" ???
+      split (true | false) "false"&gt;</div>
+          <h3>Methods</h3>
+          <dl class="methods">
+            <dt class="methoddef"><a name="FragmentRule-__init__"><span class="method-name">__init__</span></a>(<span class="argument-name">self</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dd class="overrides"><b>Overrides: </b><span class="inherited-name"><a href="Ft.Xml.ThirdParty.Xvif.FragmentFilter.html#_Callback-__init__">__init__</a></span> from class <span class="class-name"><span class="undocumented">_Callback</span></span></dd>
+            <dt class="methoddef"><a name="FragmentRule-append"><span class="method-name">append</span></a>(<span class="argument-name">self</span>, <span class="argument-name">child</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dd class="overrides"><b>Overrides: </b><span class="inherited-name"><a href="Ft.Xml.ThirdParty.Xvif.FragmentFilter.html#_Callback-append">append</a></span> from class <span class="class-name"><span class="undocumented">_Callback</span></span></dd>
+            <dt class="methoddef"><a name="FragmentRule-fragment"><span class="method-name">fragment</span></a>(<span class="argument-name">self</span>, <span class="argument-name">filter</span>, <span class="argument-name">match</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dt class="methoddef"><a name="FragmentRule-getFragmentedAttributes"><span class="method-name">getFragmentedAttributes</span></a>(<span class="argument-name">self</span>, <span class="argument-name">filter</span>, <span class="argument-name">match</span>, <span class="argument-name">attrs</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dt class="methoddef"><a name="FragmentRule-getMatch"><span class="method-name">getMatch</span></a>(<span class="argument-name">self</span>, <span class="argument-name">content</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dt class="methoddef"><a name="FragmentRule-match"><span class="method-name">match</span></a>(<span class="argument-name">self</span>, <span class="argument-name">uri</span>, <span class="argument-name">name</span>, <span class="argument-name">ruleClass</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dt class="methoddef"><a name="FragmentRule-set_break"><span class="method-name">set_break</span></a>(<span class="argument-name">self</span>, <span class="argument-name">rules</span>, <span class="argument-name">value</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dt class="methoddef"><a name="FragmentRule-set_pattern"><span class="method-name">set_pattern</span></a>(<span class="argument-name">self</span>, <span class="argument-name">rules</span>, <span class="argument-name">value</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dt class="methoddef"><a name="FragmentRule-set_repeat"><span class="method-name">set_repeat</span></a>(<span class="argument-name">self</span>, <span class="argument-name">rules</span>, <span class="argument-name">value</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dt class="methoddef"><a name="FragmentRule-set_skipFirst"><span class="method-name">set_skipFirst</span></a>(<span class="argument-name">self</span>, <span class="argument-name">rules</span>, <span class="argument-name">value</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dt class="methoddef"><a name="FragmentRule-set_split"><span class="method-name">set_split</span></a>(<span class="argument-name">self</span>, <span class="argument-name">rules</span>, <span class="argument-name">value</span>)</dt>
+            <dd class="methoddesc"></dd>
+          </dl>
+          <h3>Methods inherited from class <span class="undocumented">Ft.Xml.ThirdParty.Xvif.FragmentFilter._Callback</span></h3>
+          <dl class="methods">
+            <dt class="methoddef"><a name="_Callback-characters"><span class="method-name">characters</span></a>(<span class="argument-name">self</span>, <span class="argument-name">content</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dt class="methoddef"><a name="_Callback-endElementNS"><span class="method-name">endElementNS</span></a>(<span class="argument-name">self</span>, <span class="argument-name">rulesLoader</span>, <span class="argument-name">name</span>, <span class="argument-name">qname</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dt class="methoddef"><a name="_Callback-startElementNS"><span class="method-name">startElementNS</span></a>(<span class="argument-name">self</span>, <span class="argument-name">rulesLoader</span>, <span class="argument-name">name</span>, <span class="argument-name">qname</span>, <span class="argument-name">attrs</span>)</dt>
+            <dd class="methoddesc"></dd>
+          </dl>
+        </dd>
+        <dt class="classdef"><a name="FragmentRules"></a>class <span class="class-name">FragmentRules</span><span class="bases">(<span class="class-name"><span class="undocumented">Ft.Xml.ThirdParty.Xvif.FragmentFilter._Callback</span></span>)</span></dt>
+        <dd class="classdesc">
+          <div class="abstract">&lt;!ELEMENT fragmentRules (fragmentRule+)&gt;
+&lt;!ATTLIST fragmentRules
+xmlns   CDATA  "http://simonstl.com/ns/fragments/"&gt;</div>
+          <h3>Methods</h3>
+          <dl class="methods">
+            <dt class="methoddef"><a name="FragmentRules-__init__"><span class="method-name">__init__</span></a>(<span class="argument-name">self</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dd class="overrides"><b>Overrides: </b><span class="inherited-name"><a href="Ft.Xml.ThirdParty.Xvif.FragmentFilter.html#_Callback-__init__">__init__</a></span> from class <span class="class-name"><span class="undocumented">_Callback</span></span></dd>
+            <dt class="methoddef"><a name="FragmentRules-match"><span class="method-name">match</span></a>(<span class="argument-name">self</span>, <span class="argument-name">uri</span>, <span class="argument-name">name</span>, <span class="argument-name">ruleClass</span>)</dt>
+            <dd class="methoddesc"></dd>
+          </dl>
+          <h3>Methods inherited from class <span class="undocumented">Ft.Xml.ThirdParty.Xvif.FragmentFilter._Callback</span></h3>
+          <dl class="methods">
+            <dt class="methoddef"><a name="_Callback-append"><span class="method-name">append</span></a>(<span class="argument-name">self</span>, <span class="argument-name">child</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dt class="methoddef"><a name="_Callback-characters"><span class="method-name">characters</span></a>(<span class="argument-name">self</span>, <span class="argument-name">content</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dt class="methoddef"><a name="_Callback-endElementNS"><span class="method-name">endElementNS</span></a>(<span class="argument-name">self</span>, <span class="argument-name">rulesLoader</span>, <span class="argument-name">name</span>, <span class="argument-name">qname</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dt class="methoddef"><a name="_Callback-startElementNS"><span class="method-name">startElementNS</span></a>(<span class="argument-name">self</span>, <span class="argument-name">rulesLoader</span>, <span class="argument-name">name</span>, <span class="argument-name">qname</span>, <span class="argument-name">attrs</span>)</dt>
+            <dd class="methoddesc"></dd>
+          </dl>
+        </dd>
+        <dt class="classdef"><a name="Produce"></a>class <span class="class-name">Produce</span><span class="bases">(<span class="class-name"><span class="undocumented">Ft.Xml.ThirdParty.Xvif.FragmentFilter._Callback</span></span>)</span></dt>
+        <dd class="classdesc">
+          <div class="abstract">&lt;!ELEMENT produce (element | attribute | skip | chars)+&gt;</div>
+          <h3>Methods</h3>
+          <dl class="methods">
+            <dt class="methoddef"><a name="Produce-__init__"><span class="method-name">__init__</span></a>(<span class="argument-name">self</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dd class="overrides"><b>Overrides: </b><span class="inherited-name"><a href="Ft.Xml.ThirdParty.Xvif.FragmentFilter.html#_Callback-__init__">__init__</a></span> from class <span class="class-name"><span class="undocumented">_Callback</span></span></dd>
+            <dt class="methoddef"><a name="Produce-fragment"><span class="method-name">fragment</span></a>(<span class="argument-name">self</span>, <span class="argument-name">filter</span>, <span class="argument-name">match</span>, <span class="argument-name">skipFirst</span>, <span class="argument-name">repeat</span>, <span class="argument-name">brk</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dt class="methoddef"><a name="Produce-getFragmentedAttributes"><span class="method-name">getFragmentedAttributes</span></a>(<span class="argument-name">self</span>, <span class="argument-name">filter</span>, <span class="argument-name">match</span>, <span class="argument-name">attrs</span>, <span class="argument-name">skipFirst</span>, <span class="argument-name">repeat</span>, <span class="argument-name">brk</span>)</dt>
+            <dd class="methoddesc"></dd>
+          </dl>
+          <h3>Methods inherited from class <span class="undocumented">Ft.Xml.ThirdParty.Xvif.FragmentFilter._Callback</span></h3>
+          <dl class="methods">
+            <dt class="methoddef"><a name="_Callback-append"><span class="method-name">append</span></a>(<span class="argument-name">self</span>, <span class="argument-name">child</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dt class="methoddef"><a name="_Callback-characters"><span class="method-name">characters</span></a>(<span class="argument-name">self</span>, <span class="argument-name">content</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dt class="methoddef"><a name="_Callback-endElementNS"><span class="method-name">endElementNS</span></a>(<span class="argument-name">self</span>, <span class="argument-name">rulesLoader</span>, <span class="argument-name">name</span>, <span class="argument-name">qname</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dt class="methoddef"><a name="_Callback-startElementNS"><span class="method-name">startElementNS</span></a>(<span class="argument-name">self</span>, <span class="argument-name">rulesLoader</span>, <span class="argument-name">name</span>, <span class="argument-name">qname</span>, <span class="argument-name">attrs</span>)</dt>
+            <dd class="methoddesc"></dd>
+          </dl>
+        </dd>
+        <dt class="classdef"><a name="PseudoMatch"></a>class <span class="class-name">PseudoMatch</span></dt>
+        <dd class="classdesc">
+          <h3>Methods</h3>
+          <dl class="methods">
+            <dt class="methoddef"><a name="PseudoMatch-__init__"><span class="method-name">__init__</span></a>(<span class="argument-name">self</span>, <span class="argument-name">values</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dt class="methoddef"><a name="PseudoMatch-group"><span class="method-name">group</span></a>(<span class="argument-name">self</span>, <span class="argument-name">id</span>)</dt>
+            <dd class="methoddesc"></dd>
+          </dl>
+        </dd>
+        <dt class="classdef"><a name="RulesLoader"></a>class <span class="class-name">RulesLoader</span><span class="bases">(<span class="class-name"><span class="undocumented">xml.sax.handler.ContentHandler</span></span>, <span class="class-name"><span class="undocumented">Ft.Xml.ThirdParty.Xvif.FragmentFilter._Callback</span></span>)</span></dt>
+        <dd class="classdesc">
+          <h3>Methods</h3>
+          <dl class="methods">
+            <dt class="methoddef"><a name="RulesLoader-__init__"><span class="method-name">__init__</span></a>(<span class="argument-name">self</span>, <span class="argument-name">xmlReader</span><span class="argument-default">=None</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dd class="overrides"><b>Overrides: </b><span class="inherited-name">__init__</span> from class <span class="class-name"><span class="undocumented">ContentHandler</span></span></dd>
+            <dt class="methoddef"><a name="RulesLoader-__str__"><span class="method-name">__str__</span></a>(<span class="argument-name">self</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dt class="methoddef"><a name="RulesLoader-append"><span class="method-name">append</span></a>(<span class="argument-name">self</span>, <span class="argument-name">child</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dd class="overrides"><b>Overrides: </b><span class="inherited-name"><a href="Ft.Xml.ThirdParty.Xvif.FragmentFilter.html#_Callback-append">append</a></span> from class <span class="class-name"><span class="undocumented">_Callback</span></span></dd>
+            <dt class="methoddef"><a name="RulesLoader-appendMe"><span class="method-name">appendMe</span></a>(<span class="argument-name">self</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dt class="methoddef"><a name="RulesLoader-appendStack"><span class="method-name">appendStack</span></a>(<span class="argument-name">self</span>, <span class="argument-name">element</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dt class="methoddef"><a name="RulesLoader-characters"><span class="method-name">characters</span></a>(<span class="argument-name">self</span>, <span class="argument-name">content</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dd class="overrides"><b>Overrides: </b><span class="inherited-name">characters</span> from class <span class="class-name"><span class="undocumented">ContentHandler</span></span></dd>
+            <dt class="methoddef"><a name="RulesLoader-endDocument"><span class="method-name">endDocument</span></a>(<span class="argument-name">self</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dd class="overrides"><b>Overrides: </b><span class="inherited-name">endDocument</span> from class <span class="class-name"><span class="undocumented">ContentHandler</span></span></dd>
+            <dt class="methoddef"><a name="RulesLoader-endElementNS"><span class="method-name">endElementNS</span></a>(<span class="argument-name">self</span>, (<span class="argument-name">uri</span>, <span class="argument-name">name</span>), <span class="argument-name">qname</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dd class="overrides"><b>Overrides: </b><span class="inherited-name">endElementNS</span> from class <span class="class-name"><span class="undocumented">ContentHandler</span></span></dd>
+            <dt class="methoddef"><a name="RulesLoader-match"><span class="method-name">match</span></a>(<span class="argument-name">self</span>, <span class="argument-name">uri</span>, <span class="argument-name">name</span>, <span class="argument-name">matchClass</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dt class="methoddef"><a name="RulesLoader-previousElement"><span class="method-name">previousElement</span></a>(<span class="argument-name">self</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dt class="methoddef"><a name="RulesLoader-startElementNS"><span class="method-name">startElementNS</span></a>(<span class="argument-name">self</span>, (<span class="argument-name">uri</span>, <span class="argument-name">name</span>), <span class="argument-name">qname</span>, <span class="argument-name">attrs</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dd class="overrides"><b>Overrides: </b><span class="inherited-name">startElementNS</span> from class <span class="class-name"><span class="undocumented">ContentHandler</span></span></dd>
+            <dt class="methoddef"><a name="RulesLoader-unKnownElement"><span class="method-name">unKnownElement</span></a>(<span class="argument-name">self</span>, <span class="argument-name">uri</span>, <span class="argument-name">name</span>)</dt>
+            <dd class="methoddesc"></dd>
+          </dl>
+          <h3>Methods inherited from class <span class="undocumented">xml.sax.handler.ContentHandler</span></h3>
+          <div class="inherited"><span class="inherited-name">endElement</span>, <span class="inherited-name">endPrefixMapping</span>, <span class="inherited-name">ignorableWhitespace</span>, <span class="inherited-name">processingInstruction</span>, <span class="inherited-name">setDocumentLocator</span>, <span class="inherited-name">skippedEntity</span>, <span class="inherited-name">startDocument</span>, <span class="inherited-name">startElement</span>, <span class="inherited-name">startPrefixMapping</span></div>
+          <h3>Members</h3>
+          <dl class="members">
+            <dt class="memberdef"><a name="callbacks"><span class="member-name">callbacks</span></a> = {'http://simonstl.com/ns/fragments/': {'applyTo': &lt;class Ft.Xml.ThirdParty.Xvif.FragmentFilter.ApplyTo&gt;, 'attribute': &lt;class Ft.Xml.ThirdParty.Xvif.FragmentFilter.Attribute&gt;, 'chars': &lt;class Ft.Xml.ThirdParty.Xvif.FragmentFilter.Chars&gt;, 'element': &lt;class Ft.Xml.ThirdParty.Xvif.FragmentFilter.Element&gt;, 'fragmentRule': &lt;class Ft.Xml.ThirdParty.Xvif.FragmentFilter.FragmentRule&gt;, 'fragmentRules': &lt;class Ft.Xml.ThirdParty.Xvif.FragmentFilter.FragmentRules&gt;, 'produce': &lt;class Ft.Xml.ThirdParty.Xvif.FragmentFilter.Produce&gt;, 'skip': &lt;class Ft.Xml.ThirdParty.Xvif.FragmentFilter.Skip&gt;}}</dt>
+          </dl>
+        </dd>
+        <dt class="classdef"><a name="Skip"></a>class <span class="class-name">Skip</span><span class="bases">(<span class="class-name"><span class="undocumented">Ft.Xml.ThirdParty.Xvif.FragmentFilter._Callback</span></span>)</span></dt>
+        <dd class="classdesc">
+          <div class="abstract">&lt;!ELEMENT skip EMPTY&gt;
+&lt;!ATTLIST skip
+      before CDATA #IMPLIED
+    after CDATA #IMPLIED
+&gt;</div>
+          <h3>Methods</h3>
+          <dl class="methods">
+            <dt class="methoddef"><a name="Skip-__init__"><span class="method-name">__init__</span></a>(<span class="argument-name">self</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dd class="overrides"><b>Overrides: </b><span class="inherited-name"><a href="Ft.Xml.ThirdParty.Xvif.FragmentFilter.html#_Callback-__init__">__init__</a></span> from class <span class="class-name"><span class="undocumented">_Callback</span></span></dd>
+            <dt class="methoddef"><a name="Skip-getProduceAttribute"><span class="method-name">getProduceAttribute</span></a>(<span class="argument-name">self</span>, <span class="argument-name">filter</span>, <span class="argument-name">content</span>, <span class="argument-name">attrs</span>, <span class="argument-name">brk</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dt class="methoddef"><a name="Skip-produce"><span class="method-name">produce</span></a>(<span class="argument-name">self</span>, <span class="argument-name">filter</span>, <span class="argument-name">content</span>, <span class="argument-name">brk</span>)</dt>
+            <dd class="methoddesc"></dd>
+          </dl>
+          <h3>Methods inherited from class <span class="undocumented">Ft.Xml.ThirdParty.Xvif.FragmentFilter._Callback</span></h3>
+          <dl class="methods">
+            <dt class="methoddef"><a name="_Callback-append"><span class="method-name">append</span></a>(<span class="argument-name">self</span>, <span class="argument-name">child</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dt class="methoddef"><a name="_Callback-characters"><span class="method-name">characters</span></a>(<span class="argument-name">self</span>, <span class="argument-name">content</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dt class="methoddef"><a name="_Callback-endElementNS"><span class="method-name">endElementNS</span></a>(<span class="argument-name">self</span>, <span class="argument-name">rulesLoader</span>, <span class="argument-name">name</span>, <span class="argument-name">qname</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dt class="methoddef"><a name="_Callback-startElementNS"><span class="method-name">startElementNS</span></a>(<span class="argument-name">self</span>, <span class="argument-name">rulesLoader</span>, <span class="argument-name">name</span>, <span class="argument-name">qname</span>, <span class="argument-name">attrs</span>)</dt>
+            <dd class="methoddesc"></dd>
+          </dl>
+        </dd>
+      </dl>
+    </div>
+    <div class="section">
+      <h2>Globals</h2>
+      <dl class="globals">
+        <dt class="globaldef"><a name="InvalidFragmentException"><span class="global-name">InvalidFragmentException</span></a> = 'InvalidFragmentException'</dt>
+        <dd class="globaldesc"></dd>
+        <dt class="globaldef"><a name="InvalidRuleException"><span class="global-name">InvalidRuleException</span></a> = 'InvalidRulesException'</dt>
+        <dd class="globaldesc"></dd>
+        <dt class="globaldef"><a name="XMLNS_NAMESPACE"><span class="global-name">XMLNS_NAMESPACE</span></a> = 'http://www.w3.org/2000/xmlns/'</dt>
+        <dd class="globaldesc"></dd>
+        <dt class="globaldef"><a name="ascii_letters"><span class="global-name">ascii_letters</span></a> = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ'</dt>
+        <dd class="globaldesc"></dd>
+        <dt class="globaldef"><a name="ascii_lowercase"><span class="global-name">ascii_lowercase</span></a> = 'abcdefghijklmnopqrstuvwxyz'</dt>
+        <dd class="globaldesc"></dd>
+        <dt class="globaldef"><a name="ascii_uppercase"><span class="global-name">ascii_uppercase</span></a> = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'</dt>
+        <dd class="globaldesc"></dd>
+        <dt class="globaldef"><a name="digits"><span class="global-name">digits</span></a> = '0123456789'</dt>
+        <dd class="globaldesc"></dd>
+        <dt class="globaldef"><a name="hexdigits"><span class="global-name">hexdigits</span></a> = '0123456789abcdefABCDEF'</dt>
+        <dd class="globaldesc"></dd>
+        <dt class="globaldef"><a name="letters"><span class="global-name">letters</span></a> = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz'</dt>
+        <dd class="globaldesc"></dd>
+        <dt class="globaldef"><a name="lowercase"><span class="global-name">lowercase</span></a> = 'abcdefghijklmnopqrstuvwxyz'</dt>
+        <dd class="globaldesc"></dd>
+        <dt class="globaldef"><a name="octdigits"><span class="global-name">octdigits</span></a> = '01234567'</dt>
+        <dd class="globaldesc"></dd>
+        <dt class="globaldef"><a name="printable"><span class="global-name">printable</span></a> = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!"#$%&amp;\'()*+,-./:;&lt;=&gt;?@[\\]^_`{|}~ \t\n\r\x0b\x0c'</dt>
+        <dd class="globaldesc"></dd>
+        <dt class="globaldef"><a name="punctuation"><span class="global-name">punctuation</span></a> = '!"#$%&amp;\'()*+,-./:;&lt;=&gt;?@[\\]^_`{|}~'</dt>
+        <dd class="globaldesc"></dd>
+        <dt class="globaldef"><a name="uppercase"><span class="global-name">uppercase</span></a> = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'</dt>
+        <dd class="globaldesc"></dd>
+        <dt class="globaldef"><a name="whitespace"><span class="global-name">whitespace</span></a> = '\t\n\x0b\x0c\r '</dt>
+        <dd class="globaldesc"></dd>
+      </dl>
+    </div>
+    <div class="universal-footer">Last modified on 2004-10-22 11:49:27</div>
+  </body>
+</html>

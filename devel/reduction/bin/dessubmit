@@ -1,0 +1,598 @@
+#!/usr/bin/env perl
+########################################################################
+#  $Id$
+#
+#  $Rev::                                  $:  # Revision of last commit.
+#  $LastChangedBy::                        $:  # Author of last commit. 
+#  $LastChangedDate::                      $:  # Date of last commit.
+#
+#  Authors: 
+#         Michelle Gower (mgower@ncsa.uiuc.edu)
+#         Darren Adams (dadams@ncsa.uiuc.edu)
+#
+#  Developed at: 
+#  The National Center for Supercomputing Applications (NCSA)
+#  with useful conversations with Jordi Cohen and Jim Phillips from the
+#  Theoretical and Computation Biophysics Group at the University
+#  of Illinois at Urbana-Champaign.
+#
+#  Copyright (C) 2007 Board of Trustees of the University of Illinois. 
+#  All rights reserved.
+#
+#  DESCRIPTION:
+#
+#######################################################################
+
+use File::Basename;
+use Fcntl;
+use Getopt::Long;
+use Pod::Usage;
+use Switch;
+use POSIX qw(ceil);
+use strict;
+use warnings;
+
+use FindBin;
+use lib "$FindBin::Bin/../lib";
+use DES::utils::dbutils;
+use DES::utils::desdbutils;
+use DES::utils::misc;
+use DES::utils::submitfunc;
+use NCSA::utils::condor;
+use DES::utils::hist;
+use DES::desconfig;
+
+my ($DESFile);
+my ($Out, $Stat);
+my ($Config);
+my ($UniqName);
+my ($DAGFile);
+my ($InternalDir, $OutputDir);
+my ($DebugLog);
+my ($Jobs, @Keys);
+my ($NoSubmit, $Help, $Version, $man);
+my ($UserCfgDir);
+my ($DESCfg, $Stage);
+
+
+&Getopt::Long::Configure( 'noignorecase', 'no_autoabbrev');
+$Stat = Getopt::Long::GetOptions(
+      'nosubmit'  => \$NoSubmit,
+      'help|h'  => \$Help,
+      'man' => \$man,
+      'version|v' => \$Version,
+);
+
+pod2usage(-exitval =>1, -verbose => 1, -input => "$FindBin::Bin/../doc/dessubmit.pod") if $Help;
+pod2usage(-exitval =>1, -verbose => 2, -input => "$FindBin::Bin/../doc/dessubmit.pod") if $man;
+
+
+my $DESHome = getHome() or die "Error: Can't determine DESHome";
+
+if (defined($Version)) {
+  printVersion();
+  exit 0;
+}
+
+if (defined($Help)) {
+  print "Ask Darren\n";
+  exit 0;
+}
+
+if (scalar(@ARGV) == 1) {
+  $DESFile = $ARGV[0];
+}
+
+if (!defined($DESFile)) {
+  print "No desfile specified...defaulting to DESfile\n";
+  $DESFile = "DESfile";
+}
+
+
+$Config = new DES::desconfig;
+
+#####  Read configurations files
+# read system level DES configuration file
+if (-r "${DESHome}/etc/des.cfg") {
+  $Config->readConfig("${DESHome}/etc/des.cfg", 1, \*STDERR);
+}
+
+# read user level DES configuration file
+$UserCfgDir = $Config->getValue("usercfgdir");
+if (-r "$UserCfgDir/des.cfg") {
+  $Config->readConfig("$UserCfgDir/des.cfg", 1, \*STDERR);
+}
+
+processDESfile($DESFile);
+
+#$Config->writeConfig(\*STDOUT, \*STDERR);
+#exit;
+
+$Config->fillBlanks();
+
+$UniqName = $Config->getValueReq("uniqname");
+$InternalDir = $Config->getValueReq("internaldir");
+$OutputDir = $Config->getValueReq("outputdir");
+
+if ( -d "DESjobs/$UniqName" ) {
+  print STDERR "DESjobs/$UniqName subdirectory already exists.\n";
+  print STDERR "Remove that directory, and rerun dessubmit\n";
+  exit 1;
+}
+
+mkdir "DESjobs";
+mkdir "DESjobs/$UniqName";
+mkdir $InternalDir;
+mkdir $OutputDir;
+
+logEvent($Config, "submit");
+
+$DebugLog = $Config->getValueReq("debuglog");
+open DEBUG, "> $DebugLog";
+
+# save config
+$DESCfg = "$InternalDir/$UniqName.descfg"; 
+open FH, "> $DESCfg";
+$Config->writeConfig(\*FH, \*DEBUG);
+close FH;
+
+runChecks($Config);
+
+# must be in internal directory when submitting simulation
+chdir $InternalDir;
+
+
+$DAGFile = "analysis_mngr.dag"; 
+
+createMngrDAG($Config, $DAGFile);
+
+if (defined($NoSubmit)) {
+  print "\n\n--nosubmit used. Simulation not submitted.\n\n";
+   print "Simulation can be submitted by using the following commands:\n";
+   print "  cd $InternalDir\n";
+   print "  condor_submit $DAGFile.condor.sub\n\n";
+}
+else {
+  $Out = `condor_submit $DAGFile.condor.sub 2>&1`;
+
+  if ($Out =~ /ERROR/) {
+    print STDERR "\n$Out\n";
+    print DEBUG "\ncondor_submit $DAGFile.condor.sub\n$Out\n";
+  }
+  else {
+    print "\nAnalysis successfully submitted.\n";
+  }
+}
+print "\n\n";
+
+# for completeness, log condorid of pipeline manager
+open CONDORLOG, "< $InternalDir/$DAGFile.dagman.log";
+$Jobs = parseCondorUserLog(\*CONDORLOG);
+@Keys = keys %$Jobs;
+if (scalar(@Keys) == 1) {
+  logEvent($Config, "analysis", "j", "mngr", "pretask");
+  logEvent($Config, "analysis", "j", "mngr", "cid", $Keys[0]);
+}
+
+close DEBUG;
+exit 0;
+
+# END OF MAIN     ##########
+
+
+######################################################################
+# Create main manager DAG and check stages 
+sub createMngrDAG {
+   my $Config = shift;
+   my $DAGFilename = shift;
+
+   my $Nite = $Config->getValueReq("nite");
+   my $RunID = $Config->getValueReq("runid");
+   my $UniqName = $Config->getValueReq("uniqname");
+   my $InternalDir = $Config->getValueReq("internaldir");
+
+   my $RunSite;
+   my @StageList;
+   my ($desdb, @ImageList);
+
+   ## main workflow
+   open DAG, "> $DAGFilename" or die "ERROR: Cannot create dagfile '$DAGFilename'\n";
+   print DAG "DOT $UniqName.dot\n";
+   print DAG "\n";
+
+   $Config->getStageList(\@StageList);
+   for (my $i = 0; $i < scalar(@StageList); $i++) {
+      $Stage = $StageList[$i];
+      my %SearchDefs;
+      $SearchDefs{"stage"} = $Stage;
+      $RunSite = $Config->getValueReq("run_site", \%SearchDefs);
+      switch ($Stage) {
+         case "ingestsrc" {
+            $desdb = new DES::desDBI;
+            $desdb->getNiteSrcImageList($Nite, \@ImageList);
+    
+            if (scalar(@ImageList) != 0) {
+               print STDERR "\nERROR: asked to do ingestsrc stage\n";
+               print STDERR "There are already ", scalar(@ImageList), " src file(s) listed for nite $Nite in the database.\n";
+               print STDERR "\n";
+               print STDERR "SUBMISSION ABORTED\n";
+               print STDERR "If you wish to start processing this nite from scratch, run desclobbernite.\n";
+               print STDERR "Otherwise, modify your DESFILE to only include stages you wish to run\n";
+               print STDERR "\n";
+               exit $FAILURE;
+            }
+
+            print DAG <<EOF;
+JOB $Stage $DESHome/lib/DES/condor/$Stage.condor
+VARS $Stage deshome="$DESHome" descfg="$UniqName.descfg"
+VARS $Stage nite="$Nite" runid="$RunID" stage="$Stage" substage="" runsite="$RunSite"
+SCRIPT PRE $Stage $DESHome/libexec/despretask  $UniqName.descfg $Stage j "" 
+SCRIPT POST $Stage $DESHome/libexec/desposttask $UniqName.descfg $Stage j "" \$RETURN
+
+EOF
+         }
+         case "stagesrc" {
+            print DAG <<EOF;
+JOB $Stage $DESHome/lib/DES/condor/$Stage.condor
+VARS $Stage deshome="$DESHome" descfg="$UniqName.descfg"
+VARS $Stage nite="$Nite" runid="$RunID" stage="$Stage" substage="" runsite="$RunSite"
+SCRIPT PRE $Stage $DESHome/libexec/desprestagesrc  $UniqName.descfg 
+SCRIPT POST stagesrc $DESHome/libexec/descheckstagesrc $UniqName.descfg \$RETURN
+
+EOF
+         }
+         case "convert_ogre" {
+            print DAG <<EOF;
+JOB convert_mngr convert_mngr.dag.condor.sub
+VARS convert_mngr deshome="$DESHome" descfg="$UniqName.descfg" 
+VARS convert_mngr nite="$Nite" runid="$RunID" stage="convert" substage="mngr" runsite="$RunSite"
+SCRIPT PRE convert_mngr $DESHome/libexec/despreogrelaunch  $UniqName.descfg convert_ogre
+SCRIPT POST convert_mngr $DESHome/libexec/descheckconvertmngr $UniqName.descfg \$RETURN
+
+EOF
+            createConvertOgreDAG($Config);
+            $StageList[$i] = "convert_mngr";
+         }
+         case "convert" {
+            print DAG <<EOF;
+JOB convert_mngr convert_mngr.dag.condor.sub
+VARS convert_mngr deshome="$DESHome" descfg="$UniqName.descfg"
+VARS convert_mngr nite="$Nite" runid="$RunID" stage="convert" substage="mngr" runsite="$RunSite"
+SCRIPT PRE convert_mngr $DESHome/libexec/despreconvertmngr  $UniqName.descfg
+SCRIPT POST convert_mngr $DESHome/libexec/descheckconvertmngr $UniqName.descfg \$RETURN
+
+EOF
+            createConvertSubmit($Config);
+            createConvertDAG($Config);
+            $StageList[$i] = "convert_mngr";
+         }
+         case "process_ogre" {
+            print DAG <<EOF;
+JOB process_mngr process_mngr.dag.condor.sub
+VARS process_mngr deshome="$DESHome" descfg="$UniqName.descfg"
+VARS process_mngr nite="$Nite" runid="$RunID" stage="process" substage="mngr" runsite="$RunSite"
+SCRIPT PRE process_mngr $DESHome/libexec/despreogrelaunch  $UniqName.descfg process_ogre
+SCRIPT POST process_mngr $DESHome/libexec/descheckprocessmngr $UniqName.descfg \$RETURN
+
+EOF
+            createProcessOgreDAG($Config);
+            $StageList[$i] = "process_mngr";
+         }
+         case "scamp_ogre" {
+            print DAG <<EOF;
+JOB scamp_mngr scamp_mngr.dag.condor.sub
+VARS scamp_mngr deshome="$DESHome" descfg="$UniqName.descfg"
+VARS scamp_mngr nite="$Nite" runid="$RunID" stage="scamp" substage="mngr" runsite="$RunSite"
+SCRIPT PRE scamp_mngr $DESHome/libexec/despreogrelaunch  $UniqName.descfg scamp_ogre
+SCRIPT POST scamp_mngr $DESHome/libexec/desposttask $UniqName.descfg scamp j mngr \$RETURN
+
+EOF
+            createScampOgreDAG($Config);
+            $StageList[$i] = "scamp_mngr";
+         }
+         case "postscamp_ogre" {
+            print DAG <<EOF;
+JOB postscamp_mngr postscamp_mngr.dag.condor.sub
+VARS postscamp_mngr deshome="$DESHome" descfg="$UniqName.descfg"
+VARS postscamp_mngr nite="$Nite" runid="$RunID" stage="postscamp" substage="mngr" runsite="$RunSite"
+SCRIPT PRE postscamp_mngr $DESHome/libexec/despreogrelaunch  $UniqName.descfg postscamp_ogre
+SCRIPT POST postscamp_mngr $DESHome/libexec/desposttask $UniqName.descfg postscamp j mngr \$RETURN
+
+EOF
+            createPostScampOgreDAG($Config);
+            $StageList[$i] = "postscamp_mngr";
+         }
+         else {
+            print STDERR "Unknown stage '$Stage'\n";
+            print STDERR "Aborting submission\n";
+            exit 1;
+         }
+      }
+   }
+
+   print DAG <<EOF;
+JOB  checkanalysis $DESHome/lib/DES/condor/checkanalysis.condor
+VARS checkanalysis deshome="$DESHome" config="$UniqName.descfg"
+VARS checkanalysis nite="$Nite" runid="$RunID" stage="analysis" substage="mngr" runsite="$RunSite"
+SCRIPT PRE checkanalysis $DESHome/libexec/despretask  $UniqName.descfg analysis j mngr 
+SCRIPT POST checkanalysis $DESHome/libexec/desposttask $UniqName.descfg analysis j mngr \$RETURN
+
+EOF
+
+   # print relationships between stages
+   for (my $i = 0; $i < scalar(@StageList) - 1; $i++) {
+      print DAG "PARENT ", $StageList[$i], " CHILD ", $StageList[$i+1], "\n";
+   }
+   my $Stage = $StageList[scalar(@StageList)-1];
+   print DAG "PARENT $Stage CHILD checkanalysis\n";
+   
+   close DAG;
+   addInfoToDag($Config, "$DAGFilename", \*DEBUG);
+}
+
+
+######################################################################
+sub createConvertOgreDAG {
+   my $Config = shift;
+   
+   my $Nite = $Config->getValueReq("nite");
+   my $RunID = $Config->getValueReq("runid");
+   my $RunSite = $Config->getValueReq("run_site");
+   my %SearchDefs;
+   $SearchDefs{"site"} = $RunSite;
+   my $Platform = $Config->getValueReq("platform", \%SearchDefs);
+   my $xmlfile = "workflow_$Platform.xml";
+   my $OgreHome = $ENV{"OGRE_HOME"};
+   if ($OgreHome !~ /\S/) {
+      print STDERR "ERROR: Environment variable OGRE_HOME is not defined\n";
+      exit $FAILURE;
+   }
+
+   my $DAGFile = "convert_mngr.dag";
+   open MNGR, "> $DAGFile";
+   print MNGR <<EOF;
+   JOB convert_ogre $DESHome/lib/DES/condor/launchogre.condor
+   VARS convert_ogre deshome="$DESHome" descfg="$UniqName.descfg" 
+   VARS convert_ogre ogrehome="$OgreHome" xmlfile="$xmlfile" ogrestage="Stage_Convert_Ingest"
+   VARS convert_ogre nite="$Nite" runid="$RunID" runsite="$RunSite" stage="convert" 
+   SCRIPT PRE convert_ogre $DESHome/libexec/despretask $UniqName.descfg convert j ogre 
+   SCRIPT POST convert_ogre $DESHome/libexec/desposttask $UniqName.descfg convert j ogre \$RETURN
+EOF
+   close MNGR; 
+
+   addInfoToDag($Config, "$DAGFile", \*DEBUG);
+}
+
+
+######################################################################
+sub createProcessOgreDAG {
+   my $Config = shift;
+   
+   my $Nite = $Config->getValueReq("nite");
+   my $RunID = $Config->getValueReq("runid");
+   my $RunSite = $Config->getValueReq("run_site");
+   my %SearchDefs;
+   $SearchDefs{"site"} = $RunSite;
+   my $Platform = $Config->getValueReq("platform", \%SearchDefs);
+   my $xmlfile = "workflow_$Platform.xml";
+   
+   my $OgreHome = $ENV{"OGRE_HOME"};
+   if ($OgreHome !~ /\S/) {
+      print STDERR "ERROR: Environment variable OGRE_HOME is not defined\n";
+      exit $FAILURE;
+   }
+   my $DAGFile = "process_mngr.dag";
+   open MNGR, "> $DAGFile";
+   print MNGR <<EOF;
+   JOB process_ogre $DESHome/lib/DES/condor/launchogre.condor
+   VARS process_ogre deshome="$DESHome" descfg="$UniqName.descfg" 
+   VARS process_ogre ogrehome="$OgreHome" xmlfile="$xmlfile" ogrestage="Stage_$Platform"
+   VARS process_ogre nite="$Nite" runid="$RunID" runsite="$RunSite" stage="process" 
+   SCRIPT PRE process_ogre $DESHome/libexec/despretask $UniqName.descfg process j ogre 
+   SCRIPT POST process_ogre $DESHome/libexec/desposttask $UniqName.descfg process j ogre \$RETURN
+EOF
+   close MNGR; 
+
+   addInfoToDag($Config, "$DAGFile", \*DEBUG);
+}
+
+######################################################################
+sub createScampOgreDAG {
+   my $Config = shift;
+   
+   my $Nite = $Config->getValueReq("nite");
+   my $RunID = $Config->getValueReq("runid");
+   my $RunSite = $Config->getValueReq("run_site");
+   my %SearchDefs;
+   $SearchDefs{"site"} = $RunSite;
+   my $Platform = $Config->getValueReq("platform", \%SearchDefs);
+   my $xmlfile = "workflow_$Platform.xml";
+   my $OgreHome = $ENV{"OGRE_HOME"};
+   if ($OgreHome !~ /\S/) {
+      print STDERR "ERROR: Environment variable OGRE_HOME is not defined\n";
+      exit $FAILURE;
+   }
+   
+   my $DAGFile = "scamp_mngr.dag";
+   open MNGR, "> $DAGFile";
+   print MNGR <<EOF;
+   JOB scamp_ogre $DESHome/lib/DES/condor/launchogre.condor
+   VARS scamp_ogre deshome="$DESHome" descfg="$UniqName.descfg" 
+   VARS scamp_ogre ogrehome="$OgreHome" xmlfile="$xmlfile" ogrestage="Stage_scamp"
+   VARS scamp_ogre nite="$Nite" runid="$RunID" runsite="$RunSite" stage="scamp" 
+   SCRIPT PRE scamp_ogre $DESHome/libexec/despretask $UniqName.descfg scamp j ogre
+   SCRIPT POST scamp_ogre $DESHome/libexec/desposttask $UniqName.descfg scamp j ogre \$RETURN
+EOF
+   close MNGR; 
+
+   addInfoToDag($Config, "$DAGFile", \*DEBUG);
+}
+
+######################################################################
+sub createPostScampOgreDAG {
+   my $Config = shift;
+   
+   my $Nite = $Config->getValueReq("nite");
+   my $RunID = $Config->getValueReq("runid");
+   my $RunSite = $Config->getValueReq("run_site");
+   my %SearchDefs;
+   $SearchDefs{"site"} = $RunSite;
+   my $Platform = $Config->getValueReq("platform", \%SearchDefs);
+   my $xmlfile = "workflow_$Platform.xml";
+   my $OgreHome = $ENV{"OGRE_HOME"};
+   if ($OgreHome !~ /\S/) {
+      print STDERR "ERROR: Environment variable OGRE_HOME is not defined\n";
+      exit $FAILURE;
+   }
+   
+   my $DAGFile = "postscamp_mngr.dag";
+   open MNGR, "> $DAGFile";
+   print MNGR <<EOF;
+   JOB postscamp_ogre $DESHome/lib/DES/condor/launchogre.condor
+   VARS postscamp_ogre deshome="$DESHome" descfg="$UniqName.descfg" 
+   VARS postscamp_ogre ogrehome="$OgreHome" xmlfile="$xmlfile" ogrestage="Stage_postscamp"
+   VARS postscamp_ogre nite="$Nite" runid="$RunID" runsite="$RunSite" stage="postscamp" 
+   SCRIPT PRE postscamp_ogre $DESHome/libexec/despretask $UniqName.descfg postscamp j ogre
+   SCRIPT POST postscamp_ogre $DESHome/libexec/desposttask $UniqName.descfg postscamp j ogre \$RETURN
+EOF
+   close MNGR; 
+
+   addInfoToDag($Config, "$DAGFile", \*DEBUG);
+}
+
+######################################################################
+# Creates just the condor submit file for the DAG job
+#    actual DAG created at runtime by libexec/despreconvertmngr
+sub createConvertDAG {
+   my $Config = shift;
+   my $Nite = $Config->getValueReq("nite");
+   my $RunID = $Config->getValueReq("runid");
+   my $RunSite = $Config->getValueReq("run_site");
+
+   open FH, "> convert_mngr.dag.condor.sub";
+   print FH <<EOF;
+universe        = scheduler
+executable      = condor_dagman
+getenv          = True
+output          = convert_mngr.dag.lib.out
+error           = convert_mngr.dag.lib.err
+log             = convert_mngr.dag.dagman.log
+remove_kill_sig = SIGUSR1
+on_exit_remove  = ( ExitSignal =?= 11 || (ExitCode =!= UNDEFINED && ExitCode >=0 && ExitCode <= 2))
+copy_to_spool   = False
+arguments       = -f -l . -Debug 3 -Lockfile convert_mngr.dag.lock -Condorlog convert_mngr.log -Dag convert_mngr.dag -Rescue convert_mngr.dag.rescue
+environment     = _CONDOR_DAGMAN_LOG=convert_mngr.dag.dagman.out;_CONDOR_MAX_DAGMAN_LOG=0
+notification    = never
++des_isdesjob=TRUE
++des_nite="$Nite"
++des_runid="$RunID"
++des_stage="convert"
++des_substage="mngr"
++des_runsite="$RunSite"
+queue
+EOF
+   close FH;
+
+}
+
+
+######################################################################
+sub createConvertSubmit {
+  my $Config = shift;
+
+  my %SearchDefs;
+  $SearchDefs{"stage"} = "convert";
+
+  my $UniqName = $Config->getValueReq("uniqname", \%SearchDefs);
+  my $RunSite = $Config->getValueReq("run_site", \%SearchDefs);
+  my $Detector = $Config->getValueReq("detector", \%SearchDefs);
+
+  $SearchDefs{"site"} = $RunSite;
+  my $RunArchiveLoc = $Config->getValueReq("run_archive_loc", \%SearchDefs);
+  $SearchDefs{"archive"} = $RunArchiveLoc;
+
+  my $GlobSched = $Config->getValueReq("grid_host", \%SearchDefs).":".$Config->getValueReq("grid_port", \%SearchDefs)."/jobmanager-".$Config->getValueReq("batch_type" , \%SearchDefs);
+
+  my $NumProcs = $Config->getValue("num_procs" , \%SearchDefs);
+  my $ArchiveRoot = $Config->getValue("archive_root" , \%SearchDefs);
+  my $Nite = $Config->getValue("nite" , \%SearchDefs);
+
+  my $GlobRSL = "(maxwalltime=".ceil($Config->getValue("wall_hrs" , \%SearchDefs)*60).")";
+  if ($Config->getValue("queue" , \%SearchDefs) =~ /\S/) {
+     $GlobRSL .= "(queue=".$Config->getValue("queue" , \%SearchDefs).")";
+  }
+  if ($Config->getValue("project" , \%SearchDefs) =~ /\S/) {
+     $GlobRSL .= "(project=".$Config->getValue("project" , \%SearchDefs).")";
+  }
+  if (($Config->getValue("compute_ppn" , \%SearchDefs) == 0) || ($NumProcs == 1)) {
+     $GlobRSL .= "(count=$NumProcs)";
+  }
+  else {
+     my $PPN = $Config->getValue("compute_ppn" , \%SearchDefs);
+     my $NumHosts = ceil($NumProcs/$PPN);
+     $GlobRSL .= "(host_xcount=$NumHosts)(xcount=$PPN)";
+  }
+
+  if ($Config->getValue("maxmem" , \%SearchDefs) =~ /\S/) {
+     $GlobRSL .= "(max_memory=".($Config->getValue("maxmem" , \%SearchDefs)*$Config->getValue("num_procs", "convert")).")";
+  }
+
+  if (($GlobSched !~ /^cu.*\.ncsa\.uiuc\.edu/i) &&
+      ($GlobSched !~ /^grid-cu.ncsa/i) &&
+      ($GlobSched !~ /login\.hpcx\.ac\.uk/i)) {
+     $GlobRSL .= "(jobtype=single)";
+  }
+
+  my $RemDir = "$ArchiveRoot/raw/$Nite";
+  my $BinDir = "$ArchiveRoot/raw/$Nite/bin";
+  my $Arg1 = "$ArchiveRoot/raw/$Nite/src/\$(imgfile).fits";
+  my $Arg2 = "$ArchiveRoot/raw/$Nite/raw/\$(imgfile)/\$(imgfile)";
+  my $RunSoftwareLoc = $Config->getValueReq("run_software_loc", \%SearchDefs);
+  $SearchDefs{"software"} = $RunSoftwareLoc;
+  my $CrossTalk = $Config->getValueReq("pipeline_root" , \%SearchDefs)."/trunk/reduction/etc/$Detector.xtalk";
+  my $PhotFlag = $Config->getValueReq("phot_flag" , \%SearchDefs);
+
+  open (FH, "> convert.condor") or die "cannot create file: convert.condor\n";
+  print FH <<STR;
+universe = grid
+grid_type = gt2
+globusscheduler = $GlobSched
+globusrsl = $GlobRSL
+remote_initialdir = $RemDir/log
+executable = $DESHome/libexec/deswrapper
+arguments = $RemDir/log/convert_\$(imgfile).out $RemDir/log/convert_\$(imgfile).err $BinDir/${Detector}_convert $Arg1 $Arg2 -crosstalk $CrossTalk -quiet -qzip -photflag $PhotFlag 
+transfer_executable = true
+should_transfer_files = YES
+when_to_transfer_output = ON_EXIT
+transfer_output_files = convert_\$(imgfile).out
+notification=never
+output = convertjob_\$(imgfile).out
+error = convertjob_\$(imgfile).err
+##log_xml = true
+log = convert.log
+queue
+STR
+  close FH;
+
+  addInfoToCondor($Config, "convert.condor", "convert", "\$(imgfile)", \*DEBUG);
+}
+
+
+######################################################################
+sub processDESfile {
+  my $DESFile = shift;
+
+  print "Opening desfile '$DESFile'\n";
+  $Config->readConfig($DESFile, 1, \*STDERR); 
+
+  if ($Config->getValue("__numstages") eq "0") {
+    print STDERR "ERROR: no stages specified in DES description file.\n";
+    exit 1;
+  }
+  if ($Config->getValue("nite") !~ /\S/) {
+    print STDERR "ERROR: NITE must be specified.\n";
+    exit 1;
+  }
+}
+
+

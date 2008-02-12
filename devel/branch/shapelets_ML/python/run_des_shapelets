@@ -1,0 +1,76 @@
+#!/usr/bin/env python
+import os
+import re
+import sys
+
+from optparse import OptionParser
+
+usage="""
+    %prog [options] rootdir"""
+
+parser=OptionParser(usage)
+parser.add_option("-o","--outdir", dest="outdir",help="A directory to put all outputs", default=None)
+
+
+allpost = '_allsh.csv'
+starpost = '_starsh.csv'
+sizemagpost = '_sizemag.eps'
+
+catname = '_scamp'
+imname  = '_im'
+
+cat_pattern = re.compile('.*'+catname+'.fits.*')
+
+def GetFiles(root_dir):
+
+    catfiles=[]
+
+    path = os.path.expanduser(root_dir)
+    for root,dirs,files in os.walk(path):
+        for f in files:
+            if cat_pattern.match(f):
+                keepf = os.path.join(root, f)
+                catfiles.append(keepf)
+                print keepf
+
+    return catfiles
+
+def ReplaceDir(f1,f2,f3, newdir):
+    base = os.path.basename(f1)
+    nf1 = os.path.join(newdir, base)
+    base = os.path.basename(f2)
+    nf2 = os.path.join(newdir, base)
+    base = os.path.basename(f3)
+    nf3 = os.path.join(newdir, base)
+
+    return nf1,nf2,nf3
+
+if __name__=="__main__":
+
+    (options, args) = parser.parse_args(sys.argv[1:])
+    if len(args) < 1:
+        parser.print_help()
+        sys.exit(45)
+    else:        
+
+        root_dir = args[0]
+        outdir = options.outdir
+
+        catfiles = GetFiles(root_dir) 
+        for cf in catfiles:
+            # image file name
+            imf = cf.replace(catname,imname)
+            allf = cf.replace(catname+'.fits',allpost)
+            starf = cf.replace(catname+'.fits',starpost)
+            plotf = cf.replace(catname+'.fits',sizemagpost)
+
+            if outdir is not None:
+                allf,starf,plotf = ReplaceDir(allf,starf,plotf,outdir)
+            exitlog = starf.replace(starpost, '_measure_stars_exit.log')
+            
+            print "------------------------------------------------------"
+            sys.stdout.flush()
+            comm = "measure_stars.py -p %s -e %s %s %s %s %s" % \
+                    (plotf,exitlog,imf,cf,allf,starf)
+            res = os.system(comm)
+

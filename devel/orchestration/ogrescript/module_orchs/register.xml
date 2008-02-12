@@ -1,0 +1,33 @@
+<define procedure="Stage_register" ARG_0="int">
+    <env/>
+    <properties sysprops="true"/>
+    <echo stdout="true" message="Running Stage_register"/>
+    <declare name="appbase" string="${user.dir}"/>
+    <echo stdout="true" message="Done ${ensemble.id}-Main-Begin-Stage_register-on-${orchestration.node}"/>
+    <echo stdout="true" message="Done ${nite}"/>
+    <echo stdout="true" message="Done ${site}"/>
+    <echo stdout="true" message="Done ${uid_in}"/>
+    <echo stdout="true" message="Done ${ccd.start}"/>
+    <echo stdout="true" message="Done ${ccd.stop}"/>
+    <echo stdout="true" message="Done ${run.stage}"/>
+    <echo stdout="true" message="Done ${tgrid_homepath_${site}}"/>
+    <echo stdout="true" message="Done ${tgrid_archpath_${site}}"/>
+    <send>
+        <progress-event message="Begin Stage_register on ${orchestration.node}">
+<!--
+                  <header-property name="some-special-id" value="${ensemble.id}-Main-Begin-Stage_register-on-${orchestration.node}"/>
+-->
+            <property name="some-special-id" value="${ensemble.id}-Main-Begin-Stage_register-on-${orchestration.node}"/>
+            <property name="nite" value="${nite}"/>
+            <property name="site" value="${site}"/>
+            <property name="uid_in" value="${uid_in}"/>
+            <property name="ccd.start" value="${ccd.start}"/>
+            <property name="ccd.stop" value="${ccd.stop}"/>
+            <property name="run.stage" value="${run.stage}"/>
+            <property name="tgrid_homepath" value="${tgrid_homepath_${site}}"/>
+            <property name="tgrid_archpath" value="${tgrid_archpath_${site}}"/>
+        </progress-event>
+    </send>
+    <echo stdout="true" message="Done Stage_register"/>
+</define>
+

@@ -1,0 +1,171 @@
+
+   <target name="Stage_createlists" description="Database query to produce image lists">
+   <property file="${mypath}/module_orchs/createlists.properties"/>
+
+    <esequence>
+
+      <publish>
+         <event ensembleid="${ensemble.id}"
+             workflowid="Main"
+             nodeid="Begin Stage_createlists"
+             currentState="0">
+            <property name="message" value="Begin Stage_createlists"/>
+         </event>
+      </publish>
+
+     <print line=" - Begin Stage_createlists"/>
+
+     <edeclare name="end" long="$E{ ${ccd.stop} + 1 }"/> 
+
+     <eloop counterName="i" initialValue="${ccd.start}">
+        <ecounter>
+            <expression infix="$R{i} &lt; $R{end}"/>
+        </ecounter>	
+        
+        <!-- convert 1,...,9 to 01,...,09 -->
+        <econdblock type="else-if">
+           <econdtask>
+             <eeval>
+                <statement>
+                 <ecompare long="$R{i}">
+                     <predicate long="10" comparator="LT"/>
+                 </ecompare>
+               </statement>
+             </eeval>
+                <edeclare globalName="in" string="0$R{i}"/>
+             </econdtask>
+                <edeclare globalName="in" long="$R{i}"/>
+        </econdblock>
+
+        <econdblock type="else-if">
+           <econdtask>
+             <eeval>
+                <statement>
+                 <ecompare string="${platform}">
+                     <predicate string="TG" comparator="EQUALS"/>
+                 </ecompare>
+               </statement>
+             </eeval>
+                <edeclare globalName="ina" string="${project}"/>
+             </econdtask>
+               <esequence>
+                <edeclare globalName="list.dir" string="${workplace}/${uid}/data/${nite}/log"/>
+                <mkdir dir="${sql.dir}"/>
+               </esequence>
+        </econdblock>
+
+	<print line=" -- making lists for CCD $R{in} (from ${ccd.start} to ${ccd.stop}) and for nite ${nite}"/>
+
+
+     <econdblock type="else-if">
+        <econdtask>
+          <eeval>
+             <statement>
+               <ecompare string="${platform}">
+                     <predicate string="TG" comparator="EQUALS"/>
+                 </ecompare>
+               </statement>
+          </eeval>
+              <esequence>
+                 <edeclare globalName="list.dir" string="${local_listpath}/log"/> 
+                 <delete quiet="true" dir="$R{list.dir}"/>
+                 <mkdir dir="$R{list.dir}"/>
+                 <print line=" -- The produced lists can be found in $R{list.dir}"/>
+              </esequence>
+         </econdtask>
+     </econdblock>
+
+
+        <!-- create sql scripts -->
+	<esequence>
+	<edeclare name="sql.bias" string="${sql.dir}/outbias_${nite}.dat"/>
+        <edeclare name="sql.flat" string="${sql.dir}/outflat_${nite}.dat"/>
+        <edeclare name="sql.science" string="${sql.dir}/outscience_${nite}.dat"/>
+
+        <write path="${list.sql}" text="true" 
+                    errorProperty="failed" rethrow="false" append="true"> 
+	     <segment string="SET ECHO OFF NEWP 0 SPA 1 PAGES 0 FEED OFF HEAD OFF TRIMS ON LINESIZE 1000;" lineBreaks="1"/>
+	     <segment string="SPOOL $R{sql.bias};" lineBreaks="1"/>
+	     <segment string="select count(*) from Files where (upper(IMAGETYPE) like '%ZERO%' or upper(IMAGETYPE) like '%BIAS%') and CCD_NUMBER = $R{i} and NITE like '${nite}';" lineBreaks="1"/>
+	     <segment string="select IMAGENAME,band,ccd_number,imagetype from Files where (upper(IMAGETYPE) like '%ZERO%' or upper(IMAGETYPE) like '%BIAS%') and CCD_NUMBER = $R{i} and NITE like '${nite}';" lineBreaks="1"/>
+	     <segment string="SPOOL off;" lineBreaks="1"/>
+             <segment string="SET ECHO OFF NEWP 0 SPA 1 PAGES 0 FEED OFF HEAD OFF TRIMS ON LINESIZE 1000;" lineBreaks="1"/>
+	     <segment string="SPOOL $R{sql.flat};" lineBreaks="1"/>
+	     <segment string="select count(*) from Files where upper(IMAGETYPE) like '%FLAT%' and CCD_NUMBER = $R{i} and NITE like '${nite}';" lineBreaks="1"/>
+	     <segment string="select IMAGENAME,band,CCD_NUMBER,imagetype from Files where upper(IMAGETYPE) like '%FLAT%' and CCD_NUMBER = $R{i} and NITE like '${nite}';" lineBreaks="1"/>
+	     <segment string="SPOOL off;" lineBreaks="1"/>
+             <segment string="SET ECHO OFF NEWP 0 SPA 1 PAGES 0 FEED OFF HEAD OFF TRIMS ON LINESIZE 1000;" lineBreaks="1"/>
+	     <segment string="SPOOL $R{sql.science};" lineBreaks="1"/>
+	     <segment string="select count(*) from Files where upper(IMAGETYPE) like '%OBJECT%' and CCD_NUMBER = $R{i} and NITE like '${nite}';" lineBreaks="1"/>
+	     <segment string="select IMAGENAME,band,CCD_NUMBER,imagetype from Files where upper(IMAGETYPE) like '%OBJECT%' and CCD_NUMBER = $R{i} and NITE like '${nite}';" lineBreaks="1"/>
+	     <segment string="SPOOL off;" lineBreaks="1"/>
+             <segment string="quit" lineBreaks="1"/>
+        </write>
+        </esequence>
+
+        <!-- run database query  -->
+        <esequence>
+	  <edeclare name="sql.script" string="${list.sql}"/>
+
+	  <rtexec inheritedEnv="true" execDir="." 
+                args="${sql.exec} ${sql.command}" quiet="true">
+          </rtexec>
+        </esequence>
+           
+        <!-- create lists for bias -->
+        <esequence>
+          <edeclare name="sql.out" string="${sql.dir}/outbias_${nite}.dat"/>
+
+	  <rtexec inheritedEnv="true" execDir="." 
+                args="${createlist.exec} ${createlist.args}" quiet="true">
+            <outMonitor file="${createlist.log}"/>
+          </rtexec>
+	
+          <delete file="$R{sql.out}" quiet="true"/>
+          <print line=" -- lists created for bias images"/>  
+        </esequence>
+	
+        <!-- create lists for flats -->
+        <esequence> 
+          <edeclare name="sql.out" string="${sql.dir}/outflat_${nite}.dat"/>
+
+	  <rtexec inheritedEnv="true" execDir="." 
+                args="${createlist.exec} ${createlist.args}" quiet="true">
+            <outMonitor file="${createlist.log}"/>
+          </rtexec>
+	   
+          <delete file="$R{sql.out}" quiet="true"/>
+          <print line=" -- lists created for flat images"/>  
+        </esequence>
+
+        <!-- create lists for science -->
+        <esequence>
+          <edeclare name="sql.out" string="${sql.dir}/outscience_${nite}.dat"/>
+ 
+	  <rtexec inheritedEnv="true" execDir="." 
+                args="${createlist.exec} ${createlist.args}" quiet="true">
+            <outMonitor file="${createlist.log}"/>
+          </rtexec>
+	
+          <delete file="$R{sql.out}" quiet="true"/>
+          <print line=" -- lists created for science images"/>  
+        </esequence>
+	      
+      </eloop>
+	 
+      <print line=" - Stage_createlists done"/>
+      <print line="     "/>
+
+     <publish>
+         <event ensembleid="${ensemble.id}"
+            workflowid="Main"
+            nodeid="End Stage_createlists"
+            currentState="0">
+           <property name="message" value="End Stage_createlists"/>
+         </event>
+     </publish>
+
+     </esequence>
+   </target>
+
+   

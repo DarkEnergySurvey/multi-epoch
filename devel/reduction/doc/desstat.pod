@@ -1,0 +1,72 @@
+=cut
+########################################################################
+#  $Id$
+#
+#  $Rev::                                    $:  # Revision of last commit.
+#  $LastChangedBy::                          $:  # Author of last commit. 
+#  $LastChangedDate::                        $:  # Date of last commit.
+#
+#  Authors: 
+#         Michelle Gower (mgower@ncsa.uiuc.edu)
+#         Darren Adams (dadams@ncsa.uiuc.edu)
+#
+#  Developed at: 
+#  The National Center for Supercomputing Applications (NCSA)
+#  with useful conversations with Jordi Cohen and Jim Phillips from the
+#  Theoretical and Computation Biophysics Group at the University
+#  of Illinois at Urbana-Champaign.
+#
+#  Copyright (C) 2007 Board of Trustees of the University of Illinois. 
+#  All rights reserved.
+#
+#  DESCRIPTION:
+#
+#######################################################################
+=pod
+
+=head1 NAME
+
+desstat - Display status of running DES workflow or historical summaries.
+
+=head1 SYNOPSIS
+
+B<desstat> [ B<OPTIONS> ]
+
+B<desstat> -S<[B<-h>] [B<-v>] [B<-u> I<username>|I<-allusers>] [B<-err>] [B<-l>|B<-s>] [I<nite runid>|I<jobid>]>
+
+=head1 DESCRIPTION
+
+B<desstat> Displays status of the jobs that compose a running  DES workflow.  Information is
+gathered from both the active jobs in the Condor queue and log files.
+
+=head1 OPTIONS
+
+B<desstat> accepts the following command line options:
+
+=over 4
+
+=item -err
+
+Show hold reason for jobs in the Condor I<hold> state.
+
+=item -h, -help
+
+Print usage information and exit.
+
+=item -l, -long
+
+Format results in I<long> format, displaying status information for every job.
+
+=item -s, -summary
+
+Format results using a brief I<summary> format.
+
+=item -u, -user
+
+Specify a user name to use as a filter.
+
+=item -v, -version
+
+Display version information and exit. 
+
+=back

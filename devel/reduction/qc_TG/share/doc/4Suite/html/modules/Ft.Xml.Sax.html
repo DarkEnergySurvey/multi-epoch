@@ -1,0 +1,284 @@
+<html>
+  <head>
+    <meta content="text/html; charset=iso-8859-1" http-equiv="Content-Type">
+    <title>4Suite API Documentation: Ft.Xml.Sax</title>
+    <link href="modules.css" type="text/css" rel="stylesheet">
+  </head>
+  <body>
+    <div class="universal-header"><span class="universal-header-prefix">&nbsp;&nbsp;&nbsp;</span>&nbsp;<span class="universal-header-prefix">&nbsp;&nbsp;</span>&nbsp;<span class="universal-header-prefix">&nbsp;</span>&nbsp;<a href="../index.html">4Suite<sup>&trade;</sup> API Documentation</a></div>
+    <h1><span class="glyph-arrow">&#9658;</span> Module <span class="this-name"><a href="Ft.html" title="Ft">Ft</a>.<a href="Ft.Xml.html" title="Ft.Xml">Xml</a>.Sax</span></h1>
+    <div class="abstract">Abstraction module for Domlette SAX usage.</div>
+    <pre class="description">Copyright 2005 Fourthought, Inc. (USA).
+Detailed license and copyright information: http://4suite.org/COPYRIGHT
+Project home, documentation, distributions: http://4suite.org/</pre>
+    <div class="summary-section">
+      <table cellpadding="0" cellspacing="0">
+        <tbody>
+          <tr>
+            <td valign="top">
+              <div class="summary-header">Classes:</div>
+              <div class="summary-list"><span class="class-name"><a href="#Attributes">Attributes</a></span>, <span class="class-name"><a href="#ContentHandler">ContentHandler</a></span>, <span class="class-name"><a href="#DomBuilder">DomBuilder</a></span>, <span class="class-name"><a href="#Locator">Locator</a></span>, <span class="class-name"><a href="#SaxPrinter">SaxPrinter</a></span></div>
+            </td>
+            <td width="7" valign="middle"></td>
+            <td width="1" valign="middle" bgcolor="#C5C5C5"></td>
+            <td width="7" valign="middle"></td>
+            <td valign="top">
+              <div class="summary-header">Globals:</div>
+              <div class="summary-list"><span class="global-name"><a href="#FEATURE_GENERATOR">FEATURE_GENERATOR</a></span>, <span class="global-name"><a href="#FEATURE_PROCESS_XINCLUDES">FEATURE_PROCESS_XINCLUDES</a></span>, <span class="global-name"><a href="#PROPERTY_WHITESPACE_RULES">PROPERTY_WHITESPACE_RULES</a></span>, <span class="global-name"><a href="#PROPERTY_YIELD_RESULT">PROPERTY_YIELD_RESULT</a></span>, <span class="global-name"><a href="#XMLNS_NAMESPACE">XMLNS_NAMESPACE</a></span></div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="section">
+      <h2>Classes</h2>
+      <dl class="classes">
+        <dt class="classdef"><a name="Attributes"></a>class <span class="class-name">Attributes</span></dt>
+        <dd class="classdesc">
+          <div class="abstract">Interface for a set of XML attributes.</div>
+          <pre class="description">Contains a set of XML attributes, accessible by expanded name.</pre>
+          <h3>Methods</h3>
+          <dl class="methods">
+            <dt class="methoddef"><a name="Attributes-__contains__"><span class="method-name">__contains__</span></a>(<span class="argument-name">self</span>, <span class="argument-name">name</span>)</dt>
+            <dd class="methoddesc">
+              <div class="abstract">Alias for has_key.</div>
+            </dd>
+            <dt class="methoddef"><a name="Attributes-__delitem__"><span class="method-name">__delitem__</span></a>(<span class="argument-name">self</span>, <span class="argument-name">name</span>)</dt>
+            <dd class="methoddesc">
+              <div class="abstract">Removes the attribute with the given name.</div>
+            </dd>
+            <dt class="methoddef"><a name="Attributes-__getitem__"><span class="method-name">__getitem__</span></a>(<span class="argument-name">self</span>, <span class="argument-name">name</span>)</dt>
+            <dd class="methoddesc">
+              <div class="abstract">Alias for getValue.</div>
+            </dd>
+            <dt class="methoddef"><a name="Attributes-__len__"><span class="method-name">__len__</span></a>(<span class="argument-name">self</span>)</dt>
+            <dd class="methoddesc">
+              <div class="abstract">Returns the number of attributes in the list.</div>
+            </dd>
+            <dt class="methoddef"><a name="Attributes-get"><span class="method-name">get</span></a>(<span class="argument-name">self</span>, <span class="argument-name">name</span>, <span class="argument-name">alternative</span><span class="argument-default">=None</span>)</dt>
+            <dd class="methoddesc">
+              <div class="abstract">Return the value associated with attribute name; if it is not
+available, then return the alternative.</div>
+            </dd>
+            <dt class="methoddef"><a name="Attributes-getQNameByName"><span class="method-name">getQNameByName</span></a>(<span class="argument-name">self</span>, <span class="argument-name">name</span>)</dt>
+            <dd class="methoddesc">
+              <div class="abstract">Returns the qualified name of the attribute with the given name.</div>
+            </dd>
+            <dt class="methoddef"><a name="Attributes-getValue"><span class="method-name">getValue</span></a>(<span class="argument-name">self</span>, <span class="argument-name">name</span>)</dt>
+            <dd class="methoddesc">
+              <div class="abstract">Returns the value of the attribute with the given name.</div>
+            </dd>
+            <dt class="methoddef"><a name="Attributes-has_key"><span class="method-name">has_key</span></a>(<span class="argument-name">self</span>, <span class="argument-name">name</span>)</dt>
+            <dd class="methoddesc">
+              <div class="abstract">Returns True if the attribute name is in the list,
+False otherwise.</div>
+            </dd>
+            <dt class="methoddef"><a name="Attributes-items"><span class="method-name">items</span></a>(<span class="argument-name">self</span>)</dt>
+            <dd class="methoddesc">
+              <div class="abstract">Return a list of (attribute_name, value) pairs.</div>
+            </dd>
+            <dt class="methoddef"><a name="Attributes-keys"><span class="method-name">keys</span></a>(<span class="argument-name">self</span>)</dt>
+            <dd class="methoddesc">
+              <div class="abstract">Returns a list of the names of all attribute in the list.</div>
+            </dd>
+            <dt class="methoddef"><a name="Attributes-values"><span class="method-name">values</span></a>(<span class="argument-name">self</span>)</dt>
+            <dd class="methoddesc">
+              <div class="abstract">Return a list of all attribute values.</div>
+            </dd>
+          </dl>
+        </dd>
+        <dt class="classdef"><a name="ContentHandler"></a>class <span class="class-name">ContentHandler</span></dt>
+        <dd class="classdesc">
+          <div class="abstract">Interface for receiving logical document content events.</div>
+          <pre class="description">This is the main callback interface for the Parser. The order of
+events in this interface mirrors the order of the information in the
+document.</pre>
+          <h3>Methods</h3>
+          <dl class="methods">
+            <dt class="methoddef"><a name="ContentHandler-characters"><span class="method-name">characters</span></a>(<span class="argument-name">self</span>, <span class="argument-name">content</span>)</dt>
+            <dd class="methoddesc">
+              <div class="abstract">Receive notification of character data.</div>
+              <pre class="description">The parser will call this method to report each chunk of
+character data.   The parser will return all contiguous
+character data in a single chunk.</pre>
+            </dd>
+            <dt class="methoddef"><a name="ContentHandler-endDocument"><span class="method-name">endDocument</span></a>(<span class="argument-name">self</span>)</dt>
+            <dd class="methoddesc">
+              <div class="abstract">Receive notification of the end of a document.</div>
+              <pre class="description">The parser will invoke this method only once, and it will
+be the last method invoked during the parse. The parser shall
+not invoke this method until it has either abandoned parsing
+(because of an unrecoverable error) or reached the end of
+input.</pre>
+            </dd>
+            <dt class="methoddef"><a name="ContentHandler-endElementNS"><span class="method-name">endElementNS</span></a>(<span class="argument-name">self</span>, (<span class="argument-name">uri</span>, <span class="argument-name">localName</span>), <span class="argument-name">qualifiedName</span>)</dt>
+            <dd class="methoddesc">
+              <div class="abstract">Signals the end of an element.</div>
+              <pre class="description">The uri parameter is None for elements which have no namespace,
+the qualifiedName parameter is the raw XML name used in the source
+document.</pre>
+            </dd>
+            <dt class="methoddef"><a name="ContentHandler-endPrefixMapping"><span class="method-name">endPrefixMapping</span></a>(<span class="argument-name">self</span>, <span class="argument-name">prefix</span>)</dt>
+            <dd class="methoddesc">
+              <div class="abstract">End the scope of a prefix-URI mapping.</div>
+              <pre class="description">See startPrefixMapping for details. This event will always
+occur after the corresponding endElementNS event, but the order
+of endPrefixMapping events is not otherwise guaranteed.</pre>
+            </dd>
+            <dt class="methoddef"><a name="ContentHandler-setDocumentLocator"><span class="method-name">setDocumentLocator</span></a>(<span class="argument-name">self</span>, <span class="argument-name">locator</span>)</dt>
+            <dd class="methoddesc">
+              <div class="abstract">Called by the parser to give the application a locator for
+locating the origin of document events.</div>
+              <pre class="description">The locator allows the application to determine the end
+position of any document-related event, even if the parser is
+not reporting an error. Typically, the application will use
+this information for reporting its own errors (such as
+character content that does not match an application's
+business rules). The information returned by the locator is
+probably not sufficient for use with a search engine.
+
+Note that the locator will return correct information only
+during the invocation of the events in this interface. The
+application should not attempt to use it at any other time.</pre>
+            </dd>
+            <dt class="methoddef"><a name="ContentHandler-startDocument"><span class="method-name">startDocument</span></a>(<span class="argument-name">self</span>)</dt>
+            <dd class="methoddesc">
+              <div class="abstract">Receive notification of the beginning of a document.</div>
+              <pre class="description">The parser will invoke this method only once, before any
+other methods in this interface.</pre>
+            </dd>
+            <dt class="methoddef"><a name="ContentHandler-startElementNS"><span class="method-name">startElementNS</span></a>(<span class="argument-name">self</span>, (<span class="argument-name">uri</span>, <span class="argument-name">localName</span>), <span class="argument-name">qualifiedName</span>, <span class="argument-name">atts</span>)</dt>
+            <dd class="methoddesc">
+              <div class="abstract">Signals the start of an element.</div>
+              <pre class="description">The uri parameter is None for elements which have no namespace,
+the qualifiedName parameter is the raw XML name used in the source
+document, and the atts parameter holds an instance of the
+Attributes class containing the attributes of the element.</pre>
+            </dd>
+            <dt class="methoddef"><a name="ContentHandler-startPrefixMapping"><span class="method-name">startPrefixMapping</span></a>(<span class="argument-name">self</span>, <span class="argument-name">prefix</span>, <span class="argument-name">uri</span>)</dt>
+            <dd class="methoddesc">
+              <div class="abstract">Begin the scope of a prefix-URI Namespace mapping.</div>
+              <pre class="description">The information from this event is not necessary for normal
+Namespace processing: the XmlParser will automatically replace
+prefixes for element and attribute names.
+
+There are cases, however, when applications need to use
+prefixes in character data or in attribute values, where they
+cannot safely be expanded automatically; the
+start/endPrefixMapping event supplies the information to the
+application to expand prefixes in those contexts itself, if
+necessary.
+
+Note that start/endPrefixMapping events are not guaranteed to
+be properly nested relative to each-other: all
+startPrefixMapping events will occur before the corresponding
+startElementNS event, and all endPrefixMapping events will occur
+after the corresponding endElementNS event, but their order is
+not guaranteed.</pre>
+            </dd>
+          </dl>
+        </dd>
+        <dt class="classdef"><a name="DomBuilder"></a>class <span class="class-name">DomBuilder</span><span class="bases">(<span class="class-name"><a href="Ft.Xml.Sax.html#ContentHandler">ContentHandler</a></span>)</span></dt>
+        <dd class="classdesc">
+          <div class="abstract">A ContentHandler that is used to construct a Domlette Document.</div>
+          <h3>Methods</h3>
+          <dl class="methods">
+            <dt class="methoddef"><a name="DomBuilder-__init__"><span class="method-name">__init__</span></a>(<span class="argument-name">self</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dt class="methoddef"><a name="DomBuilder-characters"><span class="method-name">characters</span></a>(<span class="argument-name">self</span>, <span class="argument-name">data</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dd class="overrides"><b>Overrides: </b><span class="inherited-name"><a href="Ft.Xml.Sax.html#ContentHandler-characters">characters</a></span> from class <span class="class-name"><a href="Ft.Xml.Sax.html#ContentHandler">ContentHandler</a></span></dd>
+            <dt class="methoddef"><a name="DomBuilder-endDocument"><span class="method-name">endDocument</span></a>(<span class="argument-name">self</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dd class="overrides"><b>Overrides: </b><span class="inherited-name"><a href="Ft.Xml.Sax.html#ContentHandler-endDocument">endDocument</a></span> from class <span class="class-name"><a href="Ft.Xml.Sax.html#ContentHandler">ContentHandler</a></span></dd>
+            <dt class="methoddef"><a name="DomBuilder-endElementNS"><span class="method-name">endElementNS</span></a>(<span class="argument-name">self</span>, <span class="argument-name">expandedName</span>, <span class="argument-name">qualifiedName</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dd class="overrides"><b>Overrides: </b><span class="inherited-name"><a href="Ft.Xml.Sax.html#ContentHandler-endElementNS">endElementNS</a></span> from class <span class="class-name"><a href="Ft.Xml.Sax.html#ContentHandler">ContentHandler</a></span></dd>
+            <dt class="methoddef"><a name="DomBuilder-getDocument"><span class="method-name">getDocument</span></a>(<span class="argument-name">self</span>)</dt>
+            <dd class="methoddesc">
+              <div class="abstract">Returns the newly constructed Document instance.</div>
+            </dd>
+            <dt class="methoddef"><a name="DomBuilder-startDocument"><span class="method-name">startDocument</span></a>(<span class="argument-name">self</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dd class="overrides"><b>Overrides: </b><span class="inherited-name"><a href="Ft.Xml.Sax.html#ContentHandler-startDocument">startDocument</a></span> from class <span class="class-name"><a href="Ft.Xml.Sax.html#ContentHandler">ContentHandler</a></span></dd>
+            <dt class="methoddef"><a name="DomBuilder-startElementNS"><span class="method-name">startElementNS</span></a>(<span class="argument-name">self</span>, <span class="argument-name">expandedName</span>, <span class="argument-name">qualifiedName</span>, <span class="argument-name">attributes</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dd class="overrides"><b>Overrides: </b><span class="inherited-name"><a href="Ft.Xml.Sax.html#ContentHandler-startElementNS">startElementNS</a></span> from class <span class="class-name"><a href="Ft.Xml.Sax.html#ContentHandler">ContentHandler</a></span></dd>
+            <dt class="methoddef"><a name="DomBuilder-startPrefixMapping"><span class="method-name">startPrefixMapping</span></a>(<span class="argument-name">self</span>, <span class="argument-name">prefix</span>, <span class="argument-name">uri</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dd class="overrides"><b>Overrides: </b><span class="inherited-name"><a href="Ft.Xml.Sax.html#ContentHandler-startPrefixMapping">startPrefixMapping</a></span> from class <span class="class-name"><a href="Ft.Xml.Sax.html#ContentHandler">ContentHandler</a></span></dd>
+          </dl>
+          <h3>Methods inherited from class <a href="Ft.Xml.Sax.html#ContentHandler">ContentHandler</a></h3>
+          <div class="inherited"><span class="inherited-name"><a href="Ft.Xml.Sax.html#ContentHandler-endPrefixMapping">endPrefixMapping</a></span>, <span class="inherited-name"><a href="Ft.Xml.Sax.html#ContentHandler-setDocumentLocator">setDocumentLocator</a></span></div>
+        </dd>
+        <dt class="classdef"><a name="Locator"></a>class <span class="class-name">Locator</span></dt>
+        <dd class="classdesc">
+          <div class="abstract">Interface for associating a parse event with a document
+location. A locator object will return valid results only during
+calls to ContentHandler methods; at any other time, the results are
+unpredictable.</div>
+          <h3>Methods</h3>
+          <dl class="methods">
+            <dt class="methoddef"><a name="Locator-getColumnNumber"><span class="method-name">getColumnNumber</span></a>(<span class="argument-name">self</span>)</dt>
+            <dd class="methoddesc">
+              <div class="abstract">Return the column number where the current event ends.</div>
+            </dd>
+            <dt class="methoddef"><a name="Locator-getLineNumber"><span class="method-name">getLineNumber</span></a>(<span class="argument-name">self</span>)</dt>
+            <dd class="methoddesc">
+              <div class="abstract">Return the line number where the current event ends.</div>
+            </dd>
+            <dt class="methoddef"><a name="Locator-getSystemId"><span class="method-name">getSystemId</span></a>(<span class="argument-name">self</span>)</dt>
+            <dd class="methoddesc">
+              <div class="abstract">Return the system identifier for the current event.</div>
+            </dd>
+          </dl>
+        </dd>
+        <dt class="classdef"><a name="SaxPrinter"></a>class <span class="class-name">SaxPrinter</span><span class="bases">(<span class="class-name"><a href="Ft.Xml.Sax.html#ContentHandler">ContentHandler</a></span>)</span></dt>
+        <dd class="classdesc">
+          <div class="abstract">A ContentHandler that serializes the result using a 4Suite printer</div>
+          <h3>Methods</h3>
+          <dl class="methods">
+            <dt class="methoddef"><a name="SaxPrinter-__init__"><span class="method-name">__init__</span></a>(<span class="argument-name">self</span>, <span class="argument-name">printer</span><span class="argument-default">=&lt;Ft.Xml.Lib.XmlPrinter.XmlPrinter instance at 0xb76bcb0c&gt;</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dt class="methoddef"><a name="SaxPrinter-characters"><span class="method-name">characters</span></a>(<span class="argument-name">self</span>, <span class="argument-name">data</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dd class="overrides"><b>Overrides: </b><span class="inherited-name"><a href="Ft.Xml.Sax.html#ContentHandler-characters">characters</a></span> from class <span class="class-name"><a href="Ft.Xml.Sax.html#ContentHandler">ContentHandler</a></span></dd>
+            <dt class="methoddef"><a name="SaxPrinter-endDocument"><span class="method-name">endDocument</span></a>(<span class="argument-name">self</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dd class="overrides"><b>Overrides: </b><span class="inherited-name"><a href="Ft.Xml.Sax.html#ContentHandler-endDocument">endDocument</a></span> from class <span class="class-name"><a href="Ft.Xml.Sax.html#ContentHandler">ContentHandler</a></span></dd>
+            <dt class="methoddef"><a name="SaxPrinter-endElementNS"><span class="method-name">endElementNS</span></a>(<span class="argument-name">self</span>, (<span class="argument-name">namespaceURI</span>, <span class="argument-name">localName</span>), <span class="argument-name">qualifiedName</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dd class="overrides"><b>Overrides: </b><span class="inherited-name"><a href="Ft.Xml.Sax.html#ContentHandler-endElementNS">endElementNS</a></span> from class <span class="class-name"><a href="Ft.Xml.Sax.html#ContentHandler">ContentHandler</a></span></dd>
+            <dt class="methoddef"><a name="SaxPrinter-startDocument"><span class="method-name">startDocument</span></a>(<span class="argument-name">self</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dd class="overrides"><b>Overrides: </b><span class="inherited-name"><a href="Ft.Xml.Sax.html#ContentHandler-startDocument">startDocument</a></span> from class <span class="class-name"><a href="Ft.Xml.Sax.html#ContentHandler">ContentHandler</a></span></dd>
+            <dt class="methoddef"><a name="SaxPrinter-startElementNS"><span class="method-name">startElementNS</span></a>(<span class="argument-name">self</span>, (<span class="argument-name">namespaceURI</span>, <span class="argument-name">localName</span>), <span class="argument-name">qualifiedName</span>, <span class="argument-name">attributes</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dd class="overrides"><b>Overrides: </b><span class="inherited-name"><a href="Ft.Xml.Sax.html#ContentHandler-startElementNS">startElementNS</a></span> from class <span class="class-name"><a href="Ft.Xml.Sax.html#ContentHandler">ContentHandler</a></span></dd>
+            <dt class="methoddef"><a name="SaxPrinter-startPrefixMapping"><span class="method-name">startPrefixMapping</span></a>(<span class="argument-name">self</span>, <span class="argument-name">prefix</span>, <span class="argument-name">uri</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dd class="overrides"><b>Overrides: </b><span class="inherited-name"><a href="Ft.Xml.Sax.html#ContentHandler-startPrefixMapping">startPrefixMapping</a></span> from class <span class="class-name"><a href="Ft.Xml.Sax.html#ContentHandler">ContentHandler</a></span></dd>
+          </dl>
+          <h3>Methods inherited from class <a href="Ft.Xml.Sax.html#ContentHandler">ContentHandler</a></h3>
+          <div class="inherited"><span class="inherited-name"><a href="Ft.Xml.Sax.html#ContentHandler-endPrefixMapping">endPrefixMapping</a></span>, <span class="inherited-name"><a href="Ft.Xml.Sax.html#ContentHandler-setDocumentLocator">setDocumentLocator</a></span></div>
+        </dd>
+      </dl>
+    </div>
+    <div class="section">
+      <h2>Globals</h2>
+      <dl class="globals">
+        <dt class="globaldef"><a name="FEATURE_GENERATOR"><span class="global-name">FEATURE_GENERATOR</span></a> = 'http://4suite.org/sax/features/generator'</dt>
+        <dd class="globaldesc"></dd>
+        <dt class="globaldef"><a name="FEATURE_PROCESS_XINCLUDES"><span class="global-name">FEATURE_PROCESS_XINCLUDES</span></a> = 'http://4suite.org/sax/features/process-xincludes'</dt>
+        <dd class="globaldesc"></dd>
+        <dt class="globaldef"><a name="PROPERTY_WHITESPACE_RULES"><span class="global-name">PROPERTY_WHITESPACE_RULES</span></a> = 'http://4suite.org/sax/properties/whitespace-rules'</dt>
+        <dd class="globaldesc"></dd>
+        <dt class="globaldef"><a name="PROPERTY_YIELD_RESULT"><span class="global-name">PROPERTY_YIELD_RESULT</span></a> = 'http://4suite.org/sax/properties/yield-result'</dt>
+        <dd class="globaldesc"></dd>
+        <dt class="globaldef"><a name="XMLNS_NAMESPACE"><span class="global-name">XMLNS_NAMESPACE</span></a> = u'http://www.w3.org/2000/xmlns/'</dt>
+        <dd class="globaldesc"></dd>
+      </dl>
+    </div>
+    <div class="universal-footer">Last modified on 2006-04-28 13:54:49</div>
+  </body>
+</html>

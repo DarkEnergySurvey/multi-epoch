@@ -1,0 +1,97 @@
+/**
+ * PhotomEqSolverRun.java The DES Collaboration  2005
+ */
+package gov.fnal.eag.dtucker.desPhotoStds;
+
+import gov.fnal.eag.dtucker.desPhotoStds.PhotomEqSolver;
+import java.sql.SQLException;
+import java.util.Date;
+
+
+/**
+ * @author dtucker
+ *
+ */
+public class PhotomEqSolverRun {
+
+
+    public static void main (String[] args) {
+
+        System.out.print("arglist:  ");
+        for (int i=0; i< args.length; i++) {
+            System.out.print(args[i] + " ");
+        }
+        System.out.print("\n");
+        
+        PhotomEqSolver ph = new PhotomEqSolver();
+
+        // Process any arguments passed to the main method.
+        // Assume they are ordered "username password mjdLo mjdHi filter ccdid psmVersion verbose".
+        if (args.length > 0) {
+            String user = args[0];
+            ph.setUser(user);   
+            System.out.println(user);
+        } 
+        if (args.length > 1) {
+            String passwd = args[1];
+            ph.setPasswd(passwd);   
+            System.out.println(passwd);
+        }
+        if (args.length > 2) {
+            double mjdLo = Double.parseDouble(args[2]);
+            ph.setMjdLo(mjdLo);
+            System.out.println(mjdLo);
+        }        
+        if (args.length > 3) {
+            double mjdHi = Double.parseDouble(args[3]);
+            ph.setMjdHi(mjdHi);
+            System.out.println(mjdHi);
+        } 
+        if (args.length > 4) {
+            String filter = args[4];
+            ph.setFilter(filter);
+            System.out.println(filter);
+        } 
+        if (args.length > 5) {
+            int ccdid = Integer.parseInt(args[5]);
+            ph.setCcdid(ccdid);
+            System.out.println(ccdid);
+        } 
+        if (args.length > 6) {
+            String psmVersion = args[6];
+            ph.setPsmVersion(psmVersion);   
+            System.out.println(psmVersion);
+        } 
+
+        if (args.length > 7) {
+            int verbose = Integer.parseInt(args[7]);
+            ph.setVerbose(verbose);   
+            System.out.println(verbose);
+        } 
+       
+        ph.setSqlDriver("oracle.jdbc.driver.OracleDriver");
+        ph.setUrl("jdbc:oracle:thin:@//talamlx.ncsa.uiuc.edu:1521/");
+        ph.setDbName("des");
+        ph.setStdTable("des_stripe82_stds_v1");
+        ph.setObsTable("des_testobs");
+        ph.setFitTable("des_testfit");
+        
+        Date date = new Date();
+        ph.setDate(date);
+        
+        try {
+            ph.solve();
+        } catch (ClassNotFoundException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        } catch (SQLException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        } catch (Exception e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+
+    }
+
+}

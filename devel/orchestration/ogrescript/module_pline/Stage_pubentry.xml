@@ -1,0 +1,54 @@
+   <target name="Stage_pubentry" description="Publish an event upon Entry">
+    <esequence>
+
+     <edeclare name="content"  string="Begin test"/>
+     <econdblock type="else-if">
+        <econdtask>
+          <eeval>
+            <statement>
+              <ecompare string="${platform}">
+                  <predicate string="TG" comparator="EQUALS"/>
+              </ecompare>
+            </statement>
+          </eeval>
+              <esequence>
+
+                <edeclare globalName="host" string="teragrid"/>
+                <rtexec inheritedEnv="false" execDir="." args="/bin/hostname -f" quiet="true">
+                  <outMonitor file="hostname.OUT" append="false"/>
+                  <errMonitor file="hostname.ERR" append="false"/>
+                </rtexec>
+
+                <esleep timeout="1000"/>
+
+                <read path="hostname.OUT" lines="true"/>
+                <ereturn name="host" get="string"/>
+
+                <delete file="hostname.OUT"/>
+                <delete file="hostname.ERR"/>
+
+                <print line=" - Stage_pubentry: The compute host is $G{host}"/>
+                <print line=" - Begin Processing ccd ${ccd.num} data for nite ${nite}"/>
+
+                <eassign name="content"  string="Begin Processing ccd ${ccd.num} data on $G{host} for nite ${nite}"/>
+
+              </esequence>
+        </econdtask>
+              <esequence>
+                <eassign name="content"  string="Begin Processing ccd ${ccd.num} for nite ${nite}"/>
+              </esequence>
+     </econdblock>
+
+      <publish>
+         <event ensembleid="${ensemble.id}"
+              workflowid="${jid}"
+              nodeid="$R{content}"
+              currentState="0">
+             <property name="message" value="$R{content}"/>
+         </event>
+      </publish>
+
+     <print line=" - Stage_pubentry done"/>
+
+    </esequence>
+   </target>

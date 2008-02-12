@@ -1,0 +1,54 @@
+#!/usr/bin/env perl
+########################################################################
+#  $Id: deslaunchogre 510 2007-11-12 14:45:59Z dadams $
+#
+#  $Rev:: 510                              $:  # Revision of last commit.
+#  $LastChangedBy:: dadams                 $:  # Author of last commit. 
+#  $LastChangedDate:: 2007-11-12 08:4      $:  # Date of last commit.
+#
+#  Authors: 
+#         Michelle Gower (mgower@ncsa.uiuc.edu)
+#         Darren Adams (dadams@ncsa.uiuc.edu)
+#
+#  Developed at: 
+#  The National Center for Supercomputing Applications (NCSA).
+#
+#  Copyright (C) 2007 Board of Trustees of the University of Illinois. 
+#  All rights reserved.
+#
+#  DESCRIPTION:
+#     Wrap call to ogrelaunch to log condor job id.
+#
+#######################################################################
+
+use strict;
+use warnings;
+
+use FindBin;
+use lib "$FindBin::Bin/../lib";
+use DES::utils::hist;
+use DES::desconfig;
+
+
+if (scalar(@ARGV) != 6) {
+   print "Usage: deslaunchogre configfile stage condorid launchexe xmlfile ogrestage\n";
+   exit $FAILURE;
+}
+
+my  $ConfigFile = shift;
+my  $Stage = shift;
+my  $CondorID = shift;
+my  $LaunchExe = shift;
+my  $XMLFile = shift;
+my  $OGREStage = shift;
+
+# read sysinfo file
+my $Config = new DES::desconfig;
+$Config->readConfig($ConfigFile, 0, \*STDERR);
+
+# log condor jobid
+$CondorID = sprintf("%d", $CondorID);
+logEvent($Config, $Stage, "j","ogre","cid", $CondorID);
+
+exec $LaunchExe, $XMLFile, $OGREStage;
+exit $FAILURE;

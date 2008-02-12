@@ -1,0 +1,177 @@
+<html>
+  <head>
+    <meta content="text/html; charset=iso-8859-1" http-equiv="Content-Type">
+    <title>4Suite API Documentation: Ft.Xml.Xslt.XsltFunctions</title>
+    <link href="modules.css" type="text/css" rel="stylesheet">
+  </head>
+  <body>
+    <div class="universal-header"><span class="universal-header-prefix">&nbsp;&nbsp;&nbsp;</span>&nbsp;<span class="universal-header-prefix">&nbsp;&nbsp;</span>&nbsp;<span class="universal-header-prefix">&nbsp;</span>&nbsp;<a href="../index.html">4Suite<sup>&trade;</sup> API Documentation</a></div>
+    <h1><span class="glyph-arrow">&#9658;</span> Module <span class="this-name"><a href="Ft.html" title="Ft">Ft</a>.<a href="Ft.Xml.html" title="Ft.Xml">Xml</a>.<a href="Ft.Xml.Xslt.html" title="Ft.Xml.Xslt">Xslt</a>.XsltFunctions</span></h1>
+    <div class="abstract">Standard XSLT functions</div>
+    <pre class="description">Copyright 2005 Fourthought, Inc. (USA).
+Detailed license and copyright information: http://4suite.org/COPYRIGHT
+Project home, documentation, distributions: http://4suite.org/</pre>
+    <div class="summary-section">
+      <table cellpadding="0" cellspacing="0">
+        <tbody>
+          <tr>
+            <td valign="top">
+              <div class="summary-header">Functions:</div>
+              <div class="summary-list"><span class="function-name"><a href="#Current">Current</a></span>, <span class="function-name"><a href="#Document">Document</a></span>, <span class="function-name"><a href="#ElementAvailable">ElementAvailable</a></span>, <span class="function-name"><a href="#FormatNumber">FormatNumber</a></span>, <span class="function-name"><a href="#FunctionAvailable">FunctionAvailable</a></span>, <span class="function-name"><a href="#GenerateId">GenerateId</a></span>, <span class="function-name"><a href="#Key">Key</a></span>, <span class="function-name"><a href="#SystemProperty">SystemProperty</a></span>, <span class="function-name"><a href="#UnparsedEntityUri">UnparsedEntityUri</a></span></div>
+            </td>
+            <td width="7" valign="middle"></td>
+            <td width="1" valign="middle" bgcolor="#C5C5C5"></td>
+            <td width="7" valign="middle"></td>
+            <td valign="top">
+              <div class="summary-header">Globals:</div>
+              <div class="summary-list"><span class="global-name"><a href="#CoreFunctions">CoreFunctions</a></span>, <span class="global-name"><a href="#EMPTY_NAMESPACE">EMPTY_NAMESPACE</a></span>, <span class="global-name"><a href="#FT_EXT_NAMESPACE">FT_EXT_NAMESPACE</a></span>, <span class="global-name"><a href="#XSL_NAMESPACE">XSL_NAMESPACE</a></span></div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="section">
+      <h2>Functions</h2>
+      <dl class="functions">
+        <dt class="functiondef"><a name="Current"><span class="function-name">Current</span></a>(<span class="argument-name">context</span>)</dt>
+        <dd class="functiondesc">
+          <div class="abstract">Implementation of current().</div>
+          <pre class="description">Returns a node-set that has the current node as its only member.</pre>
+        </dd>
+        <dt class="functiondef"><a name="Document"><span class="function-name">Document</span></a>(<span class="argument-name">context</span>, <span class="argument-name">object</span>, <span class="argument-name">nodeSet</span><span class="argument-default">=None</span>)</dt>
+        <dd class="functiondesc">
+          <div class="abstract">Implementation of document().</div>
+          <pre class="description">The XSLT 1.0 document function returns the root node of a single
+XML document or of the union of multiple XML documents. The
+arguments are reduced to a set of URIs that indicate the documents
+to parse.
+
+The first argument is required and provides a set of URI
+references, each of which may be absolute or relative. If it
+is a node-set, then the URI references are the string-values of
+each node in the set. If the argument is any other kind of
+object, the URI reference is the string-value of object.
+
+The second argument is optional. If given, it provides a base URI
+for normalizing relative URI references, it must be a node-set,
+and only its first node (in document order) is used. The base URI
+for all relative references is the URI of the entity from which
+the node originated. If the node-set is empty, an exception is
+raised (see XSLT 1.0 erratum E14).
+
+If the second argument is not given, then the base URI depends on
+whether the first argument is a node-set. If the first argument is
+a node-set, then the base URI for each node in the set is the
+entity from which that node originated. Otherwise, the base URI is
+the URI of the entity containing the node with the document() call
+(this URI is usually that of the stylesheet itself, but could be
+an imported stylesheet or even a parsed general entity).
+
+Thus,
+
+document('') typically refers to the stylesheet itself, prior to
+whitespace stripping;
+
+document('http://somehost/foo.xml') refers to the document at
+that absolute URI;
+
+document('foo.xml') typically refers to the foo.xml document
+relative to the stylesheet;
+
+document('http://somehost/foo.xml', $ns) where $ns is a non-empty
+node-set refers to the document at that absolute URI ($ns is
+ignored);
+
+document('foo.xml', $ns) where $ns is a non-empty node-set refers
+to the foo.xml document relative to the URI of the entity from
+which $ns[1] originated;
+
+document($ns) where $ns is a non-empty node-set is treated as if
+it were
+document(string($ns[1]),$ns[1])|document(string($ns[2]),$ns[2])
+and so on; and
+
+document($ns, $ns2) where $ns is a node-set and $ns2 is a
+non-empty node-set is treated as if it were
+document(string($ns[1]),$ns2[1])|document(string($ns[2]),$ns2[1])
+and so on.</pre>
+        </dd>
+        <dt class="functiondef"><a name="ElementAvailable"><span class="function-name">ElementAvailable</span></a>(<span class="argument-name">context</span>, <span class="argument-name">qname</span>)</dt>
+        <dd class="functiondesc">
+          <div class="abstract">Implementation of element-available().</div>
+          <pre class="description">Returns true if and only if the expanded-name represented by the
+given QName is the name of an instruction. If the expanded-name has
+a namespace URI equal to the XSLT namespace URI, then it refers to
+an element defined by XSLT. Otherwise, it refers to an extension
+element. If the expanded-name has a null namespace URI, the
+element-available function will return false.</pre>
+        </dd>
+        <dt class="functiondef"><a name="FormatNumber"><span class="function-name">FormatNumber</span></a>(<span class="argument-name">context</span>, <span class="argument-name">number</span>, <span class="argument-name">formatString</span>, <span class="argument-name">decimalFormatName</span><span class="argument-default">=None</span>)</dt>
+        <dd class="functiondesc">
+          <div class="abstract">Implementation of format-number().</div>
+          <pre class="description">Converts its first argument to a string using the format pattern
+string specified by the second argument and the decimal-format
+named by the third argument (see the xsl:decimal-format element),
+or the default decimal-format, if there is no third argument.
+
+The format pattern string is in the syntax specified by the JDK 1.1
+DecimalFormat class. The decimal-format name must be a QName. It is
+an error if the stylesheet does not contain a declaration of the
+decimal-format with the specified expanded-name.</pre>
+        </dd>
+        <dt class="functiondef"><a name="FunctionAvailable"><span class="function-name">FunctionAvailable</span></a>(<span class="argument-name">context</span>, <span class="argument-name">qname</span>)</dt>
+        <dd class="functiondesc">
+          <div class="abstract">Implementation of function-available().</div>
+          <pre class="description">Returns true if and only if the expanded-name represented by the
+given QName is the name of a function in the function library.
+If the expanded-name has a non-null namespace URI, then it refers
+to an extension function; otherwise, it refers to a function
+defined by XPath or XSLT.</pre>
+        </dd>
+        <dt class="functiondef"><a name="GenerateId"><span class="function-name">GenerateId</span></a>(<span class="argument-name">context</span>, <span class="argument-name">nodeSet</span><span class="argument-default">=None</span>)</dt>
+        <dd class="functiondesc">
+          <div class="abstract">Implementation of generate-id().</div>
+          <pre class="description">Returns a string that uniquely identifies the node in the argument
+node-set that is first in document order. If the argument node-set
+is empty, the empty string is returned. If the argument is omitted,
+it defaults to the context node.</pre>
+        </dd>
+        <dt class="functiondef"><a name="Key"><span class="function-name">Key</span></a>(<span class="argument-name">context</span>, <span class="argument-name">qname</span>, <span class="argument-name">keyList</span>)</dt>
+        <dd class="functiondesc">
+          <div class="abstract">Implementation of key().</div>
+          <pre class="description">The first argument specifies the name of the key. When the second
+argument to the key function is of type node-set, then the result
+is the union of the result of applying the key function to the
+string value of each of the nodes in the argument node-set.
+When the second argument to key is of any other type, the argument
+is converted to a string as if by a call to the string function; it
+returns a node-set containing the nodes in the same document as the
+context node that have a value for the named key equal to this string.</pre>
+        </dd>
+        <dt class="functiondef"><a name="SystemProperty"><span class="function-name">SystemProperty</span></a>(<span class="argument-name">context</span>, <span class="argument-name">qname</span>)</dt>
+        <dd class="functiondesc"></dd>
+        <dt class="functiondef"><a name="UnparsedEntityUri"><span class="function-name">UnparsedEntityUri</span></a>(<span class="argument-name">context</span>, <span class="argument-name">name</span>)</dt>
+        <dd class="functiondesc">
+          <div class="abstract">Implementation of unparsed-entity-uri().</div>
+          <pre class="description">Returns the URI of the unparsed entity with the specified name in
+the same document as the context node. It returns the empty string
+if there is no such entity.</pre>
+        </dd>
+      </dl>
+    </div>
+    <div class="section">
+      <h2>Globals</h2>
+      <dl class="globals">
+        <dt class="globaldef"><a name="CoreFunctions"><span class="global-name">CoreFunctions</span></a> = {(None, 'current'): &lt;function Current&gt;, (None, 'document'): &lt;function Document&gt;, (None, 'element-available'): &lt;function ElementAvailable&gt;, (None, 'format-number'): &lt;function FormatNumber&gt;, (None, 'function-available'): &lt;function FunctionAvailable&gt;, (None, 'generate-id'): &lt;function GenerateId&gt;, (None, 'key'): &lt;function Key&gt;, (None, 'system-property'): &lt;function SystemProperty&gt;, (None, 'unparsed-entity-uri'): &lt;function UnparsedEntityUri&gt;}</dt>
+        <dd class="globaldesc"></dd>
+        <dt class="globaldef"><a name="EMPTY_NAMESPACE"><span class="global-name">EMPTY_NAMESPACE</span></a> = None</dt>
+        <dd class="globaldesc"></dd>
+        <dt class="globaldef"><a name="FT_EXT_NAMESPACE"><span class="global-name">FT_EXT_NAMESPACE</span></a> = 'http://xmlns.4suite.org/ext'</dt>
+        <dd class="globaldesc"></dd>
+        <dt class="globaldef"><a name="XSL_NAMESPACE"><span class="global-name">XSL_NAMESPACE</span></a> = u'http://www.w3.org/1999/XSL/Transform'</dt>
+        <dd class="globaldesc"></dd>
+      </dl>
+    </div>
+    <div class="universal-footer">Last modified on 2005-08-30 18:52:10</div>
+  </body>
+</html>

@@ -1,0 +1,11 @@
+ 
+# working directories
+archive.dir=${arch.dir}/raw/${nite}
+rawlog.dir=${archive.dir}/log
+rawbin.dir=${archive.dir}/bin
+rawetc.dir=${archive.dir}/etc
+
+#convert_ingest 
+convert_ingest.log=convert_ingest_${imlist.num}.log
+convert_ingest.exec=${rawbin.dir}/convert_ingest
+convert_ingest.args= ${nite} ${arch.dir} -list ${rawlog.dir}/list.${nite}_${imlist.num} -binpath ${rawbin.dir} -detector DECam -sqlldr_control ${rawetc.dir}/FILES_DECam_RAW.ctr

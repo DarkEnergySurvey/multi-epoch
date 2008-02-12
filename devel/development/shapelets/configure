@@ -1,0 +1,3 @@
+echo "Configuring cfitsio"
+cd cfitsio
+./configure

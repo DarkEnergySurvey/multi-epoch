@@ -1,0 +1,96 @@
+<html>
+  <head>
+    <meta content="text/html; charset=iso-8859-1" http-equiv="Content-Type">
+    <title>4Suite API Documentation: Ft.Lib.DistExt.Config</title>
+    <link href="modules.css" type="text/css" rel="stylesheet">
+  </head>
+  <body>
+    <div class="universal-header"><span class="universal-header-prefix">&nbsp;&nbsp;&nbsp;</span>&nbsp;<span class="universal-header-prefix">&nbsp;&nbsp;</span>&nbsp;<span class="universal-header-prefix">&nbsp;</span>&nbsp;<a href="../index.html">4Suite<sup>&trade;</sup> API Documentation</a></div>
+    <h1><span class="glyph-arrow">&#9658;</span> Module <span class="this-name"><a href="Ft.html" title="Ft">Ft</a>.<a href="Ft.Lib.html" title="Ft.Lib">Lib</a>.<a href="Ft.Lib.DistExt.html" title="Ft.Lib.DistExt">DistExt</a>.Config</span></h1>
+    <div class="summary-section">
+      <table cellpadding="0" cellspacing="0">
+        <tbody>
+          <tr>
+            <td valign="top">
+              <div class="summary-header">Classes:</div>
+              <div class="summary-list"><span class="class-name"><a href="#Config">Config</a></span></div>
+            </td>
+            <td width="7" valign="middle"></td>
+            <td bgcolor="#C5C5C5" valign="middle" width="1"></td>
+            <td width="7" valign="middle"></td>
+            <td valign="top">
+              <div class="summary-header">Functions:</div>
+              <div class="summary-list"><span class="function-name"><a href="#get_python_lib">get_python_lib</a></span></div>
+            </td>
+            <td width="7" valign="middle"></td>
+            <td bgcolor="#C5C5C5" valign="middle" width="1"></td>
+            <td width="7" valign="middle"></td>
+            <td valign="top">
+              <div class="summary-header">Globals:</div>
+              <div class="summary-list"><span class="global-name"><a href="#CACHE_FILENAME">CACHE_FILENAME</a></span>, <span class="global-name"><a href="#CONFIG_KEYS">CONFIG_KEYS</a></span>, <span class="global-name"><a href="#CONFIG_SCHEMES">CONFIG_SCHEMES</a></span>, <span class="global-name"><a href="#DEBUG">DEBUG</a></span></div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="section">
+      <h2>Classes</h2>
+      <dl class="classes">
+        <dt class="classdef"><a name="Config"></a>class <span class="class-name">Config</span><span class="bases">(<span class="class-name"><span class="undocumented">distutils.cmd.Command</span></span>)</span></dt>
+        <dd class="classdesc">
+          <h3>Methods</h3>
+          <dl class="methods">
+            <dt class="methoddef"><a name="Config-finalize_config_vars"><span class="method-name">finalize_config_vars</span></a>(<span class="argument-name">self</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dt class="methoddef"><a name="Config-finalize_options"><span class="method-name">finalize_options</span></a>(<span class="argument-name">self</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dd class="overrides"><b>Overrides: </b><span class="inherited-name">finalize_options</span> from class <span class="class-name"><span class="undocumented">Command</span></span></dd>
+            <dt class="methoddef"><a name="Config-finalize_other"><span class="method-name">finalize_other</span></a>(<span class="argument-name">self</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dt class="methoddef"><a name="Config-finalize_posix"><span class="method-name">finalize_posix</span></a>(<span class="argument-name">self</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dt class="methoddef"><a name="Config-initialize_options"><span class="method-name">initialize_options</span></a>(<span class="argument-name">self</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dd class="overrides"><b>Overrides: </b><span class="inherited-name">initialize_options</span> from class <span class="class-name"><span class="undocumented">Command</span></span></dd>
+            <dt class="methoddef"><a name="Config-run"><span class="method-name">run</span></a>(<span class="argument-name">self</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dd class="overrides"><b>Overrides: </b><span class="inherited-name">run</span> from class <span class="class-name"><span class="undocumented">Command</span></span></dd>
+          </dl>
+          <h3>Methods inherited from class <span class="undocumented">distutils.cmd.Command</span></h3>
+          <div class="inherited"><span class="inherited-name">__getattr__</span>, <span class="inherited-name">__init__</span>, <span class="inherited-name">announce</span>, <span class="inherited-name">copy_file</span>, <span class="inherited-name">copy_tree</span>, <span class="inherited-name">debug_print</span>, <span class="inherited-name">dump_options</span>, <span class="inherited-name">ensure_dirname</span>, <span class="inherited-name">ensure_filename</span>, <span class="inherited-name">ensure_finalized</span>, <span class="inherited-name">ensure_string</span>, <span class="inherited-name">ensure_string_list</span>, <span class="inherited-name">execute</span>, <span class="inherited-name">get_command_name</span>, <span class="inherited-name">get_finalized_command</span>, <span class="inherited-name">get_sub_commands</span>, <span class="inherited-name">make_archive</span>, <span class="inherited-name">make_file</span>, <span class="inherited-name">mkpath</span>, <span class="inherited-name">move_file</span>, <span class="inherited-name">reinitialize_command</span>, <span class="inherited-name">run_command</span>, <span class="inherited-name">set_undefined_options</span>, <span class="inherited-name">spawn</span>, <span class="inherited-name">warn</span></div>
+          <h3>Members</h3>
+          <dl class="members">
+            <dt class="memberdef"><a name="boolean_options"><span class="member-name">boolean_options</span></a> = ['local', 'system', 'debug']</dt>
+            <dt class="memberdef"><a name="command_name"><span class="member-name">command_name</span></a> = 'config'</dt>
+            <dt class="memberdef"><a name="description"><span class="member-name">description</span></a> = 'select installation scheme and base directories'</dt>
+            <dt class="memberdef"><a name="help_options"><span class="member-name">help_options</span></a> = [('help-compiler', None, 'list available compilers', &lt;function show_compilers at 0xb7c5d4c4&gt;)]</dt>
+            <dt class="memberdef"><a name="user_options"><span class="member-name">user_options</span></a> = [('prefix=', None, 'Use POSIX autoconf-style or Windows installation scheme with this prefix'), ('exec-prefix=', None, 'Prefix for platform-specific files (for use with --prefix)'), ('local', None, 'Use FHS /usr/local installation scheme [default]'), ('system', None, 'Use FHS /usr installation scheme (e.g. for RPM builds)'), ('home=', None, 'Use home directory installation scheme with this prefix'), ('pythonlibdir=', None, 'Directory for 3rd-party Python libraries (site-packages)'), ('includedir=', None, 'Directory for C header files'), ('bindir=', None, 'Directory for user executables'), ('datadir=', None, 'Directory for read-only platform-independent data'), ('sysconfdir=', None, 'Directory for read-only host-specific data'), ('localstatedir=', None, 'Directory for modifiable host-specific data'), ('libdir=', None, 'Directory for program &amp; package libraries'), ('docdir=', None, 'Directory for documentation files'), ('localedir=', None, 'Directory for message catalogs'), ('mandir=', None, 'Directory for man documentation'), ('compiler=', 'c', 'specify the compiler type'), ('debug', 'g', 'compile extensions and libraries with debugging information'), ('plat-name=', 'p', 'target platform for compiling extensions and libraries (default: linux-i686)')]</dt>
+          </dl>
+          <h3>Members inherited from class <span class="undocumented">distutils.cmd.Command</span></h3>
+          <div class="inherited"><span class="inherited-name">sub_commands</span></div>
+        </dd>
+      </dl>
+    </div>
+    <div class="section">
+      <h2>Functions</h2>
+      <dl class="functions">
+        <dt class="functiondef"><a name="get_python_lib"><span class="function-name">get_python_lib</span></a>(<span class="argument-name">prefix</span>)</dt>
+        <dd class="functiondesc"></dd>
+      </dl>
+    </div>
+    <div class="section">
+      <h2>Globals</h2>
+      <dl class="globals">
+        <dt class="globaldef"><a name="CACHE_FILENAME"><span class="global-name">CACHE_FILENAME</span></a> = 'config.cache'</dt>
+        <dd class="globaldesc"></dd>
+        <dt class="globaldef"><a name="CONFIG_KEYS"><span class="global-name">CONFIG_KEYS</span></a> = ('prefix', 'exec_prefix', 'pythonlibdir', 'includedir', 'bindir', 'datadir', 'sysconfdir', 'localstatedir', 'libdir', 'docdir', 'localedir', 'mandir', 'compiler', 'debug')</dt>
+        <dd class="globaldesc"></dd>
+        <dt class="globaldef"><a name="CONFIG_SCHEMES"><span class="global-name">CONFIG_SCHEMES</span></a> = {'fhs_local': {'bindir': '/usr/local/bin', 'datadir': '/usr/local/share/$name', 'docdir': '/usr/local/share/doc/$name', 'includedir': '/usr/local/include/$name', 'libdir': '/usr/local/lib/$name', 'localedir': '/usr/local/share/locale', 'localstatedir': '/var/local/lib/$name', 'mandir': '/usr/local/share/man', 'pythonlibdir': '/usr/local/lib/python2.5/site-packages', 'sysconfdir': '/usr/local/etc/$name'}, 'fhs_system': {'bindir': '/usr/bin', 'datadir': '/usr/share/$name', 'docdir': '/usr/share/doc/$name', 'includedir': '/usr/include/$name', 'libdir': '/usr/lib/$name', 'localedir': '/usr/share/locale', 'localstatedir': '/var/lib/$name', 'mandir': '/usr/share/man', 'pythonlibdir': '/usr/lib/python2.5/site-packages', 'sysconfdir': '/etc/$name'}, 'nt': {'bindir': '$prefix/Scripts', 'datadir': '$prefix/Share/$name', 'docdir': '$prefix/Share/Doc/$name', 'includedir': '$prefix/Include/$name', 'libdir': '$prefix/Share/$name', 'localedir': '$prefix/Share/Locale', 'localstatedir': '$prefix/Share/$name', 'mandir': '$prefix/Share/Help', 'pythonlibdir': '$prefix/Lib/site-packages', 'sysconfdir': '$prefix/Share/Settings/$name'}, 'other': {'bindir': '$prefix/Scripts', 'datadir': '$prefix/Share/$name', 'docdir': '$prefix/Share/Doc/$name', 'includedir': '$prefix/Include/$name', 'libdir': '$prefix/Share/$name', 'localedir': '$prefix/Share/Locale', 'localstatedir': '$prefix/Share/$name', 'mandir': '$prefix/Share/Help', 'pythonlibdir': '$prefix/Lib/site-packages', 'sysconfdir': '$prefix/Share/Settings/$name'}, 'posix_autoconf': {'bindir': '$exec_prefix/bin', 'datadir': '$prefix/share/$name', 'docdir': '$prefix/share/doc/$name', 'includedir': '$prefix/include/$name', 'libdir': '$exec_prefix/lib/$name', 'localedir': '$datadir/locale', 'localstatedir': '$exec_prefix/var/$name', 'mandir': '$prefix/man', 'pythonlibdir': '/usr/lib/python2.5/site-packages', 'sysconfdir': '$prefix/etc/$name'}, 'posix_home': {'bindir': '$prefix/bin', 'datadir': '$prefix/share/$name', 'docdir': '$prefix/share/doc/$name', 'includedir': '$prefix/include/python$python_version/$name', 'libdir': '$prefix/lib/$name', 'localedir': '$prefix/share/locale', 'localstatedir': '$prefix/share/var/$name', 'mandir': '$prefix/share/man', 'pythonlibdir': '$prefix/lib/python$python_version', 'sysconfdir': '$prefix/share/etc/$name'}}</dt>
+        <dd class="globaldesc"></dd>
+        <dt class="globaldef"><a name="DEBUG"><span class="global-name">DEBUG</span></a> = None</dt>
+        <dd class="globaldesc"></dd>
+      </dl>
+    </div>
+    <div class="universal-footer">Last modified on 2006-10-20 13:55:05</div>
+  </body>
+</html>

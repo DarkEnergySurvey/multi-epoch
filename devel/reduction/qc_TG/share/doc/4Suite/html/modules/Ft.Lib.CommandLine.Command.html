@@ -1,0 +1,78 @@
+<html>
+  <head>
+    <meta content="text/html; charset=iso-8859-1" http-equiv="Content-Type">
+    <title>4Suite API Documentation: Ft.Lib.CommandLine.Command</title>
+    <link href="modules.css" type="text/css" rel="stylesheet">
+  </head>
+  <body>
+    <div class="universal-header"><span class="universal-header-prefix">&nbsp;&nbsp;&nbsp;</span>&nbsp;<span class="universal-header-prefix">&nbsp;&nbsp;</span>&nbsp;<span class="universal-header-prefix">&nbsp;</span>&nbsp;<a href="../index.html">4Suite<sup>&trade;</sup> API Documentation</a></div>
+    <h1><span class="glyph-arrow">&#9658;</span> Module <span class="this-name"><a href="Ft.html" title="Ft">Ft</a>.<a href="Ft.Lib.html" title="Ft.Lib">Lib</a>.<a href="Ft.Lib.CommandLine.html" title="Ft.Lib.CommandLine">CommandLine</a>.Command</span></h1>
+    <div class="abstract">Superclass for a command that can be invoked by a command-line script.</div>
+    <pre class="description">Copyright 2004 Fourthought, Inc. (USA).
+Detailed license and copyright information: http://4suite.org/COPYRIGHT
+Project home, documentation, distributions: http://4suite.org/</pre>
+    <div class="summary-section">
+      <table cellpadding="0" cellspacing="0">
+        <tbody>
+          <tr>
+            <td valign="top">
+              <div class="summary-header">Classes:</div>
+              <div class="summary-list"><span class="class-name"><a href="#Command">Command</a></span></div>
+            </td>
+            <td width="7" valign="middle"></td>
+            <td width="1" valign="middle" bgcolor="#C5C5C5"></td>
+            <td width="7" valign="middle"></td>
+            <td valign="top">
+              <div class="summary-header">Globals:</div>
+              <div class="summary-list"><span class="global-name"><a href="#CONSOLE_WIDTH">CONSOLE_WIDTH</a></span></div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="section">
+      <h2>Classes</h2>
+      <dl class="classes">
+        <dt class="classdef"><a name="Command"></a>class <span class="class-name">Command</span></dt>
+        <dd class="classdesc">
+          <div class="abstract">Superclass for a command that can be invoked by a command-line script.
+Most commands won't need to subclass this.</div>
+          <pre class="description">A Command object encapsulates, for a particular command, a description,
+usage example, a set of valid options &amp; arguments, methods for
+validating the actual options and arguments entered, a function for
+command invocation, and an association with subordinate Commands.
+
+A tree of commands can be created by associating each Command instance
+with its subordinates. Typically, only the leaves of the tree will have
+functionality; the branches just provide ways of grouping the leaves
+and will not need to encapsulate the invocation functions themselves.</pre>
+          <h3>Methods</h3>
+          <dl class="methods">
+            <dt class="methoddef"><a name="Command-__init__"><span class="method-name">__init__</span></a>(<span class="argument-name">self</span>, <span class="argument-name">name</span>, <span class="argument-name">description</span>, <span class="argument-name">example</span>, <span class="argument-name">verbose_description</span>, <span class="argument-name">function</span><span class="argument-default">=None</span>, <span class="argument-name">options</span><span class="argument-default">=None</span>, <span class="argument-name">arguments</span><span class="argument-default">=None</span>, <span class="argument-name">subCommands</span><span class="argument-default">=None</span>, <span class="argument-name">fileName</span><span class="argument-default">=None</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dt class="methoddef"><a name="Command-break_parent_relationship"><span class="method-name">break_parent_relationship</span></a>(<span class="argument-name">self</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dt class="methoddef"><a name="Command-build_parent_relationship"><span class="method-name">build_parent_relationship</span></a>(<span class="argument-name">self</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dt class="methoddef"><a name="Command-flatten_command_tree"><span class="method-name">flatten_command_tree</span></a>(<span class="argument-name">self</span>, <span class="argument-name">level</span>, <span class="argument-name">previousName</span><span class="argument-default">=''</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dt class="methoddef"><a name="Command-run"><span class="method-name">run</span></a>(<span class="argument-name">self</span>, <span class="argument-name">options</span>, <span class="argument-name">arguments</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dt class="methoddef"><a name="Command-validate_arguments"><span class="method-name">validate_arguments</span></a>(<span class="argument-name">self</span>, <span class="argument-name">arglist</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dt class="methoddef"><a name="Command-validate_options"><span class="method-name">validate_options</span></a>(<span class="argument-name">self</span>, <span class="argument-name">options</span>)</dt>
+            <dd class="methoddesc"></dd>
+          </dl>
+        </dd>
+      </dl>
+    </div>
+    <div class="section">
+      <h2>Globals</h2>
+      <dl class="globals">
+        <dt class="globaldef"><a name="CONSOLE_WIDTH"><span class="global-name">CONSOLE_WIDTH</span></a> = 236</dt>
+        <dd class="globaldesc"></dd>
+      </dl>
+    </div>
+    <div class="universal-footer">Last modified on 2006-10-18 13:10:07</div>
+  </body>
+</html>

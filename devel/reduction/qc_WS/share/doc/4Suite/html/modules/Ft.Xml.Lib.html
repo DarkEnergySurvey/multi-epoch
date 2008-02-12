@@ -1,0 +1,137 @@
+<html>
+  <head>
+    <meta content="text/html; charset=iso-8859-1" http-equiv="Content-Type">
+    <title>4Suite API Documentation: Ft.Xml.Lib</title>
+    <link href="modules.css" type="text/css" rel="stylesheet">
+  </head>
+  <body>
+    <div class="universal-header"><span class="universal-header-prefix">&nbsp;&nbsp;&nbsp;</span>&nbsp;<span class="universal-header-prefix">&nbsp;&nbsp;</span>&nbsp;<span class="universal-header-prefix">&nbsp;</span>&nbsp;<a href="../index.html">4Suite<sup>&trade;</sup> API Documentation</a></div>
+    <h1><span class="glyph-arrow">&#9658;</span> Module <span class="this-name"><a href="Ft.html" title="Ft">Ft</a>.<a href="Ft.Xml.html" title="Ft.Xml">Xml</a>.Lib</span></h1>
+    <div class="abstract">Module providing XML support utilities (including serialization and tree comparison)</div>
+    <pre class="description">Copyright 2004 Fourthought, Inc. (USA).
+Detailed license and copyright information: http://4suite.org/COPYRIGHT
+Project home, documentation, distributions: http://4suite.org/</pre>
+    <div class="summary-section">
+      <table cellpadding="0" cellspacing="0">
+        <tbody>
+          <tr>
+            <td valign="top">
+              <div class="summary-header">Functions:</div>
+              <div class="summary-list"><span class="function-name"><a href="#BaseUri">BaseUri</a></span>, <span class="function-name"><a href="#Language">Language</a></span></div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="section">
+      <h2>Modules</h2>
+      <table class="modules">
+        <tbody>
+          <tr>
+            <td class="moduledef" valign="top">
+              <div class="module-name"><a name="HtmlPrettyPrinter"></a><a href="Ft.Xml.Lib.HtmlPrettyPrinter.html">HtmlPrettyPrinter</a></div>
+            </td>
+            <td class="moduledesc" valign="bottom">
+              <div class="abstract">This module supports formatted document serialization in HTML syntax.</div>
+            </td>
+          </tr>
+          <tr>
+            <td class="moduledef" valign="top">
+              <div class="module-name"><a name="HtmlPrinter"></a><a href="Ft.Xml.Lib.HtmlPrinter.html">HtmlPrinter</a></div>
+            </td>
+            <td class="moduledesc" valign="bottom">
+              <div class="abstract">This module supports document serialization in HTML syntax.</div>
+            </td>
+          </tr>
+          <tr>
+            <td class="moduledef" valign="top">
+              <div class="module-name"><a name="Print"></a><a href="Ft.Xml.Lib.Print.html">Print</a></div>
+            </td>
+            <td class="moduledesc" valign="bottom">
+              <div class="abstract">This module supports document serialization in XML or HTML syntax.</div>
+            </td>
+          </tr>
+          <tr>
+            <td class="moduledef" valign="top">
+              <div class="module-name"><a name="StripElements"></a><a href="Ft.Xml.Lib.StripElements.html">StripElements</a></div>
+            </td>
+            <td class="moduledesc" valign="bottom"></td>
+          </tr>
+          <tr>
+            <td class="moduledef" valign="top">
+              <div class="module-name"><a name="TreeCompare"></a><a href="Ft.Xml.Lib.TreeCompare.html">TreeCompare</a></div>
+            </td>
+            <td class="moduledesc" valign="bottom">
+              <div class="abstract">Comparison functions for XML and HTML documents
+(mainly used in the test suites)</div>
+            </td>
+          </tr>
+          <tr>
+            <td class="moduledef" valign="top">
+              <div class="module-name"><a name="XmlPrettyPrinter"></a><a href="Ft.Xml.Lib.XmlPrettyPrinter.html">XmlPrettyPrinter</a></div>
+            </td>
+            <td class="moduledesc" valign="bottom">
+              <div class="abstract">This module supports formatted document serialization in XML syntax.</div>
+            </td>
+          </tr>
+          <tr>
+            <td class="moduledef" valign="top">
+              <div class="module-name"><a name="XmlPrinter"></a><a href="Ft.Xml.Lib.XmlPrinter.html">XmlPrinter</a></div>
+            </td>
+            <td class="moduledesc" valign="bottom">
+              <div class="abstract">This module supports document serialization in XML syntax.</div>
+            </td>
+          </tr>
+          <tr>
+            <td class="moduledef" valign="top">
+              <div class="module-name"><a name="XmlString"></a><a href="Ft.Xml.Lib.XmlString.html">XmlString</a></div>
+            </td>
+            <td class="moduledesc" valign="bottom">
+              <div class="abstract">Miscellaneous XML-specific string functions</div>
+            </td>
+          </tr>
+          <tr>
+            <td class="moduledef" valign="top">
+              <div class="module-name"><a name="cStreamWriter"></a><a href="Ft.Xml.Lib.cStreamWriter.html">cStreamWriter</a></div>
+            </td>
+            <td class="moduledesc" valign="bottom">
+              <div class="abstract">Encoding character stream writer that makes substitutions of illegal
+and unencodable characters</div>
+            </td>
+          </tr>
+          <tr>
+            <td class="moduledef" valign="top">
+              <div class="module-name"><a name="routines"></a><a href="Ft.Xml.Lib.routines.html">routines</a></div>
+            </td>
+            <td class="moduledesc" valign="bottom"></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="section">
+      <h2>Functions</h2>
+      <dl class="functions">
+        <dt class="functiondef"><a name="BaseUri"><span class="function-name">BaseUri</span></a>(<span class="argument-name">node</span>, <span class="argument-name">fallback</span><span class="argument-default">=None</span>)</dt>
+        <dd class="functiondesc">
+          <div class="abstract">`BaseUri` is an implementation of the `node.baseURI` attribute that
+should be attached to DOM Level 3 nodes, but which is currently broken
+in 4Suite XML.  Where you would use `node.baseURI` according to DOM
+Level 3, use `BaseUri(node)` (this function) instead.</div>
+          <pre class="description">`BaseUri` returns the absolute base URI for a given `node` in a Domlette
+tree, or `None` if no such *absolute* base URI exists.
+
+If `fallback` is specified, then it is used to construct a base URI when
+everything else fails.</pre>
+        </dd>
+        <dt class="functiondef"><a name="Language"><span class="function-name">Language</span></a>(<span class="argument-name">node</span>)</dt>
+        <dd class="functiondesc">
+          <div class="abstract">This function returns the language property of the given instance of
+xml.dom.Node, based on xml:lang attributes present on the node or
+its ancestors. If no xml:lang attribute is present, returns None.</div>
+          <pre class="description">The language code, if any, is returned as an uppercase string.</pre>
+        </dd>
+      </dl>
+    </div>
+    <div class="universal-footer">Last modified on 2006-04-28 13:54:49</div>
+  </body>
+</html>

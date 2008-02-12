@@ -1,0 +1,125 @@
+<html>
+  <head>
+    <meta content="text/html; charset=iso-8859-1" http-equiv="Content-Type">
+    <title>4Suite API Documentation: Ft.Lib.CommandLine.Arguments</title>
+    <link href="modules.css" type="text/css" rel="stylesheet">
+  </head>
+  <body>
+    <div class="universal-header"><span class="universal-header-prefix">&nbsp;&nbsp;&nbsp;</span>&nbsp;<span class="universal-header-prefix">&nbsp;&nbsp;</span>&nbsp;<span class="universal-header-prefix">&nbsp;</span>&nbsp;<a href="../index.html">4Suite<sup>&trade;</sup> API Documentation</a></div>
+    <h1><span class="glyph-arrow">&#9658;</span> Module <span class="this-name"><a href="Ft.html" title="Ft">Ft</a>.<a href="Ft.Lib.html" title="Ft.Lib">Lib</a>.<a href="Ft.Lib.CommandLine.html" title="Ft.Lib.CommandLine">CommandLine</a>.Arguments</span></h1>
+    <div class="abstract">Classes that support advanced arg processing for command-line scripts</div>
+    <pre class="description">Copyright 2004 Fourthought, Inc. (USA).
+Detailed license and copyright information: http://4suite.org/COPYRIGHT
+Project home, documentation, distributions: http://4suite.org/</pre>
+    <div class="summary-section">
+      <table cellpadding="0" cellspacing="0">
+        <tbody>
+          <tr>
+            <td valign="top">
+              <div class="summary-header">Classes:</div>
+              <div class="summary-list"><span class="class-name"><a href="#Argument">Argument</a></span>, <span class="class-name"><a href="#OneOrMoreArgument">OneOrMoreArgument</a></span>, <span class="class-name"><a href="#OptionalArgument">OptionalArgument</a></span>, <span class="class-name"><a href="#RequiredArgument">RequiredArgument</a></span>, <span class="class-name"><a href="#ZeroOrMoreArgument">ZeroOrMoreArgument</a></span></div>
+            </td>
+            <td width="7" valign="middle"></td>
+            <td bgcolor="#C5C5C5" valign="middle" width="1"></td>
+            <td width="7" valign="middle"></td>
+            <td valign="top">
+              <div class="summary-header">Globals:</div>
+              <div class="summary-list"><span class="global-name"><a href="#ONE_OR_MORE">ONE_OR_MORE</a></span>, <span class="global-name"><a href="#OPTIONAL">OPTIONAL</a></span>, <span class="global-name"><a href="#REQUIRED">REQUIRED</a></span>, <span class="global-name"><a href="#ZERO_OR_MORE">ZERO_OR_MORE</a></span></div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="section">
+      <h2>Classes</h2>
+      <dl class="classes">
+        <dt class="classdef"><a name="Argument"></a>class <span class="class-name">Argument</span></dt>
+        <dd class="classdesc">
+          <h3>Methods</h3>
+          <dl class="methods">
+            <dt class="methoddef"><a name="Argument-__init__"><span class="method-name">__init__</span></a>(<span class="argument-name">self</span>, <span class="argument-name">name</span>, <span class="argument-name">description</span>, <span class="argument-name">validationFunc</span><span class="argument-default">=None</span>)</dt>
+            <dd class="methoddesc"></dd>
+          </dl>
+        </dd>
+        <dt class="classdef"><a name="OneOrMoreArgument"></a>class <span class="class-name">OneOrMoreArgument</span><span class="bases">(<span class="class-name"><a href="Ft.Lib.CommandLine.Arguments.html#Argument">Argument</a></span>)</span></dt>
+        <dd class="classdesc">
+          <h3>Methods</h3>
+          <dl class="methods">
+            <dt class="methoddef"><a name="OneOrMoreArgument-gen_command_line"><span class="method-name">gen_command_line</span></a>(<span class="argument-name">self</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dt class="methoddef"><a name="OneOrMoreArgument-validate"><span class="method-name">validate</span></a>(<span class="argument-name">self</span>, <span class="argument-name">cmd</span>, <span class="argument-name">args</span>)</dt>
+            <dd class="methoddesc"></dd>
+          </dl>
+          <h3>Methods inherited from class <a href="Ft.Lib.CommandLine.Arguments.html#Argument">Argument</a></h3>
+          <div class="inherited"><span class="inherited-name"><a href="Ft.Lib.CommandLine.Arguments.html#Argument-__init__">__init__</a></span></div>
+          <h3>Members</h3>
+          <dl class="members">
+            <dt class="memberdef"><a name="requirements"><span class="member-name">requirements</span></a> = 4</dt>
+          </dl>
+        </dd>
+        <dt class="classdef"><a name="OptionalArgument"></a>class <span class="class-name">OptionalArgument</span><span class="bases">(<span class="class-name"><a href="Ft.Lib.CommandLine.Arguments.html#Argument">Argument</a></span>)</span></dt>
+        <dd class="classdesc">
+          <h3>Methods</h3>
+          <dl class="methods">
+            <dt class="methoddef"><a name="OptionalArgument-gen_command_line"><span class="method-name">gen_command_line</span></a>(<span class="argument-name">self</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dt class="methoddef"><a name="OptionalArgument-validate"><span class="method-name">validate</span></a>(<span class="argument-name">self</span>, <span class="argument-name">cmd</span>, <span class="argument-name">args</span>)</dt>
+            <dd class="methoddesc"></dd>
+          </dl>
+          <h3>Methods inherited from class <a href="Ft.Lib.CommandLine.Arguments.html#Argument">Argument</a></h3>
+          <div class="inherited"><span class="inherited-name"><a href="Ft.Lib.CommandLine.Arguments.html#Argument-__init__">__init__</a></span></div>
+          <h3>Members</h3>
+          <dl class="members">
+            <dt class="memberdef"><a name="requirements"><span class="member-name">requirements</span></a> = 2</dt>
+          </dl>
+        </dd>
+        <dt class="classdef"><a name="RequiredArgument"></a>class <span class="class-name">RequiredArgument</span><span class="bases">(<span class="class-name"><a href="Ft.Lib.CommandLine.Arguments.html#Argument">Argument</a></span>)</span></dt>
+        <dd class="classdesc">
+          <h3>Methods</h3>
+          <dl class="methods">
+            <dt class="methoddef"><a name="RequiredArgument-gen_command_line"><span class="method-name">gen_command_line</span></a>(<span class="argument-name">self</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dt class="methoddef"><a name="RequiredArgument-validate"><span class="method-name">validate</span></a>(<span class="argument-name">self</span>, <span class="argument-name">cmd</span>, <span class="argument-name">args</span>)</dt>
+            <dd class="methoddesc"></dd>
+          </dl>
+          <h3>Methods inherited from class <a href="Ft.Lib.CommandLine.Arguments.html#Argument">Argument</a></h3>
+          <div class="inherited"><span class="inherited-name"><a href="Ft.Lib.CommandLine.Arguments.html#Argument-__init__">__init__</a></span></div>
+          <h3>Members</h3>
+          <dl class="members">
+            <dt class="memberdef"><a name="requirements"><span class="member-name">requirements</span></a> = 1</dt>
+          </dl>
+        </dd>
+        <dt class="classdef"><a name="ZeroOrMoreArgument"></a>class <span class="class-name">ZeroOrMoreArgument</span><span class="bases">(<span class="class-name"><a href="Ft.Lib.CommandLine.Arguments.html#Argument">Argument</a></span>)</span></dt>
+        <dd class="classdesc">
+          <h3>Methods</h3>
+          <dl class="methods">
+            <dt class="methoddef"><a name="ZeroOrMoreArgument-gen_command_line"><span class="method-name">gen_command_line</span></a>(<span class="argument-name">self</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dt class="methoddef"><a name="ZeroOrMoreArgument-validate"><span class="method-name">validate</span></a>(<span class="argument-name">self</span>, <span class="argument-name">cmd</span>, <span class="argument-name">args</span>)</dt>
+            <dd class="methoddesc"></dd>
+          </dl>
+          <h3>Methods inherited from class <a href="Ft.Lib.CommandLine.Arguments.html#Argument">Argument</a></h3>
+          <div class="inherited"><span class="inherited-name"><a href="Ft.Lib.CommandLine.Arguments.html#Argument-__init__">__init__</a></span></div>
+          <h3>Members</h3>
+          <dl class="members">
+            <dt class="memberdef"><a name="requirements"><span class="member-name">requirements</span></a> = 3</dt>
+          </dl>
+        </dd>
+      </dl>
+    </div>
+    <div class="section">
+      <h2>Globals</h2>
+      <dl class="globals">
+        <dt class="globaldef"><a name="ONE_OR_MORE"><span class="global-name">ONE_OR_MORE</span></a> = 4</dt>
+        <dd class="globaldesc"></dd>
+        <dt class="globaldef"><a name="OPTIONAL"><span class="global-name">OPTIONAL</span></a> = 2</dt>
+        <dd class="globaldesc"></dd>
+        <dt class="globaldef"><a name="REQUIRED"><span class="global-name">REQUIRED</span></a> = 1</dt>
+        <dd class="globaldesc"></dd>
+        <dt class="globaldef"><a name="ZERO_OR_MORE"><span class="global-name">ZERO_OR_MORE</span></a> = 3</dt>
+        <dd class="globaldesc"></dd>
+      </dl>
+    </div>
+    <div class="universal-footer">Last modified on 2005-04-18 16:46:56</div>
+  </body>
+</html>

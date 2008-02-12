@@ -1,0 +1,290 @@
+  <target name="Stage_msetup" description="Setups working environment">
+   <property file="${mypath}/module_orchs/msetup_osg.properties"/>
+         
+     <envtosysprops/>
+     <esequence>
+
+      <publish>
+         <event ensembleid="${ensemble.id}"
+                workflowid="Main"
+                nodeid="Begin Stage_msetup"
+                currentState="0">
+              <property name="message" value="Begin Stage_msetup"/>
+         </event>
+      </publish>
+
+      <print line=" - Begin Stage_msetup"/>
+
+      <edeclare name="appbase"      string="${user.dir}"/>
+
+      <econdblock type="else-if">
+        <econdtask>
+          <eeval>
+             <statement>
+               <ecompare string="${platform}">
+                     <predicate string="TG" comparator="EQUALS"/>
+                 </ecompare>
+               </statement>
+          </eeval>
+              <esequence>
+
+	       <!-- prepare directory for this job -->
+               <delete  dir="jobs/${uid}"/>
+               <mkdir  dir="jobs/${uid}"/>
+
+               <!-- write out the dir_struct.xml -->
+               <print line=" -- Write ${uid}.xml ... "/>
+               <delete file="jobs/${uid}/${uid}.tmp"/>
+
+               <write path="$R{appbase}/jobs/${uid}/${uid}.tmp" text="true"
+                    errorProperty="failed" rethrow="false">
+                 <segment string=" &lt;project name=&quot;DESpipesetup&quot; default=&quot;Stage_setup&quot; basedir=&quot;.&quot; &gt;" lineBreaks="1"/> 
+                 <segment string="   &lt;target name=&quot;Stage_setup&quot; description=&quot;make some directories&quot;&gt;" lineBreaks="2"/> 
+                 <segment string="&lt;property file=&quot;${uid}.properties&quot;/&gt;" lineBreaks="1"/> 
+               </write>
+
+               <rtexec inheritedEnv="true" execDir="." args="${catpath} jobs/${uid}/${uid}.tmp module_orchs/dir_struct.xml" quiet="true">
+                   <outMonitor file="$R{appbase}/jobs/${uid}/${uid}.xml"/>
+               </rtexec>
+
+               <delete file="jobs/${uid}/${uid}.tmp"/>
+
+               <!-- write out the dir_struct.properties -->
+               <print line=" -- Write ${uid}.properties ... "/>
+               <delete file="jobs/${uid}/${uid}.properties"/>
+
+               <write path="$R{appbase}/jobs/${uid}/${uid}.properties" text="true"
+                    errorProperty="failed" rethrow="false">
+                 <segment string="ensemble.id=${ensemble.id}" lineBreaks="1"/>
+                 <segment string="nite=${nite}" lineBreaks="1"/>
+                 <segment string="uid=${uid}" lineBreaks="1"/>
+                 <segment string="ccdstart=${ccd.start}" lineBreaks="1"/>
+                 <segment string="ccdstop=${ccd.stop}" lineBreaks="1"/>
+                 <segment string="binhost=${binhost}" lineBreaks="1"/>
+                 <segment string="etchost=${etchost}" lineBreaks="1"/>
+                 <segment string="targethost=${targethost}" lineBreaks="1"/>
+                 <segment string="binpath=${mypath}/bin_TG" lineBreaks="1"/>
+                 <segment string="etcpath=${mypath}/etc" lineBreaks="1"/>
+                 <segment string="chmodpath=/bin/chmod" lineBreaks="1"/>
+                 <segment string="cppath=/bin/cp" lineBreaks="1"/>
+                 <segment string="lspath=/bin/ls" lineBreaks="1"/>
+                 <segment string="platform=${platform}" lineBreaks="1"/>
+               </write>
+
+                <!--
+                -->
+  
+               <print line=" -- Done: jobs/${uid}/${uid}.properties written."/>
+
+               <!-- sent out the dir_struct to teragrid -->
+               <print line=" -- GridFTP ${uid}.xml and .properties across ... "/>
+
+               <edeclare name="srcxfile"  string="$R{appbase}/jobs/${uid}/${uid}.xml"/>
+               <edeclare name="srcpfile"  string="$R{appbase}/jobs/${uid}/${uid}.properties"/>
+               <edeclare name="targetdir" string="${targetprot}://${tgrid_server_${site}}${tgrid_homepath_${site}}"/>
+
+               <print line=" -- srcxfile $R{srcxfile} "/>
+               <print line=" -- srcpfile $R{srcpfile} "/>
+               <print line=" -- targetdir  $R{targetdir} "/>
+
+
+               <uricopy from="$R{srcxfile}" to="$R{targetdir}">
+               </uricopy>
+               <uricopy from="$R{srcpfile}" to="$R{targetdir}">
+               </uricopy>
+
+               <print line=" -- ${uid} setup files sent"/>
+
+               <!-- condor job-submission -->
+
+               <edeclare name="condor_location"     null="true"/>
+               <getsysprop name="condor.location"/>
+               <ereturn name="condor_location"      get="value"/>
+
+               <edeclare name="currentuser"  string="${user.name}"/>
+               <edeclare name="condorsubmit" string="$R{condor_location}/bin/condor_submit"/>
+               <edeclare name="condorq"      string="$R{condor_location}/bin/condor_q"/>
+               <edeclare name="mxc" string="maxCputime=30"/>
+               <edeclare name="mxw" string="maxwalltime=30"/>
+               <edeclare name="jobsing" string="jobtype=single"/>
+               <edeclare name="fastio" string="host_types=fastio"/>
+
+               <edeclare name="line1"  string="universe = grid"/>
+               <edeclare name="line1a" string="type = gt2"/>
+               <edeclare name="line2" string="executable=${tgrid_ogre_${site}}/bin/ogrelaunch"/>
+               <edeclare name="line2B" string="globusrsl = ($R{jobsing})($R{mxw})"/>
+
+               <edeclare name="line4"  string="transfer_executable=false"/>
+               <edeclare name="line4a" string="notification = NEVER"/>
+               <edeclare name="line4b" string="transfer_output = true "/>
+               <edeclare name="line4c" string="transfer_error = true "/>
+               <edeclare name="line4d" string="stream_output=false"/>
+               <edeclare name="line4e" string="stream_error=false"/>
+               <edeclare name="line5" string="globusscheduler=${tgrid_jobserver_${site}}/${jobmanager_msetup}"/>
+
+               <edeclare name="line9" string="remote_initialdir=${tgrid_homepath_${site}}"/>
+               <edeclare name="line10" string="queue"/>
+
+               <print line=" -- condor_g command: $R{condorsubmit}"/>
+               <print line=" -- Stage_EntryExecute  : Writing ${uid}_msetup.condor "/>
+
+               <edeclare name="line3" string="arguments=${tgrid_homepath_${site}}/${uid}.xml Stage_setup"/>              
+               <edeclare name="line6" string="output=jobs/${uid}/msetup_condor.out"/>
+               <edeclare name="line7" string="error=jobs/${uid}/msetup_condor.err"/>
+               <edeclare name="line8" string="log=jobs/${uid}/msetup_condor.log"/>
+
+               <write path="$R{appbase}/jobs/${uid}/msetup.condor" text="true"
+                    errorProperty="failed" rethrow="false">
+                <segment string="$R{line1}" lineBreaks="1"/>
+                <segment string="$R{line1a}" lineBreaks="1"/>
+                <segment string="$R{line2}" lineBreaks="1"/>
+                <segment string="$R{line2B}" lineBreaks="1"/>
+                <segment string="$R{line3}" lineBreaks="1"/>
+                <segment string="$R{line4}" lineBreaks="1"/>
+                <segment string="$R{line4a}" lineBreaks="1"/>
+                <segment string="$R{line4b}" lineBreaks="1"/>
+                <segment string="$R{line4c}" lineBreaks="1"/>
+                <segment string="$R{line4d}" lineBreaks="1"/>
+                <segment string="$R{line4e}" lineBreaks="1"/>
+                <segment string="$R{line5}" lineBreaks="1"/>
+                <segment string="$R{line6}" lineBreaks="1"/>
+                <segment string="$R{line7}" lineBreaks="1"/>
+                <segment string="$R{line8}" lineBreaks="1"/>
+                <segment string="$R{line9}" lineBreaks="1"/>
+                <segment string="$R{line10}" tabs="1"/>
+               </write>
+
+               <print line=" -- ${uid}/msetup.condor file written. "/>
+
+	        <!-- Getting the current number of condor jobs -->
+                <rtexec inheritedEnv="true" execDir="$R{appbase}"
+                       args="$R{condorq}" quiet="true">
+                    <outMonitor file="$R{appbase}/jobs/${uid}/condorq.out" append="false">
+                     <filterQueue>
+                       <rTStreamFilter pattern="$R{currentuser}" line="multiline"/>
+                     </filterQueue>
+                    </outMonitor>
+                    <errMonitor file="$R{appbase}/jobs/${uid}/condorq.err" append="false"/>
+                </rtexec>
+                <esleep timeout="1000"/>
+
+                <edeclare name="stacklevel" int="0"/>
+
+                <read path="$R{appbase}/jobs/${uid}/condorq.out" lines="true"/>
+                <ereturn name="stacklevel" get="lineCount"/>
+
+               <print line=" -- Submit the msetup condor job... "/>
+
+               <rtexec inheritedEnv="true" execDir="$R{appbase}"
+                     args="$R{condorsubmit} $R{appbase}/jobs/${uid}/msetup.condor"
+                     quiet="true">
+                   <outMonitor file="$R{appbase}/jobs/${uid}/msetup.out"/>
+                   <errMonitor file="$R{appbase}/jobs/${uid}/msetup.err"/>
+               </rtexec>
+
+               <!-- 
+                commednt out job submission 
+               --> 
+
+               <esleep timeout="10000"/>
+
+               <print line=" -- Submitted. Query condor queue ... "/>
+
+               <edeclare name="linecount" int="500"/>
+
+               <eloop counterName="j">
+                <ecounter>
+                   <expression infix="( ( $R{j} &lt; 800 ) &amp;&amp; ( $R{linecount} &gt; $R{stacklevel} ) )"/>
+                </ecounter>
+                <esleep timeout="5000"/>
+
+                <rtexec inheritedEnv="true" execDir="$R{appbase}"
+                       args="$R{condorq}" quiet="true">
+                    <outMonitor file="$R{appbase}/jobs/${uid}/condorq.out" append="false">
+                     <filterQueue>
+                       <rTStreamFilter pattern="$R{currentuser}" line="multiline"/>
+                     </filterQueue>
+                    </outMonitor>
+                    <errMonitor file="$R{appbase}/jobs/${uid}/condorq.err" append="false"/>
+                </rtexec>
+                <esleep timeout="1000"/>
+
+                <read path="$R{appbase}/jobs/${uid}/condorq.out" lines="true"/>
+                <ereturn name="linecount" get="lineCount"/>
+
+                <print line="      -- Condor stack has $R{linecount} jobs ($R{j})"/>
+
+               </eloop>
+
+               </esequence>
+        </econdtask>
+
+               <esequence>
+
+               <print line=" -- Stage_msetup - Creating directory workspaces ... "/>
+
+                <mkdir dir="${workplace}/${uid}"/>
+
+                <delete dir="${workplace}/${uid}/bin"/>
+                <mkdir dir="${workplace}/${uid}/bin"/>
+
+                <delete dir="${workplace}/${uid}/etc"/>
+                <mkdir dir="${workplace}/${uid}/etc"/>
+
+                <delete dir="${workplace}/${uid}/xml"/>
+                <mkdir dir="${workplace}/${uid}/xml"/>
+
+                <mkdir dir="${workplace}/${uid}/data"/>
+                <mkdir dir="${workplace}/${uid}/data/${nite}"/>
+                <mkdir dir="${workplace}/${uid}/data/${nite}/g"/>
+                <mkdir dir="${workplace}/${uid}/data/${nite}/r"/>
+                <mkdir dir="${workplace}/${uid}/data/${nite}/i"/>
+                <mkdir dir="${workplace}/${uid}/data/${nite}/z"/>
+                <mkdir dir="${workplace}/${uid}/data/${nite}/log"/>
+                
+                <mkdir dir="${workplace}/${uid}/data/${nite}/cal"/>
+                <mkdir dir="${workplace}/${uid}/data/${nite}/cal/bias"/>
+                <mkdir dir="${workplace}/${uid}/data/${nite}/cal/bpm"/>
+                <mkdir dir="${workplace}/${uid}/data/${nite}/cal/flat_g"/>
+                <mkdir dir="${workplace}/${uid}/data/${nite}/cal/flat_i"/>
+                <mkdir dir="${workplace}/${uid}/data/${nite}/cal/flat_r"/>
+                <mkdir dir="${workplace}/${uid}/data/${nite}/cal/flat_z"/>
+
+                <rtexec inheritedEnv="false" execDir="." args="/bin/ln -s ${WS_archpath}/${nite}/raw ${workplace}/${uid}/data/${nite}" quiet="true">
+                </rtexec>
+
+                <rtexec inheritedEnv="false" execDir="." args="${chmodpath} -R g+w ${workplace}/${uid}" quiet="false">
+                </rtexec>
+
+                <copy todir="${workplace}/${uid}/etc">
+                   <fileset dir="${mypath}/etc"/> 
+                </copy>
+                <copy todir="${workplace}/${uid}/bin">
+                   <fileset dir="${mypath}/bin_WS"/> 
+                </copy>
+
+                <rtexec inheritedEnv="true" execDir="${workplace}/${uid}" args="${chmodpath} -R 755 bin" quiet="true">
+                </rtexec> 
+
+                <rtexec inheritedEnv="false" execDir="." args="${chmodpath} -R g+w ${workplace}/${uid}" quiet="false">
+                </rtexec>
+
+               <print line=" -- Stage_msetup - Created directory workspaces in ${workplace}. "/>
+            </esequence>
+     </econdblock>
+
+     <print line=" - Stage_msetup done"/>
+     <print line=" "/>
+
+     <publish>
+          <event ensembleid="${ensemble.id}"
+                 workflowid="Main"
+                 nodeid="End Stage_msetup"
+                 currentState="0">
+              <property name="message" value="End Stage_msetup"/>
+          </event>
+     </publish>
+
+    </esequence>
+  </target>
+

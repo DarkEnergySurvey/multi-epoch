@@ -1,0 +1,196 @@
+HOW TO RUN THE PHOTOMETRIC STANDARDS MODULE OUTSIDE OF OGRE
+
+1. Set the DESPHOTOSTDSMOD_HOME environment variable to the
+   top level directory of the DESPhotoStdsMod product. E.g., 
+   on hatcreek: 
+      setenv DESPHOTOSTDSMOD_HOME /data/d4/dtucker/DESPhotoStdsMod
+
+2. Set the JAVA_HOME environment variable to the top level 
+   directory of j2sdk; e.g., on hatcreek:
+       setenv JAVA_HOME /usr/local/j2sdk1.4.2_08
+
+3. Change to the $DESPHOTOSTDSMOD_HOME directory:
+       cd $DESPHOTOSTDSMOD_HOME
+
+4. Source the setup script (currently, csh only):
+       source bin/setup.csh
+ 
+5. * * *     SKIP THIS STEP FOR NOW     * * * 
+   * * * JUNIT TEST IS CURRENTLY BROKEN * * * 
+   * * *     (DLT, 30 DECEMBER 2005)    * * *
+
+   Run the junit test to make sure all is well:
+   java gov.fnal.eag.dtucker.desPhotoStds.test.PhotomEqSolverTest
+
+   If successful, you will get lots of lines of output showing the
+   progress of the program, finishing with these lines of output:
+
+       Time: 32.033
+
+       OK (4 tests)
+
+   The actual time will likely vary, but typical values range from 
+   about 15 to 45 seconds.  If the junit tests fail, you will get
+   lengthy, nasty error messages.
+
+   If successful, the junit test will create 4 postscript plots in 
+   your current directory -- PSM_QA_g.ps, PSM_QA_r.ps, PSM_QA_i.ps, and 
+   PSM_QA_z.ps. These are QA plots showing the fits to mock standard star 
+   observations, one for each DES filter (g, r, i, z).  
+
+   There will also be four new entries, one for each DES filter,
+   in the table des_testfit in the DES database.  To see these
+   new entries, log on to the DES Oracle database from hatcreek --
+
+       sqlplus username/password@sky/DES
+
+   (where username and password are the appropriate username
+   and password to logon to the DES Oracle database) and run the
+   following query:
+
+      select * from des_testfit order by timestamp; 
+
+   You should get output like the following, where the last
+   four entries would be the entries just added by the junit
+   test:
+
+
+            MJDLO      MJDHI      CCDID FILTER            A       AERR          B
+       ---------- ---------- ---------- -------- ---------- ---------- ----------
+             BERR          K       KERR        RMS       CHI2        DOF
+       ---------- ---------- ---------- ---------- ---------- ----------
+       PHOTOMETRICFLAG PSMVERSION
+       --------------- --------------------
+       TIMESTAMP
+       ---------------------------------------------------------------------------
+            55135    55135.4         -1 g        -19.901353    .000592          0
+                0     .25095    .002095    .000391    .977693       2268
+                     1 v1.0
+       11-OCT-05 05.51.27 PM
+
+
+            MJDLO      MJDHI      CCDID FILTER            A       AERR          B
+       ---------- ---------- ---------- -------- ---------- ---------- ----------
+             BERR          K       KERR        RMS       CHI2        DOF
+       ---------- ---------- ---------- ---------- ---------- ----------
+       PHOTOMETRICFLAG PSMVERSION
+       --------------- --------------------
+       TIMESTAMP
+       ---------------------------------------------------------------------------
+            55135    55135.4         -1 r        -20.001744    .000551          0
+                0    .151228    .001954    .000407   1.019292       2608
+                     1 v1.0
+       11-OCT-05 05.51.45 PM
+
+
+            MJDLO      MJDHI      CCDID FILTER            A       AERR          B
+       ---------- ---------- ---------- -------- ---------- ---------- ----------
+             BERR          K       KERR        RMS       CHI2        DOF
+       ---------- ---------- ---------- ---------- ---------- ----------
+       PHOTOMETRICFLAG PSMVERSION
+       --------------- --------------------
+       TIMESTAMP
+       ---------------------------------------------------------------------------
+            55135    55135.4         -1 i        -20.104272    .000551          0
+                0    .103213    .001954    .000394    .986636       2608
+                     1 v1.0
+       11-OCT-05 05.51.50 PM
+
+
+            MJDLO      MJDHI      CCDID FILTER            A       AERR          B
+       ---------- ---------- ---------- -------- ---------- ---------- ----------
+             BERR          K       KERR        RMS       CHI2        DOF
+       ---------- ---------- ---------- ---------- ---------- ----------
+       PHOTOMETRICFLAG PSMVERSION
+       --------------- --------------------
+       TIMESTAMP
+       ---------------------------------------------------------------------------
+            55135    55135.4         -1 z        -20.198552    .000622          0
+                0    .049426    .002192    .000389    .972815       2063
+                     1 v1.0
+       11-OCT-05 05.51.55 PM
+
+
+       113 rows selected.
+
+
+
+
+
+
+6. Run the Photometric Standards Module for real; the following
+   command will output a single PSM_QA plot and add a single 
+   entry to the psmfit_test table (in this case, for the r filter):
+      java gov.fnal.eag.dtucker.desPhotoStds.PhotomEqSolverRun pipeline dc01user 2005oct09 r 1 16.0 18.0 3 2.5 psmfit_test v1.0 1 
+   The arguments are (in order):
+      username (here, pipeline)
+      password (here, dc01user)
+      nite (here, 2005oct09)
+      filter to be solved for (here, r)
+      ccd to solved for (here, 1)
+      magLo (here, 16.0), the low (bright) end of the range of 
+          standard star mags to be matched to the observations 
+      magHi (here, 18.0), the high (faint) end of the range of 
+          standard star mags to be matched to the observations 
+      niterations (here, 3), the number of times the fit is iterated  
+          during outlier rejection (niterations must be >= 1; 
+          for niterations=1, no outliers are removed)
+      nsigma (here, 2.5), the number of sigma from the fit
+          beyond which outliers are removed during each iteration
+          of outlier rejection (the rms of the fit is recalculated
+          for each iteration)
+      fitTable (here, psmfit_test), the name of the DES database 
+          table to which the fit results are outputted
+      software version (here, v1.0); currently a dummy value
+      verbosity level (here, 1); 0=little or no output to screen; 
+          1 or more=lots of output to screen
+
+
+   It takes about half a minute to run PhotomEqSolverRun on 2005oct09 on 
+   a single filter for a standard star mag range (magLo, magHi) = (16.0, 18.0).
+   These values work well for the g and r filters, pretty well for i, 
+   maybe other values would be better for the z filter.
+
+   Values of niterations=3, and nsigma=2.5 generally work pretty well
+   (and are, in fact, the default values used for SDSS standard star
+   work).
+
+   If successful, PhotomEqSolverRun will create a postscript plot 
+   called PSM_QA_<nite><filter><ccdid>_<fitTable><psmfit_id>.ps 
+   in your current directory -- e.g., PSM_QA_2005oct09r1_psmfit_test29.ps,
+   where psmfit_id is the value of psmfit_id for this fit's entry
+   in the fitTable.
+
+   There will also be a new entry in the fitTable in the DES database.  
+   To see this new entry, log on to the DES Oracle database from hatcreek --
+
+       sqlplus username/password@sky/DES
+
+   (where username and password are the appropriate username
+   and password to logon to the DES Oracle database) and run the
+   following query:
+
+      select * from psmfit_test order by timestamp; 
+
+   You should get output like the following, where the last
+   entry would be the one just added by PhotomEqSolverRun:
+
+SQL> select * from des_psmfit_dc01 order by fit_timestamp;
+
+ PSMFIT_ID NITE              MJDLO      MJDHI      CCDID FILTER            A
+---------- ------------ ---------- ---------- ---------- -------- ----------
+      AERR          B       BERR          K       KERR        RMS       CHI2
+---------- ---------- ---------- ---------- ---------- ---------- ----------
+       DOF PHOTOMETRICFLAG PSMVERSION
+---------- --------------- --------------------
+FIT_TIMESTAMP
+---------------------------------------------------------------------------
+       253 2005oct09            -1         -1         58 i        -25.577231
+   .009422          0          0    .097055    .022325    .039063   4.904625
+         7               0 v1.0
+24-JAN-06 07.44.42.6 PM
+
+
+
+
+

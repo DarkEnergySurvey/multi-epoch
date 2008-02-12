@@ -1,0 +1,45 @@
+#!/bin/sh
+########################################################################
+#  $Id$
+#
+#  $Rev::                                  $:  # Revision of last commit.
+#  $LastChangedBy::                        $:  # Author of last commit. 
+#  $LastChangedDate::                      $:  # Date of last commit.
+#
+#  Authors: 
+#         Michelle Gower (mgower@ncsa.uiuc.edu)
+#         Darren Adams (dadams@ncsa.uiuc.edu)
+#
+#  Developed at: 
+#  The National Center for Supercomputing Applications (NCSA).
+#
+#  Copyright (C) 2007 Board of Trustees of the University of Illinois. 
+#  All rights reserved.
+#
+#  DESCRIPTION:
+#
+#######################################################################
+
+out=$1
+shift
+err=$1
+shift
+### specific to batch scheduler
+if test -n "$PBS_JOBID"; then
+   JOBID=`echo $PBS_JOBID | cut -d'.' -f1`
+   NP=`awk 'END {print NR}' $PBS_NODEFILE`
+fi
+if test -n "$LSB_JOBID"; then
+   JOBID=$LSB_JOBID
+fi
+if test -n "$LOADL_STEP_ID"; then
+   JOBID=`echo $LOADL_STEP_ID | /bin/awk -F "." '{ print $(NF-1) "." $(NF) }'`
+fi
+
+echo "DES: JOBID = " $JOBID 
+echo ""
+echo out = $out
+echo err = $err
+echo $@
+
+$@ > $out 2> $err

@@ -1,0 +1,134 @@
+#!/usr/bin/env python
+import os
+import re
+import sys
+
+from optparse import OptionParser
+
+usage="""
+    %prog [options] imagefile catfile allout starout"""
+
+parser=OptionParser(usage)
+parser.add_option("-m","--msconf", dest="msconf",help="MeasureStars config file", default=None)
+parser.add_option("-f","--fsconf", dest="fsconf",help="FindStars config file", default=None)
+parser.add_option("-p","--plotfile", dest="plotfile",help="A plot file. Size-magnitude diagram will be written if matplotlib is available.", default=None)
+parser.add_option("-e","--exitlog", dest="exitlog",help="A file which will contain the exit code of measure_stars", default=None)
+
+errors = {}
+errors[0] = 'SUCCESS'
+errors[35] = 'READERROR'
+errors[36] = 'FORMATERROR'
+errors[37] = 'SYNTAXERROR'
+errors[38] = 'RANGEERROR'
+errors[39] = 'CATALOGERROR'
+errors[40] = 'PARAMETERERROR'
+errors[41] = 'ALGORITHMERROR'
+
+starpost  = '_starsh.csv'
+
+def PlotSizeMagOld(allfile, psffile, plotfile):
+    try:
+        import pylab
+        import csv
+
+        all_reader = csv.reader(open(allfile))
+        psf_reader = csv.reader(open(psffile))
+
+        # read all
+        all_mag = []
+        all_sigma = []
+        for row in all_reader:
+            all_mag.append(float(row[1]))
+            all_sigma.append(float(row[3]))
+
+        # read psf
+        psf_mag = []
+        psf_sigma = []
+        for row in psf_reader:
+            psf_mag.append(float(row[1]))
+            psf_sigma.append(float(row[3]))
+
+        pylab.plot(all_mag, all_sigma,
+                   marker='.',markersize=0.1,color='black',linestyle='None')
+        pylab.plot(psf_mag, psf_sigma,
+                   marker='o',markeredgecolor='red',markerfacecolor='None',
+                   linestyle='None')
+        pylab.axis([7,20,0,6])
+        pylab.xlabel(r'mag\_auto')
+        pylab.ylabel(r'$\sigma$')
+
+        print '  Plotting size-mag diagram:',plotfile
+        pylab.savefig(plotfile)
+        pylab.clf()
+
+    except ImportError:
+        print "Could not import plotting or csv routines"
+
+def PlotSizeMag(allfile, psffile, plotfile):
+    print 'Plotting size-mag diagram to file:',plotfile
+    gp_commands = """
+        set terminal postscript eps enhanced color "Courier" 16;
+        set datafile separator ",";
+        set xrange[5:18];
+        set yrange[0:8];
+        set mxtics 4;
+        set mytics 4;
+        set xlabel "mag auto";
+        set ylabel "sigma";
+
+        set output "%s";
+        plot "%s" using 2:4 title "All" with points lt -1, "%s" using 2:4 title "Stars" with points lt 1;
+        """ % (plotfile, allfile, psffile)
+
+    comm = "echo '"+gp_commands+"' | gnuplot"
+    res = os.system(comm)
+
+
+def main(argv):
+    # process the options and arguments
+    (options, args) = parser.parse_args(argv[1:])
+    if len(args) < 4:
+        parser.print_help()
+        sys.exit(45)
+
+    imfile = args[0]
+    catfile = args[1]
+    allout = args[2]
+    starout = args[3]
+
+    msconf = options.msconf
+    fsconf = options.fsconf
+    plotfile = options.plotfile
+    exitlog = options.exitlog
+
+    execdir = os.path.dirname(argv[0])
+    comm = os.path.join(execdir, 'measure_stars')
+    if msconf is not None:
+        comm = comm + ' -m '+msconf
+    if fsconf is not None:
+        comm = comm + ' -f '+fsconf
+    
+    comm = comm + " %s %s %s %s" % (imfile, catfile, allout, starout)
+
+    print "Executing command:",comm
+
+    sys.stdout.flush()
+    res = os.system(comm)
+
+
+    if exitlog is not None:
+        print 'Writing measure_stars exit status to file:',exitlog
+        exit_file = open(exitlog, 'w')
+        if errors.has_key(res):
+            exit_str = str(res)+' '+errors[res]+'\n'
+        else:
+            exit_str = '9999 Unknown Error\n'
+        exit_file.write(exit_str) 
+        exit_file.close()
+
+    if res == 0 and plotfile is not None:
+        PlotSizeMag(allout, starout, plotfile)
+
+
+if __name__=="__main__":
+    main(sys.argv)

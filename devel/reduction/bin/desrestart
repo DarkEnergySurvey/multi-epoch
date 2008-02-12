@@ -1,0 +1,245 @@
+#!/usr/bin/env perl
+########################################################################
+#  $Id$
+#
+#  $Rev::                                  $:  # Revision of last commit.
+#  $LastChangedBy::                        $:  # Author of last commit. 
+#  $LastChangedDate::                      $:  # Date of last commit.
+#
+#  Authors: 
+#         Michelle Gower (mgower@ncsa.uiuc.edu)
+#         Darren Adams (dadams@ncsa.uiuc.edu)
+#
+#  Developed at: 
+#  The National Center for Supercomputing Applications (NCSA)
+#  with useful conversations with Jordi Cohen and Jim Phillips from the
+#  Theoretical and Computation Biophysics Group at the University
+#  of Illinois at Urbana-Champaign.
+#
+#  Copyright (C) 2007 Board of Trustees of the University of Illinois. 
+#  All rights reserved.
+#
+#  DESCRIPTION:
+#
+########################################################################
+####use strict;
+use File::Basename;
+use Fcntl;
+use Getopt::Long;
+use Cwd;
+use FindBin;
+
+use lib "$FindBin::Bin/../lib";
+use DES::utils::misc;
+use DES::utils::hist;
+use DES::utils::submitfunc;
+use NCSA::utils::condor;
+use DES::desconfig;
+
+my ($desfile, $version);
+my ($out, $stat);
+my $config;
+my $condorversion;
+my ($uniqname);
+my ($msspath, $globsched, $gridftp);
+my $daglog;
+my ($internaldir);
+
+&Getopt::Long::Configure( 'noignorecase', 'no_autoabbrev');
+$stat = Getopt::Long::GetOptions(
+      'nosubmit'  => \$nosubmit,
+      'desfile|f=s' => \$desfile,
+      'force'  => \$force,
+      'restartstage' => \$restartstage,
+      'version|v' => \$version
+);
+
+$DES_HOME = getHome() or die "Error: Can't determine DES_HOME";
+
+if (defined($version))
+{
+  printVersion();
+  exit 0;
+}
+
+if (scalar(@ARGV) == 1)
+{
+  $uniqname = $ARGV[0];
+}
+
+$analysisdir = cwd();
+
+if (!defined($uniqname))
+{
+  if (-d "DESjobs")
+  {
+     @analyses = <DESjobs/*>; 
+     if (scalar(@analyses) > 1)
+     {
+        print STDERR "There are multiple analyses in the current directory\n";
+        print STDERR "Specify analysis on desrestart command line (nite_runid)\n";
+        exit 1;
+     }
+     else
+     {
+        $uniqname = $analyses[0];
+        $uniqname =~ s/DESjobs\///;
+     }
+  }
+  else
+  {
+     print "ERROR: No analysis in current directory to restart\n";
+     exit 1; 
+  }
+}
+else
+{
+  if (! -d "DESjobs/$uniqname")
+  {
+     print STDERR "ERROR: analysis $uniqname is not in current directory\n";
+     exit 1;
+  }
+}
+
+$internaldir = "DESjobs/$uniqname/internal";
+
+# check to see if analysis is currently running
+$Iwd = `condor_q -l -constraint des_isdesjob | grep -E "^Iwd" 2>&1`;
+$Iwd =~ s/Iwd\s+=\s+//g;
+$Iwd =~ s/"//g;
+@Iwd = split /\n/, $Iwd;
+$pwd = `pwd`;
+chomp($pwd);
+$pwd .= "/$internaldir";
+foreach $i (@Iwd)
+{
+   if ($i eq $pwd)
+   {
+      print STDERR "ERROR: This analysis is currently running.\n";
+      exit 1;
+   }
+}
+
+# must be in internal directory when submitting analysis
+chdir $internaldir;
+
+$configfile = "$uniqname.descfg";
+
+# read sysinfo file
+my $config = new DES::desconfig;
+$config->readConfig($configfile, 0, \*STDERR);
+
+logEvent($config, "restart", "", "", "");
+
+if (defined($force))
+{
+   # read system level DES configuration file
+   if (-r "${DES_HOME}/etc/des.cfg")
+   {
+     print "Reading system level DES configuration file (${DES_HOME}/etc/des.cfg)...";
+     $config->readConfig("${DES_HOME}/etc/des.cfg", 1, \*STDERR);
+     print "DONE\n";
+   }
+
+   # read user level DES configuration file
+   $homedir = $ENV{"HOME"};
+   if (-r "$homedir/.des/des.cfg")
+   {
+     print "Reading user level DES configuration file ($homedir/.des/des.cfg)...";
+     $config->readConfig("$homedir/.des/des.cfg", 1, \*STDERR);
+     print "DONE\n";
+   }
+}
+
+#if (defined($desfile))
+#{
+#   print "Reading new desfile ($desfile)...";
+#   $olduniqname = $config->getValue("uniqname");
+#
+#   $config->resetRunArray();
+#
+#   # add info from newdesfile
+#   $config->readConfig("$analysisdir/$desfile", 1, \*STDERR);
+#
+#   $newuniqname = $config->getValue("uniqname");
+#
+#   if ($olduniqname ne $newuniqname)
+#   {
+#     print STDERR "ERROR\nCannot modify unique analysis name (nite_runid)\n";
+#     print STDERR "Instead, use dessubmit to submit new analysis.\n";
+#     exit 1;
+#   }
+#
+#   logEvent($config, "mod", "");
+#
+#   # save modified config
+#   $success = open CONFIG, "> $configfile";
+#   if ($success == 0)
+#   {
+#     print STDERR "ERROR\nCould not open DES config file '$configfile' for writing.\n";
+#     exit 1;
+#   }
+#   $config->writeConfig(\*CONFIG, \*STDERR);
+#   close CONFIG;
+#
+#   print "DONE\n";
+#   $restartjob = 1;
+#}
+#
+#chdir "$internaldir";
+
+
+# if restarting at beginning of stage 
+# don't use rescue dag, use original stage dag
+@rescuedags = <*.rescue>; 
+foreach $dag (@rescuedags)
+{
+   if (defined($restartstage))
+   {
+      if ($dag !~ /analysis_mngr/)
+      {
+         unlink "$dag";
+      }
+   }
+   else
+   {
+      ($dagfile) = $dag =~ /(\S+.dag).rescue/; 
+      rename "$dagfile.rescue", "$dagfile";
+   }
+}
+
+#unlink <*.lib.out>;
+#unlink <*.dagman.???>;
+
+chdir "$analysisdir";
+runChecks($config);
+
+chdir "$internaldir";
+
+print "Restarting analysis...";
+$out = `condor_submit analysis_mngr.dag.condor.sub 2>&1`;
+if ($out =~ /ERROR/)
+{
+  print STDERR "ERROR\n";
+  print STDERR "condor_submit analysis_mngr.dag.condor.sub\n";
+  print STDERR "$out\n";
+}
+else
+{
+  print "DONE\n";
+  print "\n\nAnalysis successfully resubmitted\n";
+}
+print "\n\n";
+
+# for completeness, log new condorid of analysis manager
+$internaldir = $config->getValue("internaldir");
+open CONDORLOG, "< $internaldir/$analysis_mngr.dag.dagman.log";
+$jobs = parseCondorUserLog(\*CONDORLOG);
+@keys = keys %$jobs;
+if (scalar(@keys) == 1)
+{
+  logEvent($config, "analysis_mngr", "pretask");
+  logEvent($config, "analysis_mngr", "cid", $keys[0]);
+}
+
+# END OF MAIN     ##########

@@ -1,0 +1,39 @@
+<define procedure="Stage_createingestlists" ARG_0="int">
+    <properties file="${mypath}/module_orchs/createingestlists.properties"/>
+    <env/>
+    <properties sysprops="true"/>
+    <send>
+        <progress-event message="Begin Stage_createingestlists">
+            <header-property name="some-special-id" value="${ensemble.id}-Main-Begin-Stage_createingestlists"/>
+        </progress-event>
+    </send>
+    <echo stdout="true" message=" - Begin Stage_createingestlists"/>
+    <!-- create job logging directory -->
+    <delete dir="file:${user.dir}/${ingest.dir}">
+        <configuration>
+            <property name="delete-fail-on-error" value="false" type="boolean"/>
+        </configuration>
+    </delete>
+    <mkdir uri="file:${user.dir}/${ingest.dir}"/>
+    <mkdir uri="file:${user.dir}/${ingest.dir}/log"/>
+    <!-- create image lists  -->
+    <stream-monitor-process execution-dir=".">
+        <command-line>${createingestlists.exec} ${createingestlists.args}</command-line>
+        <out-monitor>
+            <trigger>
+                <filter pattern=".*"/>
+                <actions>
+                    <stream-file-write-action path="${createingestlists.log}" append="false"/>
+                </actions>
+            </trigger>
+        </out-monitor>
+    </stream-monitor-process>
+    <echo stdout="true" message=" - Stage_createingestlists done"/>
+    <echo stdout="true" message="     "/>
+    <send>
+        <progress-event message="End Stage_createingestlists">
+            <header-property name="some-special-id" value="${ensemble.id}-Main-End-Stage_createingestlists"/>
+        </progress-event>
+    </send>
+</define>
+

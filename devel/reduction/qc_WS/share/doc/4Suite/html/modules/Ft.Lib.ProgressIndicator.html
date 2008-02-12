@@ -1,0 +1,89 @@
+<html>
+  <head>
+    <meta content="text/html; charset=iso-8859-1" http-equiv="Content-Type">
+    <title>4Suite API Documentation: Ft.Lib.ProgressIndicator</title>
+    <link href="modules.css" type="text/css" rel="stylesheet">
+  </head>
+  <body>
+    <div class="universal-header"><span class="universal-header-prefix">&nbsp;&nbsp;&nbsp;</span>&nbsp;<span class="universal-header-prefix">&nbsp;&nbsp;</span>&nbsp;<span class="universal-header-prefix">&nbsp;</span>&nbsp;<a href="../index.html">4Suite<sup>&trade;</sup> API Documentation</a></div>
+    <h1><span class="glyph-arrow">&#9658;</span> Module <span class="this-name"><a href="Ft.html" title="Ft">Ft</a>.<a href="Ft.Lib.html" title="Ft.Lib">Lib</a>.ProgressIndicator</span></h1>
+    <div class="abstract">Progress indicator</div>
+    <pre class="description">Copyright 2004 Fourthought, Inc. (USA).
+Detailed license and copyright information: http://4suite.org/COPYRIGHT
+Project home, documentation, distributions: http://4suite.org/</pre>
+    <div class="summary-section">
+      <table cellpadding="0" cellspacing="0">
+        <tbody>
+          <tr>
+            <td valign="top">
+              <div class="summary-header">Classes:</div>
+              <div class="summary-list"><span class="class-name"><a href="#AutoProgressIndicator">AutoProgressIndicator</a></span>, <span class="class-name"><a href="#ProgressIndicator">ProgressIndicator</a></span></div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="section">
+      <h2>Classes</h2>
+      <dl class="classes">
+        <dt class="classdef"><a name="AutoProgressIndicator"></a>class <span class="class-name">AutoProgressIndicator</span><span class="bases">(<span class="class-name"><a href="Ft.Lib.ProgressIndicator.html#ProgressIndicator">ProgressIndicator</a></span>)</span></dt>
+        <dd class="classdesc">
+          <h3>Methods</h3>
+          <dl class="methods">
+            <dt class="methoddef"><a name="AutoProgressIndicator-__init__"><span class="method-name">__init__</span></a>(<span class="argument-name">self</span>, <span class="argument-name">prefix</span>, <span class="argument-name">total</span>, <span class="argument-name">step</span><span class="argument-default">=1</span>, <span class="argument-name">stream</span><span class="argument-default">=&lt;open file '&lt;stdout&gt;', mode 'w' at 0xb7d98068&gt;</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dd class="overrides"><b>Overrides: </b><span class="inherited-name"><a href="Ft.Lib.ProgressIndicator.html#ProgressIndicator-__init__">__init__</a></span> from class <span class="class-name"><a href="Ft.Lib.ProgressIndicator.html#ProgressIndicator">ProgressIndicator</a></span></dd>
+            <dt class="methoddef"><a name="AutoProgressIndicator-advance"><span class="method-name">advance</span></a>(<span class="argument-name">self</span>)</dt>
+            <dd class="methoddesc"></dd>
+          </dl>
+          <h3>Methods inherited from class <a href="Ft.Lib.ProgressIndicator.html#ProgressIndicator">ProgressIndicator</a></h3>
+          <div class="inherited"><span class="inherited-name"><a href="Ft.Lib.ProgressIndicator.html#ProgressIndicator-message">message</a></span>, <span class="inherited-name"><a href="Ft.Lib.ProgressIndicator.html#ProgressIndicator-newIndicator">newIndicator</a></span>, <span class="inherited-name"><a href="Ft.Lib.ProgressIndicator.html#ProgressIndicator-updateProgress">updateProgress</a></span></div>
+        </dd>
+        <dt class="classdef"><a name="ProgressIndicator"></a>class <span class="class-name">ProgressIndicator</span></dt>
+        <dd class="classdesc">
+          <div class="abstract">A progress indicator intended for terminal output (relies on ^H).</div>
+          <pre class="description">Indicator style, given as constructor argument, can be
+0: percentage; 1: bar; or 2: both. Default is 0.
+
+If using styles 1 or 2, an optional width argument
+for the bar portion can also be given (default 60).
+
+Example usage:
+# First emit whatever prefaces the indicator, if desired
+print " status:",
+sys.__stdout__.flush()
+# Create a new indicator
+p = ProgressIndicator(2)
+p.newIndicator()
+# With each iteration through a task, or as often as you want,
+# call updateProgress(), passing 2 numbers: amount completed,
+# and total amount to do.
+limit = 300000
+for i in range(limit):
+    p.updateProgress(i, limit)
+print</pre>
+          <h3>Methods</h3>
+          <dl class="methods">
+            <dt class="methoddef"><a name="ProgressIndicator-__init__"><span class="method-name">__init__</span></a>(<span class="argument-name">self</span>, <span class="argument-name">prefix</span>, <span class="argument-name">stream</span><span class="argument-default">=&lt;open file '&lt;stdout&gt;', mode 'w' at 0xb7d98068&gt;</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dt class="methoddef"><a name="ProgressIndicator-message"><span class="method-name">message</span></a>(<span class="argument-name">self</span>, <span class="argument-name">message</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dt class="methoddef"><a name="ProgressIndicator-newIndicator"><span class="method-name">newIndicator</span></a>(<span class="argument-name">self</span>, <span class="argument-name">total</span>)</dt>
+            <dd class="methoddesc">
+              <div class="abstract">Start a new indicator at 00%.
+Optional style and width arguments are same as constructor.</div>
+            </dd>
+            <dt class="methoddef"><a name="ProgressIndicator-updateProgress"><span class="method-name">updateProgress</span></a>(<span class="argument-name">self</span>, <span class="argument-name">cur</span>)</dt>
+            <dd class="methoddesc">
+              <div class="abstract">Update an existing indicator to reflect given progress.
+Arguments are amount completed so far, and total to do.
+For example, if 4 out of 30 have been completed, call
+updateProgress(4,30).</div>
+            </dd>
+          </dl>
+        </dd>
+      </dl>
+    </div>
+    <div class="universal-footer">Last modified on 2005-04-20 12:47:29</div>
+  </body>
+</html>

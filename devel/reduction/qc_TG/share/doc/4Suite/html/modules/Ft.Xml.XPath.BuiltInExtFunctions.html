@@ -1,0 +1,307 @@
+<html>
+  <head>
+    <meta content="text/html; charset=iso-8859-1" http-equiv="Content-Type">
+    <title>4Suite API Documentation: Ft.Xml.XPath.BuiltInExtFunctions</title>
+    <link href="modules.css" type="text/css" rel="stylesheet">
+  </head>
+  <body>
+    <div class="universal-header"><span class="universal-header-prefix">&nbsp;&nbsp;&nbsp;</span>&nbsp;<span class="universal-header-prefix">&nbsp;&nbsp;</span>&nbsp;<span class="universal-header-prefix">&nbsp;</span>&nbsp;<a href="../index.html">4Suite<sup>&trade;</sup> API Documentation</a></div>
+    <h1><span class="glyph-arrow">&#9658;</span> Module <span class="this-name"><a href="Ft.html" title="Ft">Ft</a>.<a href="Ft.Xml.html" title="Ft.Xml">Xml</a>.<a href="Ft.Xml.XPath.html" title="Ft.Xml.XPath">XPath</a>.BuiltInExtFunctions</span></h1>
+    <div class="abstract">4XPath-specific extension functions</div>
+    <pre class="description">Copyright 2006 Fourthought, Inc. (USA).
+Detailed license and copyright information: http://4suite.org/COPYRIGHT
+Project home, documentation, distributions: http://4suite.org/
+
+Extension functions are implemented by a module, such as this one,
+that defines an ExtFunctions global dictionary that maps (namespace,
+local-name) string tuples to a corresponding Python function. The
+function must take a Context object as the first argument, and any
+additional arguments accepted will correspond to the arguments passed
+in. See other API docs to see how to make use of modules that contain
+ExtFunctions.</pre>
+    <div class="summary-section">
+      <table cellpadding="0" cellspacing="0">
+        <tbody>
+          <tr>
+            <td valign="top">
+              <div class="summary-header">Functions:</div>
+              <div class="summary-list"><span class="function-name"><a href="#BaseUri">BaseUri</a></span>, <span class="function-name"><a href="#BinPath">BinPath</a></span>, <span class="function-name"><a href="#Decode">Decode</a></span>, <span class="function-name"><a href="#Encode">Encode</a></span>, <span class="function-name"><a href="#EndsWith">EndsWith</a></span>, <span class="function-name"><a href="#EnvVar">EnvVar</a></span>, <span class="function-name"><a href="#EscapeXml">EscapeXml</a></span>, <span class="function-name"><a href="#GenerateUuid">GenerateUuid</a></span>, <span class="function-name"><a href="#If">If</a></span>, <span class="function-name"><a href="#ImportString">ImportString</a></span>, <span class="function-name"><a href="#Indent">Indent</a></span>, <span class="function-name"><a href="#Join">Join</a></span>, <span class="function-name"><a href="#Match">Match</a></span>, <span class="function-name"><a href="#NormalizeEol">NormalizeEol</a></span>, <span class="function-name"><a href="#OsPath2Uri">OsPath2Uri</a></span>, <span class="function-name"><a href="#ParseDate">ParseDate</a></span>, <span class="function-name"><a href="#ParseXml">ParseXml</a></span>, <span class="function-name"><a href="#PytimeToExslt">PytimeToExslt</a></span>, <span class="function-name"><a href="#Random">Random</a></span>, <span class="function-name"><a href="#Range">Range</a></span>, <span class="function-name"><a href="#Replace">Replace</a></span>, <span class="function-name"><a href="#ResolvePath">ResolvePath</a></span>, <span class="function-name"><a href="#ResolveUrl">ResolveUrl</a></span>, <span class="function-name"><a href="#ShaHash">ShaHash</a></span>, <span class="function-name"><a href="#SharePath">SharePath</a></span>, <span class="function-name"><a href="#Spawnv">Spawnv</a></span>, <span class="function-name"><a href="#StrFTime">StrFTime</a></span>, <span class="function-name"><a href="#System">System</a></span>, <span class="function-name"><a href="#Uri2OsPath">Uri2OsPath</a></span>, <span class="function-name"><a href="#Version">Version</a></span>, <span class="function-name"><a href="#Wrap">Wrap</a></span></div>
+            </td>
+            <td width="7" valign="middle"></td>
+            <td width="1" valign="middle" bgcolor="#C5C5C5"></td>
+            <td width="7" valign="middle"></td>
+            <td valign="top">
+              <div class="summary-header">Globals:</div>
+              <div class="summary-list"><span class="global-name"><a href="#DEFAULT_RNG">DEFAULT_RNG</a></span>, <span class="global-name"><a href="#ExtFunctions">ExtFunctions</a></span>, <span class="global-name"><a href="#ExtNamespaces">ExtNamespaces</a></span>, <span class="global-name"><a href="#FT_EXT_NAMESPACE">FT_EXT_NAMESPACE</a></span>, <span class="global-name"><a href="#InsecureExtFunctions">InsecureExtFunctions</a></span></div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="section">
+      <h2>Functions</h2>
+      <dl class="functions">
+        <dt class="functiondef"><a name="BaseUri"><span class="function-name">BaseUri</span></a>(<span class="argument-name">context</span>, <span class="argument-name">arg</span><span class="argument-default">=None</span>)</dt>
+        <dd class="functiondesc">
+          <div class="abstract">Returns the base URI of the first node in the given node-set, or
+of the context node if no argument is given. If the given node-set
+is empty, an empty string is returned.</div>
+        </dd>
+        <dt class="functiondef"><a name="BinPath"><span class="function-name">BinPath</span></a>(<span class="argument-name">context</span>)</dt>
+        <dd class="functiondesc">
+          <div class="abstract">Returns the system-dependent path of Fourthought binaries</div>
+        </dd>
+        <dt class="functiondef"><a name="Decode"><span class="function-name">Decode</span></a>(<span class="argument-name">context</span>, <span class="argument-name">object</span>, <span class="argument-name">encoding</span>)</dt>
+        <dd class="functiondesc">
+          <div class="abstract">f:decode mirrors the Python decode function/method. It takes a
+foreign object that is a Python byte string, and an encoding,
+and returns another foreign object which is a Unicode object.</div>
+        </dd>
+        <dt class="functiondef"><a name="Encode"><span class="function-name">Encode</span></a>(<span class="argument-name">context</span>, <span class="argument-name">object</span>, <span class="argument-name">encoding</span>)</dt>
+        <dd class="functiondesc">
+          <div class="abstract">f:encode mirrors the Python encode function/method. It takes a
+foreign object that is a Unicode object, and an encoding,
+and returns another foreign object which is a Python byte string.</div>
+        </dd>
+        <dt class="functiondef"><a name="EndsWith"><span class="function-name">EndsWith</span></a>(<span class="argument-name">context</span>, <span class="argument-name">outer</span>, <span class="argument-name">inner</span>)</dt>
+        <dd class="functiondesc">
+          <div class="abstract">Returns true if the string given in the first argument ends with
+the substring given in the second argument.</div>
+        </dd>
+        <dt class="functiondef"><a name="EnvVar"><span class="function-name">EnvVar</span></a>(<span class="argument-name">context</span>, <span class="argument-name">var</span>)</dt>
+        <dd class="functiondesc">
+          <div class="abstract">Looks up a variable in the OS environment. Returns a string, either
+the environment variable value or an empty string if there is no
+such variable. The system default encoding is assumed.</div>
+          <pre class="description">CAUTION: Using this function could be a security hazard.
+
+You can also use system-property() for the same purpose
+f:env-var('foo')
+is equivalent to
+system-property('fs:foo')
+given a mapping from fs to http://xmlns.4suite.org/xslt/env-system-property</pre>
+        </dd>
+        <dt class="functiondef"><a name="EscapeXml"><span class="function-name">EscapeXml</span></a>(<span class="argument-name">context</span>, <span class="argument-name">text</span>)</dt>
+        <dd class="functiondesc">
+          <div class="abstract">Returns the given string with XML markup characters "&amp;", "&lt;" and
+"&gt;" escaped as "&amp;amp;", "&amp;lt;" and "&amp;gt;", respectively.</div>
+        </dd>
+        <dt class="functiondef"><a name="GenerateUuid"><span class="function-name">GenerateUuid</span></a>(<span class="argument-name">context</span>)</dt>
+        <dd class="functiondesc">
+          <div class="abstract">Returns a random UUID string.</div>
+        </dd>
+        <dt class="functiondef"><a name="If"><span class="function-name">If</span></a>(<span class="argument-name">context</span>, <span class="argument-name">cond</span>, <span class="argument-name">v1</span>, <span class="argument-name">v2</span><span class="argument-default">=None</span>)</dt>
+        <dd class="functiondesc">
+          <div class="abstract">If the first argument, when converted to a boolean, is true,
+returns the second argument. Otherwise, returns the third
+argument, or if the third argument is not given, returns an
+empty node-set.</div>
+        </dd>
+        <dt class="functiondef"><a name="ImportString"><span class="function-name">ImportString</span></a>(<span class="argument-name">context</span>, <span class="argument-name">object</span>)</dt>
+        <dd class="functiondesc">
+          <div class="abstract">f:import-string takes a Unicode FO and returns an XPath string.  It is
+an error if the FO contains illegal XML chars.  (although eventually
+this function might be extended to recover from this error)</div>
+        </dd>
+        <dt class="functiondef"><a name="Indent"><span class="function-name">Indent</span></a>(<span class="argument-name">context</span>, <span class="argument-name">text</span>, <span class="argument-name">levels</span>, <span class="argument-name">indentstring</span><span class="argument-default">=None</span>)</dt>
+        <dd class="functiondesc">
+          <div class="abstract">f:indent() returns a string with each line of the text indented the
+given number of levels. For each level, the indent string, normally
+2 spaces by default, is prepended to each line.</div>
+        </dd>
+        <dt class="functiondef"><a name="Join"><span class="function-name">Join</span></a>(<span class="argument-name">context</span>, <span class="argument-name">nodeset</span>, <span class="argument-name">delim</span><span class="argument-default">=' '</span>)</dt>
+        <dd class="functiondesc">
+          <div class="abstract">Concatenates the string-values of the nodes in the given node-set,
+inserting the delimiter given in the optional second argument in
+between each string-value. The delimiter defaults to a space.
+See also: EXSLT's str:concat()</div>
+        </dd>
+        <dt class="functiondef"><a name="Match"><span class="function-name">Match</span></a>(<span class="argument-name">context</span>, <span class="argument-name">pattern</span>, <span class="argument-name">arg</span><span class="argument-default">=None</span>)</dt>
+        <dd class="functiondesc">
+          <div class="abstract">Returns true if the string given in the optional second argument
+(or the string-value of the context node if no second argument is
+given) matches the regular expression given in the first argument.
+See also: EXSLT's regexp:test()
+This function does differ from XSLT 2.0 match() function</div>
+        </dd>
+        <dt class="functiondef"><a name="NormalizeEol"><span class="function-name">NormalizeEol</span></a>(<span class="argument-name">context</span>, <span class="argument-name">text</span>)</dt>
+        <dd class="functiondesc">
+          <div class="abstract">    Normalizes end-of-line characters in input string, returning the
+    normalized string. Normalization involves replacing "
+
+", "
+"
+    or "
+" with "
+"</div>
+        </dd>
+        <dt class="functiondef"><a name="OsPath2Uri"><span class="function-name">OsPath2Uri</span></a>(<span class="argument-name">context</span>, <span class="argument-name">path</span>)</dt>
+        <dd class="functiondesc">
+          <div class="abstract">Returns the given OS path as a URI.
+The result varies depending on the underlying operating system.</div>
+        </dd>
+        <dt class="functiondef"><a name="ParseDate"><span class="function-name">ParseDate</span></a>(<span class="argument-name">context</span>, <span class="argument-name">date</span>, <span class="argument-name">format</span><span class="argument-default">=None</span>)</dt>
+        <dd class="functiondesc">
+          <div class="abstract">This function is similar to EXSLT's date:parse-date()
+except that it uses Python rather than Java conventions
+for the date formatting.</div>
+        </dd>
+        <dt class="functiondef"><a name="ParseXml"><span class="function-name">ParseXml</span></a>(<span class="argument-name">context</span>, <span class="argument-name">src</span>, <span class="argument-name">parameters</span><span class="argument-default">=None</span>)</dt>
+        <dd class="functiondesc">
+          <div class="abstract">f:parse-xml() parses the string-value of the given object as XML
+and returns a node-set whose sole item is the resulting parsed
+document's root node. The XML must be a well-formed document.</div>
+          <pre class="description">src - the string or object to be parsed as XML.
+
+parameters - the name of a parameter set for the operation.
+
+The parameters argument is ignored for now. In the future, it
+will provide a way to specify a base URI for the resolution of
+relative URIs in entity declarations and XIncludes.
+
+Also for now, if the XML contains an encoding declaration, the
+declaration must specify UTF-8.
+
+An example:
+
+&lt;?xml version="1.0" encoding="utf-8"?&gt;
+&lt;xsl:stylesheet
+  xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
+  xmlns:f="http://xmlns.4suite.org/ext"
+  version="1.0"
+&gt;
+  &lt;xsl:output method="text"/&gt;
+  &lt;xsl:variable name="doc"
+    select="'&amp;lt;spam&gt;eggs&amp;lt;monty&gt;python&amp;lt;/monty&gt;&amp;lt;/spam&gt;'"/&gt;
+
+  &lt;xsl:template match="/"&gt;
+    &lt;xsl:value-of select="f:parse-xml($doc)/spam/monty"/&gt;
+  &lt;/xsl:template&gt;
+&lt;/xsl:stylesheet&gt;
+
+...run against any XML source should yield:
+
+python
+
+See also: XSLT (not XPath) extension function f:serialize-xml()</pre>
+        </dd>
+        <dt class="functiondef"><a name="PytimeToExslt"><span class="function-name">PytimeToExslt</span></a>(<span class="argument-name">context</span>, <span class="argument-name">t</span><span class="argument-default">=None</span>)</dt>
+        <dd class="functiondesc">
+          <div class="abstract">Takes a Python time value as a number and returns a date/time as if
+from EXSLT date-time()
+t - a time stamp number, as from Python's time.time()
+    if omitted, use the current time</div>
+        </dd>
+        <dt class="functiondef"><a name="Random"><span class="function-name">Random</span></a>(<span class="argument-name">context</span>, <span class="argument-name">max</span><span class="argument-default">=None</span>, <span class="argument-name">forceInt</span><span class="argument-default">=0</span>)</dt>
+        <dd class="functiondesc">
+          <div class="abstract">Returns a random number between 0 (inclusive) and max (exclusive).
+max defaults to 1. The first optional argument is a different
+value for max, and the second argument is a flag that, if set,
+causes the random number to be rounded to an integer.
+See also: EXSLT's math:random()</div>
+        </dd>
+        <dt class="functiondef"><a name="Range"><span class="function-name">Range</span></a>(<span class="argument-name">context</span>, <span class="argument-name">lo</span>, <span class="argument-name">hi</span>)</dt>
+        <dd class="functiondesc">
+          <div class="abstract">Returns a node-set consisting of text nodes encapsulating integers
+in the numeric range bounded by the given low and high values.</div>
+        </dd>
+        <dt class="functiondef"><a name="Replace"><span class="function-name">Replace</span></a>(<span class="argument-name">context</span>, <span class="argument-name">old</span>, <span class="argument-name">new</span>, <span class="argument-name">arg</span><span class="argument-default">=None</span>)</dt>
+        <dd class="functiondesc">
+          <div class="abstract">Returns the third argument string, which defaults to the
+string-value of the context node, with occurrences of the substring
+given in the first argument replaced by the string given in the
+second argument.
+See also: EXSLT's str:replace()</div>
+        </dd>
+        <dt class="functiondef"><a name="ResolvePath"><span class="function-name">ResolvePath</span></a>(<span class="argument-name">context</span>, <span class="argument-name">base</span>, <span class="argument-name">rel</span>)</dt>
+        <dd class="functiondesc">
+          <div class="abstract">Resolves a Posix-style path, such as the path portion of a URL,
+against a base. Similar to f:resolve-url, but allows the base to be
+just a path, not necessarily a full URL.</div>
+        </dd>
+        <dt class="functiondef"><a name="ResolveUrl"><span class="function-name">ResolveUrl</span></a>(<span class="argument-name">context</span>, <span class="argument-name">base</span>, <span class="argument-name">rel</span>)</dt>
+        <dd class="functiondesc">
+          <div class="abstract">Returns the relative URL ref given in the second argument
+resolved against the base given in the first argument.
+In case of URI processing error an empty string is returned</div>
+        </dd>
+        <dt class="functiondef"><a name="ShaHash"><span class="function-name">ShaHash</span></a>(<span class="argument-name">context</span>, <span class="argument-name">text</span>)</dt>
+        <dd class="functiondesc">
+          <div class="abstract">Returns a SHA message digest of the given string, as a string of
+several groups of hex digits separated by '-'. See
+http://www.itl.nist.gov/fipspubs/fip180-1.htm for info on SHA.</div>
+        </dd>
+        <dt class="functiondef"><a name="SharePath"><span class="function-name">SharePath</span></a>(<span class="argument-name">context</span>)</dt>
+        <dd class="functiondesc">
+          <div class="abstract">Returns the system-dependent path to modifiable data</div>
+        </dd>
+        <dt class="functiondef"><a name="Spawnv"><span class="function-name">Spawnv</span></a>(<span class="argument-name">context</span>, <span class="argument-name">command</span>, <span class="argument-name">*args</span>)</dt>
+        <dd class="functiondesc">
+          <div class="abstract">Executes a command in the operating system's shell, passing in the
+command line arguments separately. Returns the result of the command
+(a numeric exit code, typically).</div>
+          <pre class="description">CAUTION: Using this function could be a security hazard.
+
+See also: f:system()</pre>
+        </dd>
+        <dt class="functiondef"><a name="StrFTime"><span class="function-name">StrFTime</span></a>(<span class="argument-name">context</span>, <span class="argument-name">format</span>, <span class="argument-name">date</span><span class="argument-default">=None</span>)</dt>
+        <dd class="functiondesc">
+          <div class="abstract">Returns the given ISO 8601 UTC date-time formatted according to
+the given format string as would be used by Python's
+time.strftime(). If no date-time string is given, the current
+time is used.</div>
+        </dd>
+        <dt class="functiondef"><a name="System"><span class="function-name">System</span></a>(<span class="argument-name">context</span>, <span class="argument-name">command</span>)</dt>
+        <dd class="functiondesc">
+          <div class="abstract">Executes a command in the operating system's shell and returns the
+command's result (a numeric exit code, typically).</div>
+          <pre class="description">CAUTION: Using this function could be a security hazard.
+
+See also: f:spawnv()</pre>
+        </dd>
+        <dt class="functiondef"><a name="Uri2OsPath"><span class="function-name">Uri2OsPath</span></a>(<span class="argument-name">context</span>, <span class="argument-name">uri</span>)</dt>
+        <dd class="functiondesc">
+          <div class="abstract">Returns the given URI as an OS path.
+The result varies depending on the underlying operating system.</div>
+        </dd>
+        <dt class="functiondef"><a name="Version"><span class="function-name">Version</span></a>(<span class="argument-name">context</span>)</dt>
+        <dd class="functiondesc">
+          <div class="abstract">Returns the 4Suite version number as a string.</div>
+        </dd>
+        <dt class="functiondef"><a name="Wrap"><span class="function-name">Wrap</span></a>(<span class="argument-name">context</span>, <span class="argument-name">text</span>, <span class="argument-name">width</span>)</dt>
+        <dd class="functiondesc">
+          <div class="abstract">f:wrap() returns a string with the text reflowed so that each line
+fits within the given width. Existing linefeeds are preserved, but
+spaces are considered inter-word separators that can be collapsed.
+To reflow without preserving existing linefeeds, strip them first,
+e.g. with translate(text, '&amp;#10;', '').
+http://lists.fourthought.com/pipermail/4suite-dev/2002-December/000878.html</div>
+        </dd>
+      </dl>
+    </div>
+    <div class="section">
+      <h2>Globals</h2>
+      <dl class="globals">
+        <dt class="globaldef"><a name="DEFAULT_RNG"><span class="global-name">DEFAULT_RNG</span></a> = &lt;Ft.Lib.Random.FtSystemRandom object&gt;</dt>
+        <dd class="globaldesc">
+          <div class="abstract">A PRNG that uses an OS-specific random number source, if
+available, falling back on an instance of FtRandom.</div>
+          <pre class="description">Calls to seed(), jumpahead(), getstate() and setstate() only affect
+the fallback FtRandom instance.
+
+Implements getrandbits() in all versions of Python.
+Also adds getrandbytes(), which returns a str of bytes.</pre>
+        </dd>
+        <dt class="globaldef"><a name="ExtFunctions"><span class="global-name">ExtFunctions</span></a> = {('http://xmlns.4suite.org/ext', 'base-uri'): &lt;function BaseUri&gt;, ('http://xmlns.4suite.org/ext', 'bin-path'): &lt;function BinPath&gt;, ('http://xmlns.4suite.org/ext', 'cos'): &lt;function Cos&gt;, ('http://xmlns.4suite.org/ext', 'decode'): &lt;function Decode&gt;, ('http://xmlns.4suite.org/ext', 'degrees-to-rads'): &lt;function DegreesToRads&gt;, ('http://xmlns.4suite.org/ext', 'encode'): &lt;function Encode&gt;, ('http://xmlns.4suite.org/ext', 'ends-with'): &lt;function EndsWith&gt;, ('http://xmlns.4suite.org/ext', 'escape-xml'): &lt;function EscapeXml&gt;, ('http://xmlns.4suite.org/ext', 'fact'): &lt;function Fact&gt;, ('http://xmlns.4suite.org/ext', 'generate-uuid'): &lt;function GenerateUuid&gt;, ...}</dt>
+        <dd class="globaldesc"></dd>
+        <dt class="globaldef"><a name="ExtNamespaces"><span class="global-name">ExtNamespaces</span></a> = {'http://xmlns.4suite.org/ext': 'f'}</dt>
+        <dd class="globaldesc"></dd>
+        <dt class="globaldef"><a name="FT_EXT_NAMESPACE"><span class="global-name">FT_EXT_NAMESPACE</span></a> = 'http://xmlns.4suite.org/ext'</dt>
+        <dd class="globaldesc"></dd>
+        <dt class="globaldef"><a name="InsecureExtFunctions"><span class="global-name">InsecureExtFunctions</span></a> = {('http://xmlns.4suite.org/ext', 'env-var'): &lt;function EnvVar&gt;, ('http://xmlns.4suite.org/ext', 'spawnv'): &lt;function Spawnv&gt;, ('http://xmlns.4suite.org/ext', 'system'): &lt;function System&gt;}</dt>
+        <dd class="globaldesc"></dd>
+      </dl>
+    </div>
+    <div class="universal-footer">Last modified on 2006-08-28 09:28:10</div>
+  </body>
+</html>

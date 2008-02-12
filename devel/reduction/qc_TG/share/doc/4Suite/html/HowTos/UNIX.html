@@ -1,0 +1,232 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+  <head>
+    <meta content="text/html; charset=iso-8859-1" http-equiv="Content-Type">
+    <title>Installing 4Suite&trade; on UNIX</title>
+    <meta content="Shatin Rai" name="author">
+    <meta content="4Suite is a platform for XML and RDF application development. This document gives step-by step instructions for installing 4Suite on a UNIX-like system such as Linux, FreeBSD, or Mac OS X." name="description">
+    <meta content="4Suite, HOWTO, install, UNIX, Linux, FreeBSD, Solaris, Mac OS X, HP-UX, OpenBSD, NetBSD" name="keywords">
+    <link href="sdocbook_html.css" type="text/css" rel="stylesheet">
+  </head>
+  <body>
+    <div class="article">
+      <div class="article-title">
+        <h1 class="title">Installing <span class="trademark">4Suite<sup class="trademark">&trade;</sup></span> on UNIX</h1>
+      </div>
+      <div class="header">
+        <dl>
+          <dt>This version:</dt>
+          <dd>Revision 0.4 (2005-12-08)</dd>
+          <dt>Principal author: </dt>
+          <dd><span class="author"><span class="firstname">Shatin</span> <span class="surname">Rai</span> <span class="orgname">(Fourthought, Inc.)</span></span></dd>
+          <dt>Additional contributors: </dt>
+          <dd><span class="othercredit"><span class="firstname">Uche</span> <span class="surname">Ogbuji</span> <span class="orgname">(Fourthought, Inc.)</span></span></dd>
+          <dd><span class="othercredit"><span class="firstname">Mike</span> <span class="surname">Brown</span> <span class="orgname">(Fourthought, Inc.)</span></span></dd>
+        </dl>
+        <div class="legalnotice">
+          <h2 class="title">Legal Notice</h2>
+          <p>This document can be freely translated and distributed. It's released under the <a href="http://www.linuxdoc.org/manifesto.html">LDP License</a>.</p>
+        </div>
+        <div class="abstract">
+          <h2>Abstract</h2>
+          <p><span class="trademark">4Suite<sup class="trademark">&trade;</sup></span> is a platform for XML and RDF application development. This document gives step-by step instructions for installing 4Suite on a UNIX-like system such as Linux, FreeBSD, or Mac OS X.</p>
+        </div>
+      </div>
+      <hr>
+      <div class="toc">
+        <h2>Table Of Contents</h2>
+        <p style="display: inline; padding-left: 1em">1 <a href="#id2305843009261050704">Introduction and Conventions</a>
+          <br>
+        </p>
+        <p style="display: inline; padding-left: 1em">2 <a href="#id2305843009261121744">Quick Installation Steps</a>
+          <br>
+        </p>
+        <p style="display: inline; padding-left: 1em">3 <a href="#id2305843009261124432">CVS: bleeding-edge 4Suite</a>
+          <br>
+        </p>
+        <p style="display: inline; padding-left: 1em">4 <a href="#id2305843009261179600">Detailed Installation Guide</a>
+          <br>
+        </p>
+        <p style="display: inline; padding-left: 2em">4.1 <a href="#Python">Python</a>
+          <br>
+        </p>
+        <p style="display: inline; padding-left: 2em">4.2 <a href="#_4Suite">4Suite</a>
+          <br>
+        </p>
+        <p style="display: inline; padding-left: 2em">4.3 <a href="#Final_Step">Final Step</a>
+          <br>
+        </p>
+        <p style="display: inline; padding-left: 2em">4.4 <a href="#id2305843009261078352">Tests and Further Setup</a>
+          <br>
+        </p>
+        <p style="display: inline; padding-left: 1em">5 <a href="#id2305843009261080016">Resources</a>
+          <br>
+        </p>
+        <p style="display: inline; padding-left: 2em">5.1 <a href="#id2305843009261080272">4Suite @ SourceForge</a>
+          <br>
+        </p>
+        <p style="display: inline; padding-left: 2em">5.2 <a href="#id2305843009261097296">Additional Links</a>
+          <br>
+        </p>
+        <p style="display: inline; padding-left: 1em">6 <a href="#PyXML">Appendix A: Notes on PyXML and 4Suite</a>
+          <br>
+        </p>
+      </div>
+      <hr>
+      <div class="body">
+        <div class="section"><a name="id2305843009261050704"></a>
+          <div class="section-title">
+            <h1 class="title"><span class="section-number">1 </span>Introduction and Conventions</h1>
+          </div>
+          <p>These instructions were originally written for Red Hat 7.1 Linux, but should work for most Linux distributions and other UNIX variants with few, if any, modifications.</p>
+          <p>Ordinarily, the installation will occur in directories under <tt class="computeroutput">/usr/local</tt> and <tt class="computeroutput">/var/local</tt>. Ideally, you should perform these steps as a user who has write access in these directories.</p>
+          <p>Some instructions require the user to modify their shell environment. If multiple users will be running and accessing the repository servers, you'll want to be careful to ensure the environment is set up correctly for each user.</p>
+          <p>In command-line examples, "$" is used to represent the shell's command prompt. The actual prompt will vary from system to system. The part you are supposed to type is to the right of the "$".</p>
+          <p>Sometimes there will be a great deal of output from an instruction. If there is nothing of particular interest in the output, it will be omitted and replaced with the text "SNIP".</p>
+          <p>There are useful third-party resources mentioned in this document. Those that are necessary to follow instructions are directly linked from the text. Others are marked as endnotes and the links are available in the Resources section.</p>
+        </div>
+        <div class="section"><a name="id2305843009261121744"></a>
+          <div class="section-title">
+            <h1 class="title"><span class="section-number">2 </span>Quick Installation Steps</h1>
+          </div>
+          <p>The Detailed Installation Guide sections that follow this section will further explain these steps.</p>
+          <ol style="list-style-type: decimal; list-style-position: outside;">
+            <li>
+              <p><em class="emphasis">Install Python 2.2.1 or newer</em></p>
+              <p>Python comes pre-installed on many operating systems now, but on some systems, the 'python' user binary is linked to an outdated version of Python (happens on many Linux distros) or Python was built without PyExpat (as happened on FreeBSD for a while).</p>
+              <p>While it is OK to install/upgrade Python via your operating system's native package or ports system (RPMs, BSD packages/ports collection, etc.), if you run into any problems, the 4Suite developers prefer that you install Python from source, if you can. Just get the appropriate Python tarball from <a href="http://www.python.org/download/">python.org</a>, build and install via the usual "untar; configure; make" procedure.</p>
+            </li>
+            <li>
+              <p><em class="emphasis">Install 4Suite</em></p>
+              <p>Download the latest tarball from <a href="ftp://ftp.4suite.org/pub/4Suite/">ftp://ftp.4suite.org/pub/4Suite/</a>.</p>
+              <p>Untar the source, then build and install via the usual procedure for installing a python application: invoke "python setup.py install" in the top-level source directory.</p>
+            </li>
+            <li>
+              <p>If you want to use Triclops, the RDF graph visualization tool that comes with 4Suite, then <em class="emphasis">install GraphViz</em>.</p>
+              <p>GraphViz tarball - <a href="http://www.research.att.com/sw/tools/graphviz/download.html">http://www.research.att.com/sw/tools/graphviz/download.html</a>. It is not really necessary to do this before installing 4Suite, though.</p>
+            </li>
+          </ol>
+        </div>
+        <div class="section"><a name="id2305843009261124432"></a>
+          <div class="section-title">
+            <h1 class="title"><span class="section-number">3 </span>CVS: bleeding-edge 4Suite</h1>
+          </div>
+          <p>If you need up-to-the-minute features or fixes for 4Suite, then you can install the latest version from the developers' CVS repository. It should be considered an unstable work-in-progress preview of the next official release; it is not recommended for ordinary users.</p>
+          <ol style="list-style-type: decimal; list-style-position: outside;">
+            <li>
+              <p><em class="emphasis">4Suite CVS snapshots</em></p>
+              <p>CVS snapshots are a way to get bug fixes and experimental new features between full releases of the software. They are tarballs and zipfiles generated from Fourthought's internal CVS repository nightly.</p>
+            </li>
+            <li>
+              <p><em class="emphasis">4Suite anonymous CVS</em></p>
+              <p>If you want to keep closer track of the 4Suite development, you can use anonymous CVS (pserver). The main advantage of this approach is that you can get fixes quite easily when checked in by the developers, and keeping up-to-date afterward is easy. The main disadvantage is that you can also pick up bugs that the developers sometimes accidentally check in.</p>
+              <p>For more information about 4Suite CVS, refer to the <a href="../4SuiteCVS.xml">Obtaining 4Suite with CVS</a> documentation.</p>
+            </li>
+          </ol>
+        </div>
+        <div class="section"><a name="id2305843009261179600"></a>
+          <div class="section-title">
+            <h1 class="title"><span class="section-number">4 </span>Detailed Installation Guide</h1>
+          </div>
+          <div class="section" id="Python"><a name="Python"></a>
+            <div>
+              <h2 class="title"><span class="section-number">4.1 </span>Python</h2>
+            </div>
+            <p>4Suite is written mostly in Python: a mature, robust, efficient programming language well-suited to object-oriented programming, functional programming, and procedural tasks of any complexity. In the few cases where Python is not sufficiently speedy, certain 4Suite components are implemented in C. Therefore, you need both an appropriate version of Python <em class="emphasis">and</em> an ANSI C compiler installed if you want to be able to use 4Suite. C compilers are standard on most UNIX systems, but Python is not always available.</p>
+            <p>Specifically, <strong class="emphasis">Python 2.2.1 or higher is required for 4Suite.</strong> For best results, use Python 2.3 or 2.4. Your system might not have Python at all, or it might only have an older version, or it may have more than one version installed &mdash; some Linux distributions install Python 2.x as "python2", for example. You can have other versions of Python installed alongside the one you need for 4Suite, as long as when you use 4Suite's Python API, you be sure to load the modules with the interpreter that they were built for, and as long as the directory containing the correct <tt class="computeroutput">python</tt> executable comes first in your executable path. Test that you have a good version of python in your path by issuing this command in your command shell: <tt class="computeroutput">python -V</tt> (that's a capital V).</p>
+            <p>The installation of Python is not covered in this guide.</p>
+          </div>
+          <div class="section" id="_4Suite"><a name="_4Suite"></a>
+            <div>
+              <h2 class="title"><span class="section-number">4.2 </span>4Suite</h2>
+            </div>
+            <p>Download the latest tarball from <a href="ftp://ftp.4suite.org/pub/4Suite/">ftp://ftp.4suite.org/pub/4Suite/</a>.</p>
+            <p>Untar the source, then build and install via the usual procedure for installing a python application: invoke <tt class="computeroutput">setup.py install</tt> in the top-level source directory.</p>
+            <p>4Suite will be installed in your python site-packages directory, the actual location of which will vary from system to system, but is usually in either /usr/lib/python2.x/site-packages or /usr/local/lib/python2.x/site-packages. It is possible to customize the installation locations by running <tt class="computeroutput">setup.py config</tt> with certain arguments prior to running <tt class="computeroutput">setup.py install</tt>; see the <a href="http://4suite.org/docs/installation-locations.xhtml">4Suite Installation Locations</a> documentation for details.</p>
+            <p>An example of an installation session follows.</p>
+            <div class="screen">
+              <pre>
+<tt class="computeroutput">$ <tt class="userinput">cd /usr/local/src</tt>
+$ <tt class="userinput">tar xzvf 4Suite-XML-1.0b3.tar.gz; cd 4Suite-1.0b3</tt>
+SNIP
+
+$ <tt class="userinput">python setup.py install</tt>
+SNIP
+</tt>
+</pre>
+            </div>
+          </div>
+          <div class="section" id="Final_Step"><a name="Final_Step"></a>
+            <div>
+              <h2 class="title"><span class="section-number">4.3 </span>Final Step</h2>
+            </div>
+            <p>Now you can perform a quick test to make sure everything is installed correctly. First, open up a command prompt. From any directory outside of the 4Suite source or installation directories, run the following (you enter '<tt class="computeroutput">python</tt> and then the text to the right of the '<tt class="computeroutput">&gt;&gt;&gt;</tt> prompts):</p>
+            <div class="screen">
+              <pre>
+<tt class="computeroutput">$ <tt class="userinput">python</tt>
+Python 2.2.1 (#1, Jul  1 2002, 19:51:59)
+[GCC 2.96 20000731 (Red Hat Linux 7.1 2.96-98)] on linux2
+Type "help", "copyright", "credits" or "license" for more information.
+&gt;&gt;&gt; <tt class="userinput">from Ft.Xml import Domlette</tt>
+&gt;&gt;&gt; <tt class="userinput">from Ft.Xml.Xslt import Processor</tt>
+&gt;&gt;&gt; <tt class="userinput">print Processor</tt>
+&lt;module 'Ft.Xml.Xslt.Processor' from '/usr/local/lib/python2.2/site-packages/Ft/Xml/Xslt/Processor.pyc'&gt;
+&gt;&gt;&gt;
+</tt>
+</pre>
+            </div>
+            <p>The imports and the print should complete without error. Report any problems to the <a href="http://lists.fourthought.com/mailman/listinfo/4suite">4Suite mailing list</a>.</p>
+          </div>
+          <div class="section"><a name="id2305843009261078352"></a>
+            <div>
+              <h2 class="title"><span class="section-number">4.4 </span>Tests and Further Setup</h2>
+            </div>
+            <p>If all you wish to use in 4Suite are the basic command-line tools and Python libraries, then you are done with installation and can proceed to use them. To make sure things are working, try running a few of the command-line tools with the <tt class="computeroutput">-h</tt> option to get usage information.</p>
+            <div class="screen">
+              <pre>
+<tt class="computeroutput">$ <tt class="userinput">4xml -h</tt>
+SNIP
+$ <tt class="userinput">4xslt -h</tt>
+SNIP
+$ <tt class="userinput">4xpath -h</tt>
+SNIP
+$ <tt class="userinput">4rdf -h</tt>
+SNIP
+</tt>
+</pre>
+            </div>
+            <p><em class="emphasis">If you want to use the XML/RDF repository and server features of 4Suite, then you will need to customize and install a configuration file, initialize a repository, and do some further tests.</em> These topics are covered in the <a href="../QuickStart.xml">Quick Start</a> documentation.</p>
+          </div>
+        </div>
+        <div class="section"><a name="id2305843009261080016"></a>
+          <div class="section-title">
+            <h1 class="title"><span class="section-number">5 </span>Resources</h1>
+          </div>
+          <div class="section"><a name="id2305843009261080272"></a>
+            <div>
+              <h2 class="title"><span class="section-number">5.1 </span>4Suite @ SourceForge</h2>
+            </div>
+            <p><a href="http://sourceforge.net/projects/foursuite/">4Suite Project Page</a> - Bug Reports, Feature Requests, Patches</p>
+          </div>
+          <div class="section"><a name="id2305843009261097296"></a>
+            <div>
+              <h2 class="title"><span class="section-number">5.2 </span>Additional Links</h2>
+            </div>
+            <p><a href="http://4suite.org/">4suite.org</a> - Documentation, Downloads, News, CVS, Developer Resources</p>
+            <p><a href="http://lists.fourthought.com/mailman/listinfo/4suite">4Suite Users Mailing List</a> - Peer &amp; Developer Support</p>
+            <p><a href="http://lists.fourthought.com/mailman/listinfo/4suite-ann">4Suite Announcement Mailing List</a> - Infrequent Announcements about 4Suite</p>
+            <p><a href="http://fourthought.com/">Fourthought, Inc.</a> - Commercial Development, Consulting &amp; Support</p>
+          </div>
+        </div>
+        <div class="section" id="PyXML"><a name="PyXML"></a>
+          <div class="section-title">
+            <h1 class="title"><span class="section-number">6 </span>Appendix A: Notes on PyXML and 4Suite</h1>
+          </div>
+          <p>PyXML is a collection of XML processing libraries for Python. 4Suite and PyXML are complementary projects developed in tandem. There is minimal overlap in functionality. For example, where PyXML has a compliant, pure Python implementation of DOM Level 1, 4Suite has a lightweight, "Domlette" optimized for XPath processing and implemented mostly in C.</p>
+          <p>Prior to the 4Suite 0.12.0a1 release, PyXML was required to use 4Suite. This is no longer the case with modern versions of 4Suite; PyXML is not needed at all.</p>
+          <p>If you decide to install PyXML, you must install PyXML 0.8 or higher (try to install the most recent version) for compatibility with 4Suite. Avoid PyXML 0.8.1 &mdash; that specific version integrates a buggy version of Expat (1.95.5), which leads to core dumps in some situations. When installing PyXML, it is recommended that you use the <tt class="computeroutput">--without-xpath --without-xslt</tt> options for <tt class="computeroutput">setup.py install</tt> in order to ensure that the very old, deprecated XPath and XSLT implementations included with PyXML will not be installed. These implementations are ported from 4Suite 0.11.1 and using them alongside newer versions of 4Suite may be problematic.</p>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

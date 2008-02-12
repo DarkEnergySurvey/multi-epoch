@@ -1,0 +1,10 @@
+<ogrescript>
+<import file="simple-procedure.xml"/>
+	<declare name="monitor">
+<new-object/>
+</declare>
+<call procedure="p0" ARG_0="1" ARG_1="40829384" ARG_2="${monitor}" RET_0="r0" RET_1="r1" RET_2="r2"/>
+<assign name="g0" int="${r0}" global="true"/>
+<assign name="g1" long="${r1}" global="true"/>
+<assign name="g2" object="${r2}" global="true"/>
+</ogrescript>

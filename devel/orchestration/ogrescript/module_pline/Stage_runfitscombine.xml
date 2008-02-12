@@ -1,0 +1,74 @@
+   <target name="Stage_runfitscombine" description="run SExtractor">
+       <esequence>
+
+
+        <edeclare name="content_begin"  string="test begin"/>
+        <edeclare name="content_end"    string="test end"/>
+        <econdblock type="else-if">
+          <econdtask>
+            <eeval>
+             <statement>
+                <ecompare string="${platform}">
+                   <predicate string="TG" comparator="EQUALS"/>
+                </ecompare>
+             </statement>
+            </eeval>
+              <esequence>
+                <eassign name="content_begin"  string="Begin Stage_runfitscombine for ccd ${ccd.num} data on $G{host} for nite ${nite}"/>
+                <eassign name="content_end"    string="End Stage_runfitscombine for ccd ${ccd.num} data on $G{host} for nite ${nite}"/>
+              </esequence>
+          </econdtask>
+              <esequence>
+                <eassign name="content_begin"  string="Begin Stage_runfitscombine for ccd ${ccd.num} for nite ${nite}"/>
+                <eassign name="content_end"    string="End Stage_runfitscombine for ccd ${ccd.num} for nite ${nite}"/>
+              </esequence>
+        </econdblock>
+
+            <publish>
+              <event ensembleid="${ensemble.id}" workflowid="${jid}"
+                   nodeid="$R{content_begin}" currentState="1">
+                   <property name="message" value="$R{content_begin}"/>
+              </event>
+            </publish>
+
+             <rtexec inheritedEnv="false" execDir="${nite.dir}"
+                     args="${fits.exec} ${fits.command_g}" quiet="true">
+                     <outMonitor file="${local.out}/${fits.log}"/>
+                     <errMonitor file="${local.out}/${fits.log}"/>
+             </rtexec>
+
+             <rtexec inheritedEnv="false" execDir="${nite.dir}"
+                     args="${fits.exec} ${fits.command_r}" quiet="true">
+                     <outMonitor file="${local.out}/${fits.log}"/>
+                     <errMonitor file="${local.out}/${fits.log}"/>
+             </rtexec>
+
+             <rtexec inheritedEnv="false" execDir="${nite.dir}"
+                     args="${fits.exec} ${fits.command_i}" quiet="true">
+                     <outMonitor file="${local.out}/${fits.log}"/>
+                     <errMonitor file="${local.out}/${fits.log}"/>
+             </rtexec>
+
+             <rtexec inheritedEnv="false" execDir="${nite.dir}"
+                     args="${fits.exec} ${fits.command_z}" quiet="true">
+                     <outMonitor file="${local.out}/${fits.log}"/>
+                     <errMonitor file="${local.out}/${fits.log}"/>
+             </rtexec>
+
+            <print line=" - Stage_runfitscombine done"/>
+
+         <write path="${local.out}/${fits.log}" text="true"
+                         errorProperty="failed" rethrow="false" append="true">
+                         <segment string=" -- runfitscombine done" lineBreaks="1"/>
+         </write>
+
+
+         <publish>
+            <event ensembleid="${ensemble.id}" workflowid="${jid}"
+                   nodeid="$R{content_end}" currentState="1">
+                  <property name="message" value="$R{content_end}"/>
+            </event>
+         </publish>
+
+       </esequence>
+   </target>

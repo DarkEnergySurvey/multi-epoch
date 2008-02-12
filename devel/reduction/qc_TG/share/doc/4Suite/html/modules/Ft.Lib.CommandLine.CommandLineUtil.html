@@ -1,0 +1,106 @@
+<html>
+  <head>
+    <meta content="text/html; charset=iso-8859-1" http-equiv="Content-Type">
+    <title>4Suite API Documentation: Ft.Lib.CommandLine.CommandLineUtil</title>
+    <link href="modules.css" type="text/css" rel="stylesheet">
+  </head>
+  <body>
+    <div class="universal-header"><span class="universal-header-prefix">&nbsp;&nbsp;&nbsp;</span>&nbsp;<span class="universal-header-prefix">&nbsp;&nbsp;</span>&nbsp;<span class="universal-header-prefix">&nbsp;</span>&nbsp;<a href="../index.html">4Suite<sup>&trade;</sup> API Documentation</a></div>
+    <h1><span class="glyph-arrow">&#9658;</span> Module <span class="this-name"><a href="Ft.html" title="Ft">Ft</a>.<a href="Ft.Lib.html" title="Ft.Lib">Lib</a>.<a href="Ft.Lib.CommandLine.html" title="Ft.Lib.CommandLine">CommandLine</a>.CommandLineUtil</span></h1>
+    <div class="abstract">Utility functions used by command-line scripts</div>
+    <pre class="description">Copyright 2004 Fourthought, Inc. (USA).
+Detailed license and copyright information: http://4suite.org/COPYRIGHT
+Project home, documentation, distributions: http://4suite.org/</pre>
+    <div class="summary-section">
+      <table cellpadding="0" cellspacing="0">
+        <tbody>
+          <tr>
+            <td valign="top">
+              <div class="summary-header">Classes:</div>
+              <div class="summary-list"><span class="class-name"><a href="#ArgumentError">ArgumentError</a></span>, <span class="class-name"><a href="#GetoptError">GetoptError</a></span></div>
+            </td>
+            <td width="7" valign="middle"></td>
+            <td width="1" valign="middle" bgcolor="#C5C5C5"></td>
+            <td width="7" valign="middle"></td>
+            <td valign="top">
+              <div class="summary-header">Functions:</div>
+              <div class="summary-list"><span class="function-name"><a href="#SourceArgToInputSource">SourceArgToInputSource</a></span>, <span class="function-name"><a href="#SourceArgToUri">SourceArgToUri</a></span>, <span class="function-name"><a href="#wrap_text">wrap_text</a></span></div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="section">
+      <h2>Classes</h2>
+      <dl class="classes">
+        <dt class="classdef"><a name="ArgumentError"></a>class <span class="class-name">ArgumentError</span><span class="bases">(<span class="class-name"><span class="undocumented">Exception</span></span>)</span></dt>
+        <dd class="classdesc">
+          <h3>Methods inherited from class <span class="undocumented">Exception</span></h3>
+          <div class="inherited"><span class="inherited-name">__getitem__</span>, <span class="inherited-name">__init__</span>, <span class="inherited-name">__str__</span></div>
+        </dd>
+        <dt class="classdef"><a name="GetoptError"></a>class <span class="class-name">GetoptError</span><span class="bases">(<span class="class-name"><span class="undocumented">Exception</span></span>)</span></dt>
+        <dd class="classdesc">
+          <h3>Methods inherited from class <span class="undocumented">Exception</span></h3>
+          <div class="inherited"><span class="inherited-name">__getitem__</span>, <span class="inherited-name">__init__</span>, <span class="inherited-name">__str__</span></div>
+        </dd>
+      </dl>
+    </div>
+    <div class="section">
+      <h2>Functions</h2>
+      <dl class="functions">
+        <dt class="functiondef"><a name="SourceArgToInputSource"><span class="function-name">SourceArgToInputSource</span></a>(<span class="argument-name">arg</span>, <span class="argument-name">factory</span>, <span class="argument-name">*v_args</span>, <span class="argument-name">**kw_args</span>)</dt>
+        <dd class="functiondesc">
+          <div class="abstract">Some command-line scripts take an argument that is supposed to be
+either "-" (denoting standard input) or a URI reference that can be
+resolved against the URI equivalent of the current working
+directory. This function processes such an argument, given as a
+string, and returns an appropriate InputSource object.</div>
+          <pre class="description">Since users tend to expect local OS paths to work as URIs, this
+function will accept and use an OS path argument if does appear to
+point to an existing local file, even though this could interfere
+with catalog-based resolution.
+
+Raises a ValueError if arg is neither a local file nor a valid URI
+reference nor "-". Raises a UriException if a stream for the
+InputSource could not be opened (e.g., when the URI refers to a
+directory or unreadable file).
+
+Extra arguments given to this function are passed to the
+InputSourceFactory method that creates the InputSource instance.
+The factory must support the methods fromStream() and fromUri(),
+as defined in Ft.Xml.InputSource.InputSourceFactory. The factory
+must also provide a resolver object with a normalize() method that
+can resolve a URI reference against a base URI, returning a URI.</pre>
+        </dd>
+        <dt class="functiondef"><a name="SourceArgToUri"><span class="function-name">SourceArgToUri</span></a>(<span class="argument-name">arg</span>, <span class="argument-name">resolver</span><span class="argument-default">=&lt;Ft.Lib.Uri.FtUriResolver instance at 0xb7bda14c&gt;</span>)</dt>
+        <dd class="functiondesc">
+          <div class="abstract">Some command-line scripts take an argument that is supposed to be
+either "-" (denoting standard input) or a URI reference that can be
+resolved against the URI equivalent of the current working
+directory. This function processes such an argument, given as a
+string, and returns an appropriate URI.</div>
+          <pre class="description">Since users tend to expect local OS paths to work as URIs, this
+function will accept and use an OS path argument if does appear to
+point to an existing local file, even though this could interfere
+with catalog-based resolution.
+
+Raises a ValueError if arg is neither a local file nor a valid URI
+reference nor "-".
+
+The resolver object must support a normalize() method that
+can resolve a URI reference against a base URI, returning a URI.</pre>
+        </dd>
+        <dt class="functiondef"><a name="wrap_text"><span class="function-name">wrap_text</span></a>(<span class="argument-name">text</span>, <span class="argument-name">width</span>)</dt>
+        <dd class="functiondesc">
+          <div class="abstract">Split 'text' into multiple lines of no more than 'width' characters
+each, and return the result as a list of strings.</div>
+          <pre class="description">This function differs from distutils.fancy_getopt.wrap_text() in
+that the distutils version collapses blank lines; this one doesn't.
+
+See also: Ft.Lib.Wrap()</pre>
+        </dd>
+      </dl>
+    </div>
+    <div class="universal-footer">Last modified on 2004-10-04 16:54:56</div>
+  </body>
+</html>

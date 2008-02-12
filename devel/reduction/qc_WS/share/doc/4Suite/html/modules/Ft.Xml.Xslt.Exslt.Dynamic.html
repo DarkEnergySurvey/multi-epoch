@@ -1,0 +1,108 @@
+<html>
+  <head>
+    <meta content="text/html; charset=iso-8859-1" http-equiv="Content-Type">
+    <title>4Suite API Documentation: Ft.Xml.Xslt.Exslt.Dynamic</title>
+    <link href="modules.css" type="text/css" rel="stylesheet">
+  </head>
+  <body>
+    <div class="universal-header"><span class="universal-header-prefix">&nbsp;&nbsp;&nbsp;</span>&nbsp;<span class="universal-header-prefix">&nbsp;&nbsp;</span>&nbsp;<span class="universal-header-prefix">&nbsp;</span>&nbsp;<a href="../index.html">4Suite<sup>&trade;</sup> API Documentation</a></div>
+    <h1><span class="glyph-arrow">&#9658;</span> Module <span class="this-name"><a href="Ft.html" title="Ft">Ft</a>.<a href="Ft.Xml.html" title="Ft.Xml">Xml</a>.<a href="Ft.Xml.Xslt.html" title="Ft.Xml.Xslt">Xslt</a>.<a href="Ft.Xml.Xslt.Exslt.html" title="Ft.Xml.Xslt.Exslt">Exslt</a>.Dynamic</span></h1>
+    <div class="abstract">EXSLT 2.0 - Dyanmic (http://www.exslt.org/dyn/index.html)
+WWW: http://4suite.org/XSLT        e-mail: support@4suite.org</div>
+    <pre class="description">Copyright (c) 2001 Fourthought Inc, USA.   All Rights Reserved.
+See  http://4suite.org/COPYRIGHT  for license and copyright information</pre>
+    <div class="summary-section">
+      <table cellpadding="0" cellspacing="0">
+        <tbody>
+          <tr>
+            <td valign="top">
+              <div class="summary-header">Functions:</div>
+              <div class="summary-list"><span class="function-name"><a href="#Closure">Closure</a></span>, <span class="function-name"><a href="#ClosureImpl">ClosureImpl</a></span>, <span class="function-name"><a href="#Evaluate">Evaluate</a></span>, <span class="function-name"><a href="#Map">Map</a></span>, <span class="function-name"><a href="#MapImpl">MapImpl</a></span>, <span class="function-name"><a href="#Max">Max</a></span>, <span class="function-name"><a href="#Min">Min</a></span>, <span class="function-name"><a href="#Sum">Sum</a></span>, <span class="function-name"><a href="#handle_traceback">handle_traceback</a></span></div>
+            </td>
+            <td width="7" valign="middle"></td>
+            <td bgcolor="#C5C5C5" valign="middle" width="1"></td>
+            <td width="7" valign="middle"></td>
+            <td valign="top">
+              <div class="summary-header">Globals:</div>
+              <div class="summary-list"><span class="global-name"><a href="#EXSL_COMMON_NS">EXSL_COMMON_NS</a></span>, <span class="global-name"><a href="#EXSL_DYNAMIC_NS">EXSL_DYNAMIC_NS</a></span>, <span class="global-name"><a href="#ExtElements">ExtElements</a></span>, <span class="global-name"><a href="#ExtFunctions">ExtFunctions</a></span>, <span class="global-name"><a href="#ExtNamespaces">ExtNamespaces</a></span>, <span class="global-name"><a href="#NODE_HANDLERS">NODE_HANDLERS</a></span></div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="section">
+      <h2>Functions</h2>
+      <dl class="functions">
+        <dt class="functiondef"><a name="Closure"><span class="function-name">Closure</span></a>(<span class="argument-name">context</span>, <span class="argument-name">nodeset</span>, <span class="argument-name">string</span>)</dt>
+        <dd class="functiondesc">
+          <div class="abstract">The dyn:closure function creates a node set resulting from transitive
+closure of evaluating the expression passed as the second argument on
+each of the nodes passed as the first argument, then on the node set
+resulting from that and so on until no more nodes are found.</div>
+          <pre class="description">http://www.exslt.org/dyn/functions/closure/index.html</pre>
+        </dd>
+        <dt class="functiondef"><a name="ClosureImpl"><span class="function-name">ClosureImpl</span></a>(<span class="argument-name">context</span>, <span class="argument-name">nodeset</span>, <span class="argument-name">expr</span>, <span class="argument-name">accumulator</span>)</dt>
+        <dd class="functiondesc"></dd>
+        <dt class="functiondef"><a name="Evaluate"><span class="function-name">Evaluate</span></a>(<span class="argument-name">context</span>, <span class="argument-name">string</span>)</dt>
+        <dd class="functiondesc">
+          <div class="abstract">The dyn:evaluate function evaluates a string as an XPath expression and
+returns the resulting value, which might be a boolean, number, string,
+node set, result tree fragment or external object. The sole argument is
+the string to be evaluated. If the string is an invalid XPath expression,
+an empty node-set is returned.</div>
+          <pre class="description">http://www.exslt.org/dyn/functions/evaluate/index.html</pre>
+        </dd>
+        <dt class="functiondef"><a name="Map"><span class="function-name">Map</span></a>(<span class="argument-name">context</span>, <span class="argument-name">nodeset</span>, <span class="argument-name">string</span>)</dt>
+        <dd class="functiondesc">
+          <div class="abstract">The dyn:map function evaluates the expression passed as the second
+argument for each of the nodes passed as the first argument, and returns
+a node set of those values.</div>
+          <pre class="description">http://www.exslt.org/dyn/functions/map/index.html</pre>
+        </dd>
+        <dt class="functiondef"><a name="MapImpl"><span class="function-name">MapImpl</span></a>(<span class="argument-name">context</span>, <span class="argument-name">nodeset</span>, <span class="argument-name">expr</span>)</dt>
+        <dd class="functiondesc"></dd>
+        <dt class="functiondef"><a name="Max"><span class="function-name">Max</span></a>(<span class="argument-name">context</span>, <span class="argument-name">nodeset</span>, <span class="argument-name">string</span>)</dt>
+        <dd class="functiondesc">
+          <div class="abstract">The dyn:max function calculates the maximum value for the nodes passed as
+the first argument, where the value of each node is calculated dynamically
+using an XPath expression passed as a string as the second argument.</div>
+          <pre class="description">http://www.exslt.org/dyn/functions/max/index.html</pre>
+        </dd>
+        <dt class="functiondef"><a name="Min"><span class="function-name">Min</span></a>(<span class="argument-name">context</span>, <span class="argument-name">nodeset</span>, <span class="argument-name">string</span>)</dt>
+        <dd class="functiondesc">
+          <div class="abstract">The dyn:min function calculates the minimum value for the nodes passed as
+the first argument, where the value of each node is calculated dynamically
+using an XPath expression passed as a string as the second argument.</div>
+          <pre class="description">http://www.exslt.org/dyn/functions/min/index.html</pre>
+        </dd>
+        <dt class="functiondef"><a name="Sum"><span class="function-name">Sum</span></a>(<span class="argument-name">context</span>, <span class="argument-name">nodeset</span>, <span class="argument-name">string</span>)</dt>
+        <dd class="functiondesc">
+          <div class="abstract">The dyn:sum function calculates the sum for the nodes passed as the first
+argument, where the value of each node is calculated dynamically using an
+XPath expression passed as a string as the second argument.</div>
+          <pre class="description">http://www.exslt.org/dyn/functions/sum/index.html</pre>
+        </dd>
+        <dt class="functiondef"><a name="handle_traceback"><span class="function-name">handle_traceback</span></a>()</dt>
+        <dd class="functiondesc"></dd>
+      </dl>
+    </div>
+    <div class="section">
+      <h2>Globals</h2>
+      <dl class="globals">
+        <dt class="globaldef"><a name="EXSL_COMMON_NS"><span class="global-name">EXSL_COMMON_NS</span></a> = 'http://exslt.org/common'</dt>
+        <dd class="globaldesc"></dd>
+        <dt class="globaldef"><a name="EXSL_DYNAMIC_NS"><span class="global-name">EXSL_DYNAMIC_NS</span></a> = 'http://exslt.org/dynamic'</dt>
+        <dd class="globaldesc"></dd>
+        <dt class="globaldef"><a name="ExtElements"><span class="global-name">ExtElements</span></a> = {}</dt>
+        <dd class="globaldesc"></dd>
+        <dt class="globaldef"><a name="ExtFunctions"><span class="global-name">ExtFunctions</span></a> = {('http://exslt.org/dynamic', 'closure'): &lt;function Closure at 0xb75c6684&gt;, ('http://exslt.org/dynamic', 'evaluate'): &lt;function Evaluate at 0xb75c656c&gt;, ('http://exslt.org/dynamic', 'map'): &lt;function Map at 0xb75c664c&gt;, ('http://exslt.org/dynamic', 'max'): &lt;function Max at 0xb75c679c&gt;, ('http://exslt.org/dynamic', 'min'): &lt;function Min at 0xb75c6924&gt;, ('http://exslt.org/dynamic', 'sum'): &lt;function Sum at 0xb75c695c&gt;}</dt>
+        <dd class="globaldesc"></dd>
+        <dt class="globaldef"><a name="ExtNamespaces"><span class="global-name">ExtNamespaces</span></a> = {'http://exslt.org/dynamic': 'dyn'}</dt>
+        <dd class="globaldesc"></dd>
+        <dt class="globaldef"><a name="NODE_HANDLERS"><span class="global-name">NODE_HANDLERS</span></a> = {&lt;type 'float'&gt;: (u'exsl:number', &lt;built-in function StringValue&gt;), &lt;type 'list'&gt;: (None, None), &lt;type 'unicode'&gt;: (u'exsl:string', &lt;built-in function StringValue&gt;), &lt;type 'boolean'&gt;: (u'exsl:boolean', &lt;function &lt;lambda&gt; at 0xb75c64fc&gt;)}</dt>
+        <dd class="globaldesc"></dd>
+      </dl>
+    </div>
+    <div class="universal-footer">Last modified on 2006-12-16 17:19:16</div>
+  </body>
+</html>

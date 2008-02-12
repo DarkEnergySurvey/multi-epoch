@@ -1,0 +1,426 @@
+<html>
+  <head>
+    <meta content="text/html; charset=iso-8859-1" http-equiv="Content-Type">
+    <title>4Suite API Documentation: Ft.Xml.XPath.ParsedExpr</title>
+    <link href="modules.css" type="text/css" rel="stylesheet">
+  </head>
+  <body>
+    <div class="universal-header"><span class="universal-header-prefix">&nbsp;&nbsp;&nbsp;</span>&nbsp;<span class="universal-header-prefix">&nbsp;&nbsp;</span>&nbsp;<span class="universal-header-prefix">&nbsp;</span>&nbsp;<a href="../index.html">4Suite<sup>&trade;</sup> API Documentation</a></div>
+    <h1><span class="glyph-arrow">&#9658;</span> Module <span class="this-name"><a href="Ft.html" title="Ft">Ft</a>.<a href="Ft.Xml.html" title="Ft.Xml">Xml</a>.<a href="Ft.Xml.XPath.html" title="Ft.Xml.XPath">XPath</a>.ParsedExpr</span></h1>
+    <div class="abstract">The implementation of parsed XPath expression tokens.</div>
+    <pre class="description">Copyright 2005 Fourthought, Inc. (USA).
+Detailed license and copyright information: http://4suite.org/COPYRIGHT
+Project home, documentation, distributions: http://4suite.org/</pre>
+    <div class="summary-section">
+      <table cellpadding="0" cellspacing="0">
+        <tbody>
+          <tr>
+            <td valign="top">
+              <div class="summary-header">Classes:</div>
+              <div class="summary-list"><span class="class-name"><a href="#FunctionCall">FunctionCall</a></span>, <span class="class-name"><a href="#FunctionCall1">FunctionCall1</a></span>, <span class="class-name"><a href="#FunctionCall2">FunctionCall2</a></span>, <span class="class-name"><a href="#FunctionCall3">FunctionCall3</a></span>, <span class="class-name"><a href="#FunctionCallN">FunctionCallN</a></span>, <span class="class-name"><a href="#ParsedAdditiveExpr">ParsedAdditiveExpr</a></span>, <span class="class-name"><a href="#ParsedAndExpr">ParsedAndExpr</a></span>, <span class="class-name"><a href="#ParsedEqualityExpr">ParsedEqualityExpr</a></span>, <span class="class-name"><a href="#ParsedFilterExpr">ParsedFilterExpr</a></span>, <span class="class-name"><a href="#ParsedLiteralExpr">ParsedLiteralExpr</a></span>, <span class="class-name"><a href="#ParsedMultiplicativeExpr">ParsedMultiplicativeExpr</a></span>, <span class="class-name"><a href="#ParsedNLiteralExpr">ParsedNLiteralExpr</a></span>, <span class="class-name"><a href="#ParsedOrExpr">ParsedOrExpr</a></span>, <span class="class-name"><a href="#ParsedPathExpr">ParsedPathExpr</a></span>, <span class="class-name"><a href="#ParsedRelationalExpr">ParsedRelationalExpr</a></span>, <span class="class-name"><a href="#ParsedUnaryExpr">ParsedUnaryExpr</a></span>, <span class="class-name"><a href="#ParsedUnionExpr">ParsedUnionExpr</a></span>, <span class="class-name"><a href="#ParsedVariableReferenceExpr">ParsedVariableReferenceExpr</a></span></div>
+            </td>
+            <td width="7" valign="middle"></td>
+            <td bgcolor="#C5C5C5" valign="middle" width="1"></td>
+            <td width="7" valign="middle"></td>
+            <td valign="top">
+              <div class="summary-header">Functions:</div>
+              <div class="summary-list"><span class="function-name"><a href="#ParsedFunctionCallExpr">ParsedFunctionCallExpr</a></span></div>
+            </td>
+            <td width="7" valign="middle"></td>
+            <td bgcolor="#C5C5C5" valign="middle" width="1"></td>
+            <td width="7" valign="middle"></td>
+            <td valign="top">
+              <div class="summary-header">Globals:</div>
+              <div class="summary-list"><span class="global-name"><a href="#EMPTY_NAMESPACE">EMPTY_NAMESPACE</a></span></div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="section">
+      <h2>Classes</h2>
+      <dl class="classes">
+        <dt class="classdef"><a name="FunctionCall"></a>class <span class="class-name">FunctionCall</span></dt>
+        <dd class="classdesc">
+          <div class="abstract">An object representing a function call expression
+(XPath 1.0 grammar production 16: FunctionCall)</div>
+          <h3>Methods</h3>
+          <dl class="methods">
+            <dt class="methoddef"><a name="FunctionCall-__getinitargs__"><span class="method-name">__getinitargs__</span></a>(<span class="argument-name">self</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dt class="methoddef"><a name="FunctionCall-__getstate__"><span class="method-name">__getstate__</span></a>(<span class="argument-name">self</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dt class="methoddef"><a name="FunctionCall-__init__"><span class="method-name">__init__</span></a>(<span class="argument-name">self</span>, <span class="argument-name">name</span>, <span class="argument-name">key</span>, <span class="argument-name">args</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dt class="methoddef"><a name="FunctionCall-__repr__"><span class="method-name">__repr__</span></a>(<span class="argument-name">self</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dt class="methoddef"><a name="FunctionCall-__str__"><span class="method-name">__str__</span></a>(<span class="argument-name">self</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dt class="methoddef"><a name="FunctionCall-error"><span class="method-name">error</span></a>(<span class="argument-name">self</span>, <span class="argument-name">*args</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dt class="methoddef"><a name="FunctionCall-evaluate"><span class="method-name">evaluate</span></a>(<span class="argument-name">self</span>, <span class="argument-name">context</span>)</dt>
+            <dd class="methoddesc">
+              <div class="abstract">Returns the result of calling the function</div>
+            </dd>
+            <dt class="methoddef"><a name="FunctionCall-getArgumentError"><span class="method-name">getArgumentError</span></a>(<span class="argument-name">self</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dt class="methoddef"><a name="FunctionCall-pprint"><span class="method-name">pprint</span></a>(<span class="argument-name">self</span>, <span class="argument-name">indent</span><span class="argument-default">=''</span>)</dt>
+            <dd class="methoddesc"></dd>
+          </dl>
+        </dd>
+        <dt class="classdef"><a name="FunctionCall1"></a>class <span class="class-name">FunctionCall1</span><span class="bases">(<span class="class-name"><a href="Ft.Xml.XPath.ParsedExpr.html#FunctionCall">FunctionCall</a></span>)</span></dt>
+        <dd class="classdesc">
+          <h3>Methods</h3>
+          <dl class="methods">
+            <dt class="methoddef"><a name="FunctionCall1-__init__"><span class="method-name">__init__</span></a>(<span class="argument-name">self</span>, <span class="argument-name">name</span>, <span class="argument-name">key</span>, <span class="argument-name">args</span>)</dt>
+            <dd class="methoddesc">
+              <div class="abstract"># a function call with 1 argument</div>
+            </dd>
+            <dd class="overrides"><b>Overrides: </b><span class="inherited-name"><a href="Ft.Xml.XPath.ParsedExpr.html#FunctionCall-__init__">__init__</a></span> from class <span class="class-name"><a href="Ft.Xml.XPath.ParsedExpr.html#FunctionCall">FunctionCall</a></span></dd>
+            <dt class="methoddef"><a name="FunctionCall1-evaluate"><span class="method-name">evaluate</span></a>(<span class="argument-name">self</span>, <span class="argument-name">context</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dd class="overrides"><b>Overrides: </b><span class="inherited-name"><a href="Ft.Xml.XPath.ParsedExpr.html#FunctionCall-evaluate">evaluate</a></span> from class <span class="class-name"><a href="Ft.Xml.XPath.ParsedExpr.html#FunctionCall">FunctionCall</a></span></dd>
+          </dl>
+          <h3>Methods inherited from class <a href="Ft.Xml.XPath.ParsedExpr.html#FunctionCall">FunctionCall</a></h3>
+          <div class="inherited"><span class="inherited-name"><a href="Ft.Xml.XPath.ParsedExpr.html#FunctionCall-__getinitargs__">__getinitargs__</a></span>, <span class="inherited-name"><a href="Ft.Xml.XPath.ParsedExpr.html#FunctionCall-__getstate__">__getstate__</a></span>, <span class="inherited-name"><a href="Ft.Xml.XPath.ParsedExpr.html#FunctionCall-__repr__">__repr__</a></span>, <span class="inherited-name"><a href="Ft.Xml.XPath.ParsedExpr.html#FunctionCall-__str__">__str__</a></span>, <span class="inherited-name"><a href="Ft.Xml.XPath.ParsedExpr.html#FunctionCall-error">error</a></span>, <span class="inherited-name"><a href="Ft.Xml.XPath.ParsedExpr.html#FunctionCall-getArgumentError">getArgumentError</a></span>, <span class="inherited-name"><a href="Ft.Xml.XPath.ParsedExpr.html#FunctionCall-pprint">pprint</a></span></div>
+        </dd>
+        <dt class="classdef"><a name="FunctionCall2"></a>class <span class="class-name">FunctionCall2</span><span class="bases">(<span class="class-name"><a href="Ft.Xml.XPath.ParsedExpr.html#FunctionCall">FunctionCall</a></span>)</span></dt>
+        <dd class="classdesc">
+          <h3>Methods</h3>
+          <dl class="methods">
+            <dt class="methoddef"><a name="FunctionCall2-__init__"><span class="method-name">__init__</span></a>(<span class="argument-name">self</span>, <span class="argument-name">name</span>, <span class="argument-name">key</span>, <span class="argument-name">args</span>)</dt>
+            <dd class="methoddesc">
+              <div class="abstract"># a function call with 2 arguments</div>
+            </dd>
+            <dd class="overrides"><b>Overrides: </b><span class="inherited-name"><a href="Ft.Xml.XPath.ParsedExpr.html#FunctionCall-__init__">__init__</a></span> from class <span class="class-name"><a href="Ft.Xml.XPath.ParsedExpr.html#FunctionCall">FunctionCall</a></span></dd>
+            <dt class="methoddef"><a name="FunctionCall2-evaluate"><span class="method-name">evaluate</span></a>(<span class="argument-name">self</span>, <span class="argument-name">context</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dd class="overrides"><b>Overrides: </b><span class="inherited-name"><a href="Ft.Xml.XPath.ParsedExpr.html#FunctionCall-evaluate">evaluate</a></span> from class <span class="class-name"><a href="Ft.Xml.XPath.ParsedExpr.html#FunctionCall">FunctionCall</a></span></dd>
+          </dl>
+          <h3>Methods inherited from class <a href="Ft.Xml.XPath.ParsedExpr.html#FunctionCall">FunctionCall</a></h3>
+          <div class="inherited"><span class="inherited-name"><a href="Ft.Xml.XPath.ParsedExpr.html#FunctionCall-__getinitargs__">__getinitargs__</a></span>, <span class="inherited-name"><a href="Ft.Xml.XPath.ParsedExpr.html#FunctionCall-__getstate__">__getstate__</a></span>, <span class="inherited-name"><a href="Ft.Xml.XPath.ParsedExpr.html#FunctionCall-__repr__">__repr__</a></span>, <span class="inherited-name"><a href="Ft.Xml.XPath.ParsedExpr.html#FunctionCall-__str__">__str__</a></span>, <span class="inherited-name"><a href="Ft.Xml.XPath.ParsedExpr.html#FunctionCall-error">error</a></span>, <span class="inherited-name"><a href="Ft.Xml.XPath.ParsedExpr.html#FunctionCall-getArgumentError">getArgumentError</a></span>, <span class="inherited-name"><a href="Ft.Xml.XPath.ParsedExpr.html#FunctionCall-pprint">pprint</a></span></div>
+        </dd>
+        <dt class="classdef"><a name="FunctionCall3"></a>class <span class="class-name">FunctionCall3</span><span class="bases">(<span class="class-name"><a href="Ft.Xml.XPath.ParsedExpr.html#FunctionCall">FunctionCall</a></span>)</span></dt>
+        <dd class="classdesc">
+          <h3>Methods</h3>
+          <dl class="methods">
+            <dt class="methoddef"><a name="FunctionCall3-__init__"><span class="method-name">__init__</span></a>(<span class="argument-name">self</span>, <span class="argument-name">name</span>, <span class="argument-name">key</span>, <span class="argument-name">args</span>)</dt>
+            <dd class="methoddesc">
+              <div class="abstract"># a function call with 3 arguments</div>
+            </dd>
+            <dd class="overrides"><b>Overrides: </b><span class="inherited-name"><a href="Ft.Xml.XPath.ParsedExpr.html#FunctionCall-__init__">__init__</a></span> from class <span class="class-name"><a href="Ft.Xml.XPath.ParsedExpr.html#FunctionCall">FunctionCall</a></span></dd>
+            <dt class="methoddef"><a name="FunctionCall3-evaluate"><span class="method-name">evaluate</span></a>(<span class="argument-name">self</span>, <span class="argument-name">context</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dd class="overrides"><b>Overrides: </b><span class="inherited-name"><a href="Ft.Xml.XPath.ParsedExpr.html#FunctionCall-evaluate">evaluate</a></span> from class <span class="class-name"><a href="Ft.Xml.XPath.ParsedExpr.html#FunctionCall">FunctionCall</a></span></dd>
+          </dl>
+          <h3>Methods inherited from class <a href="Ft.Xml.XPath.ParsedExpr.html#FunctionCall">FunctionCall</a></h3>
+          <div class="inherited"><span class="inherited-name"><a href="Ft.Xml.XPath.ParsedExpr.html#FunctionCall-__getinitargs__">__getinitargs__</a></span>, <span class="inherited-name"><a href="Ft.Xml.XPath.ParsedExpr.html#FunctionCall-__getstate__">__getstate__</a></span>, <span class="inherited-name"><a href="Ft.Xml.XPath.ParsedExpr.html#FunctionCall-__repr__">__repr__</a></span>, <span class="inherited-name"><a href="Ft.Xml.XPath.ParsedExpr.html#FunctionCall-__str__">__str__</a></span>, <span class="inherited-name"><a href="Ft.Xml.XPath.ParsedExpr.html#FunctionCall-error">error</a></span>, <span class="inherited-name"><a href="Ft.Xml.XPath.ParsedExpr.html#FunctionCall-getArgumentError">getArgumentError</a></span>, <span class="inherited-name"><a href="Ft.Xml.XPath.ParsedExpr.html#FunctionCall-pprint">pprint</a></span></div>
+        </dd>
+        <dt class="classdef"><a name="FunctionCallN"></a>class <span class="class-name">FunctionCallN</span><span class="bases">(<span class="class-name"><a href="Ft.Xml.XPath.ParsedExpr.html#FunctionCall">FunctionCall</a></span>)</span></dt>
+        <dd class="classdesc">
+          <h3>Methods</h3>
+          <dl class="methods">
+            <dt class="methoddef"><a name="FunctionCallN-__init__"><span class="method-name">__init__</span></a>(<span class="argument-name">self</span>, <span class="argument-name">name</span>, <span class="argument-name">key</span>, <span class="argument-name">args</span>)</dt>
+            <dd class="methoddesc">
+              <div class="abstract"># a function call with more than 3 arguments</div>
+            </dd>
+            <dd class="overrides"><b>Overrides: </b><span class="inherited-name"><a href="Ft.Xml.XPath.ParsedExpr.html#FunctionCall-__init__">__init__</a></span> from class <span class="class-name"><a href="Ft.Xml.XPath.ParsedExpr.html#FunctionCall">FunctionCall</a></span></dd>
+            <dt class="methoddef"><a name="FunctionCallN-evaluate"><span class="method-name">evaluate</span></a>(<span class="argument-name">self</span>, <span class="argument-name">context</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dd class="overrides"><b>Overrides: </b><span class="inherited-name"><a href="Ft.Xml.XPath.ParsedExpr.html#FunctionCall-evaluate">evaluate</a></span> from class <span class="class-name"><a href="Ft.Xml.XPath.ParsedExpr.html#FunctionCall">FunctionCall</a></span></dd>
+          </dl>
+          <h3>Methods inherited from class <a href="Ft.Xml.XPath.ParsedExpr.html#FunctionCall">FunctionCall</a></h3>
+          <div class="inherited"><span class="inherited-name"><a href="Ft.Xml.XPath.ParsedExpr.html#FunctionCall-__getinitargs__">__getinitargs__</a></span>, <span class="inherited-name"><a href="Ft.Xml.XPath.ParsedExpr.html#FunctionCall-__getstate__">__getstate__</a></span>, <span class="inherited-name"><a href="Ft.Xml.XPath.ParsedExpr.html#FunctionCall-__repr__">__repr__</a></span>, <span class="inherited-name"><a href="Ft.Xml.XPath.ParsedExpr.html#FunctionCall-__str__">__str__</a></span>, <span class="inherited-name"><a href="Ft.Xml.XPath.ParsedExpr.html#FunctionCall-error">error</a></span>, <span class="inherited-name"><a href="Ft.Xml.XPath.ParsedExpr.html#FunctionCall-getArgumentError">getArgumentError</a></span>, <span class="inherited-name"><a href="Ft.Xml.XPath.ParsedExpr.html#FunctionCall-pprint">pprint</a></span></div>
+        </dd>
+        <dt class="classdef"><a name="ParsedAdditiveExpr"></a>class <span class="class-name">ParsedAdditiveExpr</span></dt>
+        <dd class="classdesc">
+          <div class="abstract">An object representing an additive expression
+(XPath 1.0 grammar production 25: AdditiveExpr)</div>
+          <h3>Methods</h3>
+          <dl class="methods">
+            <dt class="methoddef"><a name="ParsedAdditiveExpr-__init__"><span class="method-name">__init__</span></a>(<span class="argument-name">self</span>, <span class="argument-name">sign</span>, <span class="argument-name">left</span>, <span class="argument-name">right</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dt class="methoddef"><a name="ParsedAdditiveExpr-__repr__"><span class="method-name">__repr__</span></a>(<span class="argument-name">self</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dt class="methoddef"><a name="ParsedAdditiveExpr-__str__"><span class="method-name">__str__</span></a>(<span class="argument-name">self</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dt class="methoddef"><a name="ParsedAdditiveExpr-evaluate"><span class="method-name">evaluate</span></a>(<span class="argument-name">self</span>, <span class="argument-name">context</span>)</dt>
+            <dd class="methoddesc">
+              <div class="abstract">Returns a number</div>
+            </dd>
+            <dt class="methoddef"><a name="ParsedAdditiveExpr-pprint"><span class="method-name">pprint</span></a>(<span class="argument-name">self</span>, <span class="argument-name">indent</span><span class="argument-default">=''</span>)</dt>
+            <dd class="methoddesc"></dd>
+          </dl>
+        </dd>
+        <dt class="classdef"><a name="ParsedAndExpr"></a>class <span class="class-name">ParsedAndExpr</span></dt>
+        <dd class="classdesc">
+          <div class="abstract">An object representing an and expression
+(XPath 1.0 grammar production 22: AndExpr)</div>
+          <h3>Methods</h3>
+          <dl class="methods">
+            <dt class="methoddef"><a name="ParsedAndExpr-__init__"><span class="method-name">__init__</span></a>(<span class="argument-name">self</span>, <span class="argument-name">left</span>, <span class="argument-name">right</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dt class="methoddef"><a name="ParsedAndExpr-__repr__"><span class="method-name">__repr__</span></a>(<span class="argument-name">self</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dt class="methoddef"><a name="ParsedAndExpr-__str__"><span class="method-name">__str__</span></a>(<span class="argument-name">self</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dt class="methoddef"><a name="ParsedAndExpr-evaluate"><span class="method-name">evaluate</span></a>(<span class="argument-name">self</span>, <span class="argument-name">context</span>)</dt>
+            <dd class="methoddesc">
+              <div class="abstract">Returns a boolean</div>
+            </dd>
+            <dt class="methoddef"><a name="ParsedAndExpr-pprint"><span class="method-name">pprint</span></a>(<span class="argument-name">self</span>, <span class="argument-name">indent</span><span class="argument-default">=''</span>)</dt>
+            <dd class="methoddesc"></dd>
+          </dl>
+        </dd>
+        <dt class="classdef"><a name="ParsedEqualityExpr"></a>class <span class="class-name">ParsedEqualityExpr</span></dt>
+        <dd class="classdesc">
+          <div class="abstract">An object representing an equality expression
+(XPath 1.0 grammar production 23: EqualityExpr)</div>
+          <h3>Methods</h3>
+          <dl class="methods">
+            <dt class="methoddef"><a name="ParsedEqualityExpr-__getstate__"><span class="method-name">__getstate__</span></a>(<span class="argument-name">self</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dt class="methoddef"><a name="ParsedEqualityExpr-__init__"><span class="method-name">__init__</span></a>(<span class="argument-name">self</span>, <span class="argument-name">op</span>, <span class="argument-name">left</span>, <span class="argument-name">right</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dt class="methoddef"><a name="ParsedEqualityExpr-__repr__"><span class="method-name">__repr__</span></a>(<span class="argument-name">self</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dt class="methoddef"><a name="ParsedEqualityExpr-__setstate__"><span class="method-name">__setstate__</span></a>(<span class="argument-name">self</span>, <span class="argument-name">state</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dt class="methoddef"><a name="ParsedEqualityExpr-__str__"><span class="method-name">__str__</span></a>(<span class="argument-name">self</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dt class="methoddef"><a name="ParsedEqualityExpr-evaluate"><span class="method-name">evaluate</span></a>(<span class="argument-name">self</span>, <span class="argument-name">context</span>)</dt>
+            <dd class="methoddesc">
+              <div class="abstract">Returns a boolean</div>
+            </dd>
+            <dt class="methoddef"><a name="ParsedEqualityExpr-pprint"><span class="method-name">pprint</span></a>(<span class="argument-name">self</span>, <span class="argument-name">indent</span><span class="argument-default">=''</span>)</dt>
+            <dd class="methoddesc"></dd>
+          </dl>
+        </dd>
+        <dt class="classdef"><a name="ParsedFilterExpr"></a>class <span class="class-name">ParsedFilterExpr</span></dt>
+        <dd class="classdesc">
+          <div class="abstract">An object representing a filter expression
+(XPath 1.0 grammar production 20: FilterExpr)</div>
+          <h3>Methods</h3>
+          <dl class="methods">
+            <dt class="methoddef"><a name="ParsedFilterExpr-__init__"><span class="method-name">__init__</span></a>(<span class="argument-name">self</span>, <span class="argument-name">filter_</span>, <span class="argument-name">predicates</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dt class="methoddef"><a name="ParsedFilterExpr-__repr__"><span class="method-name">__repr__</span></a>(<span class="argument-name">self</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dt class="methoddef"><a name="ParsedFilterExpr-__str__"><span class="method-name">__str__</span></a>(<span class="argument-name">self</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dt class="methoddef"><a name="ParsedFilterExpr-evaluate"><span class="method-name">evaluate</span></a>(<span class="argument-name">self</span>, <span class="argument-name">context</span>)</dt>
+            <dd class="methoddesc">
+              <div class="abstract">Returns a node-set</div>
+            </dd>
+            <dt class="methoddef"><a name="ParsedFilterExpr-pprint"><span class="method-name">pprint</span></a>(<span class="argument-name">self</span>, <span class="argument-name">indent</span><span class="argument-default">=''</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dt class="methoddef"><a name="ParsedFilterExpr-shiftContext"><span class="method-name">shiftContext</span></a>(<span class="argument-name">self</span>, <span class="argument-name">context</span>, <span class="argument-name">index</span>, <span class="argument-name">set</span>, <span class="argument-name">len</span>, <span class="argument-name">func</span>)</dt>
+            <dd class="methoddesc"></dd>
+          </dl>
+        </dd>
+        <dt class="classdef"><a name="ParsedLiteralExpr"></a>class <span class="class-name">ParsedLiteralExpr</span></dt>
+        <dd class="classdesc">
+          <div class="abstract">An object representing a string literal expression
+(XPath 1.0 grammar production 29: Literal)</div>
+          <h3>Methods</h3>
+          <dl class="methods">
+            <dt class="methoddef"><a name="ParsedLiteralExpr-__init__"><span class="method-name">__init__</span></a>(<span class="argument-name">self</span>, <span class="argument-name">literal</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dt class="methoddef"><a name="ParsedLiteralExpr-__repr__"><span class="method-name">__repr__</span></a>(<span class="argument-name">self</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dt class="methoddef"><a name="ParsedLiteralExpr-__str__"><span class="method-name">__str__</span></a>(<span class="argument-name">self</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dt class="methoddef"><a name="ParsedLiteralExpr-evaluate"><span class="method-name">evaluate</span></a>(<span class="argument-name">self</span>, <span class="argument-name">context</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dt class="methoddef"><a name="ParsedLiteralExpr-pprint"><span class="method-name">pprint</span></a>(<span class="argument-name">self</span>, <span class="argument-name">indent</span><span class="argument-default">=''</span>)</dt>
+            <dd class="methoddesc"></dd>
+          </dl>
+        </dd>
+        <dt class="classdef"><a name="ParsedMultiplicativeExpr"></a>class <span class="class-name">ParsedMultiplicativeExpr</span></dt>
+        <dd class="classdesc">
+          <div class="abstract">An object representing an multiplicative expression
+(XPath 1.0 grammar production 26: MultiplicativeExpr)</div>
+          <h3>Methods</h3>
+          <dl class="methods">
+            <dt class="methoddef"><a name="ParsedMultiplicativeExpr-__init__"><span class="method-name">__init__</span></a>(<span class="argument-name">self</span>, <span class="argument-name">opcode</span>, <span class="argument-name">left</span>, <span class="argument-name">right</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dt class="methoddef"><a name="ParsedMultiplicativeExpr-__repr__"><span class="method-name">__repr__</span></a>(<span class="argument-name">self</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dt class="methoddef"><a name="ParsedMultiplicativeExpr-__str__"><span class="method-name">__str__</span></a>(<span class="argument-name">self</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dt class="methoddef"><a name="ParsedMultiplicativeExpr-evaluate"><span class="method-name">evaluate</span></a>(<span class="argument-name">self</span>, <span class="argument-name">context</span>)</dt>
+            <dd class="methoddesc">
+              <div class="abstract">Returns a number</div>
+            </dd>
+            <dt class="methoddef"><a name="ParsedMultiplicativeExpr-pprint"><span class="method-name">pprint</span></a>(<span class="argument-name">self</span>, <span class="argument-name">indent</span><span class="argument-default">=''</span>)</dt>
+            <dd class="methoddesc"></dd>
+          </dl>
+        </dd>
+        <dt class="classdef"><a name="ParsedNLiteralExpr"></a>class <span class="class-name">ParsedNLiteralExpr</span><span class="bases">(<span class="class-name"><a href="Ft.Xml.XPath.ParsedExpr.html#ParsedLiteralExpr">ParsedLiteralExpr</a></span>)</span></dt>
+        <dd class="classdesc">
+          <div class="abstract">An object representing a numeric literal expression
+(XPath 1.0 grammar production 30: Number)</div>
+          <h3>Methods</h3>
+          <dl class="methods">
+            <dt class="methoddef"><a name="ParsedNLiteralExpr-__init__"><span class="method-name">__init__</span></a>(<span class="argument-name">self</span>, <span class="argument-name">nliteral</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dd class="overrides"><b>Overrides: </b><span class="inherited-name"><a href="Ft.Xml.XPath.ParsedExpr.html#ParsedLiteralExpr-__init__">__init__</a></span> from class <span class="class-name"><a href="Ft.Xml.XPath.ParsedExpr.html#ParsedLiteralExpr">ParsedLiteralExpr</a></span></dd>
+            <dt class="methoddef"><a name="ParsedNLiteralExpr-__repr__"><span class="method-name">__repr__</span></a>(<span class="argument-name">self</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dd class="overrides"><b>Overrides: </b><span class="inherited-name"><a href="Ft.Xml.XPath.ParsedExpr.html#ParsedLiteralExpr-__repr__">__repr__</a></span> from class <span class="class-name"><a href="Ft.Xml.XPath.ParsedExpr.html#ParsedLiteralExpr">ParsedLiteralExpr</a></span></dd>
+            <dt class="methoddef"><a name="ParsedNLiteralExpr-__str__"><span class="method-name">__str__</span></a>(<span class="argument-name">self</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dd class="overrides"><b>Overrides: </b><span class="inherited-name"><a href="Ft.Xml.XPath.ParsedExpr.html#ParsedLiteralExpr-__str__">__str__</a></span> from class <span class="class-name"><a href="Ft.Xml.XPath.ParsedExpr.html#ParsedLiteralExpr">ParsedLiteralExpr</a></span></dd>
+            <dt class="methoddef"><a name="ParsedNLiteralExpr-pprint"><span class="method-name">pprint</span></a>(<span class="argument-name">self</span>, <span class="argument-name">indent</span><span class="argument-default">=''</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dd class="overrides"><b>Overrides: </b><span class="inherited-name"><a href="Ft.Xml.XPath.ParsedExpr.html#ParsedLiteralExpr-pprint">pprint</a></span> from class <span class="class-name"><a href="Ft.Xml.XPath.ParsedExpr.html#ParsedLiteralExpr">ParsedLiteralExpr</a></span></dd>
+          </dl>
+          <h3>Methods inherited from class <a href="Ft.Xml.XPath.ParsedExpr.html#ParsedLiteralExpr">ParsedLiteralExpr</a></h3>
+          <div class="inherited"><span class="inherited-name"><a href="Ft.Xml.XPath.ParsedExpr.html#ParsedLiteralExpr-evaluate">evaluate</a></span></div>
+        </dd>
+        <dt class="classdef"><a name="ParsedOrExpr"></a>class <span class="class-name">ParsedOrExpr</span></dt>
+        <dd class="classdesc">
+          <div class="abstract">An object representing an or expression
+(XPath 1.0 grammar production 21: OrExpr)</div>
+          <h3>Methods</h3>
+          <dl class="methods">
+            <dt class="methoddef"><a name="ParsedOrExpr-__init__"><span class="method-name">__init__</span></a>(<span class="argument-name">self</span>, <span class="argument-name">left</span>, <span class="argument-name">right</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dt class="methoddef"><a name="ParsedOrExpr-__repr__"><span class="method-name">__repr__</span></a>(<span class="argument-name">self</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dt class="methoddef"><a name="ParsedOrExpr-__str__"><span class="method-name">__str__</span></a>(<span class="argument-name">self</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dt class="methoddef"><a name="ParsedOrExpr-evaluate"><span class="method-name">evaluate</span></a>(<span class="argument-name">self</span>, <span class="argument-name">context</span>)</dt>
+            <dd class="methoddesc">
+              <div class="abstract">Returns a boolean</div>
+            </dd>
+            <dt class="methoddef"><a name="ParsedOrExpr-pprint"><span class="method-name">pprint</span></a>(<span class="argument-name">self</span>, <span class="argument-name">indent</span><span class="argument-default">=''</span>)</dt>
+            <dd class="methoddesc"></dd>
+          </dl>
+        </dd>
+        <dt class="classdef"><a name="ParsedPathExpr"></a>class <span class="class-name">ParsedPathExpr</span></dt>
+        <dd class="classdesc">
+          <div class="abstract">An object representing a path expression
+(XPath 1.0 grammar production 19: PathExpr)</div>
+          <h3>Methods</h3>
+          <dl class="methods">
+            <dt class="methoddef"><a name="ParsedPathExpr-__init__"><span class="method-name">__init__</span></a>(<span class="argument-name">self</span>, <span class="argument-name">descendant</span>, <span class="argument-name">left</span>, <span class="argument-name">right</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dt class="methoddef"><a name="ParsedPathExpr-__repr__"><span class="method-name">__repr__</span></a>(<span class="argument-name">self</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dt class="methoddef"><a name="ParsedPathExpr-__str__"><span class="method-name">__str__</span></a>(<span class="argument-name">self</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dt class="methoddef"><a name="ParsedPathExpr-evaluate"><span class="method-name">evaluate</span></a>(<span class="argument-name">self</span>, <span class="argument-name">context</span>)</dt>
+            <dd class="methoddesc">
+              <div class="abstract">Returns a node-set</div>
+            </dd>
+            <dt class="methoddef"><a name="ParsedPathExpr-pprint"><span class="method-name">pprint</span></a>(<span class="argument-name">self</span>, <span class="argument-name">indent</span><span class="argument-default">=''</span>)</dt>
+            <dd class="methoddesc"></dd>
+          </dl>
+        </dd>
+        <dt class="classdef"><a name="ParsedRelationalExpr"></a>class <span class="class-name">ParsedRelationalExpr</span></dt>
+        <dd class="classdesc">
+          <div class="abstract">An object representing a relational expression
+(XPath 1.0 grammar production 24: RelationalExpr)</div>
+          <h3>Methods</h3>
+          <dl class="methods">
+            <dt class="methoddef"><a name="ParsedRelationalExpr-__getstate__"><span class="method-name">__getstate__</span></a>(<span class="argument-name">self</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dt class="methoddef"><a name="ParsedRelationalExpr-__init__"><span class="method-name">__init__</span></a>(<span class="argument-name">self</span>, <span class="argument-name">opcode</span>, <span class="argument-name">left</span>, <span class="argument-name">right</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dt class="methoddef"><a name="ParsedRelationalExpr-__repr__"><span class="method-name">__repr__</span></a>(<span class="argument-name">self</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dt class="methoddef"><a name="ParsedRelationalExpr-__setstate__"><span class="method-name">__setstate__</span></a>(<span class="argument-name">self</span>, <span class="argument-name">state</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dt class="methoddef"><a name="ParsedRelationalExpr-__str__"><span class="method-name">__str__</span></a>(<span class="argument-name">self</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dt class="methoddef"><a name="ParsedRelationalExpr-evaluate"><span class="method-name">evaluate</span></a>(<span class="argument-name">self</span>, <span class="argument-name">context</span>)</dt>
+            <dd class="methoddesc">
+              <div class="abstract">Returns a boolean</div>
+            </dd>
+            <dt class="methoddef"><a name="ParsedRelationalExpr-pprint"><span class="method-name">pprint</span></a>(<span class="argument-name">self</span>, <span class="argument-name">indent</span><span class="argument-default">=''</span>)</dt>
+            <dd class="methoddesc"></dd>
+          </dl>
+        </dd>
+        <dt class="classdef"><a name="ParsedUnaryExpr"></a>class <span class="class-name">ParsedUnaryExpr</span></dt>
+        <dd class="classdesc">
+          <div class="abstract">An object representing a unary expression
+(XPath 1.0 grammar production 27: UnaryExpr)</div>
+          <h3>Methods</h3>
+          <dl class="methods">
+            <dt class="methoddef"><a name="ParsedUnaryExpr-__init__"><span class="method-name">__init__</span></a>(<span class="argument-name">self</span>, <span class="argument-name">exp</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dt class="methoddef"><a name="ParsedUnaryExpr-__repr__"><span class="method-name">__repr__</span></a>(<span class="argument-name">self</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dt class="methoddef"><a name="ParsedUnaryExpr-__str__"><span class="method-name">__str__</span></a>(<span class="argument-name">self</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dt class="methoddef"><a name="ParsedUnaryExpr-evaluate"><span class="method-name">evaluate</span></a>(<span class="argument-name">self</span>, <span class="argument-name">context</span>)</dt>
+            <dd class="methoddesc">
+              <div class="abstract">Returns a number</div>
+            </dd>
+            <dt class="methoddef"><a name="ParsedUnaryExpr-pprint"><span class="method-name">pprint</span></a>(<span class="argument-name">self</span>, <span class="argument-name">indent</span><span class="argument-default">=''</span>)</dt>
+            <dd class="methoddesc"></dd>
+          </dl>
+        </dd>
+        <dt class="classdef"><a name="ParsedUnionExpr"></a>class <span class="class-name">ParsedUnionExpr</span></dt>
+        <dd class="classdesc">
+          <div class="abstract">An object representing a union expression
+(XPath 1.0 grammar production 18: UnionExpr)</div>
+          <h3>Methods</h3>
+          <dl class="methods">
+            <dt class="methoddef"><a name="ParsedUnionExpr-__init__"><span class="method-name">__init__</span></a>(<span class="argument-name">self</span>, <span class="argument-name">left</span>, <span class="argument-name">right</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dt class="methoddef"><a name="ParsedUnionExpr-__repr__"><span class="method-name">__repr__</span></a>(<span class="argument-name">self</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dt class="methoddef"><a name="ParsedUnionExpr-__str__"><span class="method-name">__str__</span></a>(<span class="argument-name">self</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dt class="methoddef"><a name="ParsedUnionExpr-evaluate"><span class="method-name">evaluate</span></a>(<span class="argument-name">self</span>, <span class="argument-name">context</span>)</dt>
+            <dd class="methoddesc">
+              <div class="abstract">Returns a node-set</div>
+            </dd>
+            <dt class="methoddef"><a name="ParsedUnionExpr-pprint"><span class="method-name">pprint</span></a>(<span class="argument-name">self</span>, <span class="argument-name">indent</span><span class="argument-default">=''</span>)</dt>
+            <dd class="methoddesc"></dd>
+          </dl>
+        </dd>
+        <dt class="classdef"><a name="ParsedVariableReferenceExpr"></a>class <span class="class-name">ParsedVariableReferenceExpr</span></dt>
+        <dd class="classdesc">
+          <div class="abstract">An object representing a variable reference expression
+(XPath 1.0 grammar production 36: VariableReference)</div>
+          <h3>Methods</h3>
+          <dl class="methods">
+            <dt class="methoddef"><a name="ParsedVariableReferenceExpr-__init__"><span class="method-name">__init__</span></a>(<span class="argument-name">self</span>, <span class="argument-name">name</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dt class="methoddef"><a name="ParsedVariableReferenceExpr-__repr__"><span class="method-name">__repr__</span></a>(<span class="argument-name">self</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dt class="methoddef"><a name="ParsedVariableReferenceExpr-__str__"><span class="method-name">__str__</span></a>(<span class="argument-name">self</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dt class="methoddef"><a name="ParsedVariableReferenceExpr-evaluate"><span class="method-name">evaluate</span></a>(<span class="argument-name">self</span>, <span class="argument-name">context</span>)</dt>
+            <dd class="methoddesc">
+              <div class="abstract">Returns a string</div>
+            </dd>
+            <dt class="methoddef"><a name="ParsedVariableReferenceExpr-pprint"><span class="method-name">pprint</span></a>(<span class="argument-name">self</span>, <span class="argument-name">indent</span><span class="argument-default">=''</span>)</dt>
+            <dd class="methoddesc"></dd>
+          </dl>
+        </dd>
+      </dl>
+    </div>
+    <div class="section">
+      <h2>Functions</h2>
+      <dl class="functions">
+        <dt class="functiondef"><a name="ParsedFunctionCallExpr"><span class="function-name">ParsedFunctionCallExpr</span></a>(<span class="argument-name">name</span>, <span class="argument-name">args</span>)</dt>
+        <dd class="functiondesc">
+          <div class="abstract">Returns an object representing a function call expression
+(XPath 1.0 grammar production 16: FunctionCall)</div>
+        </dd>
+      </dl>
+    </div>
+    <div class="section">
+      <h2>Globals</h2>
+      <dl class="globals">
+        <dt class="globaldef"><a name="EMPTY_NAMESPACE"><span class="global-name">EMPTY_NAMESPACE</span></a> = None</dt>
+        <dd class="globaldesc"></dd>
+      </dl>
+    </div>
+    <div class="universal-footer">Last modified on 2006-12-16 18:44:29</div>
+  </body>
+</html>

@@ -1,0 +1,1744 @@
+<html>
+  <head>
+    <meta content="text/html; charset=iso-8859-1" http-equiv="Content-Type">
+    <title>XsltBuiltins</title>
+    <link href="extensions.css" type="text/css" rel="stylesheet">
+  </head>
+  <body>
+    <h1>Extension Module - XsltBuiltins</h1>
+  
+  
+    <h2>Namespaces</h2>
+    <p>The namespaces for extensions defined in this document are:</p>
+    <table cellpadding="4">
+      <tr>
+        <th align="left">Prefix</th>
+        <th align="center">Namespace</th>
+      </tr>
+      <tr align="left">
+        <td><samp>date</samp></td>
+        <td><samp>http://exslt.org/dates-and-times</samp></td>
+      </tr>
+      <tr align="left">
+        <td><samp>dyn</samp></td>
+        <td><samp>http://exslt.org/dynamic</samp></td>
+      </tr>
+      <tr align="left">
+        <td><samp>exsl</samp></td>
+        <td><samp>http://exslt.org/common</samp></td>
+      </tr>
+      <tr align="left">
+        <td><samp>f</samp></td>
+        <td><samp>http://xmlns.4suite.org/ext</samp></td>
+      </tr>
+      <tr align="left">
+        <td><samp>func</samp></td>
+        <td><samp>http://exslt.org/functions</samp></td>
+      </tr>
+      <tr align="left">
+        <td><samp>math</samp></td>
+        <td><samp>http://exslt.org/math</samp></td>
+      </tr>
+      <tr align="left">
+        <td><samp>regexp</samp></td>
+        <td><samp>http://exslt.org/regular-expressions</samp></td>
+      </tr>
+      <tr align="left">
+        <td><samp>set</samp></td>
+        <td><samp>http://exslt.org/sets</samp></td>
+      </tr>
+      <tr align="left">
+        <td><samp>str</samp></td>
+        <td><samp>http://exslt.org/strings</samp></td>
+      </tr>
+    </table>
+    <p>The prefixes are given for this document only. Any other prefix can be
+      used within a particular stylesheet.</p>
+  
+    <hr width="100%">
+    <h2>Functions</h2>
+    <table cellpadding="4">
+      <tr>
+        <th align="left">Function</th>
+        <th align="center">Syntax</th>
+      </tr>
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+  
+      <tr align="left">
+        <td valign="top"><a href="#id183021190736">date:add</a></td>
+        <td class="syntax"><var>unknown</var> <b>date:add</b>(<var>dateTime</var>, <var>duration</var>)</td>
+      </tr>
+      <tr align="left">
+        <td valign="top"><a href="#id183021149776">date:add-duration</a></td>
+        <td class="syntax"><var>unknown</var> <b>date:add-duration</b>(<var>duration1</var>, <var>duration2</var>)</td>
+      </tr>
+      <tr align="left">
+        <td valign="top"><a href="#id183021189712">date:date</a></td>
+        <td class="syntax"><var>unknown</var> <b>date:date</b>(<var>dateTime</var>)</td>
+      </tr>
+      <tr align="left">
+        <td valign="top"><a href="#id183021272528">date:date-time</a></td>
+        <td class="syntax"><var>unknown</var> <b>date:date-time</b>()</td>
+      </tr>
+      <tr align="left">
+        <td valign="top"><a href="#id183021114704">date:day-abbreviation</a></td>
+        <td class="syntax"><var>unknown</var> <b>date:day-abbreviation</b>(<var>dateTime</var>)</td>
+      </tr>
+      <tr align="left">
+        <td valign="top"><a href="#id183021287376">date:day-in-month</a></td>
+        <td class="syntax"><var>unknown</var> <b>date:day-in-month</b>(<var>dateTime</var>)</td>
+      </tr>
+      <tr align="left">
+        <td valign="top"><a href="#id183021130704">date:day-in-week</a></td>
+        <td class="syntax"><var>unknown</var> <b>date:day-in-week</b>(<var>dateTime</var>)</td>
+      </tr>
+      <tr align="left">
+        <td valign="top"><a href="#id183021256528">date:day-in-year</a></td>
+        <td class="syntax"><var>unknown</var> <b>date:day-in-year</b>(<var>dateTime</var>)</td>
+      </tr>
+      <tr align="left">
+        <td valign="top"><a href="#id183021199696">date:day-name</a></td>
+        <td class="syntax"><var>unknown</var> <b>date:day-name</b>(<var>dateTime</var>)</td>
+      </tr>
+      <tr align="left">
+        <td valign="top"><a href="#id183021238992">date:day-of-week-in-month</a></td>
+        <td class="syntax"><var>unknown</var> <b>date:day-of-week-in-month</b>(<var>dateTime</var>)</td>
+      </tr>
+      <tr align="left">
+        <td valign="top"><a href="#id183021202256">date:difference</a></td>
+        <td class="syntax"><var>unknown</var> <b>date:difference</b>(<var>start</var>, <var>end</var>)</td>
+      </tr>
+      <tr align="left">
+        <td valign="top"><a href="#id183021219152">date:duration</a></td>
+        <td class="syntax"><var>unknown</var> <b>date:duration</b>(<var>seconds</var>)</td>
+      </tr>
+      <tr align="left">
+        <td valign="top"><a href="#id183021115216">date:format-date</a></td>
+        <td class="syntax"><var>unknown</var> <b>date:format-date</b>(<var>dateTime</var>, <var>pattern</var>)</td>
+      </tr>
+      <tr align="left">
+        <td valign="top"><a href="#id183021200720">date:hour-in-day</a></td>
+        <td class="syntax"><var>unknown</var> <b>date:hour-in-day</b>(<var>dateTime</var>)</td>
+      </tr>
+      <tr align="left">
+        <td valign="top"><a href="#id183021215824">date:leap-year</a></td>
+        <td class="syntax"><var>unknown</var> <b>date:leap-year</b>(<var>dateTime</var>)</td>
+      </tr>
+      <tr align="left">
+        <td valign="top"><a href="#id183021166928">date:minute-in-hour</a></td>
+        <td class="syntax"><var>unknown</var> <b>date:minute-in-hour</b>(<var>dateTime</var>)</td>
+      </tr>
+      <tr align="left">
+        <td valign="top"><a href="#id183021201744">date:month-abbreviation</a></td>
+        <td class="syntax"><var>unknown</var> <b>date:month-abbreviation</b>(<var>dateTime</var>)</td>
+      </tr>
+      <tr align="left">
+        <td valign="top"><a href="#id183021189200">date:month-in-year</a></td>
+        <td class="syntax"><var>unknown</var> <b>date:month-in-year</b>(<var>dateTime</var>)</td>
+      </tr>
+      <tr align="left">
+        <td valign="top"><a href="#id183021168080">date:month-name</a></td>
+        <td class="syntax"><var>unknown</var> <b>date:month-name</b>(<var>dateTime</var>)</td>
+      </tr>
+      <tr align="left">
+        <td valign="top"><a href="#id183021254864">date:second-in-minute</a></td>
+        <td class="syntax"><var>unknown</var> <b>date:second-in-minute</b>(<var>dateTime</var>)</td>
+      </tr>
+      <tr align="left">
+        <td valign="top"><a href="#id183021116368">date:seconds</a></td>
+        <td class="syntax"><var>unknown</var> <b>date:seconds</b>(<var>string</var>)</td>
+      </tr>
+      <tr align="left">
+        <td valign="top"><a href="#id183021148496">date:sum</a></td>
+        <td class="syntax"><var>unknown</var> <b>date:sum</b>(<var>nodeset</var>)</td>
+      </tr>
+      <tr align="left">
+        <td valign="top"><a href="#id183021114192">date:time</a></td>
+        <td class="syntax"><var>unknown</var> <b>date:time</b>(<var>dateTime</var>)</td>
+      </tr>
+      <tr align="left">
+        <td valign="top"><a href="#id183021216976">date:week-in-month</a></td>
+        <td class="syntax"><var>unknown</var> <b>date:week-in-month</b>(<var>dateTime</var>)</td>
+      </tr>
+      <tr align="left">
+        <td valign="top"><a href="#id183021219664">date:week-in-year</a></td>
+        <td class="syntax"><var>unknown</var> <b>date:week-in-year</b>(<var>dateTime</var>)</td>
+      </tr>
+      <tr align="left">
+        <td valign="top"><a href="#id183021132624">date:year</a></td>
+        <td class="syntax"><var>unknown</var> <b>date:year</b>(<var>dateTime</var>)</td>
+      </tr>
+      <tr align="left">
+        <td valign="top"><a href="#id183021167440">dyn:closure</a></td>
+        <td class="syntax"><var>unknown</var> <b>dyn:closure</b>(<var>nodeset</var>, <var>string</var>)</td>
+      </tr>
+      <tr align="left">
+        <td valign="top"><a href="#id183021188048">dyn:evaluate</a></td>
+        <td class="syntax"><var>unknown</var> <b>dyn:evaluate</b>(<var>string</var>)</td>
+      </tr>
+      <tr align="left">
+        <td valign="top"><a href="#id183021253712">dyn:map</a></td>
+        <td class="syntax"><var>unknown</var> <b>dyn:map</b>(<var>nodeset</var>, <var>string</var>)</td>
+      </tr>
+      <tr align="left">
+        <td valign="top"><a href="#id183021270608">dyn:max</a></td>
+        <td class="syntax"><var>unknown</var> <b>dyn:max</b>(<var>nodeset</var>, <var>string</var>)</td>
+      </tr>
+      <tr align="left">
+        <td valign="top"><a href="#id183021269968">dyn:min</a></td>
+        <td class="syntax"><var>unknown</var> <b>dyn:min</b>(<var>nodeset</var>, <var>string</var>)</td>
+      </tr>
+      <tr align="left">
+        <td valign="top"><a href="#id183021289296">dyn:sum</a></td>
+        <td class="syntax"><var>unknown</var> <b>dyn:sum</b>(<var>nodeset</var>, <var>string</var>)</td>
+      </tr>
+      <tr align="left">
+        <td valign="top"><a href="#id183021147344">exsl:node-set</a></td>
+        <td class="syntax"><var>unknown</var> <b>exsl:node-set</b>(<var>obj</var>)</td>
+      </tr>
+      <tr align="left">
+        <td valign="top"><a href="#id183021237968">exsl:object-type</a></td>
+        <td class="syntax"><var>unknown</var> <b>exsl:object-type</b>(<var>obj</var>)</td>
+      </tr>
+      <tr align="left">
+        <td valign="top"><a href="#id183021116880">f:doc-as-string</a></td>
+        <td class="syntax"><var>unknown</var> <b>f:doc-as-string</b>(<var>obj</var>, <var>encoding</var>)</td>
+      </tr>
+      <tr align="left">
+        <td valign="top"><a href="#id183021129936">f:key</a></td>
+        <td class="syntax"><var>unknown</var> <b>f:key</b>(<var>qname</var>, <var>keyList</var>, <var>realContextNode</var>)</td>
+      </tr>
+      <tr align="left">
+        <td valign="top"><a href="#id183021113552">f:lookup</a></td>
+        <td class="syntax"><var>unknown</var> <b>f:lookup</b>(<var>name</var>, <var>key</var>)</td>
+      </tr>
+      <tr align="left">
+        <td valign="top"><a href="#id183021201232">f:map</a></td>
+        <td class="syntax"><var>unknown</var> <b>f:map</b>(<var>funcname</var>)</td>
+      </tr>
+      <tr align="left">
+        <td valign="top"><a href="#id183021147856">f:search-re</a></td>
+        <td class="syntax"><var>unknown</var> <b>f:search-re</b>(<var>pattern</var>, <var>arg</var>)</td>
+      </tr>
+      <tr align="left">
+        <td valign="top"><a href="#id183021187280">f:serialize-xml</a></td>
+        <td class="syntax"><var>unknown</var> <b>f:serialize-xml</b>(<var>nodeset</var>, <var>method</var>, <var>omitxmldecl</var>)</td>
+      </tr>
+      <tr align="left">
+        <td valign="top"><a href="#id183021188560">f:split</a></td>
+        <td class="syntax"><var>unknown</var> <b>f:split</b>(<var>arg</var>, <var>delim</var>)</td>
+      </tr>
+      <tr align="left">
+        <td valign="top"><a href="#id183021269456">math:abs</a></td>
+        <td class="syntax"><var>unknown</var> <b>math:abs</b>(<var>num</var>)</td>
+      </tr>
+      <tr align="left">
+        <td valign="top"><a href="#id183021115856">math:acos</a></td>
+        <td class="syntax"><var>unknown</var> <b>math:acos</b>(<var>num</var>)</td>
+      </tr>
+      <tr align="left">
+        <td valign="top"><a href="#id183021272016">math:asin</a></td>
+        <td class="syntax"><var>unknown</var> <b>math:asin</b>(<var>num</var>)</td>
+      </tr>
+      <tr align="left">
+        <td valign="top"><a href="#id183021190224">math:atan</a></td>
+        <td class="syntax"><var>unknown</var> <b>math:atan</b>(<var>num</var>)</td>
+      </tr>
+      <tr align="left">
+        <td valign="top"><a href="#id183021255888">math:atan2</a></td>
+        <td class="syntax"><var>unknown</var> <b>math:atan2</b>(<var>y</var>, <var>x</var>)</td>
+      </tr>
+      <tr align="left">
+        <td valign="top"><a href="#id183021133136">math:constant</a></td>
+        <td class="syntax"><var>unknown</var> <b>math:constant</b>(<var>name</var>, <var>precision</var>)</td>
+      </tr>
+      <tr align="left">
+        <td valign="top"><a href="#id183021254352">math:cos</a></td>
+        <td class="syntax"><var>unknown</var> <b>math:cos</b>(<var>num</var>)</td>
+      </tr>
+      <tr align="left">
+        <td valign="top"><a href="#id183021200208">math:exp</a></td>
+        <td class="syntax"><var>unknown</var> <b>math:exp</b>(<var>num</var>)</td>
+      </tr>
+      <tr align="left">
+        <td valign="top"><a href="#id183021202896">math:highest</a></td>
+        <td class="syntax"><var>unknown</var> <b>math:highest</b>(<var>nodeset</var>)</td>
+      </tr>
+      <tr align="left">
+        <td valign="top"><a href="#id183021286864">math:log</a></td>
+        <td class="syntax"><var>unknown</var> <b>math:log</b>(<var>num</var>)</td>
+      </tr>
+      <tr align="left">
+        <td valign="top"><a href="#id183021272912">math:lowest</a></td>
+        <td class="syntax"><var>unknown</var> <b>math:lowest</b>(<var>nodeset</var>)</td>
+      </tr>
+      <tr align="left">
+        <td valign="top"><a href="#id183021285840">math:max</a></td>
+        <td class="syntax"><var>unknown</var> <b>math:max</b>(<var>nodeset</var>)</td>
+      </tr>
+      <tr align="left">
+        <td valign="top"><a href="#id183021146832">math:min</a></td>
+        <td class="syntax"><var>unknown</var> <b>math:min</b>(<var>nodeset</var>)</td>
+      </tr>
+      <tr align="left">
+        <td valign="top"><a href="#id183021240016">math:power</a></td>
+        <td class="syntax"><var>unknown</var> <b>math:power</b>(<var>base</var>, <var>exponent</var>)</td>
+      </tr>
+      <tr align="left">
+        <td valign="top"><a href="#id183021218768">math:random</a></td>
+        <td class="syntax"><var>unknown</var> <b>math:random</b>()</td>
+      </tr>
+      <tr align="left">
+        <td valign="top"><a href="#id183021239504">math:sin</a></td>
+        <td class="syntax"><var>unknown</var> <b>math:sin</b>(<var>num</var>)</td>
+      </tr>
+      <tr align="left">
+        <td valign="top"><a href="#id183021236688">math:sqrt</a></td>
+        <td class="syntax"><var>unknown</var> <b>math:sqrt</b>(<var>num</var>)</td>
+      </tr>
+      <tr align="left">
+        <td valign="top"><a href="#id183021238480">math:tan</a></td>
+        <td class="syntax"><var>unknown</var> <b>math:tan</b>(<var>num</var>)</td>
+      </tr>
+      <tr align="left">
+        <td valign="top"><a href="#id183021287888">regexp:match</a></td>
+        <td class="syntax"><var>unknown</var> <b>regexp:match</b>(<var>source</var>, <var>pattern</var>, <var>flags</var>)</td>
+      </tr>
+      <tr align="left">
+        <td valign="top"><a href="#id183021169232">regexp:replace</a></td>
+        <td class="syntax"><var>unknown</var> <b>regexp:replace</b>(<var>source</var>, <var>pattern</var>, <var>flags</var>, <var>repl</var>)</td>
+      </tr>
+      <tr align="left">
+        <td valign="top"><a href="#id183021131856">regexp:test</a></td>
+        <td class="syntax"><var>unknown</var> <b>regexp:test</b>(<var>source</var>, <var>pattern</var>, <var>flags</var>)</td>
+      </tr>
+      <tr align="left">
+        <td valign="top"><a href="#id183021218128">set:difference</a></td>
+        <td class="syntax"><var>unknown</var> <b>set:difference</b>(<var>nodes1</var>, <var>nodes2</var>)</td>
+      </tr>
+      <tr align="left">
+        <td valign="top"><a href="#id183021255376">set:distinct</a></td>
+        <td class="syntax"><var>unknown</var> <b>set:distinct</b>(<var>nodeset</var>)</td>
+      </tr>
+      <tr align="left">
+        <td valign="top"><a href="#id183021131216">set:has-same-node</a></td>
+        <td class="syntax"><var>unknown</var> <b>set:has-same-node</b>(<var>ns1</var>, <var>ns2</var>)</td>
+      </tr>
+      <tr align="left">
+        <td valign="top"><a href="#id183021217488">set:intersection</a></td>
+        <td class="syntax"><var>unknown</var> <b>set:intersection</b>(<var>ns1</var>, <var>ns2</var>)</td>
+      </tr>
+      <tr align="left">
+        <td valign="top"><a href="#id183021146192">set:leading</a></td>
+        <td class="syntax"><var>unknown</var> <b>set:leading</b>(<var>ns1</var>, <var>ns2</var>)</td>
+      </tr>
+      <tr align="left">
+        <td valign="top"><a href="#id183021168592">set:trailing</a></td>
+        <td class="syntax"><var>unknown</var> <b>set:trailing</b>(<var>ns1</var>, <var>ns2</var>)</td>
+      </tr>
+      <tr align="left">
+        <td valign="top"><a href="#id183021237200">str:align</a></td>
+        <td class="syntax"><var>unknown</var> <b>str:align</b>(<var>target</var>, <var>padding</var>, <var>alignment</var>)</td>
+      </tr>
+      <tr align="left">
+        <td valign="top"><a href="#id183021286352">str:concat</a></td>
+        <td class="syntax"><var>unknown</var> <b>str:concat</b>(<var>nodeset</var>)</td>
+      </tr>
+      <tr align="left">
+        <td valign="top"><a href="#id183021253072">str:decode-uri</a></td>
+        <td class="syntax"><var>unknown</var> <b>str:decode-uri</b>(<var>uri</var>, <var>encoding</var>)</td>
+      </tr>
+      <tr align="left">
+        <td valign="top"><a href="#id183021271248">str:encode-uri</a></td>
+        <td class="syntax"><var>unknown</var> <b>str:encode-uri</b>(<var>uri</var>, <var>escapeReserved</var>, <var>encoding</var>)</td>
+      </tr>
+      <tr align="left">
+        <td valign="top"><a href="#id183021288656">str:padding</a></td>
+        <td class="syntax"><var>unknown</var> <b>str:padding</b>(<var>length</var>, <var>chars</var>)</td>
+      </tr>
+      <tr align="left">
+        <td valign="top"><a href="#id183021149008">str:replace</a></td>
+        <td class="syntax"><var>unknown</var> <b>str:replace</b>(<var>s</var>, <var>searchNodes</var>, <var>replNodes</var>)</td>
+      </tr>
+      <tr align="left">
+        <td valign="top"><a href="#id183021170128">str:split</a></td>
+        <td class="syntax"><var>unknown</var> <b>str:split</b>(<var>string</var>, <var>pattern</var>)</td>
+      </tr>
+      <tr align="left">
+        <td valign="top"><a href="#id183021216336">str:tokenize</a></td>
+        <td class="syntax"><var>unknown</var> <b>str:tokenize</b>(<var>string</var>, <var>delimiters</var>)</td>
+      </tr>
+    </table>
+  
+    <hr width="100%">
+    <h2>Elements</h2>
+    <table cellpadding="4">
+      <tr>
+        <th align="left">Element</th>
+        <th align="center">Syntax</th>
+      </tr>
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+  
+      <tr align="left">
+        <td valign="top"><a href="#id183021354064">exsl:document</a></td>
+        <td class="syntax">&lt;exsl:document
+          <br>&nbsp;&nbsp;<b>href</b> = { uri-reference }
+          <br>&nbsp;&nbsp;cdata-section-elements = { qnames }
+          <br>&nbsp;&nbsp;doctype-public = { string }
+          <br>&nbsp;&nbsp;doctype-system = { string }
+          <br>&nbsp;&nbsp;encoding = { string }
+          <br>&nbsp;&nbsp;f:overwrite-safeguard = { "yes" | "no" }
+          <br>&nbsp;&nbsp;f:utfbom = { "yes" | "no" }
+          <br>&nbsp;&nbsp;indent = { "yes" | "no" }
+          <br>&nbsp;&nbsp;media-type = { string }
+          <br>&nbsp;&nbsp;method = { qname }
+          <br>&nbsp;&nbsp;omit-xml-declaration = { "yes" | "no" }
+          <br>&nbsp;&nbsp;standalone = { "yes" | "no" }
+          <br>&nbsp;&nbsp;version = { nmtoken }
+          <br>&nbsp;&nbsp;&lt;!-- Content: <var>template</var> --&gt;
+          <br> /&gt;
+          <br>
+        </td>
+      </tr>
+      <tr align="left">
+        <td valign="top"><a href="#id183021331408">f:apply-imports</a></td>
+        <td class="syntax">&lt;f:apply-imports
+          <br>&nbsp;&nbsp;&lt;!-- Content: xsl:with-param* --&gt;
+          <br> /&gt;
+          <br>
+        </td>
+      </tr>
+      <tr align="left">
+        <td valign="top"><a href="#id183021319248">f:apply-templates</a></td>
+        <td class="syntax">&lt;f:apply-templates
+          <br>&nbsp;&nbsp;mode = { qname }
+          <br>&nbsp;&nbsp;select = expression
+          <br>&nbsp;&nbsp;&lt;!-- Content: (xsl:sort | xsl:with-param)* --&gt;
+          <br> /&gt;
+          <br>
+        </td>
+      </tr>
+      <tr align="left">
+        <td valign="top"><a href="#id183021370832">f:assign</a></td>
+        <td class="syntax">&lt;f:assign
+          <br>&nbsp;&nbsp;<b>name</b> = qname
+          <br>&nbsp;&nbsp;body-as-ns = { "yes" | "no" }
+          <br>&nbsp;&nbsp;select = expression
+          <br>&nbsp;&nbsp;&lt;!-- Content: <var>template</var> --&gt;
+          <br> /&gt;
+          <br>
+        </td>
+      </tr>
+      <tr align="left">
+        <td valign="top"><a href="#id183021382352">f:chain-to</a></td>
+        <td class="syntax">&lt;f:chain-to
+          <br>&nbsp;&nbsp;<b>href</b> = { uri-reference }
+          <br>&nbsp;&nbsp;&lt;!-- Content: xsl:with-param* --&gt;
+          <br> /&gt;
+          <br>
+        </td>
+      </tr>
+      <tr align="left">
+        <td valign="top"><a href="#id183021380304">f:create-index</a></td>
+        <td class="syntax">&lt;f:create-index
+          <br>&nbsp;&nbsp;<b>name</b> = { string }
+          <br>&nbsp;&nbsp;<b>select</b> = expression
+          <br>&nbsp;&nbsp;<b>use</b> = expression
+          <br>&nbsp;&nbsp;&lt;!-- Content: <var>template</var> --&gt;
+          <br> /&gt;
+          <br>
+        </td>
+      </tr>
+      <tr align="left">
+        <td valign="top"><a href="#id183021381456">f:dump-keys</a></td>
+        <td class="syntax">&lt;f:dump-keys
+          <br>&nbsp;&nbsp;force-update = { "yes" | "no" }
+          <br>&nbsp;&nbsp;raw = { "yes" | "no" }
+          <br>&nbsp;&nbsp;&lt;!-- Content: <var>template</var> --&gt;
+          <br> /&gt;
+          <br>
+        </td>
+      </tr>
+      <tr align="left">
+        <td valign="top"><a href="#id183021320144">f:dump-vars</a></td>
+        <td class="syntax">&lt;f:dump-vars
+          <br>&nbsp;&nbsp;raw = { "yes" | "no" }
+          <br>&nbsp;&nbsp;&lt;!-- Content: <var>template</var> --&gt;
+          <br> /&gt;
+          <br>
+        </td>
+      </tr>
+      <tr align="left">
+        <td valign="top"><a href="#id183021318864">f:gettext</a></td>
+        <td class="syntax">&lt;f:gettext
+          <br>&nbsp;&nbsp;&lt;!-- Content: <var>template</var> --&gt;
+          <br> /&gt;
+          <br>
+        </td>
+      </tr>
+      <tr align="left">
+        <td valign="top"><a href="#id183021353424">f:message-control</a></td>
+        <td class="syntax">&lt;f:message-control
+          <br>&nbsp;&nbsp;suppress = { "yes" | "no" }
+          <br>&nbsp;&nbsp;&lt;!-- Content: <var>template</var> --&gt;
+          <br> /&gt;
+          <br>
+        </td>
+      </tr>
+      <tr align="left">
+        <td valign="top"><a href="#id183021333968">f:output</a></td>
+        <td class="syntax">&lt;f:output
+          <br>&nbsp;&nbsp;cdata-section-elements = { qnames }
+          <br>&nbsp;&nbsp;doctype-public = { string }
+          <br>&nbsp;&nbsp;doctype-system = { string }
+          <br>&nbsp;&nbsp;encoding = { string }
+          <br>&nbsp;&nbsp;indent = { "yes" | "no" }
+          <br>&nbsp;&nbsp;media-type = { string }
+          <br>&nbsp;&nbsp;method = { qname }
+          <br>&nbsp;&nbsp;omit-xml-declaration = { "yes" | "no" }
+          <br>&nbsp;&nbsp;standalone = { "yes" | "no" }
+          <br>&nbsp;&nbsp;version = { nmtoken }
+          <br>&nbsp;&nbsp;&lt;!-- Content: <var>template</var> --&gt;
+          <br> /&gt;
+          <br>
+        </td>
+      </tr>
+      <tr align="left">
+        <td valign="top"><a href="#id183021331792">f:raw-text-output</a></td>
+        <td class="syntax">&lt;f:raw-text-output
+          <br>&nbsp;&nbsp;<b>select</b> = expression
+          <br>&nbsp;&nbsp;&lt;!-- Content: <var>template</var> --&gt;
+          <br> /&gt;
+          <br>
+        </td>
+      </tr>
+      <tr align="left">
+        <td valign="top"><a href="#id183021320784">f:replace</a></td>
+        <td class="syntax">&lt;f:replace
+          <br>&nbsp;&nbsp;<b>substring</b> = string-expression
+          <br>&nbsp;&nbsp;string = string-expression
+          <br>&nbsp;&nbsp;&lt;!-- Content: <var>template</var> --&gt;
+          <br> /&gt;
+          <br>
+        </td>
+      </tr>
+      <tr align="left">
+        <td valign="top"><a href="#id183021333072">f:setup-translations</a></td>
+        <td class="syntax">&lt;f:setup-translations
+          <br>&nbsp;&nbsp;<b>domain</b> = { string }
+          <br>&nbsp;&nbsp;localedir = { string }
+          <br>&nbsp;&nbsp;&lt;!-- Content: <var>template</var> --&gt;
+          <br> /&gt;
+          <br>
+        </td>
+      </tr>
+      <tr align="left">
+        <td valign="top"><a href="#id183021321680">f:uri-to-element</a></td>
+        <td class="syntax">&lt;f:uri-to-element
+          <br>&nbsp;&nbsp;<b>default-name</b> = { qname }
+          <br>&nbsp;&nbsp;<b>uri</b> = { uri-reference }
+          <br>&nbsp;&nbsp;default-namespace = { uri-reference }
+          <br>&nbsp;&nbsp;use-attribute-sets = qnames
+          <br>&nbsp;&nbsp;&lt;!-- Content: <var>template</var> --&gt;
+          <br> /&gt;
+          <br>
+        </td>
+      </tr>
+      <tr align="left">
+        <td valign="top"><a href="#id183021370192">func:function</a></td>
+        <td class="syntax">&lt;func:function
+          <br>&nbsp;&nbsp;<b>name</b> = qname-but-not-ncname
+          <br>&nbsp;&nbsp;&lt;!-- Content: (xsl:param*, <var>template</var>) --&gt;
+          <br> /&gt;
+          <br>
+        </td>
+      </tr>
+      <tr align="left">
+        <td valign="top"><a href="#id183021332432">func:result</a></td>
+        <td class="syntax">&lt;func:result
+          <br>&nbsp;&nbsp;select = expression
+          <br>&nbsp;&nbsp;&lt;!-- Content: <var>template</var> --&gt;
+          <br> /&gt;
+          <br>
+        </td>
+      </tr>
+    </table>
+
+    <hr width="100%">
+    <h2>Functions</h2>
+    <div class="detail"><a name="id183021190736"></a>
+      <h3>Function - date:add</h3>
+      <h4>Function Syntax</h4>
+      <div class="syntax"><var>unknown</var> <b>date:add</b>(<var>dateTime</var>, <var>duration</var>)</div>
+      <p>The date:add function returns the result of adding a duration to a dateTime.
+
+Implements version 2.</p>
+    </div>
+    <div class="detail"><a name="id183021149776"></a>
+      <h3>Function - date:add-duration</h3>
+      <h4>Function Syntax</h4>
+      <div class="syntax"><var>unknown</var> <b>date:add-duration</b>(<var>duration1</var>, <var>duration2</var>)</div>
+      <p>The date:add-duration function returns the duration resulting from adding
+two durations together.
+
+Implements version 2.</p>
+    </div>
+    <div class="detail"><a name="id183021189712"></a>
+      <h3>Function - date:date</h3>
+      <h4>Function Syntax</h4>
+      <div class="syntax"><var>unknown</var> <b>date:date</b>(<var>dateTime</var>)</div>
+      <p>The date:date function returns the date portion of the dateTime
+argument if present, or of the current local date/time. The
+argument can be given in xs:dateTime or xs:date format.
+
+Implements version 2.</p>
+    </div>
+    <div class="detail"><a name="id183021272528"></a>
+      <h3>Function - date:date-time</h3>
+      <h4>Function Syntax</h4>
+      <div class="syntax"><var>unknown</var> <b>date:date-time</b>()</div>
+      <p>The date:date-time function returns the current local date/time as an
+ISO 8601 formatted date/time string, with a time zone.
+
+Implements version 1.</p>
+    </div>
+    <div class="detail"><a name="id183021114704"></a>
+      <h3>Function - date:day-abbreviation</h3>
+      <h4>Function Syntax</h4>
+      <div class="syntax"><var>unknown</var> <b>date:day-abbreviation</b>(<var>dateTime</var>)</div>
+      <p>The date:day-abbreviation function returns the English abbreviation
+for the day name of a given date.
+
+Implements version 2.</p>
+    </div>
+    <div class="detail"><a name="id183021287376"></a>
+      <h3>Function - date:day-in-month</h3>
+      <h4>Function Syntax</h4>
+      <div class="syntax"><var>unknown</var> <b>date:day-in-month</b>(<var>dateTime</var>)</div>
+      <p>The date:day-in-month function returns the numerical date, i.e.
+27 for the 27th of March.
+
+Implements version 2.</p>
+    </div>
+    <div class="detail"><a name="id183021130704"></a>
+      <h3>Function - date:day-in-week</h3>
+      <h4>Function Syntax</h4>
+      <div class="syntax"><var>unknown</var> <b>date:day-in-week</b>(<var>dateTime</var>)</div>
+      <p>The date:day-in-week function returns a number representing the
+weekday of a given date. Sunday is 1, Saturday is 7.
+
+Implements version 2.</p>
+    </div>
+    <div class="detail"><a name="id183021256528"></a>
+      <h3>Function - date:day-in-year</h3>
+      <h4>Function Syntax</h4>
+      <div class="syntax"><var>unknown</var> <b>date:day-in-year</b>(<var>dateTime</var>)</div>
+      <p>The date:day-in-year function returns a number representing
+the position of a date in the year.
+
+Implements version 2.</p>
+    </div>
+    <div class="detail"><a name="id183021199696"></a>
+      <h3>Function - date:day-name</h3>
+      <h4>Function Syntax</h4>
+      <div class="syntax"><var>unknown</var> <b>date:day-name</b>(<var>dateTime</var>)</div>
+      <p>The date:day-name function returns the full English day name of
+a given date.
+
+Implements version 2.</p>
+    </div>
+    <div class="detail"><a name="id183021238992"></a>
+      <h3>Function - date:day-of-week-in-month</h3>
+      <h4>Function Syntax</h4>
+      <div class="syntax"><var>unknown</var> <b>date:day-of-week-in-month</b>(<var>dateTime</var>)</div>
+      <p>The date:day-of-week-in-month function returns the day-of-the-week
+in a month of a date as a number (e.g. 3 for the 3rd Tuesday in May).
+
+Implements version 2.</p>
+    </div>
+    <div class="detail"><a name="id183021202256"></a>
+      <h3>Function - date:difference</h3>
+      <h4>Function Syntax</h4>
+      <div class="syntax"><var>unknown</var> <b>date:difference</b>(<var>start</var>, <var>end</var>)</div>
+      <p>The date:difference function returns the difference between the first date
+and the second date as a duration in string form.
+
+Implements version 1.</p>
+    </div>
+    <div class="detail"><a name="id183021219152"></a>
+      <h3>Function - date:duration</h3>
+      <h4>Function Syntax</h4>
+      <div class="syntax"><var>unknown</var> <b>date:duration</b>(<var>seconds</var>)</div>
+      <p>The date:duration function returns a duration string representing the
+number of seconds specified by the argument string. If no argument is
+given, then the result of calling date:seconds without any arguments is
+used as a default argument.
+
+Implements version 1.</p>
+    </div>
+    <div class="detail"><a name="id183021115216"></a>
+      <h3>Function - date:format-date</h3>
+      <h4>Function Syntax</h4>
+      <div class="syntax"><var>unknown</var> <b>date:format-date</b>(<var>dateTime</var>, <var>pattern</var>)</div>
+      <p>The date:format-date function formats a date/time according to a pattern.
+
+The first argument to date:format-date specifies the date/time to be
+formatted. It must be right or left-truncated date/time strings in one of
+the formats defined in XML Schema Part 2: Datatypes.  The permitted
+formats are as follows: xs:dateTime, xs:date, xs:time, xs:gYearMonth,
+xs:gYear, xs:gMonthDay, xs:gMonth and xs:gDay.
+
+The second argument is a string that gives the format pattern used to
+format the date. The format pattern must be in the syntax specified by
+the JDK 1.1 SimpleDateFormat class. The format pattern string is
+interpreted as described for the JDK 1.1 SimpleDateFormat class.
+
+Implements version 2.</p>
+    </div>
+    <div class="detail"><a name="id183021200720"></a>
+      <h3>Function - date:hour-in-day</h3>
+      <h4>Function Syntax</h4>
+      <div class="syntax"><var>unknown</var> <b>date:hour-in-day</b>(<var>dateTime</var>)</div>
+      <p>The date:hour-in-date function returns the hour portion of a date-
+time string as an integer.
+
+Implements version 2.</p>
+    </div>
+    <div class="detail"><a name="id183021215824"></a>
+      <h3>Function - date:leap-year</h3>
+      <h4>Function Syntax</h4>
+      <div class="syntax"><var>unknown</var> <b>date:leap-year</b>(<var>dateTime</var>)</div>
+      <p>The date:leap-year function returns true if the year argument
+(defaults to current year) is a leap year, false otherwise.
+
+Implements version 1.</p>
+    </div>
+    <div class="detail"><a name="id183021166928"></a>
+      <h3>Function - date:minute-in-hour</h3>
+      <h4>Function Syntax</h4>
+      <div class="syntax"><var>unknown</var> <b>date:minute-in-hour</b>(<var>dateTime</var>)</div>
+      <p>The date:minute-in-hour function returns the minute portion of a
+date-time string as an integer.
+
+Implements version 2.</p>
+    </div>
+    <div class="detail"><a name="id183021201744"></a>
+      <h3>Function - date:month-abbreviation</h3>
+      <h4>Function Syntax</h4>
+      <div class="syntax"><var>unknown</var> <b>date:month-abbreviation</b>(<var>dateTime</var>)</div>
+      <p>The date:month-abbreviation function returns the abbreviation
+of the month of a date.
+
+Implements version 2.</p>
+    </div>
+    <div class="detail"><a name="id183021189200"></a>
+      <h3>Function - date:month-in-year</h3>
+      <h4>Function Syntax</h4>
+      <div class="syntax"><var>unknown</var> <b>date:month-in-year</b>(<var>dateTime</var>)</div>
+      <p>The date:month-in-year function returns the month portion of
+the dateTime argument (defaults to current month) as an integer.
+
+Implements version 2.</p>
+    </div>
+    <div class="detail"><a name="id183021168080"></a>
+      <h3>Function - date:month-name</h3>
+      <h4>Function Syntax</h4>
+      <div class="syntax"><var>unknown</var> <b>date:month-name</b>(<var>dateTime</var>)</div>
+      <p>The date:month-name function returns the full English name
+of the month portion of a date.
+
+Implements version 2.</p>
+    </div>
+    <div class="detail"><a name="id183021254864"></a>
+      <h3>Function - date:second-in-minute</h3>
+      <h4>Function Syntax</h4>
+      <div class="syntax"><var>unknown</var> <b>date:second-in-minute</b>(<var>dateTime</var>)</div>
+      <p>The date:second-in-minute function returns the seconds portion
+of a date-time string as an integer.
+
+Implements version 2.</p>
+    </div>
+    <div class="detail"><a name="id183021116368"></a>
+      <h3>Function - date:seconds</h3>
+      <h4>Function Syntax</h4>
+      <div class="syntax"><var>unknown</var> <b>date:seconds</b>(<var>string</var>)</div>
+      <p>The date:seconds function returns the number of seconds specified by the
+argument string. If no argument is given, then the current local
+date/time, as returned by date:date-time is used as a default argument.
+
+Implements version 1.</p>
+    </div>
+    <div class="detail"><a name="id183021148496"></a>
+      <h3>Function - date:sum</h3>
+      <h4>Function Syntax</h4>
+      <div class="syntax"><var>unknown</var> <b>date:sum</b>(<var>nodeset</var>)</div>
+      <p>The date:sum function adds a set of durations together. The string values
+of the nodes in the node set passed as an argument are interpreted as
+durations and added together as if using the date:add-duration function.
+
+Implements version 1.</p>
+    </div>
+    <div class="detail"><a name="id183021114192"></a>
+      <h3>Function - date:time</h3>
+      <h4>Function Syntax</h4>
+      <div class="syntax"><var>unknown</var> <b>date:time</b>(<var>dateTime</var>)</div>
+      <p>The date:time function returns the time portion of the dateTime
+argument if present, or of the current local date/time. The
+argument can be given in xs:dateTime or xs:time format.
+
+Implements version 2.</p>
+    </div>
+    <div class="detail"><a name="id183021216976"></a>
+      <h3>Function - date:week-in-month</h3>
+      <h4>Function Syntax</h4>
+      <div class="syntax"><var>unknown</var> <b>date:week-in-month</b>(<var>dateTime</var>)</div>
+      <p>The date:week-in-month function returns the week in a month of a date as
+a number. If no argument is given, then the current local date/time, as
+returned by date:date-time is used the default argument. For the purposes
+of numbering, the first day of the month is in week 1 and new weeks begin
+on a Monday (so the first and last weeks in a month will often have less
+than 7 days in them).
+
+Implements version 3.</p>
+    </div>
+    <div class="detail"><a name="id183021219664"></a>
+      <h3>Function - date:week-in-year</h3>
+      <h4>Function Syntax</h4>
+      <div class="syntax"><var>unknown</var> <b>date:week-in-year</b>(<var>dateTime</var>)</div>
+      <p>The date:week-in-year function returns a number representing
+the week of the year a date is in.
+
+Implements version 3.</p>
+    </div>
+    <div class="detail"><a name="id183021132624"></a>
+      <h3>Function - date:year</h3>
+      <h4>Function Syntax</h4>
+      <div class="syntax"><var>unknown</var> <b>date:year</b>(<var>dateTime</var>)</div>
+      <p>The date:year function returns the year portion of the
+dateTime supplied, or of the current year, as an integer.
+
+Implements version 2.</p>
+    </div>
+    <div class="detail"><a name="id183021167440"></a>
+      <h3>Function - dyn:closure</h3>
+      <h4>Function Syntax</h4>
+      <div class="syntax"><var>unknown</var> <b>dyn:closure</b>(<var>nodeset</var>, <var>string</var>)</div>
+      <p>The dyn:closure function creates a node set resulting from transitive
+closure of evaluating the expression passed as the second argument on
+each of the nodes passed as the first argument, then on the node set
+resulting from that and so on until no more nodes are found.
+
+http://www.exslt.org/dyn/functions/closure/index.html</p>
+    </div>
+    <div class="detail"><a name="id183021188048"></a>
+      <h3>Function - dyn:evaluate</h3>
+      <h4>Function Syntax</h4>
+      <div class="syntax"><var>unknown</var> <b>dyn:evaluate</b>(<var>string</var>)</div>
+      <p>The dyn:evaluate function evaluates a string as an XPath expression and
+returns the resulting value, which might be a boolean, number, string,
+node set, result tree fragment or external object. The sole argument is
+the string to be evaluated. If the string is an invalid XPath expression,
+an empty node-set is returned.
+
+http://www.exslt.org/dyn/functions/evaluate/index.html</p>
+    </div>
+    <div class="detail"><a name="id183021253712"></a>
+      <h3>Function - dyn:map</h3>
+      <h4>Function Syntax</h4>
+      <div class="syntax"><var>unknown</var> <b>dyn:map</b>(<var>nodeset</var>, <var>string</var>)</div>
+      <p>The dyn:map function evaluates the expression passed as the second
+argument for each of the nodes passed as the first argument, and returns
+a node set of those values.
+
+http://www.exslt.org/dyn/functions/map/index.html</p>
+    </div>
+    <div class="detail"><a name="id183021270608"></a>
+      <h3>Function - dyn:max</h3>
+      <h4>Function Syntax</h4>
+      <div class="syntax"><var>unknown</var> <b>dyn:max</b>(<var>nodeset</var>, <var>string</var>)</div>
+      <p>The dyn:max function calculates the maximum value for the nodes passed as
+the first argument, where the value of each node is calculated dynamically
+using an XPath expression passed as a string as the second argument.
+
+http://www.exslt.org/dyn/functions/max/index.html</p>
+    </div>
+    <div class="detail"><a name="id183021269968"></a>
+      <h3>Function - dyn:min</h3>
+      <h4>Function Syntax</h4>
+      <div class="syntax"><var>unknown</var> <b>dyn:min</b>(<var>nodeset</var>, <var>string</var>)</div>
+      <p>The dyn:min function calculates the minimum value for the nodes passed as
+the first argument, where the value of each node is calculated dynamically
+using an XPath expression passed as a string as the second argument.
+
+http://www.exslt.org/dyn/functions/min/index.html</p>
+    </div>
+    <div class="detail"><a name="id183021289296"></a>
+      <h3>Function - dyn:sum</h3>
+      <h4>Function Syntax</h4>
+      <div class="syntax"><var>unknown</var> <b>dyn:sum</b>(<var>nodeset</var>, <var>string</var>)</div>
+      <p>The dyn:sum function calculates the sum for the nodes passed as the first
+argument, where the value of each node is calculated dynamically using an
+XPath expression passed as a string as the second argument.
+
+http://www.exslt.org/dyn/functions/sum/index.html</p>
+    </div>
+    <div class="detail"><a name="id183021147344"></a>
+      <h3>Function - exsl:node-set</h3>
+      <h4>Function Syntax</h4>
+      <div class="syntax"><var>unknown</var> <b>exsl:node-set</b>(<var>obj</var>)</div>
+      <p>The purpose of the exsl:node-set function is to return a node-set from a
+result tree fragment. If the argument is a node-set already, it is simply
+returned as is. If the argument to exsl:node-set is not a node-set or a
+result tree fragment, then it is converted to a string as by the string()
+function, and the function returns a node-set consisting of a single text
+node with that string value.
+
+The exsl:node-set function does not have side-effects: the result tree
+fragment used as an argument is still available as a result tree fragment
+after it is passed as an argument to exsl:node-set.</p>
+    </div>
+    <div class="detail"><a name="id183021237968"></a>
+      <h3>Function - exsl:object-type</h3>
+      <h4>Function Syntax</h4>
+      <div class="syntax"><var>unknown</var> <b>exsl:object-type</b>(<var>obj</var>)</div>
+      <p>The exsl:object-type function returns a string giving the type of the
+object passed as the argument. The possible object types are: 'string',
+'number', 'boolean', 'node-set', 'RTF' or 'external'.</p>
+    </div>
+    <div class="detail"><a name="id183021116880"></a>
+      <h3>Function - f:doc-as-string</h3>
+      <h4>Function Syntax</h4>
+      <div class="syntax"><var>unknown</var> <b>f:doc-as-string</b>(<var>obj</var>, <var>encoding</var>)</div>
+      <p>Retrieves a document, similar to the document() function, but
+returns the document as an XPath string object rather than as a
+node-set.
+
+Security note: if the associated URI resolver allows file: URLs,
+this extension could be used to read arbitrary system files</p>
+    </div>
+    <div class="detail"><a name="id183021129936"></a>
+      <h3>Function - f:key</h3>
+      <h4>Function Syntax</h4>
+      <div class="syntax"><var>unknown</var> <b>f:key</b>(<var>qname</var>, <var>keyList</var>, <var>realContextNode</var>)</div>
+      <p>Query an XSLT key, but allow the user to override the context node for
+purposes of determining which source document to check.
+realContextNode is a node set from which the first node is extracted
+And used as the context node</p>
+    </div>
+    <div class="detail"><a name="id183021113552"></a>
+      <h3>Function - f:lookup</h3>
+      <h4>Function Syntax</h4>
+      <div class="syntax"><var>unknown</var> <b>f:lookup</b>(<var>name</var>, <var>key</var>)</div>
+      <p>f:lookup() queries an index as defined by f:create-index.</p>
+    </div>
+    <div class="detail"><a name="id183021201232"></a>
+      <h3>Function - f:map</h3>
+      <h4>Function Syntax</h4>
+      <div class="syntax"><var>unknown</var> <b>f:map</b>(<var>funcname</var>)</div>
+      <p>Apply the function serially over the given node sets.
+In iteration i, the function is passed N parameters
+where N is the number of argument node sets.  Each
+parameter is a node set of size 1, whose node is
+the ith node of the corresponding argument node set.
+The return value is a node set consisting of a series
+of result-tree nodes, each of which is a text node
+whose value is the string value of the result of the
+ith function invocation.
+Warning: this function uses the implied ordering of the node set
+Based on its implementation as a Python list.  But in reality
+There is no reliable ordering of XPath node sets.
+Therefore this function is not recommended for use with
+more than one node set parameter.</p>
+    </div>
+    <div class="detail"><a name="id183021147856"></a>
+      <h3>Function - f:search-re</h3>
+      <h4>Function Syntax</h4>
+      <div class="syntax"><var>unknown</var> <b>f:search-re</b>(<var>pattern</var>, <var>arg</var>)</div>
+      <p>Do a regular expression search against the argument (i.e. get all matches)</p>
+    </div>
+    <div class="detail"><a name="id183021187280"></a>
+      <h3>Function - f:serialize-xml</h3>
+      <h4>Function Syntax</h4>
+      <div class="syntax"><var>unknown</var> <b>f:serialize-xml</b>(<var>nodeset</var>, <var>method</var>, <var>omitxmldecl</var>)</div>
+      <p>f:serialize-xml() takes a node set and turns it into a string
+representing the serialization of the node set, obtained
+by concatenating the serialization of each node in the
+node set in document order.
+
+See also: XPath (not XSLT) extension function f:parse-xml()</p>
+    </div>
+    <div class="detail"><a name="id183021188560"></a>
+      <h3>Function - f:split</h3>
+      <h4>Function Syntax</h4>
+      <div class="syntax"><var>unknown</var> <b>f:split</b>(<var>arg</var>, <var>delim</var>)</div>
+      <p>DEPRECATED.
+Equivalent to EXSLT's str:split().
+Splits a string according to a sub-string and return a node set
+of elements nodes, each of which is named "Split" and contains the
+split text
+For example f:split('A,B,C,') returns a node set of "Split" nodes
+having text nodes with values "A", "B" and "C"
+arg - converted to a string, is the string to split up
+delim - the delimiter upon which to split, defaults to " "</p>
+    </div>
+    <div class="detail"><a name="id183021269456"></a>
+      <h3>Function - math:abs</h3>
+      <h4>Function Syntax</h4>
+      <div class="syntax"><var>unknown</var> <b>math:abs</b>(<var>num</var>)</div>
+      <p>The math:abs function returns the absolute value of a number.</p>
+    </div>
+    <div class="detail"><a name="id183021115856"></a>
+      <h3>Function - math:acos</h3>
+      <h4>Function Syntax</h4>
+      <div class="syntax"><var>unknown</var> <b>math:acos</b>(<var>num</var>)</div>
+      <p>The math:acos function returns the arccosine value of a number.</p>
+    </div>
+    <div class="detail"><a name="id183021272016"></a>
+      <h3>Function - math:asin</h3>
+      <h4>Function Syntax</h4>
+      <div class="syntax"><var>unknown</var> <b>math:asin</b>(<var>num</var>)</div>
+      <p>The math:asin function returns the arcsine value of a number.</p>
+    </div>
+    <div class="detail"><a name="id183021190224"></a>
+      <h3>Function - math:atan</h3>
+      <h4>Function Syntax</h4>
+      <div class="syntax"><var>unknown</var> <b>math:atan</b>(<var>num</var>)</div>
+      <p>The math:atan function returns the arctangent value of a number.</p>
+    </div>
+    <div class="detail"><a name="id183021255888"></a>
+      <h3>Function - math:atan2</h3>
+      <h4>Function Syntax</h4>
+      <div class="syntax"><var>unknown</var> <b>math:atan2</b>(<var>y</var>, <var>x</var>)</div>
+      <p>The math:atan2 function returns the angle ( in radians ) from the X axis
+to a point (y,x).</p>
+    </div>
+    <div class="detail"><a name="id183021133136"></a>
+      <h3>Function - math:constant</h3>
+      <h4>Function Syntax</h4>
+      <div class="syntax"><var>unknown</var> <b>math:constant</b>(<var>name</var>, <var>precision</var>)</div>
+      <p>The math:constant function returns the specified constant to a set precision.</p>
+    </div>
+    <div class="detail"><a name="id183021254352"></a>
+      <h3>Function - math:cos</h3>
+      <h4>Function Syntax</h4>
+      <div class="syntax"><var>unknown</var> <b>math:cos</b>(<var>num</var>)</div>
+      <p>The math:cos function returns cosine of the passed argument.</p>
+    </div>
+    <div class="detail"><a name="id183021200208"></a>
+      <h3>Function - math:exp</h3>
+      <h4>Function Syntax</h4>
+      <div class="syntax"><var>unknown</var> <b>math:exp</b>(<var>num</var>)</div>
+      <p>The math:exp function returns e (the base of natural logarithms) raised to
+a power.</p>
+    </div>
+    <div class="detail"><a name="id183021202896"></a>
+      <h3>Function - math:highest</h3>
+      <h4>Function Syntax</h4>
+      <div class="syntax"><var>unknown</var> <b>math:highest</b>(<var>nodeset</var>)</div>
+      <p>The math:highest function returns the nodes in the node set whose value is
+the maximum value for the node set. The maximum value for the node set is
+the same as the value as calculated by math:max. A node has this maximum
+value if the result of converting its string value to a number as if by the
+number function is equal to the maximum value, where the equality
+comparison is defined as a numerical comparison using the = operator.</p>
+    </div>
+    <div class="detail"><a name="id183021286864"></a>
+      <h3>Function - math:log</h3>
+      <h4>Function Syntax</h4>
+      <div class="syntax"><var>unknown</var> <b>math:log</b>(<var>num</var>)</div>
+      <p>The math:log function returns the natural logarithm of a number.</p>
+    </div>
+    <div class="detail"><a name="id183021272912"></a>
+      <h3>Function - math:lowest</h3>
+      <h4>Function Syntax</h4>
+      <div class="syntax"><var>unknown</var> <b>math:lowest</b>(<var>nodeset</var>)</div>
+      <p>The math:lowest function returns the nodes in the node set whose value is
+the minimum value for the node set. The minimum value for the node set is
+the same as the value as calculated by math:min. A node has this minimum
+value if the result of converting its string value to a number as if by the
+number function is equal to the minimum value, where the equality
+comparison is defined as a numerical comparison using the = operator.</p>
+    </div>
+    <div class="detail"><a name="id183021285840"></a>
+      <h3>Function - math:max</h3>
+      <h4>Function Syntax</h4>
+      <div class="syntax"><var>unknown</var> <b>math:max</b>(<var>nodeset</var>)</div>
+      <p>The math:max function returns the maximum value of the nodes passed as
+the argument.</p>
+    </div>
+    <div class="detail"><a name="id183021146832"></a>
+      <h3>Function - math:min</h3>
+      <h4>Function Syntax</h4>
+      <div class="syntax"><var>unknown</var> <b>math:min</b>(<var>nodeset</var>)</div>
+      <p>The math:min function returns the minimum value of the nodes passed as
+the argument.</p>
+    </div>
+    <div class="detail"><a name="id183021240016"></a>
+      <h3>Function - math:power</h3>
+      <h4>Function Syntax</h4>
+      <div class="syntax"><var>unknown</var> <b>math:power</b>(<var>base</var>, <var>exponent</var>)</div>
+      <p>The math:power function returns the value of a base expression taken to
+a specified power.</p>
+    </div>
+    <div class="detail"><a name="id183021218768"></a>
+      <h3>Function - math:random</h3>
+      <h4>Function Syntax</h4>
+      <div class="syntax"><var>unknown</var> <b>math:random</b>()</div>
+      <p>The math:random function returns a random number from 0 to 1.</p>
+    </div>
+    <div class="detail"><a name="id183021239504"></a>
+      <h3>Function - math:sin</h3>
+      <h4>Function Syntax</h4>
+      <div class="syntax"><var>unknown</var> <b>math:sin</b>(<var>num</var>)</div>
+      <p>The math:sin function returns the sine of the number.</p>
+    </div>
+    <div class="detail"><a name="id183021236688"></a>
+      <h3>Function - math:sqrt</h3>
+      <h4>Function Syntax</h4>
+      <div class="syntax"><var>unknown</var> <b>math:sqrt</b>(<var>num</var>)</div>
+      <p>The math:sqrt function returns the square root of a number.</p>
+    </div>
+    <div class="detail"><a name="id183021238480"></a>
+      <h3>Function - math:tan</h3>
+      <h4>Function Syntax</h4>
+      <div class="syntax"><var>unknown</var> <b>math:tan</b>(<var>num</var>)</div>
+      <p>The math:tan function returns the tangent of the number passed as
+an argument.</p>
+    </div>
+    <div class="detail"><a name="id183021287888"></a>
+      <h3>Function - regexp:match</h3>
+      <h4>Function Syntax</h4>
+      <div class="syntax"><var>unknown</var> <b>regexp:match</b>(<var>source</var>, <var>pattern</var>, <var>flags</var>)</div>
+      <p>The regexp:match function lets you get hold of the substrings of the
+string passed as the first argument that match the captured parts of
+the regular expression passed as the second argument.
+
+The second argument is a regular expression that follows the Javascript
+regular expression syntax.
+
+The third argument is a string consisting of character flags to be used
+by the match. If a character is present then that flag is true. The
+flags are:
+  g: global match - the submatches from all the matches in the string
+                    are returned. If this character is not present, then
+                    only the submatches from the first match in the
+                    string are returned.
+  i: case insensitive - the regular expression is treated as case
+                        insensitive. If this character is not present,
+                        then the regular expression is case sensitive.
+
+The regexp:match function returns a node set of 'match' elements, each of
+whose string value is equal to a portion of the first argument string
+that was captured by the regular expression. If the match is not global,
+the first match element has a value equal to the portion of the string
+matched by the entire regular expression.</p>
+    </div>
+    <div class="detail"><a name="id183021169232"></a>
+      <h3>Function - regexp:replace</h3>
+      <h4>Function Syntax</h4>
+      <div class="syntax"><var>unknown</var> <b>regexp:replace</b>(<var>source</var>, <var>pattern</var>, <var>flags</var>, <var>repl</var>)</div>
+      <p>The regexp:replace function replaces the parts of a string that match
+a regular expression with another string.
+
+The first argument is the string to be matched and replaced. The second
+argument is a regular expression that follows the Javascript regular
+expression syntax. The fourth argument is the string to replace the
+matched parts of the string.
+
+The third argument is a string consisting of character flags to be used
+by the match. If a character is present then that flag is true. The flags
+are:
+  g: global replace - all occurrences of the regular expression in the
+                      string are replaced. If this character is not
+                      present, then only the first occurrence of the
+                      regular expression is replaced.
+  i: case insensitive - the regular expression is treated as case
+                        insensitive. If this character is not present,
+                        then the regular expression is case sensitive.</p>
+    </div>
+    <div class="detail"><a name="id183021131856"></a>
+      <h3>Function - regexp:test</h3>
+      <h4>Function Syntax</h4>
+      <div class="syntax"><var>unknown</var> <b>regexp:test</b>(<var>source</var>, <var>pattern</var>, <var>flags</var>)</div>
+      <p>The regexp:test function returns true if the string given as the first
+argument matches the regular expression given as the second argument.
+
+The second argument is a regular expression that follows the Javascript
+regular expression syntax.
+
+The third argument is a string consisting of flags to be used by the test.
+If a character is present then that flag is true. The flags are:
+  g: global test - has no effect on this function, but is retained for
+                   consistency with regexp:match and regexp:replace.
+  i: case insensitive - the regular expression is treated as case
+                        insensitive. If this character is not present,
+                        then the regular expression is case sensitive.</p>
+    </div>
+    <div class="detail"><a name="id183021218128"></a>
+      <h3>Function - set:difference</h3>
+      <h4>Function Syntax</h4>
+      <div class="syntax"><var>unknown</var> <b>set:difference</b>(<var>nodes1</var>, <var>nodes2</var>)</div>
+      <p>The set:difference function returns the difference between two node
+sets - those nodes that are in the node set passed as the first argument
+that are not in the node set passed as the second argument.</p>
+    </div>
+    <div class="detail"><a name="id183021255376"></a>
+      <h3>Function - set:distinct</h3>
+      <h4>Function Syntax</h4>
+      <div class="syntax"><var>unknown</var> <b>set:distinct</b>(<var>nodeset</var>)</div>
+      <p>The set:distinct function returns a subset of the nodes contained in the
+node-set NS passed as the first argument. Specifically, it selects a node
+N if there is no node in NS that has the same string value as N, and that
+precedes N in document order.</p>
+    </div>
+    <div class="detail"><a name="id183021131216"></a>
+      <h3>Function - set:has-same-node</h3>
+      <h4>Function Syntax</h4>
+      <div class="syntax"><var>unknown</var> <b>set:has-same-node</b>(<var>ns1</var>, <var>ns2</var>)</div>
+      <p>The set:has-same-node function returns true if the node set passed as the
+first argument shares any nodes with the node set passed as the second
+argument. If there are no nodes that are in both node sets, then it
+returns false.</p>
+    </div>
+    <div class="detail"><a name="id183021217488"></a>
+      <h3>Function - set:intersection</h3>
+      <h4>Function Syntax</h4>
+      <div class="syntax"><var>unknown</var> <b>set:intersection</b>(<var>ns1</var>, <var>ns2</var>)</div>
+      <p>The set:intersection function returns a node set comprising the nodes that
+are within both the node sets passed as arguments to it.</p>
+    </div>
+    <div class="detail"><a name="id183021146192"></a>
+      <h3>Function - set:leading</h3>
+      <h4>Function Syntax</h4>
+      <div class="syntax"><var>unknown</var> <b>set:leading</b>(<var>ns1</var>, <var>ns2</var>)</div>
+      <p>The set:leading function returns the nodes in the node set passed as the
+first argument that precede, in document order, the first node in the node
+set passed as the second argument. If the first node in the second node
+set is not contained in the first node set, then an empty node set is
+returned. If the second node set is empty, then the first node set is
+returned.</p>
+    </div>
+    <div class="detail"><a name="id183021168592"></a>
+      <h3>Function - set:trailing</h3>
+      <h4>Function Syntax</h4>
+      <div class="syntax"><var>unknown</var> <b>set:trailing</b>(<var>ns1</var>, <var>ns2</var>)</div>
+      <p>The set:trailing function returns the nodes in the node set passed as the
+first argument that follow, in document order, the first node in the node
+set passed as the second argument. If the first node in the second node
+set is not contained in the first node set, then an empty node set is
+returned. If the second node set is empty, then the first node set is
+returned.</p>
+    </div>
+    <div class="detail"><a name="id183021237200"></a>
+      <h3>Function - str:align</h3>
+      <h4>Function Syntax</h4>
+      <div class="syntax"><var>unknown</var> <b>str:align</b>(<var>target</var>, <var>padding</var>, <var>alignment</var>)</div>
+      <p>The str:align function aligns a string within another string.
+
+See http://exslt.org/str/functions/align/str.align.html for further
+explanation.</p>
+    </div>
+    <div class="detail"><a name="id183021286352"></a>
+      <h3>Function - str:concat</h3>
+      <h4>Function Syntax</h4>
+      <div class="syntax"><var>unknown</var> <b>str:concat</b>(<var>nodeset</var>)</div>
+      <p>The str:concat function takes a node set and returns the concatenation of
+the string values of the nodes in that node set. If the node set is empty,
+it returns an empty string.</p>
+    </div>
+    <div class="detail"><a name="id183021253072"></a>
+      <h3>Function - str:decode-uri</h3>
+      <h4>Function Syntax</h4>
+      <div class="syntax"><var>unknown</var> <b>str:decode-uri</b>(<var>uri</var>, <var>encoding</var>)</div>
+      <p>The str:decode-uri function decodes a percent-encoded string, such as
+one would find in a URI.</p>
+    </div>
+    <div class="detail"><a name="id183021271248"></a>
+      <h3>Function - str:encode-uri</h3>
+      <h4>Function Syntax</h4>
+      <div class="syntax"><var>unknown</var> <b>str:encode-uri</b>(<var>uri</var>, <var>escapeReserved</var>, <var>encoding</var>)</div>
+      <p>The str:encode-uri function percent-encodes a string for embedding in a URI.
+The second argument is a boolean indicating whether to escape reserved characters;
+if true, the given string can be a URI already, with just some of its characters
+needing to be escaped (not recommended, but users who don't understand the nuances
+of the URI syntax tend to prefer it over assembling a URI piece-by-piece).</p>
+    </div>
+    <div class="detail"><a name="id183021288656"></a>
+      <h3>Function - str:padding</h3>
+      <h4>Function Syntax</h4>
+      <div class="syntax"><var>unknown</var> <b>str:padding</b>(<var>length</var>, <var>chars</var>)</div>
+      <p>The str:padding function creates a padding string of a certain length.
+
+The second argument gives a string to be used to create the padding.
+This string is repeated as many times as is necessary to create a string
+of the length specified by the first argument; if the string is more than
+a character long, it may have to be truncated to produce the required
+length. If no second argument is specified, it defaults to a space (' ').</p>
+    </div>
+    <div class="detail"><a name="id183021149008"></a>
+      <h3>Function - str:replace</h3>
+      <h4>Function Syntax</h4>
+      <div class="syntax"><var>unknown</var> <b>str:replace</b>(<var>s</var>, <var>searchNodes</var>, <var>replNodes</var>)</div>
+      <p>The str:replace function converts a string to a node-set, with
+each instance of a substring from a given list (obtained from the
+string-values of nodes in the second argument) replaced by the
+node at the corresponding position of the node-set given as the
+third argument. Unreplaced substrings become text nodes.
+
+The second and third arguments can be any type of object; if
+either is not a node-set, it is treated as if it were a node-set
+of just one text node, formed from the object's string-value.
+
+Attribute and namespace nodes in the replacement set are
+erroneous but are treated as empty text nodes.
+
+All occurrences of the longest substrings are replaced first,
+and once a replacement is made, that span of the original string
+is no longer eligible for future replacements.
+
+An empty search string matches between every character of the
+original string.
+
+See http://exslt.org/str/functions/replace/str.replace.html for details.</p>
+    </div>
+    <div class="detail"><a name="id183021170128"></a>
+      <h3>Function - str:split</h3>
+      <h4>Function Syntax</h4>
+      <div class="syntax"><var>unknown</var> <b>str:split</b>(<var>string</var>, <var>pattern</var>)</div>
+      <p>The str:split function splits up a string and returns a node set of
+token elements, each containing one token from the string.
+
+The first argument is the string to be split. The second argument is a
+pattern string (default=' '). The string given by the first argument is
+split at any occurrence of this pattern. An empty string pattern will
+result in a split on every character in the string.</p>
+    </div>
+    <div class="detail"><a name="id183021216336"></a>
+      <h3>Function - str:tokenize</h3>
+      <h4>Function Syntax</h4>
+      <div class="syntax"><var>unknown</var> <b>str:tokenize</b>(<var>string</var>, <var>delimiters</var>)</div>
+      <p>The str:tokenize function splits up a string and returns a node set of
+'token' elements, each containing one token from the string.
+
+The first argument is the string to be tokenized. The second argument
+is a string consisting of a number of characters. Each character in
+this string is taken as a delimiting character. The string given by the
+first argument is split at any occurrence of any of these characters.</p>
+    </div>
+    <hr width="100%">
+    <h2>Elements</h2>
+    <div class="detail"><a name="id183021354064"></a>
+      <h3>Element - exsl:document</h3>
+      <h4>Element Syntax</h4>
+      <div class="syntax">&lt;exsl:document
+        <br>&nbsp;&nbsp;<b>href</b> = { uri-reference }
+        <br>&nbsp;&nbsp;cdata-section-elements = { qnames }
+        <br>&nbsp;&nbsp;doctype-public = { string }
+        <br>&nbsp;&nbsp;doctype-system = { string }
+        <br>&nbsp;&nbsp;encoding = { string }
+        <br>&nbsp;&nbsp;f:overwrite-safeguard = { "yes" | "no" }
+        <br>&nbsp;&nbsp;f:utfbom = { "yes" | "no" }
+        <br>&nbsp;&nbsp;indent = { "yes" | "no" }
+        <br>&nbsp;&nbsp;media-type = { string }
+        <br>&nbsp;&nbsp;method = { qname }
+        <br>&nbsp;&nbsp;omit-xml-declaration = { "yes" | "no" }
+        <br>&nbsp;&nbsp;standalone = { "yes" | "no" }
+        <br>&nbsp;&nbsp;version = { nmtoken }
+        <br>&nbsp;&nbsp;&lt;!-- Content: <var>template</var> --&gt;
+        <br> /&gt;
+        <br>
+      </div>
+      <p>For the basic specification, see:
+http://www.exslt.org/exsl/elements/document/index.html
+The only URI scheme supported by 4Suite currently is 'file:'
+Security note:
+As a precaution, if you try to overwrite an existing file, it will be
+saved to a temporary file (there will be a warning with the file name).
+If this this precaution fails, the instruction will abort.  You can
+override this precaution, always allowing the function to overwrite
+a document by using the f:overwrite-okay extension attribute.</p>
+    </div>
+    <div class="detail"><a name="id183021331408"></a>
+      <h3>Element - f:apply-imports</h3>
+      <h4>Element Syntax</h4>
+      <div class="syntax">&lt;f:apply-imports
+        <br>&nbsp;&nbsp;&lt;!-- Content: xsl:with-param* --&gt;
+        <br> /&gt;
+        <br>
+      </div>
+      <p>The f:apply-imports element is an extension of the xsl:apply-imports
+element. It differs from xsl:apply-imports in the following way:
+The element accepts xsl:with-param children that designate
+parameters that will be passed to the applied templates.</p>
+    </div>
+    <div class="detail"><a name="id183021319248"></a>
+      <h3>Element - f:apply-templates</h3>
+      <h4>Element Syntax</h4>
+      <div class="syntax">&lt;f:apply-templates
+        <br>&nbsp;&nbsp;mode = { qname }
+        <br>&nbsp;&nbsp;select = expression
+        <br>&nbsp;&nbsp;&lt;!-- Content: (xsl:sort | xsl:with-param)* --&gt;
+        <br> /&gt;
+        <br>
+      </div>
+      <p>The f:apply-templates element is an extension of the xsl:apply-templates
+element. It differs from xsl:apply-templates in the following way:
+The value of the mode attribute is an attribute value template
+rather than a static string. Thus, the mode can be computed at
+run time.</p>
+    </div>
+    <div class="detail"><a name="id183021370832"></a>
+      <h3>Element - f:assign</h3>
+      <h4>Element Syntax</h4>
+      <div class="syntax">&lt;f:assign
+        <br>&nbsp;&nbsp;<b>name</b> = qname
+        <br>&nbsp;&nbsp;body-as-ns = { "yes" | "no" }
+        <br>&nbsp;&nbsp;select = expression
+        <br>&nbsp;&nbsp;&lt;!-- Content: <var>template</var> --&gt;
+        <br> /&gt;
+        <br>
+      </div>
+      <p>The f:assign element works like xsl:variable, but forces both a local
+and a global variable binding, replacing any other in-scope bindings
+having the same expanded-name. Thus, it can be used to circumvent XSLT's
+restriction on variables not being reassignable. However, its use is not
+recommended, for reasons explained below.
+
+As with xsl:variable, the name of the variable is given in the mandatory
+name attribute, and the new value may be given either by an expression in
+the select attribute, or by instantiating the content of the element.
+
+If no select attribute is given, then a body-as-ns attribute may be used
+to indicate whether to assign the variable to the contents as a node-set
+(value 'yes') or as a result tree fragment (default, or value 'no').
+In either case, be aware that the node-set or result tree fragment will
+have a root node.
+
+Note that reassignment of variables is generally never actually needed.
+Before using f:assign, read the XSL FAQ or ask on xsl-list if there is a
+better, more portable way to solve your problem.
+
+XSLT is designed as a language that is free of side-effects, which is
+why assignment is not allowed and variables have very specific scope.
+When variable assignment is allowed, certain optimizations in the XSLT
+processor become impossible. Also, there are some circumstances in which
+the order of execution may not be quite what you expect, in which case
+f:assign may show anomalous behavior. It does not work predictably when
+called from within a tail-recursive template, for example.
+
+That said, f:assign can be a convenient way to create a node-set from
+a result tree fragment in XSLT 1.0. The proper way to do this is with
+EXSLT: &lt;xsl:variable name="rtf"&gt;&lt;foo/&gt;&lt;/xsl:variable&gt;
+&lt;xsl:variable name="ns" select="exsl:node-set($rtf)" xmlns:exsl="http://exslt.org/common"/&gt;
+but f:assign can do it in one step:
+&lt;f:assign name="ns" body-as-ns="yes"&gt;&lt;foo/&gt;&lt;/f:assign&gt;</p>
+    </div>
+    <div class="detail"><a name="id183021382352"></a>
+      <h3>Element - f:chain-to</h3>
+      <h4>Element Syntax</h4>
+      <div class="syntax">&lt;f:chain-to
+        <br>&nbsp;&nbsp;<b>href</b> = { uri-reference }
+        <br>&nbsp;&nbsp;&lt;!-- Content: xsl:with-param* --&gt;
+        <br> /&gt;
+        <br>
+      </div>
+      <p>f:chain-to tells the processor to apply the output of the current
+stylsheet as the input of another stylesheet, establishing a chain of
+transforms.  The next stylesheet in the chain is specified using an
+AVT, which allows for dynamically constructed chains.
+
+Children can be xsl:with-param elements, in which case the specified
+values are passed on to the next stylesheet as top-level parameters
+
+Warning: if the href attribute is blank, it will chain back to this
+same stylesheet and could lead to an infinite loop.
+FIXME: Trap this condition</p>
+    </div>
+    <div class="detail"><a name="id183021380304"></a>
+      <h3>Element - f:create-index</h3>
+      <h4>Element Syntax</h4>
+      <div class="syntax">&lt;f:create-index
+        <br>&nbsp;&nbsp;<b>name</b> = { string }
+        <br>&nbsp;&nbsp;<b>select</b> = expression
+        <br>&nbsp;&nbsp;<b>use</b> = expression
+        <br>&nbsp;&nbsp;&lt;!-- Content: <var>template</var> --&gt;
+        <br> /&gt;
+        <br>
+      </div>
+      <p>f:create-index allows one to create an arbitrary key at run time using
+any node data.  It is similar to xsl:key, except that it is computed
+on demand at run-time, and uses an XPath selection rather than an XSLT
+match, which gives more flexibility over what is indexed.
+
+These keys can be accessed using the extension function f:lookup().
+
+Avoid making a dynamic index have the same name as a proper xsl:key.
+In particular this will confuse tools such as the &lt;f:dump-keys/&gt;
+diagnostic extension.</p>
+    </div>
+    <div class="detail"><a name="id183021381456"></a>
+      <h3>Element - f:dump-keys</h3>
+      <h4>Element Syntax</h4>
+      <div class="syntax">&lt;f:dump-keys
+        <br>&nbsp;&nbsp;force-update = { "yes" | "no" }
+        <br>&nbsp;&nbsp;raw = { "yes" | "no" }
+        <br>&nbsp;&nbsp;&lt;!-- Content: <var>template</var> --&gt;
+        <br> /&gt;
+        <br>
+      </div>
+      <p></p>
+    </div>
+    <div class="detail"><a name="id183021320144"></a>
+      <h3>Element - f:dump-vars</h3>
+      <h4>Element Syntax</h4>
+      <div class="syntax">&lt;f:dump-vars
+        <br>&nbsp;&nbsp;raw = { "yes" | "no" }
+        <br>&nbsp;&nbsp;&lt;!-- Content: <var>template</var> --&gt;
+        <br> /&gt;
+        <br>
+      </div>
+      <p></p>
+    </div>
+    <div class="detail"><a name="id183021318864"></a>
+      <h3>Element - f:gettext</h3>
+      <h4>Element Syntax</h4>
+      <div class="syntax">&lt;f:gettext
+        <br>&nbsp;&nbsp;&lt;!-- Content: <var>template</var> --&gt;
+        <br> /&gt;
+        <br>
+      </div>
+      <p></p>
+    </div>
+    <div class="detail"><a name="id183021353424"></a>
+      <h3>Element - f:message-control</h3>
+      <h4>Element Syntax</h4>
+      <div class="syntax">&lt;f:message-control
+        <br>&nbsp;&nbsp;suppress = { "yes" | "no" }
+        <br>&nbsp;&nbsp;&lt;!-- Content: <var>template</var> --&gt;
+        <br> /&gt;
+        <br>
+      </div>
+      <p>f:msg-control provides, as a side effect, context-sensitive control
+over whether messages (i.e., those produced by xsl:message) and
+warnings are output by the processor.</p>
+    </div>
+    <div class="detail"><a name="id183021333968"></a>
+      <h3>Element - f:output</h3>
+      <h4>Element Syntax</h4>
+      <div class="syntax">&lt;f:output
+        <br>&nbsp;&nbsp;cdata-section-elements = { qnames }
+        <br>&nbsp;&nbsp;doctype-public = { string }
+        <br>&nbsp;&nbsp;doctype-system = { string }
+        <br>&nbsp;&nbsp;encoding = { string }
+        <br>&nbsp;&nbsp;indent = { "yes" | "no" }
+        <br>&nbsp;&nbsp;media-type = { string }
+        <br>&nbsp;&nbsp;method = { qname }
+        <br>&nbsp;&nbsp;omit-xml-declaration = { "yes" | "no" }
+        <br>&nbsp;&nbsp;standalone = { "yes" | "no" }
+        <br>&nbsp;&nbsp;version = { nmtoken }
+        <br>&nbsp;&nbsp;&lt;!-- Content: <var>template</var> --&gt;
+        <br> /&gt;
+        <br>
+      </div>
+      <p>f:output is similar to xsl:output, but it allows you to compute the
+output parameters dynamically (as attribute value templates). Unlike
+xsl:output, this element is not expected to be empty; the output
+parameters apply only to the serialization of the element's content.</p>
+    </div>
+    <div class="detail"><a name="id183021331792"></a>
+      <h3>Element - f:raw-text-output</h3>
+      <h4>Element Syntax</h4>
+      <div class="syntax">&lt;f:raw-text-output
+        <br>&nbsp;&nbsp;<b>select</b> = expression
+        <br>&nbsp;&nbsp;&lt;!-- Content: <var>template</var> --&gt;
+        <br> /&gt;
+        <br>
+      </div>
+      <p>Given a foreign XPath object, f:raw-text-output creates a text node
+based on the object, just like xsl:value-of with
+disable-output-escaping="yes". Unlike xsl:value-of, however, this
+element does not use the string-value of the object; it instead
+feeds the object directly to the current output writer. Therefore,
+unless a custom output writer is used, the object must be a Python
+Unicode string.
+
+The intent is to provide a way to serialize a Unicode string that may
+contain characters that are not permitted in an XPath string object.
+For example, another extension can convert raw binary data to a
+Unicode string, and then this extension can reserialize that string
+through the XSLT output stream, without risk of losing any data due
+to XPath's restrictions on string content.</p>
+    </div>
+    <div class="detail"><a name="id183021320784"></a>
+      <h3>Element - f:replace</h3>
+      <h4>Element Syntax</h4>
+      <div class="syntax">&lt;f:replace
+        <br>&nbsp;&nbsp;<b>substring</b> = string-expression
+        <br>&nbsp;&nbsp;string = string-expression
+        <br>&nbsp;&nbsp;&lt;!-- Content: <var>template</var> --&gt;
+        <br> /&gt;
+        <br>
+      </div>
+      <p>f:replace performs a search and replace on a string, placing the results
+in the output.  The content is treated as a template.  The string value
+of the output from this template is the replacement string.
+All instances of the string given by the 'substring' attribute
+are replaced with the replacement string.</p>
+    </div>
+    <div class="detail"><a name="id183021333072"></a>
+      <h3>Element - f:setup-translations</h3>
+      <h4>Element Syntax</h4>
+      <div class="syntax">&lt;f:setup-translations
+        <br>&nbsp;&nbsp;<b>domain</b> = { string }
+        <br>&nbsp;&nbsp;localedir = { string }
+        <br>&nbsp;&nbsp;&lt;!-- Content: <var>template</var> --&gt;
+        <br> /&gt;
+        <br>
+      </div>
+      <p></p>
+    </div>
+    <div class="detail"><a name="id183021321680"></a>
+      <h3>Element - f:uri-to-element</h3>
+      <h4>Element Syntax</h4>
+      <div class="syntax">&lt;f:uri-to-element
+        <br>&nbsp;&nbsp;<b>default-name</b> = { qname }
+        <br>&nbsp;&nbsp;<b>uri</b> = { uri-reference }
+        <br>&nbsp;&nbsp;default-namespace = { uri-reference }
+        <br>&nbsp;&nbsp;use-attribute-sets = qnames
+        <br>&nbsp;&nbsp;&lt;!-- Content: <var>template</var> --&gt;
+        <br> /&gt;
+        <br>
+      </div>
+      <p>Extends xsl:element by deriving the constructed element's QName and
+namespace from the supplied URI reference. The URI reference is
+first resolved to absolute form. Then, if the resulting URI begins
+with an in-scope namespace, that namespace will be used as if it had
+been supplied as the 'namespace' attribute to xsl:element, and the
+remainder of the URI will be combined with a prefix from the
+in-scope namespace bindings and used as if supplied as the 'name'
+attribute to xsl:element.
+
+Otherwise, the supplied default-name and default-namespace will be
+used, effecting the same result as calling xsl:element with these
+values.
+
+The intent is to allow an RDF resource, as identified by a URI with
+a fragment component, to be easily converted into an element.</p>
+    </div>
+    <div class="detail"><a name="id183021370192"></a>
+      <h3>Element - func:function</h3>
+      <h4>Element Syntax</h4>
+      <div class="syntax">&lt;func:function
+        <br>&nbsp;&nbsp;<b>name</b> = qname-but-not-ncname
+        <br>&nbsp;&nbsp;&lt;!-- Content: (xsl:param*, <var>template</var>) --&gt;
+        <br> /&gt;
+        <br>
+      </div>
+      <p></p>
+    </div>
+    <div class="detail"><a name="id183021332432"></a>
+      <h3>Element - func:result</h3>
+      <h4>Element Syntax</h4>
+      <div class="syntax">&lt;func:result
+        <br>&nbsp;&nbsp;select = expression
+        <br>&nbsp;&nbsp;&lt;!-- Content: <var>template</var> --&gt;
+        <br> /&gt;
+        <br>
+      </div>
+      <p>When an func:result element is instantiated, during the
+instantiation of a func:function element, the function returns
+with its value.</p>
+    </div>
+  </body>
+</html>

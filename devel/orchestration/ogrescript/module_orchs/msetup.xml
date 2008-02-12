@@ -1,0 +1,386 @@
+<define procedure="Stage_msetup" ARG_0="int">
+    <properties file="${mypath}/module_orchs/msetup.properties"/>
+    <env/>
+    <properties sysprops="true"/>
+    <declare name="appbase" string="${user.dir}"/>
+    <declare name="globus_location" string="${env.GLOBUS_LOCATION}"/>
+    <send>
+        <progress-event message="Begin Stage_msetup">
+            <header-property name="some-special-id" value="${ensemble.id}-Main-Begin-Stage_msetup"/>
+        </progress-event>
+    </send>
+    <echo stdout="true" message=" - Begin Stage_msetup"/>
+    <if>
+        <equals first="${platform}" second="TG"/>
+        <!-- prepare directory for this job -->
+        <echo stdout="true" message=" -- file:jobs/${uid} ... "/>
+<!--
+            <delete dir="file:${appbase}/jobs/${uid}">
+                <configuration>
+                    <property name="delete-fail-on-error" value="false" type="boolean"/>
+                </configuration>
+            </delete>
+-->
+        <delete dir="file:${appbase}/jobs/${uid}">
+            <configuration>
+                <property name="delete-fail-on-error" value="false" type="boolean"/>
+            </configuration>
+        </delete>
+        <mkdir uri="file:${appbase}/jobs/${uid}"/>
+        <!-- write out the dir_struct.xml -->
+        <echo stdout="true" message=" -- Write ${uid}.xml ... "/>
+<!--
+            <delete dir="file:${appbase}/jobs/${uid}/${uid}.tmp">
+                <configuration>
+                    <property name="delete-fail-on-error" value="false" type="boolean"/>
+                </configuration>
+            </delete>
+-->
+        <delete dir="file:${appbase}/jobs/${uid}/${uid}.tmp">
+            <configuration>
+                <property name="delete-fail-on-error" value="false" type="boolean"/>
+            </configuration>
+        </delete>
+        <write-segments path="${appbase}/jobs/${uid}/${uid}.tmp">
+            <segment lineBreaks="1"> &lt;project name=&quot;DESpipesetup&quot; default=&quot;Stage_setup&quot; basedir=&quot;.&quot; &gt;</segment>
+            <segment lineBreaks="2">   &lt;target name=&quot;Stage_setup&quot; description=&quot;make some directories&quot;&gt;</segment>
+            <segment lineBreaks="1">&lt;property file=&quot;${uid}.properties&quot;/&gt;</segment>
+        </write-segments>
+        <stream-monitor-process execution-dir=".">
+            <command-line>${catpath} ${appbase}/jobs/${uid}/${uid}.tmp ../module_orchs/dir_struct.xml</command-line>
+            <out-monitor>
+                <trigger>
+                    <filter pattern=".*"/>
+                    <actions>
+                        <stream-file-write-action path="${appbase}/jobs/${uid}/${uid}.xml" append="false"/>
+                    </actions>
+                </trigger>
+            </out-monitor>
+        </stream-monitor-process>
+<!--
+            <delete dir="file:${appbase}/jobs/${uid}/${uid}.tmp">
+                <configuration>
+                    <property name="delete-fail-on-error" value="false" type="boolean"/>
+                </configuration>
+            </delete>
+-->
+        <delete dir="file:${appbase}/jobs/${uid}/${uid}.tmp">
+            <configuration>
+                <property name="delete-fail-on-error" value="false" type="boolean"/>
+            </configuration>
+        </delete>
+        <!-- write out the dir_struct.properties -->
+        <echo stdout="true" message=" -- Write ${uid}.properties ... "/>
+<!--
+            <delete dir="file:${appbase}/jobs/${uid}/${uid}.properties">
+                <configuration>
+                    <property name="delete-fail-on-error" value="false" type="boolean"/>
+                </configuration>
+            </delete>
+-->
+        <delete dir="file:${appbase}/jobs/${uid}/${uid}.properties">
+            <configuration>
+                <property name="delete-fail-on-error" value="false" type="boolean"/>
+            </configuration>
+        </delete>
+        <write-segments path="${appbase}/jobs/${uid}/${uid}.properties">
+            <segment lineBreaks="1">ensemble.id=${ensemble.id}</segment>
+            <segment lineBreaks="1">nite=${nite}</segment>
+            <segment lineBreaks="1">uid=${uid}</segment>
+            <segment lineBreaks="1">ccdstart=${ccd.start}</segment>
+            <segment lineBreaks="1">ccdstop=${ccd.stop}</segment>
+            <segment lineBreaks="1">binhost=${binhost}</segment>
+            <segment lineBreaks="1">etchost=${etchost}</segment>
+            <segment lineBreaks="1">binpath=${mypath}/bin_DES</segment>
+            <segment lineBreaks="1">etcpath=${mypath}/etc</segment>
+            <segment lineBreaks="1">chmodpath=/bin/chmod</segment>
+            <segment lineBreaks="1">cppath=/bin/cp</segment>
+            <segment lineBreaks="1">lspath=/bin/ls</segment>
+            <segment lineBreaks="1">platform=${platform}</segment>
+        </write-segments>
+        <echo stdout="true" message=" -- Done: jobs/${uid}/${uid}.properties written."/>
+        <!-- sent out the dir_struct to teragrid -->
+        <echo stdout="true" message=" -- GridFTP ${uid}.xml and .properties across ... "/>
+        <declare name="srcxfile" string="${appbase}/jobs/${uid}/${uid}.xml"/>
+        <declare name="srcpfile" string="${appbase}/jobs/${uid}/${uid}.properties"/>
+<!--
+            <declare name="targetdir" string="${targetprot}://${tgrid_server_${site}}${tgrid_homepath_${site}}"/>
+-->
+        <declare name="targetdir" string="file:${tgrid_homepath_${site}}"/>
+<!--
+         <copy sourceDir="file:${srcxfile}" target="${targetdir}" />
+         <copy sourceDir="file:${srcpfile}" target="${targetdir}" />
+-->
+        <copy>
+            <source base="file:${srcxfile}/">
+                <include>*</include>
+            </source>
+            <target>file:${targetdir}</target>
+        </copy>
+        <copy>
+            <source base="file:${srcpfile}/">
+                <include>*</include>
+            </source>
+            <target>file:${targetdir}</target>
+        </copy>
+<!--
+   <copy taskName="test_copy">
+        <targetGroup targetURI="${targetdir}">
+               <pattern base="dir:/${srcxfile}"/>
+        </targetGroup>
+   </copy>
+
+   <copy taskName="test_copy" verbose="true">
+        <targetGroup targetURI="${targetdir}">
+               <pattern base="file:${srcpfil}">
+               </pattern>
+        </targetGroup>
+   </copy>
+-->
+        <echo stdout="true" message=" -- ${uid} setup files sent"/>
+        <!-- condor job-submission -->
+        <declare name="currentuser" string="${user.name}"/>
+        <declare name="condorsubmit" string="${globus_location}/bin/condor_submit"/>
+        <declare name="condorq" string="${globus_location}/bin/condor_q"/>
+        <declare name="mxc" string="maxCputime=30"/>
+        <declare name="mxw" string="maxWallTime=30"/>
+        <declare name="fastio" string="host_types=fastio"/>
+        <declare name="line1" string="universe=globus"/>
+        <declare name="line2" string="executable=${tgrid_ogre_${site}}/bin/launch"/>
+        <declare name="line2B" string="globusrsl = (${mxw})(max_memory=${maxmem})(environment=(OGRE_HOME ${tgrid_ogre_${site}}) (JAVA_HOME ${tgrid_java_${site}}))"/>
+        <declare name="line4" string="transfer_executable=false"/>
+        <declare name="line5" string="globusscheduler=${tgrid_jobserver_${site}}/${jobmanager_msetup}"/>
+        <declare name="line9" string="remote_initialdir=${tgrid_homepath_${site}}"/>
+        <declare name="line10" string="queue"/>
+        <echo stdout="true" message=" -- condor_g command: ${condorsubmit}"/>
+        <echo stdout="true" message=" -- Stage_EntryExecute  : Writing ${uid}_msetup.condor "/>
+        <declare name="line3" string="arguments=${uid}.xml Stage_setup"/>
+        <declare name="line6" string="output=${appbase}/jobs/${uid}/msetup_condor.out"/>
+        <declare name="line7" string="error=${appbase}/jobs/${uid}/msetup_condor.err"/>
+        <declare name="line8" string="log=${appbase}/jobs/${uid}/msetup_condor.log"/>
+        <write-segments path="${appbase}/jobs/${uid}/msetup.condor">
+            <segment lineBreaks="1">${line1}</segment>
+            <segment lineBreaks="1">${line2}</segment>
+            <segment lineBreaks="1">${line2B}</segment>
+            <segment lineBreaks="1">${line3}</segment>
+            <segment lineBreaks="1">${line4}</segment>
+            <segment lineBreaks="1">${line5}</segment>
+            <segment lineBreaks="1">${line6}</segment>
+            <segment lineBreaks="1">${line7}</segment>
+            <segment lineBreaks="1">${line8}</segment>
+            <segment lineBreaks="1">${line9}</segment>
+            <segment lineBreaks="1">${line10}</segment>
+        </write-segments>
+        <echo stdout="true" message=" -- ${uid}/msetup.condor file written. "/>
+        <!-- Getting the current number of condor jobs -->
+        <stream-monitor-process execution-dir="${appbase}">
+            <command-line>${condorq}</command-line>
+            <out-monitor>
+                <trigger>
+                    <filter pattern="${currentuser}"/>
+                    <actions>
+                        <stream-file-write-action path="${appbase}/jobs/${uid}/condorq.out" append="false"/>
+                    </actions>
+                </trigger>
+            </out-monitor>
+            <err-monitor>
+                <trigger>
+                    <filter pattern=".*"/>
+                    <actions>
+                        <stream-file-write-action path="${appbase}/jobs/${uid}/condorq.err" append="false"/>
+                    </actions>
+                </trigger>
+            </err-monitor>
+        </stream-monitor-process>
+        <sleep time="1000"/>
+        <declare name="stacklevel" int="6"/>
+        <declare name="lineCount" int="0"/>
+        <line-count path="${appbase}/jobs/${uid}/condorq.out">
+            <return-value defaultName="lineCount"/>
+        </line-count>
+        <echo stdout="true" message=" -- Submit the msetup condor job... "/>
+        <echo stdout="true" message=" -- ${condorsubmit} ${appbase}/jobs/${uid}/msetup.condor... "/>
+        <stream-monitor-process execution-dir="${appbase}">
+            <command-line>${condorsubmit} ${appbase}/jobs/${uid}/msetup.condor</command-line>
+            <out-monitor>
+                <trigger>
+                    <filter pattern=".*"/>
+                    <actions>
+                        <stream-file-write-action path="${appbase}/jobs/${uid}/msetup.out" append="false"/>
+                    </actions>
+                </trigger>
+            </out-monitor>
+            <err-monitor>
+                <trigger>
+                    <filter pattern=".*"/>
+                    <actions>
+                        <stream-file-write-action path="${appbase}/jobs/${uid}/msetup.err" append="false"/>
+                    </actions>
+                </trigger>
+            </err-monitor>
+        </stream-monitor-process>
+        <sleep time="10000"/>
+        <echo stdout="true" message=" -- Submitted. Query condor queue ... "/>
+        <declare name="linecount" int="500"/>
+        <declare name="j" int="0"/>
+        <for var="j" from="0" condition="$E{( ( ${j} &lt; 800 ) &amp;&amp; ( ${linecount} &gt; ${stacklevel} ) )}">
+            <sleep time="5000"/>
+            <stream-monitor-process execution-dir="${appbase}">
+                <command-line>${condorq}</command-line>
+                <out-monitor>
+                    <trigger>
+                        <filter pattern="${currentuser}"/>
+                        <actions>
+                            <stream-file-write-action path="${appbase}/jobs/${uid}/condorq.out" append="false"/>
+                        </actions>
+                    </trigger>
+                </out-monitor>
+                <err-monitor>
+                    <trigger>
+                        <filter pattern=".*"/>
+                        <actions>
+                            <stream-file-write-action path="${appbase}/jobs/${uid}/condorq.err" append="false"/>
+                        </actions>
+                    </trigger>
+                </err-monitor>
+            </stream-monitor-process>
+            <sleep time="1000"/>
+            <declare name="lineCount" int="0"/>
+            <line-count path="${appbase}/jobs/${uid}/condorq.out">
+                <return-value defaultName="lineCount" assignedName="linecount"/>
+            </line-count>
+            <echo stdout="true" message="      -- Condor stack has ${linecount} jobs (${j})"/>
+        </for>
+        <else>
+            <echo stdout="true" message=" -- Stage_msetup - Creating directory workspaces ... "/>
+            <echo stdout="true" message=" -- file:${workplace}/${uid}"/>
+            <mkdir uri="file:${workplace}/${uid}"/>
+<!--
+               <delete dir="dir:${workplace}/${uid}/bin">
+                   <configuration>
+                       <property name="delete-fail-on-error" value="false" type="boolean"/>
+                   </configuration>
+               </delete>
+-->
+            <delete dir="file:${workplace}/${uid}">
+                <configuration>
+                    <property name="delete-fail-on-error" value="false" type="boolean"/>
+                </configuration>
+            </delete>
+            <mkdir uri="file:${workplace}/${uid}/bin"/>
+<!--
+               <delete dir="dir:${workplace}/${uid}/etc">
+                   <configuration>
+                       <property name="delete-fail-on-error" value="false" type="boolean"/>
+                   </configuration>
+               </delete>
+-->
+            <delete dir="file:${workplace}/${uid}/etc">
+                <configuration>
+                    <property name="delete-fail-on-error" value="false" type="boolean"/>
+                </configuration>
+            </delete>
+            <mkdir uri="file:${workplace}/${uid}/etc"/>
+<!--
+               <delete dir="dir:${workplace}/${uid}/xml">
+                   <configuration>
+                       <property name="delete-fail-on-error" value="false" type="boolean"/>
+                   </configuration>
+               </delete>
+-->
+            <delete dir="file:${workplace}/${uid}/xml">
+                <configuration>
+                    <property name="delete-fail-on-error" value="false" type="boolean"/>
+                </configuration>
+            </delete>
+            <mkdir uri="file:${workplace}/${uid}/xml"/>
+            <mkdir uri="file:${workplace}/${uid}/data"/>
+            <mkdir uri="file:${workplace}/${uid}/data/${nite}"/>
+            <mkdir uri="file:${workplace}/${uid}/data/${nite}/g"/>
+            <mkdir uri="file:${workplace}/${uid}/data/${nite}/r"/>
+            <mkdir uri="file:${workplace}/${uid}/data/${nite}/i"/>
+            <mkdir uri="file:${workplace}/${uid}/data/${nite}/z"/>
+            <mkdir uri="file:${workplace}/${uid}/data/${nite}/log"/>
+            <mkdir uri="file:${workplace}/${uid}/data/${nite}/cal"/>
+            <mkdir uri="file:${workplace}/${uid}/data/${nite}/cal/bias"/>
+            <mkdir uri="file:${workplace}/${uid}/data/${nite}/cal/bpm"/>
+            <mkdir uri="file:${workplace}/${uid}/data/${nite}/cal/flat_g"/>
+            <mkdir uri="file:${workplace}/${uid}/data/${nite}/cal/flat_i"/>
+            <mkdir uri="file:${workplace}/${uid}/data/${nite}/cal/flat_r"/>
+            <mkdir uri="file:${workplace}/${uid}/data/${nite}/cal/flat_z"/>
+            <echo stdout="true" message=" -- file:${workplace}/${uid}"/>
+            <echo stdout="true" message=" -- /bin/rm ${workplace}/${uid}/data/${nite}/raw"/>
+<!--
+               <stream-monitor-process execution-dir=".">
+                  <command-line>/bin/rm ${workplace}/${uid}/data/${nite}/raw</command-line>
+               </stream-monitor-process>
+-->
+            <delete dir="file:${workplace}/${uid}/data/${nite}/raw">
+                <configuration>
+                    <property name="delete-fail-on-error" value="false" type="boolean"/>
+                </configuration>
+            </delete>
+            <echo stdout="true" message=" -- /bin/ln -s ${BCS_archpath}/${nite}/raw ${workplace}/${uid}/data/${nite}"/>
+            <stream-monitor-process execution-dir=".">
+                <command-line>/bin/ln -s ${BCS_archpath}/${nite}/raw ${workplace}/${uid}/data/${nite}</command-line>
+            </stream-monitor-process>
+            <echo stdout="true" message=" -- ${chmodpath} -R g+w ${workplace}/${uid}"/>
+            <stream-monitor-process execution-dir=".">
+                <command-line>${chmodpath} -R g+w ${workplace}/${uid}</command-line>
+            </stream-monitor-process>
+            <echo stdout="true" message=" -- file:${workplace}/${uid}"/>
+            <echo stdout="true" message=" -- ${workplace}/${uid}/etc: ${mypath}/etc"/>
+            <copy>
+                <source base="file:${mypath}/etc/">
+                    <include>*</include>
+                </source>
+                <target>file:${workplace}/${uid}/etc</target>
+            </copy>
+<!--
+<copy sourceDir="file:${mypath}/etc" target="file:${workplace}/${uid}/etc">
+</copy>
+-->
+            <echo stdout="true" message=" -- ${mypath}/bin_BCS    ${workplace}/${uid}/bin"/>
+            <copy>
+                <source base="file:${mypath}/bin_BCS/">
+                    <include>*</include>
+                </source>
+                <target>file:${workplace}/${uid}/bin</target>
+            </copy>
+<!--
+<copy sourceDir="file:${mypath}/bin_BCS" target="file:${workplace}/${uid}/bin" />
+-->
+<!--
+   <copy taskName="test_copy" verbose="true">
+        <targetGroup targetURI="${workplace}/${uid}/etc">
+               <pattern base="${mypath}/etc">
+               </pattern>
+        </targetGroup>
+   </copy>
+
+   <copy taskName="test_copy" verbose="true">
+        <targetGroup targetURI="${workplace}/${uid}/bin">
+               <pattern base="${mypath}/bin_BCS">
+               </pattern>
+        </targetGroup>
+   </copy>
+-->
+            <echo stdout="true" message=" -- file:${workplace}/${uid}"/>
+            <stream-monitor-process execution-dir="${workplace}/${uid}">
+                <command-line>${chmodpath} -R 755 bin</command-line>
+            </stream-monitor-process>
+            <stream-monitor-process execution-dir=".">
+                <command-line>${chmodpath} -R g+w ${workplace}/${uid}</command-line>
+            </stream-monitor-process>
+            <echo stdout="true" message=" -- Stage_msetup - Created directory workspaces in ${workplace}. "/>
+        </else>
+    </if>
+    <echo stdout="true" message=" - Stage_msetup done"/>
+    <echo stdout="true" message=" "/>
+    <send>
+        <progress-event message="End Stage_msetup">
+            <header-property name="some-special-id" value="${ensemble.id}-Main-End-Stage_msetup"/>
+        </progress-event>
+    </send>
+</define>
+

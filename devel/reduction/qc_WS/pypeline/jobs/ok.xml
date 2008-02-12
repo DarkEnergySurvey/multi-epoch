@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<job>
+  <config>
+    <rootDir>/home/martelli/base</rootDir>
+    <dataRepository>/home/martelli/data/</dataRepository>
+  </config>
+
+  <components>
+
+    <component id="origin">
+      <data>
+        <file value="ds9.fits" type="fits_image" id="test"/>
+        <file value="ds9.weight.fits" type="fits_weightmap_image" id="test.weight"/> 
+        <file value="USNOB1.fits" type="fits_catalog" id="ref_file"/>
+	<config type="float" id="gain" value="0"/>
+  	<config type="float" id="zero_point" value="25"/>
+	<config type="float" id="pixel_scale" value="0.27"/>
+	<config type="float" id="seeing" value="1.30"/>
+
+      </data>
+    </component>
+
+    <component id="fits2jpeg1">
+      <module>fits2jpeg</module>
+      <input>
+      	<file source="origin" type="fits_image" id="test"/>
+      </input>	
+      <config>
+        <scalar id="min_image_value" type="float" value="-109" />
+        <scalar id="max_image_value" type="float" value="367" />
+      </config>
+    </component>
+
+    <component id="SExtractor1">
+      <module>sextractor1</module>
+      <input>
+      	<file source="origin" type="fits_image" id="test"/>
+      	<file source="origin" type="fits_weightmap_image" id="test.weight"/>
+        <config source="origin" id="gain" type="float" />
+        <config source="origin" id="pixel_scale" type="float" />
+        <config source="origin" id="zero_point" type="float" />
+      </input>	
+      <config>
+      </config>
+    </component>
+
+    <component id="SExtractor2">
+      <module>sextractor2</module>
+      <input>
+      	<file source="origin" type="fits_image" id="test"/>
+      	<file source="origin" type="fits_weightmap_image" id="test.weight"/>
+	<config source="origin" type="float" id="seeing"/>
+        <config source="origin" id="gain" type="float" />
+        <config source="origin" id="pixel_scale" type="float" />
+        <config source="origin" id="zero_point" type="float" />
+      </input>	
+      <config>
+      </config>
+    </component>
+
+    <component id="addflags1">
+      <module>addflags</module>
+      <input>
+        <file source="origin" type="fits_image" id="test"/>
+      	<file source="origin" type="fits_weightmap_image" id="test.weight"/>
+      	<file source="SExtractor2" type="fits_catalog" id="test_out"/>
+      </input>	
+      <config>
+        <scalar id="mag_lim" type="float" value="10.0" />
+        <scalar id="cs_lim" type="float" value="0.9" />
+      </config>
+    </component>
+
+    <component id="classification1">
+      <module>classification</module>
+      <input>
+      	<file source="addflags1" type="fits_catalog" id="test_out"/>
+      </input>	
+      <config>
+        <scalar id="sigma_cut" type="float" value="5.0" />
+        <scalar id="band" type="string" value="B" />
+      </config>
+    </component>
+
+    <component id="spatial1">
+      <module>spatial</module>
+      <input>
+      	<file source="addflags1" type="fits_catalog" id="test_out"/>
+      </input>	
+      <config>
+        <scalar id="sigma_cut" type="float" value="5.0" />
+      </config>
+    </component>
+
+    <component id="psf1">
+      <module>psf</module>
+      <input>
+      	<file source="addflags1" type="fits_catalog" id="test_out"/>
+      </input>	
+      <config>
+        <scalar id="sigma_cut" type="float" value="5.0" />
+      </config>
+    </component>
+
+<!--    <component id="astrometry1">
+      <module>astrometry</module>
+      <input>
+      	<file source="addflags1" type="fits_catalog" id="test_out"/>
+      	<file source="origin" type="fits_catalog" id="ref_file"/>
+      </input>	
+      <config>
+        <scalar id="ang_sep" type="float" value="1.0" />
+        <scalar id="sigma_cut" type="float" value="5.0" />
+      </config>
+    </component>
+
+    <component id="photometry1">
+      <module>photometry</module>
+      <input>
+      	<file source="addflags1" type="fits_catalog" id="test_out"/>
+      	<file source="origin" type="fits_catalog" id="ref_file"/>
+      </input>	
+      <config>
+        <scalar id="ang_sep" type="float" value="1.0" />
+        <scalar id="band" type="string" value="B" />
+        <scalar id="sigma_cut" type="float" value="5.0" />
+      </config>
+    </component>
+-->
+    <component id="counts1">
+      <module>counts</module>
+      <input>
+      	<file source="addflags1" type="fits_catalog" id="test_out"/>
+      </input>	
+      <config>
+        <scalar id="sigma_cut" type="float" value="5.0" />
+      </config>
+    </component>
+
+  </components>
+</job>

@@ -1,0 +1,79 @@
+   <target name="Stage_makedirs" description="create subdirectories in science dirs">
+     <esequence>
+
+        <edeclare name="content_begin"  string="test begin"/>
+        <edeclare name="content_end"    string="test end"/>
+        <econdblock type="else-if">
+          <econdtask>
+            <eeval>
+             <statement>
+                <ecompare string="${platform}">
+                   <predicate string="TG" comparator="EQUALS"/>
+                </ecompare>
+             </statement>
+            </eeval>
+              <esequence>
+                <eassign name="content_begin"  string="Begin Stage_makedirs for ccd ${ccd.num} data on $G{host} for nite ${nite}"/>
+                <eassign name="content_end"    string="End Stage_makedirs for ccd ${ccd.num} data on $G{host} for nite ${nite}"/>
+              </esequence>
+          </econdtask>
+              <esequence>
+                <eassign name="content_begin"  string="Begin Stage_makedirs for ccd ${ccd.num} for nite ${nite}"/>
+                <eassign name="content_end"    string="End Stage_makedirs for ccd ${ccd.num} for nite ${nite}"/>
+              </esequence>
+        </econdblock>
+
+        <publish>
+            <event ensembleid="${ensemble.id}" workflowid="${jid}"
+                  nodeid="$R{content_begin}" currentState="1">
+                  <property name="message" value="$R{content_begin}"/>
+            </event>
+        </publish>
+
+        <print line=" - ccd ${ccd.num} data for nite ${nite}"/>
+
+         <write path="${local.out}/${makedirs.log}" text="true"
+                    errorProperty="failed" rethrow="false" append="true">
+             <segment string="For Stage_makedirs" lineBreaks="1"/>
+             <segment string=" - Creating reduced science frame directories" lineBreaks="2"/>
+         </write>
+
+         <rtexec inheritedEnv="false" execDir="${nite.dir}"
+                   args="${makedirs.exec} ${makedirs.outscig}" quiet="true">
+                     <outMonitor file="${local.out}/${makedirs.log}"/>
+                     <errMonitor file="${local.out}/${makedirs.log}"/>
+         </rtexec>
+
+         <rtexec inheritedEnv="false" execDir="${nite.dir}"
+                   args="${makedirs.exec} ${makedirs.outscir}" quiet="true">
+                     <outMonitor file="${local.out}/${makedirs.log}"/>
+                     <errMonitor file="${local.out}/${makedirs.log}"/>
+         </rtexec>
+
+         <rtexec inheritedEnv="false" execDir="${nite.dir}"
+                   args="${makedirs.exec} ${makedirs.outscii}" quiet="true">
+                     <outMonitor file="${local.out}/${makedirs.log}"/>
+                     <errMonitor file="${local.out}/${makedirs.log}"/>
+         </rtexec>
+
+         <rtexec inheritedEnv="false" execDir="${nite.dir}"
+                   args="${makedirs.exec} ${makedirs.outsciz}" quiet="true">
+                     <outMonitor file="${local.out}/${makedirs.log}"/>
+                     <errMonitor file="${local.out}/${makedirs.log}"/>
+         </rtexec>
+
+         <write path="$R{local.out}/${makedirs.log}" text="true"
+                    errorProperty="failed" rethrow="false" append="true">
+             <segment string=" - All directories have been created" lineBreaks="2"/>
+         </write>
+
+         <publish>
+            <event ensembleid="${ensemble.id}" workflowid="${jid}"
+                 nodeid="$R{content_end}" currentState="1">
+                 <property name="message" value="$R{content_end}"/>
+            </event>
+         </publish>
+
+         <print line=" - Stage_makedirs done"/>
+     </esequence>
+   </target>

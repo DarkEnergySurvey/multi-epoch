@@ -1,0 +1,101 @@
+########################################################################
+#  $Id$
+#
+#  $Rev::                             $:  # Revision of last commit.
+#  $LastChangedBy::                   $:  # Author of last commit. 
+#  $LastChangedDate::                 $:  # Date of last commit.
+#
+#  Authors: 
+#         Michelle Gower (mgower@ncsa.uiuc.edu)
+#         Darren Adams (dadams@ncsa.uiuc.edu)
+#
+#  Developed at: 
+#  The National Center for Supercomputing Applications (NCSA).
+#
+#  Copyright (C) 2007 Board of Trustees of the University of Illinois. 
+#  All rights reserved.
+#
+#  DESCRIPTION:
+#
+#  This configuration file overrides all other user/system 
+#  configuration files.  Any values places here will be applied to the 
+#  analysis run.
+#  Persistant user-specifc settings should be placed in:
+#    ${HOME}/.des/des.cfg
+#  Persistant system-specifc settings should be placed in:
+#    ../etc/des.cfg
+#
+#
+########################################################################
+
+########################################################################
+# GLOBAL VALUES
+# These are global across all STAGES and SITES.
+########################################################################
+NITE = ogre4
+RUNID = test1
+ccdstart 1
+ccdstop 2
+VERBOSE = 1
+ARCHIVESITE ncsa_mercury
+
+########################################################################
+# SITE VALUES
+########################################################################
+RUNSITE ncsa_mercury
+
+########################################################################
+########################################################################
+# STAGE VALUES
+# This is where the composition of the analysis workflow is described.
+# Configuration options listed after each stage are applied to that 
+# stage only.
+########################################################################
+########################################################################
+
+
+########################################################################
+# Local stage that inserts entries in to the files table of the des DB.
+# The program examines the Archive directory at the specified ARCHIVESITE
+# using a third party GridFTP listing.
+########################################################################
+#STAGE ingestsrc
+
+########################################################################
+# Stage src image data to the appropriate Archive location at the
+# specified RUNSITE.
+########################################################################
+#STAGE stagesrc
+
+########################################################################
+# Conversion of src image data into raw.
+########################################################################
+#STAGE convert_ogre
+# WALLHRS 0.5
+# NUMJOBS 2
+#STAGE convert
+#  WALLHRS 0.5
+#  NUMPROCS 1
+
+########################################################################
+#
+########################################################################
+#STAGE process_ogre
+#  WALLHRS 2.0
+#  NUMJOBS 2
+#
+
+########################################################################
+########################################################################
+#STAGE scamp_ogre
+#  WALLHRS 2.0
+#  NUMJOBS 2
+#
+
+########################################################################
+########################################################################
+#STAGE postscamp_ogre
+# WALLHRS 2.0
+
+
+

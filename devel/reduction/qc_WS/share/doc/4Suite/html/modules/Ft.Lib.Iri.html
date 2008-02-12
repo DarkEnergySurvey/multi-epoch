@@ -1,0 +1,63 @@
+<html>
+  <head>
+    <meta content="text/html; charset=iso-8859-1" http-equiv="Content-Type">
+    <title>4Suite API Documentation: Ft.Lib.Iri</title>
+    <link href="modules.css" type="text/css" rel="stylesheet">
+  </head>
+  <body>
+    <div class="universal-header"><span class="universal-header-prefix">&nbsp;&nbsp;&nbsp;</span>&nbsp;<span class="universal-header-prefix">&nbsp;&nbsp;</span>&nbsp;<span class="universal-header-prefix">&nbsp;</span>&nbsp;<a href="../index.html">4Suite<sup>&trade;</sup> API Documentation</a></div>
+    <h1><span class="glyph-arrow">&#9658;</span> Module <span class="this-name"><a href="Ft.html" title="Ft">Ft</a>.<a href="Ft.Lib.html" title="Ft.Lib">Lib</a>.Iri</span></h1>
+    <div class="abstract">Classes and functions related to IRI processing</div>
+    <pre class="description">Copyright 2004 Fourthought, Inc. (USA).
+Detailed license and copyright information: http://4suite.org/COPYRIGHT
+Project home, documentation, distributions: http://4suite.org/</pre>
+    <div class="summary-section">
+      <table cellpadding="0" cellspacing="0">
+        <tbody>
+          <tr>
+            <td valign="top">
+              <div class="summary-header">Functions:</div>
+              <div class="summary-list"><span class="function-name"><a href="#ConvertIregName">ConvertIregName</a></span>, <span class="function-name"><a href="#IriToUri">IriToUri</a></span>, <span class="function-name"><a href="#NfcNormalize">NfcNormalize</a></span></div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="section">
+      <h2>Functions</h2>
+      <dl class="functions">
+        <dt class="functiondef"><a name="ConvertIregName"><span class="function-name">ConvertIregName</span></a>(<span class="argument-name">iregname</span>)</dt>
+        <dd class="functiondesc">
+          <div class="abstract">On Python 2.3 and higher, converts the given ireg-name component
+of an IRI to a string suitable for use as a URI reg-name in pre-
+rfc2396bis schemes and resolvers. Returns the ireg-name
+unmodified on Python 2.2.</div>
+        </dd>
+        <dt class="functiondef"><a name="IriToUri"><span class="function-name">IriToUri</span></a>(<span class="argument-name">iri</span>, <span class="argument-name">convertHost</span><span class="argument-default">=False</span>)</dt>
+        <dd class="functiondesc">
+          <div class="abstract">Converts an IRI or IRI reference to a URI or URI reference,
+implementing sec. 3.1 of draft-duerst-iri-10.</div>
+          <pre class="description">The convertHost flag indicates whether to perform conversion of
+the ireg-name (host) component of the IRI to an RFC 2396-compatible
+URI reg-name (IDNA encoded), e.g.
+IriToUri(u'http://r\xe9sum\xe9.example.org/', convertHost=False)
+=&gt; u'http://r%C3%A9sum%C3%A9.example.org/'
+IriToUri(u'http://r\xe9sum\xe9.example.org/', convertHost=True)
+=&gt; u'http://xn--rsum-bpad.example.org/'
+
+Ordinarily, the IRI should be given as a unicode string. If the IRI
+is instead given as a byte string, then it will be assumed to be
+UTF-8 encoded, will be decoded accordingly, and as per the
+requirements of the conversion algorithm, will NOT be normalized.</pre>
+        </dd>
+        <dt class="functiondef"><a name="NfcNormalize"><span class="function-name">NfcNormalize</span></a>(<span class="argument-name">iri</span>)</dt>
+        <dd class="functiondesc">
+          <div class="abstract">On Python 2.3 and higher, normalizes the given unicode string
+according to Unicode Normalization Form C (NFC), so that it can
+be used as an IRI or IRI reference.</div>
+        </dd>
+      </dl>
+    </div>
+    <div class="universal-footer">Last modified on 2006-08-23 00:46:34</div>
+  </body>
+</html>

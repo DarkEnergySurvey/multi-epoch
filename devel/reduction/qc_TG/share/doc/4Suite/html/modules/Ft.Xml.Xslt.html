@@ -1,0 +1,683 @@
+<html>
+  <head>
+    <meta content="text/html; charset=iso-8859-1" http-equiv="Content-Type">
+    <title>4Suite API Documentation: Ft.Xml.Xslt</title>
+    <link href="modules.css" type="text/css" rel="stylesheet">
+  </head>
+  <body>
+    <div class="universal-header"><span class="universal-header-prefix">&nbsp;&nbsp;&nbsp;</span>&nbsp;<span class="universal-header-prefix">&nbsp;&nbsp;</span>&nbsp;<span class="universal-header-prefix">&nbsp;</span>&nbsp;<a href="../index.html">4Suite<sup>&trade;</sup> API Documentation</a></div>
+    <h1><span class="glyph-arrow">&#9658;</span> Module <span class="this-name"><a href="Ft.html" title="Ft">Ft</a>.<a href="Ft.Xml.html" title="Ft.Xml">Xml</a>.Xslt</span></h1>
+    <div class="abstract">4XSLT initialization and XSLT pattern tools</div>
+    <pre class="description">These are the most common steps for using this XSLT engine:
+
+  1. Create an Ft.Xml.Xslt.Processor.Processor instance:
+
+     from Ft.Xml.Xslt import Processor
+     processor = Processor.Processor()
+
+  2. Prepare Ft.Xml.InputSource instances (via their factory)
+     for the source XML and for the stylesheet.
+
+  3. Call the Processor's appendStylesheet() method, passing it
+     the stylesheet's InputSource.
+
+  4. Call the Processor's run() method, passing it the source
+     document's InputSource.
+
+You can call run() multiple times on different InputSources. When you're
+done, the processor's reset() method can be used to restore a clean slate
+(at which point you would have to append stylesheets to the processor
+again), but in most circumstances it is actually less expensive to just
+create a new Processor instance.
+
+Copyright 2003 Fourthought, Inc. (USA).
+Detailed license and copyright information: http://4suite.org/COPYRIGHT
+Project home, documentation, distributions: http://4suite.org/</pre>
+    <div class="summary-section">
+      <table cellpadding="0" cellspacing="0">
+        <tbody>
+          <tr>
+            <td valign="top">
+              <div class="summary-header">Classes:</div>
+              <div class="summary-list"><span class="class-name"><a href="#CategoryTypes">CategoryTypes</a></span>, <span class="class-name"><a href="#PatternList">PatternList</a></span>, <span class="class-name"><a href="#XsltException">XsltException</a></span>, <span class="class-name"><a href="#XsltParserException">XsltParserException</a></span>, <span class="class-name"><a href="#XsltRuntimeException">XsltRuntimeException</a></span></div>
+            </td>
+            <td width="7" valign="middle"></td>
+            <td width="1" valign="middle" bgcolor="#C5C5C5"></td>
+            <td width="7" valign="middle"></td>
+            <td valign="top">
+              <div class="summary-header">Functions:</div>
+              <div class="summary-list"><span class="function-name"><a href="#Transform">Transform</a></span>, <span class="function-name"><a href="#TransformPath">TransformPath</a></span></div>
+            </td>
+            <td width="7" valign="middle"></td>
+            <td width="1" valign="middle" bgcolor="#C5C5C5"></td>
+            <td width="7" valign="middle"></td>
+            <td valign="top">
+              <div class="summary-header">Globals:</div>
+              <div class="summary-list"><span class="global-name"><a href="#XSL_NAMESPACE">XSL_NAMESPACE</a></span></div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="section">
+      <h2>Modules</h2>
+      <table class="modules">
+        <tbody>
+          <tr>
+            <td class="moduledef" valign="top">
+              <div class="module-name"><a name="ApplyImportsElement"></a><a href="Ft.Xml.Xslt.ApplyImportsElement.html">ApplyImportsElement</a></div>
+            </td>
+            <td class="moduledesc" valign="bottom">
+              <div class="abstract">Implementation of the XSLT Spec apply-imports stylesheet element.
+WWW: http://4suite.org/4XSLT        e-mail: support@4suite.org</div>
+            </td>
+          </tr>
+          <tr>
+            <td class="moduledef" valign="top">
+              <div class="module-name"><a name="ApplyTemplatesElement"></a><a href="Ft.Xml.Xslt.ApplyTemplatesElement.html">ApplyTemplatesElement</a></div>
+            </td>
+            <td class="moduledesc" valign="bottom">
+              <div class="abstract">Implementation of xsl:apply-templates instruction</div>
+            </td>
+          </tr>
+          <tr>
+            <td class="moduledef" valign="top">
+              <div class="module-name"><a name="AttributeElement"></a><a href="Ft.Xml.Xslt.AttributeElement.html">AttributeElement</a></div>
+            </td>
+            <td class="moduledesc" valign="bottom">
+              <div class="abstract">Implementation of xsl:attribute element</div>
+            </td>
+          </tr>
+          <tr>
+            <td class="moduledef" valign="top">
+              <div class="module-name"><a name="AttributeInfo"></a><a href="Ft.Xml.Xslt.AttributeInfo.html">AttributeInfo</a></div>
+            </td>
+            <td class="moduledesc" valign="bottom">
+              <div class="abstract">Classes that support validation and evaluation of attribute values in
+XSLT instruction elements</div>
+            </td>
+          </tr>
+          <tr>
+            <td class="moduledef" valign="top">
+              <div class="module-name"><a name="AttributeSetElement"></a><a href="Ft.Xml.Xslt.AttributeSetElement.html">AttributeSetElement</a></div>
+            </td>
+            <td class="moduledesc" valign="bottom">
+              <div class="abstract">Implementation of the XSLT Spec attribute-set stylesheet element.
+WWW: http://4suite.org/4XSLT        e-mail: support@4suite.org</div>
+            </td>
+          </tr>
+          <tr>
+            <td class="moduledef" valign="top">
+              <div class="module-name"><a name="AttributeValueTemplate"></a><a href="Ft.Xml.Xslt.AttributeValueTemplate.html">AttributeValueTemplate</a></div>
+            </td>
+            <td class="moduledesc" valign="bottom">
+              <div class="abstract">Implementation of XSLT attribute value templates</div>
+            </td>
+          </tr>
+          <tr>
+            <td class="moduledef" valign="top">
+              <div class="module-name"><a name="AvtParserc"></a><a href="Ft.Xml.Xslt.AvtParserc.html">AvtParserc</a></div>
+            </td>
+            <td class="moduledesc" valign="bottom"></td>
+          </tr>
+          <tr>
+            <td class="moduledef" valign="top">
+              <div class="module-name"><a name="BuiltInExtElements"></a><a href="Ft.Xml.Xslt.BuiltInExtElements.html">BuiltInExtElements</a></div>
+            </td>
+            <td class="moduledesc" valign="bottom">
+              <div class="abstract">Fourthought proprietary XSLT extension elements</div>
+            </td>
+          </tr>
+          <tr>
+            <td class="moduledef" valign="top">
+              <div class="module-name"><a name="BuiltInExtFunctions"></a><a href="Ft.Xml.Xslt.BuiltInExtFunctions.html">BuiltInExtFunctions</a></div>
+            </td>
+            <td class="moduledesc" valign="bottom">
+              <div class="abstract">4XSLT specific extension functions (i.e. ones that create a node set)</div>
+            </td>
+          </tr>
+          <tr>
+            <td class="moduledef" valign="top">
+              <div class="module-name"><a name="CallTemplateElement"></a><a href="Ft.Xml.Xslt.CallTemplateElement.html">CallTemplateElement</a></div>
+            </td>
+            <td class="moduledesc" valign="bottom">
+              <div class="abstract">Implementation of the XSLT Spec call-template stylesheet element.
+WWW: http://4suite.org/4XSLT        e-mail: support@4suite.org</div>
+            </td>
+          </tr>
+          <tr>
+            <td class="moduledef" valign="top">
+              <div class="module-name"><a name="ChooseElement"></a><a href="Ft.Xml.Xslt.ChooseElement.html">ChooseElement</a></div>
+            </td>
+            <td class="moduledesc" valign="bottom">
+              <div class="abstract">Implementation of the XSLT Spec choose instruction
+WWW: http://4suite.org/4XSLT        e-mail: support@4suite.org</div>
+            </td>
+          </tr>
+          <tr>
+            <td class="moduledef" valign="top">
+              <div class="module-name"><a name="CommentElement"></a><a href="Ft.Xml.Xslt.CommentElement.html">CommentElement</a></div>
+            </td>
+            <td class="moduledesc" valign="bottom">
+              <div class="abstract">xsl:comment instruction implementation</div>
+            </td>
+          </tr>
+          <tr>
+            <td class="moduledef" valign="top">
+              <div class="module-name"><a name="ContentInfo"></a><a href="Ft.Xml.Xslt.ContentInfo.html">ContentInfo</a></div>
+            </td>
+            <td class="moduledesc" valign="bottom"></td>
+          </tr>
+          <tr>
+            <td class="moduledef" valign="top">
+              <div class="module-name"><a name="CopyElement"></a><a href="Ft.Xml.Xslt.CopyElement.html">CopyElement</a></div>
+            </td>
+            <td class="moduledesc" valign="bottom">
+              <div class="abstract">Implementation of the XSLT Spec copy stylesheet element.
+WWW: http://4suite.org/4XSLT        e-mail: support@4suite.org</div>
+            </td>
+          </tr>
+          <tr>
+            <td class="moduledef" valign="top">
+              <div class="module-name"><a name="CopyOfElement"></a><a href="Ft.Xml.Xslt.CopyOfElement.html">CopyOfElement</a></div>
+            </td>
+            <td class="moduledesc" valign="bottom">
+              <div class="abstract">Implementation of the XSLT Spec copy-of element.
+WWW: http://4suite.org/4XSLT        e-mail: support@4suite.org</div>
+            </td>
+          </tr>
+          <tr>
+            <td class="moduledef" valign="top">
+              <div class="module-name"><a name="Debugger"></a><a href="Ft.Xml.Xslt.Debugger.html">Debugger</a></div>
+            </td>
+            <td class="moduledesc" valign="bottom"></td>
+          </tr>
+          <tr>
+            <td class="moduledef" valign="top">
+              <div class="module-name"><a name="DomWriter"></a><a href="Ft.Xml.Xslt.DomWriter.html">DomWriter</a></div>
+            </td>
+            <td class="moduledesc" valign="bottom">
+              <div class="abstract">DOM DocumentFragment writer for XSLT output</div>
+            </td>
+          </tr>
+          <tr>
+            <td class="moduledef" valign="top">
+              <div class="module-name"><a name="ElementElement"></a><a href="Ft.Xml.Xslt.ElementElement.html">ElementElement</a></div>
+            </td>
+            <td class="moduledesc" valign="bottom">
+              <div class="abstract">Implementation of xsl:element element</div>
+            </td>
+          </tr>
+          <tr>
+            <td class="moduledef" valign="top">
+              <div class="module-name"><a name="Exslt"></a><a href="Ft.Xml.Xslt.Exslt.html">Exslt</a></div>
+            </td>
+            <td class="moduledesc" valign="bottom"></td>
+          </tr>
+          <tr>
+            <td class="moduledef" valign="top">
+              <div class="module-name"><a name="ExtendedProcessingElements"></a><a href="Ft.Xml.Xslt.ExtendedProcessingElements.html">ExtendedProcessingElements</a></div>
+            </td>
+            <td class="moduledesc" valign="bottom">
+              <div class="abstract">Extended versions of XSLT elements for debugging and execution tracing</div>
+            </td>
+          </tr>
+          <tr>
+            <td class="moduledef" valign="top">
+              <div class="module-name"><a name="ForEachElement"></a><a href="Ft.Xml.Xslt.ForEachElement.html">ForEachElement</a></div>
+            </td>
+            <td class="moduledesc" valign="bottom">
+              <div class="abstract">Implementation of the XSLT Spec for-each stylesheet element.
+WWW: http://4suite.org/4XSLT        e-mail: support@4suite.org</div>
+            </td>
+          </tr>
+          <tr>
+            <td class="moduledef" valign="top">
+              <div class="module-name"><a name="GenericVariable"></a><a href="Ft.Xml.Xslt.GenericVariable.html">GenericVariable</a></div>
+            </td>
+            <td class="moduledesc" valign="bottom">
+              <div class="abstract">Base implementation of XSLT variable assigning elements</div>
+            </td>
+          </tr>
+          <tr>
+            <td class="moduledef" valign="top">
+              <div class="module-name"><a name="HtmlWriter"></a><a href="Ft.Xml.Xslt.HtmlWriter.html">HtmlWriter</a></div>
+            </td>
+            <td class="moduledesc" valign="bottom">
+              <div class="abstract">HTML writer for XSLT processor output</div>
+            </td>
+          </tr>
+          <tr>
+            <td class="moduledef" valign="top">
+              <div class="module-name"><a name="IfElement"></a><a href="Ft.Xml.Xslt.IfElement.html">IfElement</a></div>
+            </td>
+            <td class="moduledesc" valign="bottom">
+              <div class="abstract">Implementation of the XSLT Spec if instruction
+WWW: http://4suite.org/4XSLT        e-mail: support@4suite.org</div>
+            </td>
+          </tr>
+          <tr>
+            <td class="moduledef" valign="top">
+              <div class="module-name"><a name="LiteralElement"></a><a href="Ft.Xml.Xslt.LiteralElement.html">LiteralElement</a></div>
+            </td>
+            <td class="moduledesc" valign="bottom">
+              <div class="abstract">Implementation of XSLT literal result elements</div>
+            </td>
+          </tr>
+          <tr>
+            <td class="moduledef" valign="top">
+              <div class="module-name"><a name="MessageElement"></a><a href="Ft.Xml.Xslt.MessageElement.html">MessageElement</a></div>
+            </td>
+            <td class="moduledesc" valign="bottom">
+              <div class="abstract">Implementation of the XSLT Spec import stylesheet element.
+WWW: http://4suite.org/4XSLT        e-mail: support@4suite.org</div>
+            </td>
+          </tr>
+          <tr>
+            <td class="moduledef" valign="top">
+              <div class="module-name"><a name="MessageSource"></a><a href="Ft.Xml.Xslt.MessageSource.html">MessageSource</a></div>
+            </td>
+            <td class="moduledesc" valign="bottom">
+              <div class="abstract">XSLT error codes and messages</div>
+            </td>
+          </tr>
+          <tr>
+            <td class="moduledef" valign="top">
+              <div class="module-name"><a name="NullWriter"></a><a href="Ft.Xml.Xslt.NullWriter.html">NullWriter</a></div>
+            </td>
+            <td class="moduledesc" valign="bottom">
+              <div class="abstract">Interface definition for XSLT output writers</div>
+            </td>
+          </tr>
+          <tr>
+            <td class="moduledef" valign="top">
+              <div class="module-name"><a name="NumberElement"></a><a href="Ft.Xml.Xslt.NumberElement.html">NumberElement</a></div>
+            </td>
+            <td class="moduledesc" valign="bottom">
+              <div class="abstract">Implementation of xsl:number</div>
+            </td>
+          </tr>
+          <tr>
+            <td class="moduledef" valign="top">
+              <div class="module-name"><a name="NumberFormatter"></a><a href="Ft.Xml.Xslt.NumberFormatter.html">NumberFormatter</a></div>
+            </td>
+            <td class="moduledesc" valign="bottom"></td>
+          </tr>
+          <tr>
+            <td class="moduledef" valign="top">
+              <div class="module-name"><a name="OtherXslElement"></a><a href="Ft.Xml.Xslt.OtherXslElement.html">OtherXslElement</a></div>
+            </td>
+            <td class="moduledesc" valign="bottom">
+              <div class="abstract">Non-template instructions from the XSLT spec
+WWW: http://4suite.org/4XSLT        e-mail: support@4suite.org</div>
+            </td>
+          </tr>
+          <tr>
+            <td class="moduledef" valign="top">
+              <div class="module-name"><a name="OutputHandler"></a><a href="Ft.Xml.Xslt.OutputHandler.html">OutputHandler</a></div>
+            </td>
+            <td class="moduledesc" valign="bottom">
+              <div class="abstract">Manages XSLT output parameters governed by the xsl:output instruction
+See also Ft.Xml.Xslt.OutputParameters</div>
+            </td>
+          </tr>
+          <tr>
+            <td class="moduledef" valign="top">
+              <div class="module-name"><a name="OutputParameters"></a><a href="Ft.Xml.Xslt.OutputParameters.html">OutputParameters</a></div>
+            </td>
+            <td class="moduledesc" valign="bottom">
+              <div class="abstract">Represents XSLT output parameters governed by the xsl:output instruction
+See also Ft.Xml.Xslt.OutputHandler</div>
+            </td>
+          </tr>
+          <tr>
+            <td class="moduledef" valign="top">
+              <div class="module-name"><a name="ParamElement"></a><a href="Ft.Xml.Xslt.ParamElement.html">ParamElement</a></div>
+            </td>
+            <td class="moduledesc" valign="bottom">
+              <div class="abstract">Implementation of the XSLT Spec param stylesheet element.
+WWW: http://4suite.org/4XSLT        e-mail: support@4suite.org</div>
+            </td>
+          </tr>
+          <tr>
+            <td class="moduledef" valign="top">
+              <div class="module-name"><a name="PlainTextWriter"></a><a href="Ft.Xml.Xslt.PlainTextWriter.html">PlainTextWriter</a></div>
+            </td>
+            <td class="moduledesc" valign="bottom">
+              <div class="abstract">Plain text writer for XSLT processor output</div>
+            </td>
+          </tr>
+          <tr>
+            <td class="moduledef" valign="top">
+              <div class="module-name"><a name="ProcessingInstructionElement"></a><a href="Ft.Xml.Xslt.ProcessingInstructionElement.html">ProcessingInstructionElement</a></div>
+            </td>
+            <td class="moduledesc" valign="bottom">
+              <div class="abstract">Implementation of the XSLT Spec processing-instruction stylesheet element.
+WWW: http://4suite.org/4XSLT        e-mail: support@4suite.org</div>
+            </td>
+          </tr>
+          <tr>
+            <td class="moduledef" valign="top">
+              <div class="module-name"><a name="Processor"></a><a href="Ft.Xml.Xslt.Processor.html">Processor</a></div>
+            </td>
+            <td class="moduledesc" valign="bottom">
+              <div class="abstract">XSLT processing engine</div>
+            </td>
+          </tr>
+          <tr>
+            <td class="moduledef" valign="top">
+              <div class="module-name"><a name="Roman"></a><a href="Ft.Xml.Xslt.Roman.html">Roman</a></div>
+            </td>
+            <td class="moduledesc" valign="bottom">
+              <div class="abstract">Light-weight functions to convert from Roman-Numerals to ints,
+and vice-versa.</div>
+            </td>
+          </tr>
+          <tr>
+            <td class="moduledef" valign="top">
+              <div class="module-name"><a name="RtfWriter"></a><a href="Ft.Xml.Xslt.RtfWriter.html">RtfWriter</a></div>
+            </td>
+            <td class="moduledesc" valign="bottom">
+              <div class="abstract">Result Tree Fragment writer for XSLT output</div>
+            </td>
+          </tr>
+          <tr>
+            <td class="moduledef" valign="top">
+              <div class="module-name"><a name="SaxWriter"></a><a href="Ft.Xml.Xslt.SaxWriter.html">SaxWriter</a></div>
+            </td>
+            <td class="moduledesc" valign="bottom">
+              <div class="abstract">SAX2 event writer for XSLT output</div>
+            </td>
+          </tr>
+          <tr>
+            <td class="moduledef" valign="top">
+              <div class="module-name"><a name="SortElement"></a><a href="Ft.Xml.Xslt.SortElement.html">SortElement</a></div>
+            </td>
+            <td class="moduledesc" valign="bottom">
+              <div class="abstract">xsl:sort implementation
+    
+Copyright 2005 Fourthought, Inc. (USA).
+Detailed license and copyright information: http://4suite.org/COPYRIGHT
+Project home, documentation, distributions: http://4suite.org/</div>
+            </td>
+          </tr>
+          <tr>
+            <td class="moduledef" valign="top">
+              <div class="module-name"><a name="StringWriter"></a><a href="Ft.Xml.Xslt.StringWriter.html">StringWriter</a></div>
+            </td>
+            <td class="moduledesc" valign="bottom">
+              <div class="abstract">A specialized XSLT output writer that only captures text output events</div>
+            </td>
+          </tr>
+          <tr>
+            <td class="moduledef" valign="top">
+              <div class="module-name"><a name="Stylesheet"></a><a href="Ft.Xml.Xslt.Stylesheet.html">Stylesheet</a></div>
+            </td>
+            <td class="moduledesc" valign="bottom">
+              <div class="abstract">xsl:stylesheet / xsl:transform implementation;
+various stylesheet internals</div>
+            </td>
+          </tr>
+          <tr>
+            <td class="moduledef" valign="top">
+              <div class="module-name"><a name="StylesheetHandler"></a><a href="Ft.Xml.Xslt.StylesheetHandler.html">StylesheetHandler</a></div>
+            </td>
+            <td class="moduledesc" valign="bottom">
+              <div class="abstract">Stylesheet tree generator</div>
+            </td>
+          </tr>
+          <tr>
+            <td class="moduledef" valign="top">
+              <div class="module-name"><a name="StylesheetReader"></a><a href="Ft.Xml.Xslt.StylesheetReader.html">StylesheetReader</a></div>
+            </td>
+            <td class="moduledesc" valign="bottom">
+              <div class="abstract">Classes for the creation of a stylesheet object</div>
+            </td>
+          </tr>
+          <tr>
+            <td class="moduledef" valign="top">
+              <div class="module-name"><a name="StylesheetTree"></a><a href="Ft.Xml.Xslt.StylesheetTree.html">StylesheetTree</a></div>
+            </td>
+            <td class="moduledesc" valign="bottom">
+              <div class="abstract">Node classes for the stylesheet tree</div>
+            </td>
+          </tr>
+          <tr>
+            <td class="moduledef" valign="top">
+              <div class="module-name"><a name="TemplateElement"></a><a href="Ft.Xml.Xslt.TemplateElement.html">TemplateElement</a></div>
+            </td>
+            <td class="moduledesc" valign="bottom">
+              <div class="abstract">Implementation of the XSLT Spec template stylesheet element.
+WWW: http://4suite.org/4XSLT        e-mail: support@4suite.org</div>
+            </td>
+          </tr>
+          <tr>
+            <td class="moduledef" valign="top">
+              <div class="module-name"><a name="TextElement"></a><a href="Ft.Xml.Xslt.TextElement.html">TextElement</a></div>
+            </td>
+            <td class="moduledesc" valign="bottom">
+              <div class="abstract">Implementation of the xsl:text element.</div>
+            </td>
+          </tr>
+          <tr>
+            <td class="moduledef" valign="top">
+              <div class="module-name"><a name="TextSax"></a><a href="Ft.Xml.Xslt.TextSax.html">TextSax</a></div>
+            </td>
+            <td class="moduledesc" valign="bottom">
+              <div class="abstract">Components for reading Text files from a SAX-like producer.
+WWW: http://4suite.org/4DOM         e-mail: support@4suite.org</div>
+            </td>
+          </tr>
+          <tr>
+            <td class="moduledef" valign="top">
+              <div class="module-name"><a name="UndefinedElements"></a><a href="Ft.Xml.Xslt.UndefinedElements.html">UndefinedElements</a></div>
+            </td>
+            <td class="moduledesc" valign="bottom">
+              <div class="abstract">Node classes for the stylesheet tree</div>
+            </td>
+          </tr>
+          <tr>
+            <td class="moduledef" valign="top">
+              <div class="module-name"><a name="ValueOfElement"></a><a href="Ft.Xml.Xslt.ValueOfElement.html">ValueOfElement</a></div>
+            </td>
+            <td class="moduledesc" valign="bottom">
+              <div class="abstract">Implementation of the xsl:value-of element.</div>
+            </td>
+          </tr>
+          <tr>
+            <td class="moduledef" valign="top">
+              <div class="module-name"><a name="VariableElement"></a><a href="Ft.Xml.Xslt.VariableElement.html">VariableElement</a></div>
+            </td>
+            <td class="moduledesc" valign="bottom">
+              <div class="abstract">Implementation of the XSLT Spec variable stylesheet element.
+WWW: http://4suite.org/4XSLT        e-mail: support@4suite.org</div>
+            </td>
+          </tr>
+          <tr>
+            <td class="moduledef" valign="top">
+              <div class="module-name"><a name="WhitespaceElements"></a><a href="Ft.Xml.Xslt.WhitespaceElements.html">WhitespaceElements</a></div>
+            </td>
+            <td class="moduledesc" valign="bottom"></td>
+          </tr>
+          <tr>
+            <td class="moduledef" valign="top">
+              <div class="module-name"><a name="WithParamElement"></a><a href="Ft.Xml.Xslt.WithParamElement.html">WithParamElement</a></div>
+            </td>
+            <td class="moduledesc" valign="bottom">
+              <div class="abstract">Implementation of the XSLT Spec with-param stylesheet element.
+WWW: http://4suite.org/4XSLT        e-mail: support@4suite.org</div>
+            </td>
+          </tr>
+          <tr>
+            <td class="moduledef" valign="top">
+              <div class="module-name"><a name="XPathExtensions"></a><a href="Ft.Xml.Xslt.XPathExtensions.html">XPathExtensions</a></div>
+            </td>
+            <td class="moduledesc" valign="bottom"></td>
+          </tr>
+          <tr>
+            <td class="moduledef" valign="top">
+              <div class="module-name"><a name="XPatternParserc"></a><a href="Ft.Xml.Xslt.XPatternParserc.html">XPatternParserc</a></div>
+            </td>
+            <td class="moduledesc" valign="bottom"></td>
+          </tr>
+          <tr>
+            <td class="moduledef" valign="top">
+              <div class="module-name"><a name="XPatterns"></a><a href="Ft.Xml.Xslt.XPatterns.html">XPatterns</a></div>
+            </td>
+            <td class="moduledesc" valign="bottom">
+              <div class="abstract">Implement Patterns according to the XSLT spec</div>
+            </td>
+          </tr>
+          <tr>
+            <td class="moduledef" valign="top">
+              <div class="module-name"><a name="XmlWriter"></a><a href="Ft.Xml.Xslt.XmlWriter.html">XmlWriter</a></div>
+            </td>
+            <td class="moduledesc" valign="bottom">
+              <div class="abstract">XML writer for XSLT output</div>
+            </td>
+          </tr>
+          <tr>
+            <td class="moduledef" valign="top">
+              <div class="module-name"><a name="XsltContext"></a><a href="Ft.Xml.Xslt.XsltContext.html">XsltContext</a></div>
+            </td>
+            <td class="moduledesc" valign="bottom">
+              <div class="abstract">Context and state information for XSLT processing</div>
+            </td>
+          </tr>
+          <tr>
+            <td class="moduledef" valign="top">
+              <div class="module-name"><a name="XsltFunctions"></a><a href="Ft.Xml.Xslt.XsltFunctions.html">XsltFunctions</a></div>
+            </td>
+            <td class="moduledesc" valign="bottom">
+              <div class="abstract">Standard XSLT functions</div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="section">
+      <h2>Classes</h2>
+      <dl class="classes">
+        <dt class="classdef"><a name="CategoryTypes"></a>class <span class="class-name">CategoryTypes</span></dt>
+        <dd class="classdesc">
+          <div class="abstract">Collection of constants making up the categories of XSLT element</div>
+          <h3>Members</h3>
+          <dl class="members">
+            <dt class="memberdef"><a name="INSTRUCTION"><span class="member-name">INSTRUCTION</span></a> = 0</dt>
+            <dt class="memberdef"><a name="RESULT_ELEMENT"><span class="member-name">RESULT_ELEMENT</span></a> = 2</dt>
+            <dt class="memberdef"><a name="TOP_LEVEL_ELEMENT"><span class="member-name">TOP_LEVEL_ELEMENT</span></a> = 1</dt>
+          </dl>
+        </dd>
+        <dt class="classdef"><a name="PatternList"></a>class <span class="class-name">PatternList</span></dt>
+        <dd class="classdesc">
+          <div class="abstract">PatternList is a class that is useful for people writing code to
+process XSLT patterns, especially in groups.</div>
+          <h3>Methods</h3>
+          <dl class="methods">
+            <dt class="methoddef"><a name="PatternList-__init__"><span class="method-name">__init__</span></a>(<span class="argument-name">self</span>, <span class="argument-name">patterns</span>, <span class="argument-name">namespaces</span><span class="argument-default">=None</span>)</dt>
+            <dd class="methoddesc">
+              <div class="abstract">patterns - A list of strings that make up either compiled pattern
+           objects or valid XSLT patterns in string form.
+           It must be either all of one form or all of another
+namespaces - A namespace dictionary - { prefix: uri, ... } -
+             to be used for setting up expressions in the pattern</div>
+            </dd>
+            <dt class="methoddef"><a name="PatternList-lookup"><span class="method-name">lookup</span></a>(<span class="argument-name">self</span>, <span class="argument-name">node</span>, <span class="argument-name">context</span><span class="argument-default">=None</span>)</dt>
+            <dd class="methoddesc">
+              <div class="abstract">Return the patterns that match the node (as a list)</div>
+            </dd>
+            <dt class="methoddef"><a name="PatternList-lookupAsSet"><span class="method-name">lookupAsSet</span></a>(<span class="argument-name">self</span>, <span class="argument-name">node</span>, <span class="argument-name">context</span><span class="argument-default">=None</span>)</dt>
+            <dd class="methoddesc">
+              <div class="abstract">Returns the patterns that match the node (as a set [dictionary])</div>
+            </dd>
+            <dt class="methoddef"><a name="PatternList-xsltKeyPrep"><span class="method-name">xsltKeyPrep</span></a>(<span class="argument-name">self</span>, <span class="argument-name">context</span>, <span class="argument-name">node</span>)</dt>
+            <dd class="methoddesc">
+              <div class="abstract">A special utility used for XSLT key preparation.
+A list of lists is returned.  The outer list corresponds
+to the patterns.  Each inner list is either [node] or []
+depending on whether or not the node matched the corresponding
+pattern.</div>
+            </dd>
+          </dl>
+          <h3>Members</h3>
+          <dl class="members">
+            <dt class="memberdef"><a name="PARSER"><span class="member-name">PARSER</span></a> = &lt;Ft.Xml.Xslt.XPatternParser object&gt;</dt>
+          </dl>
+        </dd>
+        <dt class="classdef"><a name="XsltException"></a>class <span class="class-name">XsltException</span><span class="bases">(<span class="class-name"><a href="Ft.html#FtException">Ft.FtException</a></span>)</span></dt>
+        <dd class="classdesc">
+          <h3>Methods</h3>
+          <dl class="methods">
+            <dt class="methoddef"><a name="XsltException-__init__"><span class="method-name">__init__</span></a>(<span class="argument-name">self</span>, <span class="argument-name">errorCode</span>, <span class="argument-name">*args</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dd class="overrides"><b>Overrides: </b><span class="inherited-name"><a href="Ft.html#FtException-__init__">__init__</a></span> from class <span class="class-name"><a href="Ft.html#FtException">FtException</a></span></dd>
+          </dl>
+          <h3>Methods inherited from class <a href="Ft.html#FtException">Ft.FtException</a></h3>
+          <div class="inherited"><span class="inherited-name"><a href="Ft.html#FtException-__getattr__">__getattr__</a></span>, <span class="inherited-name"><a href="Ft.html#FtException-__repr__">__repr__</a></span>, <span class="inherited-name"><a href="Ft.html#FtException-__str__">__str__</a></span></div>
+          <h3>Methods inherited from class <span class="undocumented">Exception</span></h3>
+          <div class="inherited"><span class="inherited-name">__getitem__</span></div>
+        </dd>
+        <dt class="classdef"><a name="XsltParserException"></a>class <span class="class-name">XsltParserException</span><span class="bases">(<span class="class-name"><a href="Ft.Xml.Xslt.html#XsltException">XsltException</a></span>)</span></dt>
+        <dd class="classdesc">
+          <div class="abstract">The exception raised when an error is encountered during the parsing
+of a stylesheet.  This eliminates the need for location information
+within each error message.</div>
+          <h3>Methods</h3>
+          <dl class="methods">
+            <dt class="methoddef"><a name="XsltParserException-__init__"><span class="method-name">__init__</span></a>(<span class="argument-name">self</span>, <span class="argument-name">code</span>, <span class="argument-name">locator</span>, <span class="argument-name">*args</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dd class="overrides"><b>Overrides: </b><span class="inherited-name"><a href="Ft.Xml.Xslt.html#XsltException-__init__">__init__</a></span> from class <span class="class-name"><a href="Ft.Xml.Xslt.html#XsltException">XsltException</a></span></dd>
+          </dl>
+          <h3>Methods inherited from class <a href="Ft.html#FtException">Ft.FtException</a></h3>
+          <div class="inherited"><span class="inherited-name"><a href="Ft.html#FtException-__getattr__">__getattr__</a></span>, <span class="inherited-name"><a href="Ft.html#FtException-__repr__">__repr__</a></span>, <span class="inherited-name"><a href="Ft.html#FtException-__str__">__str__</a></span></div>
+          <h3>Methods inherited from class <span class="undocumented">Exception</span></h3>
+          <div class="inherited"><span class="inherited-name">__getitem__</span></div>
+        </dd>
+        <dt class="classdef"><a name="XsltRuntimeException"></a>class <span class="class-name">XsltRuntimeException</span><span class="bases">(<span class="class-name"><a href="Ft.Xml.Xslt.html#XsltException">XsltException</a></span>)</span></dt>
+        <dd class="classdesc">
+          <h3>Methods</h3>
+          <dl class="methods">
+            <dt class="methoddef"><a name="XsltRuntimeException-__init__"><span class="method-name">__init__</span></a>(<span class="argument-name">self</span>, <span class="argument-name">code</span>, <span class="argument-name">xsltelement</span>, <span class="argument-name">*args</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dd class="overrides"><b>Overrides: </b><span class="inherited-name"><a href="Ft.Xml.Xslt.html#XsltException-__init__">__init__</a></span> from class <span class="class-name"><a href="Ft.Xml.Xslt.html#XsltException">XsltException</a></span></dd>
+          </dl>
+          <h3>Methods inherited from class <a href="Ft.html#FtException">Ft.FtException</a></h3>
+          <div class="inherited"><span class="inherited-name"><a href="Ft.html#FtException-__getattr__">__getattr__</a></span>, <span class="inherited-name"><a href="Ft.html#FtException-__repr__">__repr__</a></span>, <span class="inherited-name"><a href="Ft.html#FtException-__str__">__str__</a></span></div>
+          <h3>Methods inherited from class <span class="undocumented">Exception</span></h3>
+          <div class="inherited"><span class="inherited-name">__getitem__</span></div>
+        </dd>
+      </dl>
+    </div>
+    <div class="section">
+      <h2>Functions</h2>
+      <dl class="functions">
+        <dt class="functiondef"><a name="Transform"><span class="function-name">Transform</span></a>(<span class="argument-name">source</span>, <span class="argument-name">stylesheet</span>, <span class="argument-name">params</span><span class="argument-default">=None</span>, <span class="argument-name">output</span><span class="argument-default">=None</span>)</dt>
+        <dd class="functiondesc">
+          <div class="abstract">Convenience function for applying an XSLT transform.  Returns
+a string.</div>
+          <pre class="description">source - XML source document in the form of a a string (not Unicode
+         object), file-like object (stream), file path, URI or
+         Ft.Xml.InputSource.InputSource instance.  If string or stream
+         it must be self-contained  XML (i.e. not requiring access to
+         any other resource such as external entities or includes)
+stylesheet - XSLT document in the form of a string, stream, URL,
+             file path or Ft.Xml.InputSource.InputSource instance
+params - optional dictionary of stylesheet parameters, the keys of
+         which may be given as unicode objects if they have no namespace,
+         or as (uri, localname) tuples if they do.
+output - optional file-like object to which output is written (incrementally, as processed)</pre>
+        </dd>
+        <dt class="functiondef"><a name="TransformPath"><span class="function-name">TransformPath</span></a>(<span class="argument-name">source</span>, <span class="argument-name">stylesheet</span>)</dt>
+        <dd class="functiondesc"></dd>
+      </dl>
+    </div>
+    <div class="section">
+      <h2>Globals</h2>
+      <dl class="globals">
+        <dt class="globaldef"><a name="XSL_NAMESPACE"><span class="global-name">XSL_NAMESPACE</span></a> = u'http://www.w3.org/1999/XSL/Transform'</dt>
+        <dd class="globaldesc"></dd>
+      </dl>
+    </div>
+    <div class="universal-footer">Last modified on 2006-08-24 08:51:02</div>
+  </body>
+</html>

@@ -1,0 +1,187 @@
+<html>
+  <head>
+    <meta content="text/html; charset=iso-8859-1" http-equiv="Content-Type">
+    <title>4Suite API Documentation: Ft.Xml.Xslt.ContentInfo</title>
+    <link href="modules.css" type="text/css" rel="stylesheet">
+  </head>
+  <body>
+    <div class="universal-header"><span class="universal-header-prefix">&nbsp;&nbsp;&nbsp;</span>&nbsp;<span class="universal-header-prefix">&nbsp;&nbsp;</span>&nbsp;<span class="universal-header-prefix">&nbsp;</span>&nbsp;<a href="../index.html">4Suite<sup>&trade;</sup> API Documentation</a></div>
+    <h1><span class="glyph-arrow">&#9658;</span> Module <span class="this-name"><a href="Ft.html" title="Ft">Ft</a>.<a href="Ft.Xml.html" title="Ft.Xml">Xml</a>.<a href="Ft.Xml.Xslt.html" title="Ft.Xml.Xslt">Xslt</a>.ContentInfo</span></h1>
+    <div class="summary-section">
+      <table cellpadding="0" cellspacing="0">
+        <tbody>
+          <tr>
+            <td valign="top">
+              <div class="summary-header">Classes:</div>
+              <div class="summary-list"><span class="class-name"><a href="#Alt">Alt</a></span>, <span class="class-name"><a href="#Atom">Atom</a></span>, <span class="class-name"><a href="#Opt">Opt</a></span>, <span class="class-name"><a href="#QName">QName</a></span>, <span class="class-name"><a href="#Rep">Rep</a></span>, <span class="class-name"><a href="#Rep1">Rep1</a></span>, <span class="class-name"><a href="#Seq">Seq</a></span>, <span class="class-name"><a href="#Validator">Validator</a></span></div>
+            </td>
+            <td width="7" valign="middle"></td>
+            <td width="1" valign="middle" bgcolor="#C5C5C5"></td>
+            <td width="7" valign="middle"></td>
+            <td valign="top">
+              <div class="summary-header">Globals:</div>
+              <div class="summary-list"><span class="global-name"><a href="#ELSE">ELSE</a></span>, <span class="global-name"><a href="#EMPTY">EMPTY</a></span>, <span class="global-name"><a href="#Empty">Empty</a></span>, <span class="global-name"><a href="#Instructions">Instructions</a></span>, <span class="global-name"><a href="#ResultElements">ResultElements</a></span>, <span class="global-name"><a href="#TEXT_NODE">TEXT_NODE</a></span>, <span class="global-name"><a href="#Template">Template</a></span>, <span class="global-name"><a href="#Text">Text</a></span>, <span class="global-name"><a href="#TopLevelElements">TopLevelElements</a></span>, <span class="global-name"><a href="#XSL_NAMESPACE">XSL_NAMESPACE</a></span></div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="section">
+      <h2>Classes</h2>
+      <dl class="classes">
+        <dt class="classdef"><a name="Alt"></a>class <span class="class-name">Alt</span></dt>
+        <dd class="classdesc">
+          <div class="abstract">Alt(arg1, arg2, arg3...)
+matches arg1 or arg2 or arg3...</div>
+          <h3>Methods</h3>
+          <dl class="methods">
+            <dt class="methoddef"><a name="Alt-__init__"><span class="method-name">__init__</span></a>(<span class="argument-name">self</span>, <span class="argument-name">*args</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dt class="methoddef"><a name="Alt-__str__"><span class="method-name">__str__</span></a>(<span class="argument-name">self</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dt class="methoddef"><a name="Alt-buildValidator"><span class="method-name">buildValidator</span></a>(<span class="argument-name">self</span>, <span class="argument-name">validator</span>, <span class="argument-name">initial</span>, <span class="argument-name">final</span>)</dt>
+            <dd class="methoddesc"></dd>
+          </dl>
+        </dd>
+        <dt class="classdef"><a name="Atom"></a>class <span class="class-name">Atom</span></dt>
+        <dd class="classdesc">
+          <div class="abstract">Atom(arg)
+matches exactly one occurence of 'arg'</div>
+          <h3>Methods</h3>
+          <dl class="methods">
+            <dt class="methoddef"><a name="Atom-__init__"><span class="method-name">__init__</span></a>(<span class="argument-name">self</span>, <span class="argument-name">token</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dt class="methoddef"><a name="Atom-buildValidator"><span class="method-name">buildValidator</span></a>(<span class="argument-name">self</span>, <span class="argument-name">validator</span>, <span class="argument-name">initial</span>, <span class="argument-name">final</span>)</dt>
+            <dd class="methoddesc"></dd>
+          </dl>
+        </dd>
+        <dt class="classdef"><a name="Opt"></a>class <span class="class-name">Opt</span></dt>
+        <dd class="classdesc">
+          <div class="abstract">Opt(arg)
+matches zero or one occurrences of 'arg'</div>
+          <h3>Methods</h3>
+          <dl class="methods">
+            <dt class="methoddef"><a name="Opt-__init__"><span class="method-name">__init__</span></a>(<span class="argument-name">self</span>, <span class="argument-name">arg</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dt class="methoddef"><a name="Opt-__str__"><span class="method-name">__str__</span></a>(<span class="argument-name">self</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dt class="methoddef"><a name="Opt-buildValidator"><span class="method-name">buildValidator</span></a>(<span class="argument-name">self</span>, <span class="argument-name">validator</span>, <span class="argument-name">initial</span>, <span class="argument-name">final</span>)</dt>
+            <dd class="methoddesc"></dd>
+          </dl>
+        </dd>
+        <dt class="classdef"><a name="QName"></a>class <span class="class-name">QName</span><span class="bases">(<span class="class-name"><a href="Ft.Xml.Xslt.ContentInfo.html#Atom">Atom</a></span>)</span></dt>
+        <dd class="classdesc">
+          <div class="abstract">QName(namespaceUri, qualifiedName)
+matches a fully qualified name (e.g., xsl:sort)</div>
+          <h3>Methods</h3>
+          <dl class="methods">
+            <dt class="methoddef"><a name="QName-__init__"><span class="method-name">__init__</span></a>(<span class="argument-name">self</span>, <span class="argument-name">namespaceUri</span>, <span class="argument-name">qualifiedName</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dd class="overrides"><b>Overrides: </b><span class="inherited-name"><a href="Ft.Xml.Xslt.ContentInfo.html#Atom-__init__">__init__</a></span> from class <span class="class-name"><a href="Ft.Xml.Xslt.ContentInfo.html#Atom">Atom</a></span></dd>
+            <dt class="methoddef"><a name="QName-__str__"><span class="method-name">__str__</span></a>(<span class="argument-name">self</span>)</dt>
+            <dd class="methoddesc"></dd>
+          </dl>
+          <h3>Methods inherited from class <a href="Ft.Xml.Xslt.ContentInfo.html#Atom">Atom</a></h3>
+          <div class="inherited"><span class="inherited-name"><a href="Ft.Xml.Xslt.ContentInfo.html#Atom-buildValidator">buildValidator</a></span></div>
+        </dd>
+        <dt class="classdef"><a name="Rep"></a>class <span class="class-name">Rep</span></dt>
+        <dd class="classdesc">
+          <div class="abstract">Rep(arg)
+matches zero or more occurrences of 'arg'</div>
+          <h3>Methods</h3>
+          <dl class="methods">
+            <dt class="methoddef"><a name="Rep-__init__"><span class="method-name">__init__</span></a>(<span class="argument-name">self</span>, <span class="argument-name">arg</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dt class="methoddef"><a name="Rep-__str__"><span class="method-name">__str__</span></a>(<span class="argument-name">self</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dt class="methoddef"><a name="Rep-buildValidator"><span class="method-name">buildValidator</span></a>(<span class="argument-name">self</span>, <span class="argument-name">validator</span>, <span class="argument-name">initial</span>, <span class="argument-name">final</span>)</dt>
+            <dd class="methoddesc"></dd>
+          </dl>
+        </dd>
+        <dt class="classdef"><a name="Rep1"></a>class <span class="class-name">Rep1</span></dt>
+        <dd class="classdesc">
+          <div class="abstract">Rep1(arg)
+matches one or more occurrences of 'arg'</div>
+          <h3>Methods</h3>
+          <dl class="methods">
+            <dt class="methoddef"><a name="Rep1-__init__"><span class="method-name">__init__</span></a>(<span class="argument-name">self</span>, <span class="argument-name">arg</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dt class="methoddef"><a name="Rep1-__str__"><span class="method-name">__str__</span></a>(<span class="argument-name">self</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dt class="methoddef"><a name="Rep1-buildValidator"><span class="method-name">buildValidator</span></a>(<span class="argument-name">self</span>, <span class="argument-name">validator</span>, <span class="argument-name">initial</span>, <span class="argument-name">final</span>)</dt>
+            <dd class="methoddesc"></dd>
+          </dl>
+        </dd>
+        <dt class="classdef"><a name="Seq"></a>class <span class="class-name">Seq</span></dt>
+        <dd class="classdesc">
+          <div class="abstract">Seq(arg1, arg2, arg3...)
+matches arg1 followed by arg2 followed by arg3...</div>
+          <h3>Methods</h3>
+          <dl class="methods">
+            <dt class="methoddef"><a name="Seq-__init__"><span class="method-name">__init__</span></a>(<span class="argument-name">self</span>, <span class="argument-name">*args</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dt class="methoddef"><a name="Seq-__str__"><span class="method-name">__str__</span></a>(<span class="argument-name">self</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dt class="methoddef"><a name="Seq-buildValidator"><span class="method-name">buildValidator</span></a>(<span class="argument-name">self</span>, <span class="argument-name">validator</span>, <span class="argument-name">initial</span>, <span class="argument-name">final</span>)</dt>
+            <dd class="methoddesc"></dd>
+          </dl>
+        </dd>
+        <dt class="classdef"><a name="Validator"></a>class <span class="class-name">Validator</span></dt>
+        <dd class="classdesc">
+          <h3>Methods</h3>
+          <dl class="methods">
+            <dt class="methoddef"><a name="Validator-__init__"><span class="method-name">__init__</span></a>(<span class="argument-name">self</span>, <span class="argument-name">expr</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dt class="methoddef"><a name="Validator-__str__"><span class="method-name">__str__</span></a>(<span class="argument-name">self</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dt class="methoddef"><a name="Validator-getValidation"><span class="method-name">getValidation</span></a>(<span class="argument-name">self</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dt class="methoddef"><a name="Validator-transition"><span class="method-name">transition</span></a>(<span class="argument-name">self</span>, <span class="argument-name">token</span>, <span class="argument-name">state1</span>, <span class="argument-name">state2</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dt class="methoddef"><a name="Validator-validate"><span class="method-name">validate</span></a>(<span class="argument-name">self</span>, <span class="argument-name">validation</span>, <span class="argument-name">token</span>)</dt>
+            <dd class="methoddesc"></dd>
+          </dl>
+        </dd>
+      </dl>
+    </div>
+    <div class="section">
+      <h2>Globals</h2>
+      <dl class="globals">
+        <dt class="globaldef"><a name="ELSE"><span class="global-name">ELSE</span></a> = -2147483646</dt>
+        <dd class="globaldesc"></dd>
+        <dt class="globaldef"><a name="EMPTY"><span class="global-name">EMPTY</span></a> = -2147483647</dt>
+        <dd class="globaldesc"></dd>
+        <dt class="globaldef"><a name="Empty"><span class="global-name">Empty</span></a> = &lt;Ft.Xml.Xslt.ContentInfo.Atom instance&gt;</dt>
+        <dd class="globaldesc">
+          <div class="abstract">Empty is the content model for childless elements</div>
+        </dd>
+        <dt class="globaldef"><a name="Instructions"><span class="global-name">Instructions</span></a> = &lt;Ft.Xml.Xslt.ContentInfo.Rep instance&gt;</dt>
+        <dd class="globaldesc">
+          <div class="abstract">Instructions is the set of elements which have a category of instruction</div>
+        </dd>
+        <dt class="globaldef"><a name="ResultElements"><span class="global-name">ResultElements</span></a> = &lt;Ft.Xml.Xslt.ContentInfo.Rep instance&gt;</dt>
+        <dd class="globaldesc">
+          <div class="abstract">ResultElements is the set of elements not declared in the XSL namespace</div>
+        </dd>
+        <dt class="globaldef"><a name="TEXT_NODE"><span class="global-name">TEXT_NODE</span></a> = (None, None)</dt>
+        <dd class="globaldesc"></dd>
+        <dt class="globaldef"><a name="Template"><span class="global-name">Template</span></a> = &lt;Ft.Xml.Xslt.ContentInfo.Rep instance&gt;</dt>
+        <dd class="globaldesc">
+          <div class="abstract">Template is the set of text, instructions or result-elements</div>
+        </dd>
+        <dt class="globaldef"><a name="Text"><span class="global-name">Text</span></a> = &lt;Ft.Xml.Xslt.ContentInfo.Atom instance&gt;</dt>
+        <dd class="globaldesc">
+          <div class="abstract">Text is any PCDATA content</div>
+        </dd>
+        <dt class="globaldef"><a name="TopLevelElements"><span class="global-name">TopLevelElements</span></a> = &lt;Ft.Xml.Xslt.ContentInfo.Rep instance&gt;</dt>
+        <dd class="globaldesc">
+          <div class="abstract">TopLevelElements is the set of elements which have a category of
+top-level-element or are a result-element.</div>
+        </dd>
+        <dt class="globaldef"><a name="XSL_NAMESPACE"><span class="global-name">XSL_NAMESPACE</span></a> = u'http://www.w3.org/1999/XSL/Transform'</dt>
+        <dd class="globaldesc"></dd>
+      </dl>
+    </div>
+    <div class="universal-footer">Last modified on 2005-04-18 16:47:00</div>
+  </body>
+</html>

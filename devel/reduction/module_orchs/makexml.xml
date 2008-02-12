@@ -1,0 +1,209 @@
+  <target name="Stage_makexml" description="Create main xml scripts">
+   <property file="${mypath}/module_orchs/makexml.properties"/>
+
+     <esequence>
+
+      <print line=" - Begin Stage_makexml"/>
+
+      <edeclare name="appbase"      string="${user.dir}"/>
+
+      <econdblock type="else-if">
+        <econdtask>
+          <eeval>
+             <statement>
+               <ecompare string="${platform}">
+                     <predicate string="TG" comparator="EQUALS"/>
+                 </ecompare>
+               </statement>
+          </eeval>
+              <esequence>
+
+                <print line=" -- Creating xml scripts for ${project} pipeline"/>
+
+                <publish>
+                 <event ensembleid="${ensemble.id}"
+                   workflowid="Main"
+                   nodeid="Begin Stage_makexml"
+                   currentState="0">
+                  <property name="message" value="Begin Stage_makexml"/>
+                 </event>
+                </publish>
+
+                <edeclare name="end" long="$E{ ${ccd.stop} + 1 }"/> 
+
+                <eloop counterName="i" initialValue="${ccd.start}">
+                 <ecounter>
+                  <expression infix="$R{i} &lt; $R{end}"/>
+                 </ecounter>           
+
+                 <!-- convert 1,...,9 to 01,...,09 -->
+                 <econdblock type="else-if">
+                  <econdtask>
+                    <eeval>
+                      <statement> 
+                       <ecompare long="$R{i}">
+                         <predicate long="10" comparator="LT"/>
+                       </ecompare> 
+                      </statement>
+                    </eeval>
+                     <edeclare globalName="in" string="0$R{i}"/>
+                  </econdtask>
+                     <edeclare globalName="in" long="$R{i}"/>
+                 </econdblock>
+
+                 <delete dir="$R{appbase}/jobs/${uid}/$R{in}/xml"/>
+                 <mkdir  dir="$R{appbase}/jobs/${uid}/$R{in}/xml"/>  
+
+                 <print line=" -- Running Stage_makexml A - Write xml workflow scripts and properties files for CCD$R{in}"/>
+
+                 <write path="$R{appbase}/jobs/${uid}/$R{in}/${project}_$R{in}.ptest" text="true"
+                   errorProperty="failed" rethrow="false">
+                  <segment string="data.protocol=file" lineBreaks="1"/> 
+                  <segment string="# directory for the given nite" lineBreaks="1"/>
+                  <segment string="nite=${nite}" lineBreaks="1"/>
+                  <segment string="# CCD number to work on" lineBreaks="1"/> 
+                  <segment string="ccd.num=$R{in}" lineBreaks="1"/> 
+                  <segment string="ensemble.id=${ensemble.id}" lineBreaks="1"/> 
+                  <segment string="jid=${uid}_$R{in}" lineBreaks="1"/> 
+                  <segment string="job.id=${tgrid_homepath_${site}}/${uid}_$R{in}" lineBreaks="1"/> 
+                  <segment string="arch.dir=${tgrid_archpath_${site}}" lineBreaks="1"/> 
+                  <segment string="base.dir=${tgrid_archpath_${site}}" lineBreaks="1"/> 
+                  <segment string="project=${project}" lineBreaks="1"/> 
+                  <segment string="platform=${platform}" lineBreaks="1"/> 
+                  <segment string="bpmlocation=${bpm.location}" lineBreaks="1"/> 
+                  <segment string="pupillocation=${pupil.location}" lineBreaks="1"/> 
+                  <segment string="oracle.path=${tgrid_oracle_${site}}/bin" lineBreaks="1"/> 
+                  <segment string="archive.node=${archive.node}" lineBreaks="1"/> 
+                  <segment string=" " lineBreaks="1"/> 
+                 </write>
+  
+                 <rtexec inheritedEnv="true" execDir="." args="${catpath} $R{appbase}/jobs/${uid}/$R{in}/${project}_$R{in}.ptest ${mypath}/module_pline/combine.prop.template.${platform}" quiet="true">
+                     <outMonitor file="$R{appbase}/jobs/${uid}/$R{in}/xml/${project}_$R{in}.properties"/>
+                 </rtexec>
+
+                 <write path="$R{appbase}/jobs/${uid}/$R{in}/${project}_$R{in}.test" text="true"
+                   errorProperty="failed" rethrow="false">
+                  <segment string="&lt;project name=&quot;${project}pipeline&quot; default=&quot;Stages&quot; basedir=&quot;.&quot; &gt;" lineBreaks="1"/> 
+                  <segment string="&lt;property file=&quot;${project}_$R{in}.properties&quot;/&gt;" lineBreaks="1"/>
+                 </write>
+
+                 <rtexec inheritedEnv="true" execDir="." args="${catpath} $R{appbase}/jobs/${uid}/$R{in}/${project}_$R{in}.test ${mypath}/module_pline/combine.xml.template" quiet="true">
+                     <outMonitor file="$R{appbase}/jobs/${uid}/$R{in}/xml/${project}_$R{in}.xml"/>
+                 </rtexec>
+
+                 <write path="$R{appbase}/jobs/${uid}/$R{in}/xml/${project}_$R{in}.xml" text="true"
+                   errorProperty="failed" rethrow="false" append="true">
+                  <segment string="  &lt;target name=&quot;Stages&quot; depends=&quot;${stage.list}&quot; description=&quot;Main Reduction Pipeline&quot;&gt;" lineBreaks="1"/> 
+                  <segment string="  &lt;/target&gt;" lineBreaks="1"/> 
+                  <segment string=" " lineBreaks="1"/>
+                  <segment string="&lt;/project&gt;" lineBreaks="1"/> 
+                 </write>
+
+                 <delete file="$R{appbase}/jobs/${uid}/$R{in}/${project}_$R{in}.ptest"/>
+                 <delete file="$R{appbase}/jobs/${uid}/$R{in}/${project}_$R{in}.test"/>
+ 
+                 <print line=" -- Running Stage_makexml B - GridFTP xml/prop for CCD$R{in} ... "/>
+
+                 <edeclare name="srcdir_xml"  string="$R{appbase}/jobs/${uid}/$R{in}/xml"/>
+                 <edeclare name="targetdir" string="${targetprot}://${tgrid_server_${site}}${tgrid_homepath_${site}}/${uid}_$R{in}"/>
+
+                 <uricopy from="$R{srcdir_xml}" to="$R{targetdir}">
+                 </uricopy>             
+
+                </eloop>
+
+                <publish>
+                 <event ensembleid="${ensemble.id}"
+                    workflowid="Main"
+                    nodeid="End Stage_makexml"
+                    currentState="0">
+                  <property name="message" value="End Stage_makexml"/>
+                 </event>
+                </publish>
+
+               </esequence>
+        </econdtask>
+               <esequence>
+
+                 <print line=" -- Creating xml scripts for ${project} pipeline"/>
+
+                 <edeclare name="end" long="$E{ ${ccd.stop} + 1 }"/> 
+
+                 <eloop counterName="i" initialValue="${ccd.start}">
+                  <ecounter>
+                   <expression infix="$R{i} &lt; $R{end}"/>
+                 </ecounter>           
+
+                 <!-- convert 1,...,9 to 01,...,09 -->
+                 <econdblock type="else-if">
+                  <econdtask>
+                    <eeval>
+                      <statement> 
+                       <ecompare long="$R{i}">
+                         <predicate long="10" comparator="LT"/>
+                       </ecompare> 
+                      </statement>
+                    </eeval>
+                     <edeclare globalName="in" string="0$R{i}"/>
+                  </econdtask>
+                     <edeclare globalName="in" long="$R{i}"/>
+                 </econdblock>
+
+                 <print line=" -- Running Stage_makexml - Write xml workflow scripts and properties files for CCD$R{in}"/>
+
+                 <write path="${workplace}/${uid}/xml/${project}_$R{in}.ptest" text="true"
+                   errorProperty="failed" rethrow="false">
+                  <segment string="data.protocol=file" lineBreaks="1"/> 
+                  <segment string="# directory for the given nite" lineBreaks="1"/>
+                  <segment string="nite=${nite}" lineBreaks="1"/>
+                  <segment string="# CCD number to work on" lineBreaks="1"/> 
+                  <segment string="ccd.num=$R{in}" lineBreaks="1"/> 
+                  <segment string="ensemble.id=${ensemble.id}" lineBreaks="1"/> 
+                  <segment string="jid=${uid}" lineBreaks="1"/> 
+                  <segment string="job.id=${workplace}/${uid}" lineBreaks="1"/> 
+                  <segment string="arch.dir=${WS_archpath}" lineBreaks="1"/> 
+                  <segment string="base.dir=${WS_archpath}" lineBreaks="1"/> 
+                  <segment string="ccd.start=${ccd.start}" lineBreaks="1"/> 
+                  <segment string="project=${project}" lineBreaks="1"/> 
+                  <segment string="platform=${platform}" lineBreaks="1"/> 
+                  <segment string="bpmlocation=${bpm.location}" lineBreaks="1"/> 
+                  <segment string="pupillocation=${pupil.location}" lineBreaks="1"/> 
+                  <segment string="archive.node=${archive.node}" lineBreaks="1"/> 
+                  <segment string=" " lineBreaks="1"/> 
+                 </write>
+  
+                 <rtexec inheritedEnv="false" execDir="." args="${catpath} ${workplace}/${uid}/xml/${project}_$R{in}.ptest ${mypath}/module_pline/combine.prop.template.${platform}" quiet="true">
+                     <outMonitor file="${workplace}/${uid}/xml/${project}_$R{in}.properties"/>
+                 </rtexec>
+
+                 <write path="${workplace}/${uid}/xml/${project}_$R{in}.test" text="true"
+                   errorProperty="failed" rethrow="false">
+                  <segment string="&lt;project name=&quot;${project}pipeline&quot; default=&quot;Stages&quot; basedir=&quot;.&quot; &gt;" lineBreaks="1"/> 
+                  <segment string="&lt;property file=&quot;${project}_$R{in}.properties&quot;/&gt;" lineBreaks="1"/>
+                 </write>
+
+                 <rtexec inheritedEnv="false" execDir="." args="${catpath} ${workplace}/${uid}/xml/${project}_$R{in}.test ${mypath}/module_pline/combine.xml.template" quiet="true">
+                     <outMonitor file="${workplace}/${uid}/xml/${project}_$R{in}.xml"/>
+                 </rtexec>
+
+                 <write path="${workplace}/${uid}/xml/${project}_$R{in}.xml" text="true"
+                   errorProperty="failed" rethrow="false" append="true">
+                  <segment string="  &lt;target name=&quot;Stages&quot; depends=&quot;${stage.list}&quot; description=&quot;Main Reduction Pipeline&quot;&gt;" lineBreaks="1"/> 
+                  <segment string="  &lt;/target&gt;" lineBreaks="1"/> 
+                  <segment string=" " lineBreaks="1"/>
+                  <segment string="&lt;/project&gt;" lineBreaks="1"/> 
+                 </write>
+
+                 <delete file="${workplace}/${uid}/xml/${project}_$R{in}.ptest"/>
+                 <delete file="${workplace}/${uid}/xml/${project}_$R{in}.test"/>
+ 
+                </eloop>
+            </esequence>
+     </econdblock>
+
+     <print line=" - Stage_makexml done"/>
+     <print line=" "/>
+
+    </esequence>
+  </target>
+

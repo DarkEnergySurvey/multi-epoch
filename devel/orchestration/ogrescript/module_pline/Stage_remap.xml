@@ -1,0 +1,123 @@
+   <target name="Stage_remap" description="remap with SWarp">
+       <esequence>
+
+        <edeclare name="content_begin"  string="test begin"/>
+        <edeclare name="content_end"    string="test end"/>
+        <econdblock type="else-if">
+          <econdtask>
+            <eeval>
+             <statement>
+                <ecompare string="${platform}">
+                   <predicate string="TG" comparator="EQUALS"/>
+                </ecompare>
+             </statement>
+            </eeval>
+              <esequence>
+                <eassign name="content_begin"  string="Begin Stage_remap for ccd ${ccd.num} data on $G{host} for nite ${nite}"/>
+                <eassign name="content_end"    string="End Stage_remap for ccd ${ccd.num} data on $G{host} for nite ${nite}"/>
+              </esequence>
+          </econdtask>
+              <esequence>
+                <eassign name="content_begin"  string="Begin Stage_remap for ccd ${ccd.num} for nite ${nite}"/>
+                <eassign name="content_end"    string="End Stage_remap for ccd ${ccd.num} for nite ${nite}"/>
+              </esequence>
+        </econdblock>
+
+            <publish>
+              <event ensembleid="${ensemble.id}" workflowid="${jid}"
+                   nodeid="$R{content_begin}" currentState="1">
+                   <property name="message" value="$R{content_begin}"/>
+              </event>
+            </publish>
+
+             <edeclare name="band" string="g"/>
+             <edeclare name="input.list" string="${scigout.list}"/>
+             <edeclare name="output.list" string="${local.out}/remap_g_${ccd.num}.list"/>
+
+             <write path="${local.out}/${remap.log}" text="true"
+                    errorProperty="failed" rethrow="false" append="true">
+                 <segment string=" -- remap results for ${scig.list}" lineBreaks="1"/>
+             </write>
+
+             <rtexec inheritedEnv="false" execDir="${nite.dir}"
+                     args="${remap.exec} ${remap.args}" quiet="true">
+                     <outMonitor file="${local.out}/${remap.log}"/>
+                     <errMonitor file="${local.out}/${remap.log}"/>
+             </rtexec>
+
+       </esequence>
+
+       <esequence>
+
+             <edeclare name="band" string="r"/>
+             <edeclare name="input.list" string="${scirout.list}"/>
+             <edeclare name="output.list" string="${local.out}/remap_r_${ccd.num}.list"/>
+
+             <write path="${local.out}/${remap.log}" text="true"
+                    errorProperty="failed" rethrow="false" append="true">
+                 <segment string=" -- remap results for ${scir.list}" lineBreaks="1"/>
+             </write>
+
+             <rtexec inheritedEnv="false" execDir="${nite.dir}"
+                     args="${remap.exec} ${remap.args}" quiet="true">
+                     <outMonitor file="${local.out}/${remap.log}"/>
+                     <errMonitor file="${local.out}/${remap.log}"/>
+             </rtexec>
+
+       </esequence>
+
+       <esequence>
+
+             <edeclare name="band" string="i"/>
+             <edeclare name="input.list" string="${sciiout.list}"/>
+             <edeclare name="output.list" string="${local.out}/remap_i_${ccd.num}.list"/>
+
+             <write path="${local.out}/${remap.log}" text="true"
+                    errorProperty="failed" rethrow="false" append="true">
+                 <segment string=" -- remap results for ${scii.list}" lineBreaks="1"/>
+             </write>
+
+             <rtexec inheritedEnv="false" execDir="${nite.dir}"
+                     args="${remap.exec} ${remap.args}" quiet="true">
+                     <outMonitor file="${local.out}/${remap.log}"/>
+                     <errMonitor file="${local.out}/${remap.log}"/>
+             </rtexec>
+
+       </esequence>
+
+       <esequence>
+
+             <edeclare name="band" string="z"/>
+             <edeclare name="input.list" string="${scizout.list}"/>
+             <edeclare name="output.list" string="${local.out}/remap_z_${ccd.num}.list"/>
+
+             <write path="${local.out}/${remap.log}" text="true"
+                    errorProperty="failed" rethrow="false" append="true">
+                 <segment string=" -- remap results for ${sciz.list}" lineBreaks="1"/>
+             </write>
+
+             <rtexec inheritedEnv="false" execDir="${nite.dir}"
+                     args="${remap.exec} ${remap.args}" quiet="true">
+                     <outMonitor file="${local.out}/${remap.log}"/>
+                     <errMonitor file="${local.out}/${remap.log}"/>
+             </rtexec>
+
+       </esequence>
+
+       <esequence>
+            <print line=" - Stage_remap done"/>
+
+            <write path="${local.out}/${remap.log}" text="true"
+                         errorProperty="failed" rethrow="false" append="true">
+                         <segment string=" -- remap done" lineBreaks="1"/>
+            </write>
+
+         <publish>
+            <event ensembleid="${ensemble.id}" workflowid="${jid}"
+                   nodeid="$R{content_end}" currentState="1">
+                  <property name="message" value="$R{content_end}"/>
+            </event>
+         </publish>
+
+       </esequence>
+   </target>

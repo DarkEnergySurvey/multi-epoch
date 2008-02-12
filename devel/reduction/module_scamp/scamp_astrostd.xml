@@ -1,0 +1,172 @@
+   <target name="Stage_scamp_astrostd" description="produce USNOB standard stars catalog for runSCAMP">
+    <property file="${mypath}/module_scamp/scamp_astrostd.properties"/>
+
+    <esequence>
+
+        <publish>
+           <event ensembleid="${ensemble.id}"
+                 workflowid="Main"
+                 nodeid="Begin Stage_scamp_astrostd"
+                 currentState="0">
+                  <property name="message" value="Begin Stage_scamp_astrostd"/>
+           </event>
+        </publish>
+
+     <print line=" - Begin Stage_scamp_astrostd"/>
+     <print line=" -- Running Stage_scamp_astrostd  ... "/>
+
+      <edeclare name="appbase"      string="${user.dir}"/> 
+ 
+     <!-- run select_astro_standars and ascii2ldac for either TG or WS -->
+     <econdblock type="else-if">
+      <econdtask>
+         <eeval>
+            <statement>
+               <ecompare string="${platform}">
+                     <predicate string="TG" comparator="EQUALS"/>
+                 </ecompare>
+               </statement>
+         </eeval>
+           <esequence>
+     <!--        <edeclare globalname="scamp_astrostd.out" string="${mypath}/jobs/${uid_in}_${nite}_scamp"/> -->
+             <edeclare globalname="scamp_astrostd.out" string="$R{appbase}/jobs/${uid_in}_${nite}_scamp"/>
+
+             <edeclare name="end" long="$E{ ${scamplist.number} + 1 }"/>
+ 
+             <eloop counterName="i" initialValue="1">
+               <ecounter>
+                 <expression infix="$R{i} &lt; $R{end}"/>
+               </ecounter>
+
+               <!-- convert 1,...,9 to 01,...,09 -->
+
+               <econdblock type="else-if">
+                <econdtask>
+                 <eeval>
+                   <statement>
+                    <ecompare long="$R{i}">
+                       <predicate long="10" comparator="LT"/>
+                    </ecompare>
+                   </statement>
+                 </eeval>
+                  <edeclare globalName="in" string="0$R{i}"/>
+                </econdtask>
+                  <edeclare globalName="in" long="$R{i}"/>
+               </econdblock>
+              
+               <edeclare name="scamp_astrostd.list" string="$R{scamp_astrostd.out}/${uid}_usnob.list_$R{in}"/>
+               <edeclare name="scamp_astrostd.cat" string="$R{scamp_astrostd.out}/${uid}_USNOB_$R{in}.cat"/>
+               <edeclare name="scamp_astrostd.fits" string="$R{scamp_astrostd.out}/${uid}_USNOB_$R{in}.fits"/>
+
+               <rtexec inheritedEnv="false" execDir="." 
+                  args="${scamp_astrostd.exec} ${scamp_astrostd.args}" quiet="false">
+               </rtexec>
+
+               <rtexec inheritedEnv="false" execDir="." 
+                  args="${scamp_ascii2ldac.exec} ${scamp_ascii2ldac.args}" quiet="false">
+              </rtexec>
+
+             </eloop>
+           </esequence>
+      </econdtask>    
+          <esequence>   
+            <edeclare globalname="scamp_astrostd.out" string="${workplace}/${uid}/data/${nite}/log"/>
+                
+               <econdblock type="else-if">
+                <econdtask>
+                 <eeval>
+                   <statement>
+                     <ecompare string="${project}">
+                       <predicate string="DES" comparator="EQUALS"/>
+                     </ecompare>
+                   </statement>
+                 </eeval>
+                  <edeclare globalName="scamp_astrostd.list" string="$R{scamp_astrostd.out}/${uid}_usnob.list_01"/>
+                </econdtask>
+                  <edeclare globalName="scamp_astrostd.list" string="$R{scamp_astrostd.out}/${uid}_usnob.list"/>
+               </econdblock>
+
+            <!--edeclare name="scamp_astrostd.list" string="$R{scamp_astrostd.out}/${uid}_usnob.list"/-->
+            <edeclare name="scamp_astrostd.cat" string="$R{scamp_astrostd.out}/${uid}_USNOB.cat"/>
+            <edeclare name="scamp_astrostd.fits" string="$R{scamp_astrostd.out}/${uid}_USNOB.fits"/>
+
+            <rtexec inheritedEnv="false" execDir="." 
+                args="${scamp_astrostd.exec} ${scamp_astrostd.args}" quiet="false">
+            </rtexec>
+
+            <rtexec inheritedEnv="false" execDir="." 
+                args="${scamp_ascii2ldac.exec} ${scamp_ascii2ldac.args}" quiet="false">
+            </rtexec>
+
+            <delete file="$R{scamp_astrostd.out}/${uid}_USNOB.cat"/>
+
+          </esequence>
+     </econdblock>
+    
+
+     <!-- gridFTP the USNOB catalogs over to teragrid -->
+     <econdblock type="else-if">
+      <econdtask>
+         <eeval>
+            <statement>
+               <ecompare string="${platform}">
+                     <predicate string="TG" comparator="EQUALS"/>
+                 </ecompare>
+               </statement>
+         </eeval>
+           <esequence>
+
+             <edeclare name="end" long="$E{ ${scamplist.number} + 1 }"/>
+ 
+             <eloop counterName="i" initialValue="1">
+               <ecounter>
+                 <expression infix="$R{i} &lt; $R{end}"/>
+               </ecounter>
+
+               <!-- convert 1,...,9 to 01,...,09 -->
+
+               <econdblock type="else-if">
+                <econdtask>
+                 <eeval>
+                   <statement>
+                    <ecompare long="$R{i}">
+                       <predicate long="10" comparator="LT"/>
+                    </ecompare>
+                   </statement>
+                 </eeval>
+                  <edeclare globalName="in" string="0$R{i}"/>
+                </econdtask>
+                  <edeclare globalName="in" long="$R{i}"/>
+               </econdblock>
+
+               <edeclare name="srcfile"  string="$R{scamp_astrostd.out}/${uid}_USNOB_$R{in}.fits"/>
+               <edeclare name="targetdir" string="${targetprot}://${tgrid_server_${site}}${tgrid_homepath_${site}}/${uid}_scamp_$R{in}/data/${nite}/log"/>
+
+               <uricopy from="$R{srcfile}" to="$R{targetdir}">
+               </uricopy>
+
+               <print line=" -- ${uid}_USNOB_$R{in}.fits sent"/>
+
+               <delete file="$R{scamp_astrostd.out}/${uid}_USNOB_$R{in}.fits"/>
+               <delete file="$R{scamp_astrostd.out}/${uid}_USNOB_$R{in}.cat"/>
+
+             </eloop>
+
+           </esequence>
+      </econdtask>    
+     </econdblock>
+
+     <print line=" - Stage_scamp_astrostd done"/>
+     <print line="  "/>
+
+        <publish>
+           <event ensembleid="${ensemble.id}"
+                 workflowid="Main"
+                 nodeid="End Stage_scamp_astrostd"
+                 currentState="0">
+                  <property name="message" value="End Stage_scamp_astrostd"/>
+           </event>
+        </publish>
+
+    </esequence>
+   </target>

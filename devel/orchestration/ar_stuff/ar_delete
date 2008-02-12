@@ -1,0 +1,74 @@
+#!/usr/bin/perl
+
+use strict;
+use Getopt::Long;
+require Pod::Usage;
+use Data::Dumper;
+
+my $cmd = "/usr/bin/ar_copy -delete ";
+
+for (@ARGV)
+{
+  $cmd .= "$_ ";
+}
+
+my ($verbose, $debug, $help, $man, $fromLoc, $toLoc, $imclass, $nite,
+    $imagetype, $ccd, $runid, $list, $listing, $verify, $dryrun, $pdiff);
+
+GetOptions( 'imclass|i=s'   => \$imclass,
+            'nite|n=s'      => \$nite,
+            'imagetype|t=s' => \$imagetype,
+            'ccd|c=s'       => \$ccd,
+            'runid|r=s'     => \$runid,
+            'help|?'        => \$help,
+            'man'           => \$man,
+            'verbose|v'     => \$verbose,
+            'debug|d'       => \$debug,
+            'dryrun|D'      => \$dryrun,
+            'list|l'        => \$list )
+  or Pod::Usage::pod2usage(0);
+
+Pod::Usage::pod2usage(0) if $help;
+Pod::Usage::pod2usage(-verbose => 2) if $man;
+
+if( defined $debug )
+{
+  print "$cmd\n";	
+}
+
+system($cmd);
+
+
+=head1 NAME
+
+
+B<ar_delete> - Deletes DES data files from an archive node and updates database.
+
+
+=head1 SYNOPSIS
+
+
+B<ar_delete> [options] <fromnode> <tonode>
+
+
+  Options:
+     -verbose, -v          Print copious output
+     -help, -?             Print usage
+     -man                  Print man page.
+     -imclass, -i =???
+     -list, -l             List the valid server names
+     -nite=NIGHT           is a tag like bcs051124 or des20061014 that is
+                           associated with a collection of data acquired on
+                           a particular night
+     -imagetype, -t        is a FILE attribute that can be one of the
+                           following: src, object, bias, flat, raw, reduced,
+                           coadd, catalog
+     -runid, -r            is the identifier associated with a particular
+                           processing job.  An example is
+                           BCS20061019_bcs051124
+                           (which is the processing job associated with nite
+                           bcs051124 that took place on Oct 19, 2006)
+     -ccd, -c              is the ccd number or range (1,2 or 1-2, or all)
+
+=cut
+

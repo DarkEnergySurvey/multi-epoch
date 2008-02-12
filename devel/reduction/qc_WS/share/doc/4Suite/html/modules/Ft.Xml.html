@@ -1,0 +1,463 @@
+<html>
+  <head>
+    <meta content="text/html; charset=iso-8859-1" http-equiv="Content-Type">
+    <title>4Suite API Documentation: Ft.Xml</title>
+    <link href="modules.css" type="text/css" rel="stylesheet">
+  </head>
+  <body>
+    <div class="universal-header"><span class="universal-header-prefix">&nbsp;&nbsp;&nbsp;</span>&nbsp;<span class="universal-header-prefix">&nbsp;&nbsp;</span>&nbsp;<span class="universal-header-prefix">&nbsp;</span>&nbsp;<a href="../index.html">4Suite<sup>&trade;</sup> API Documentation</a></div>
+    <h1><span class="glyph-arrow">&#9658;</span> Module <span class="this-name"><a href="Ft.html" title="Ft">Ft</a>.Xml</span></h1>
+    <div class="abstract">Module providing utilities for processing XML files</div>
+    <pre class="description">Copyright 2006 Fourthought, Inc. (USA).
+Detailed license and copyright information: http://4suite.org/COPYRIGHT
+Project home, documentation, distributions: http://4suite.org/</pre>
+    <div class="summary-section">
+      <table cellpadding="0" cellspacing="0">
+        <tbody>
+          <tr>
+            <td valign="top">
+              <div class="summary-header">Classes:</div>
+              <div class="summary-list"><span class="class-name"><a href="#MarkupWriter">MarkupWriter</a></span>, <span class="class-name"><a href="#ReaderException">ReaderException</a></span>, <span class="class-name"><a href="#XIncludeException">XIncludeException</a></span></div>
+            </td>
+            <td width="7" valign="middle"></td>
+            <td bgcolor="#C5C5C5" valign="middle" width="1"></td>
+            <td width="7" valign="middle"></td>
+            <td valign="top">
+              <div class="summary-header">Functions:</div>
+              <div class="summary-list"><span class="function-name"><a href="#ApplyXUpdate">ApplyXUpdate</a></span>, <span class="function-name"><a href="#Parse">Parse</a></span>, <span class="function-name"><a href="#ParsePath">ParsePath</a></span>, <span class="function-name"><a href="#SplitQName">SplitQName</a></span></div>
+            </td>
+            <td width="7" valign="middle"></td>
+            <td bgcolor="#C5C5C5" valign="middle" width="1"></td>
+            <td width="7" valign="middle"></td>
+            <td valign="top">
+              <div class="summary-header">Globals:</div>
+              <div class="summary-list"><span class="global-name"><a href="#EMPTY_NAMESPACE">EMPTY_NAMESPACE</a></span>, <span class="global-name"><a href="#EMPTY_PREFIX">EMPTY_PREFIX</a></span>, <span class="global-name"><a href="#HAS_PYEXPAT">HAS_PYEXPAT</a></span>, <span class="global-name"><a href="#READ_EXTERNAL_DTD">READ_EXTERNAL_DTD</a></span>, <span class="global-name"><a href="#XHTML_NAMESPACE">XHTML_NAMESPACE</a></span>, <span class="global-name"><a href="#XMLNS_NAMESPACE">XMLNS_NAMESPACE</a></span>, <span class="global-name"><a href="#XML_NAMESPACE">XML_NAMESPACE</a></span></div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="section">
+      <h2>Modules</h2>
+      <table class="modules">
+        <tbody>
+          <tr>
+            <td class="moduledef" valign="top">
+              <div class="module-name"><a name="Catalog"></a><a href="Ft.Xml.Catalog.html">Catalog</a></div>
+            </td>
+            <td class="moduledesc" valign="bottom">
+              <div class="abstract">Classes and functions that help implement OASIS XML and TR9401 Catalogs.
+Resolution with Catalogs is handled via the Ft.Xml.InputSource module.</div>
+            </td>
+          </tr>
+          <tr>
+            <td class="moduledef" valign="top">
+              <div class="module-name"><a name="Domlette"></a><a href="Ft.Xml.Domlette.html">Domlette</a></div>
+            </td>
+            <td class="moduledesc" valign="bottom">
+              <div class="abstract">Abstraction module for Domlette usage.
+Domlette is a DOM-like library tailored for use in XPath/XSLT.</div>
+            </td>
+          </tr>
+          <tr>
+            <td class="moduledef" valign="top">
+              <div class="module-name"><a name="InputSource"></a><a href="Ft.Xml.InputSource.html">InputSource</a></div>
+            </td>
+            <td class="moduledesc" valign="bottom">
+              <div class="abstract">Classes providing a standard interface and encapsulation of metadata for
+document/entity streams intended for input to various XML processors.</div>
+            </td>
+          </tr>
+          <tr>
+            <td class="moduledef" valign="top">
+              <div class="module-name"><a name="Lib"></a><a href="Ft.Xml.Lib.html">Lib</a></div>
+            </td>
+            <td class="moduledesc" valign="bottom">
+              <div class="abstract">Module providing XML support utilities (including serialization and tree comparison)</div>
+            </td>
+          </tr>
+          <tr>
+            <td class="moduledef" valign="top">
+              <div class="module-name"><a name="MarkupWriter"></a><span class="undocumented">MarkupWriter</span></div>
+            </td>
+            <td class="moduledesc" valign="bottom">
+              <div class="abstract">General-purpose utility class for generating XML (may eventually be
+expanded to produce more output types)</div>
+            </td>
+          </tr>
+          <tr>
+            <td class="moduledef" valign="top">
+              <div class="module-name"><a name="MessageSource"></a><a href="Ft.Xml.MessageSource.html">MessageSource</a></div>
+            </td>
+            <td class="moduledesc" valign="bottom">
+              <div class="abstract">Localizable message strings</div>
+            </td>
+          </tr>
+          <tr>
+            <td class="moduledef" valign="top">
+              <div class="module-name"><a name="Sax"></a><a href="Ft.Xml.Sax.html">Sax</a></div>
+            </td>
+            <td class="moduledesc" valign="bottom">
+              <div class="abstract">Abstraction module for Domlette SAX usage.</div>
+            </td>
+          </tr>
+          <tr>
+            <td class="moduledef" valign="top">
+              <div class="module-name"><a name="ThirdParty"></a><a href="Ft.Xml.ThirdParty.html">ThirdParty</a></div>
+            </td>
+            <td class="moduledesc" valign="bottom"></td>
+          </tr>
+          <tr>
+            <td class="moduledef" valign="top">
+              <div class="module-name"><a name="XInclude"></a><a href="Ft.Xml.XInclude.html">XInclude</a></div>
+            </td>
+            <td class="moduledesc" valign="bottom">
+              <div class="abstract">XInclude processing</div>
+            </td>
+          </tr>
+          <tr>
+            <td class="moduledef" valign="top">
+              <div class="module-name"><a name="XLink"></a><a href="Ft.Xml.XLink.html">XLink</a></div>
+            </td>
+            <td class="moduledesc" valign="bottom">
+              <div class="abstract">XLink processing package</div>
+            </td>
+          </tr>
+          <tr>
+            <td class="moduledef" valign="top">
+              <div class="module-name"><a name="XPath"></a><a href="Ft.Xml.XPath.html">XPath</a></div>
+            </td>
+            <td class="moduledesc" valign="bottom">
+              <div class="abstract">4XPath initialization and principal functions</div>
+            </td>
+          </tr>
+          <tr>
+            <td class="moduledef" valign="top">
+              <div class="module-name"><a name="XPointer"></a><a href="Ft.Xml.XPointer.html">XPointer</a></div>
+            </td>
+            <td class="moduledesc" valign="bottom">
+              <div class="abstract">Module for XPointer processing</div>
+            </td>
+          </tr>
+          <tr>
+            <td class="moduledef" valign="top">
+              <div class="module-name"><a name="XUpdate"></a><a href="Ft.Xml.XUpdate.html">XUpdate</a></div>
+            </td>
+            <td class="moduledesc" valign="bottom">
+              <div class="abstract">XUpdate request processing</div>
+            </td>
+          </tr>
+          <tr>
+            <td class="moduledef" valign="top">
+              <div class="module-name"><a name="Xslt"></a><a href="Ft.Xml.Xslt.html">Xslt</a></div>
+            </td>
+            <td class="moduledesc" valign="bottom">
+              <div class="abstract">4XSLT initialization and XSLT pattern tools</div>
+            </td>
+          </tr>
+          <tr>
+            <td class="moduledef" valign="top">
+              <div class="module-name"><a name="Xvif"></a><a href="Ft.Xml.Xvif.html">Xvif</a></div>
+            </td>
+            <td class="moduledesc" valign="bottom">
+              <div class="abstract">XVIF integration for 4Suite.  Includes basic RELAX NG support</div>
+            </td>
+          </tr>
+          <tr>
+            <td class="moduledef" valign="top">
+              <div class="module-name"><a name="cDomlette"></a><a href="Ft.Xml.cDomlette.html">cDomlette</a></div>
+            </td>
+            <td class="moduledesc" valign="bottom">
+              <div class="abstract">cDomlette implementation: a very fast DOM-like library tailored for use in XPath/XSLT</div>
+            </td>
+          </tr>
+          <tr>
+            <td class="moduledef" valign="top">
+              <div class="module-name"><a name="cDomlettec"></a><a href="Ft.Xml.cDomlettec.html">cDomlettec</a></div>
+            </td>
+            <td class="moduledesc" valign="bottom">
+              <div class="abstract">cDomlette implementation: a very fast DOM-like library tailored for use in XPath/XSLT</div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="section">
+      <h2>Classes</h2>
+      <dl class="classes">
+        <dt class="classdef"><a name="MarkupWriter"></a>class <span class="class-name">MarkupWriter</span><span class="bases">(<span class="class-name"><span class="undocumented">object</span></span>)</span></dt>
+        <dd class="classdesc">
+          <div class="abstract">General-purpose utility class for generating XML (may eventually be
+expanded to produce more output types)</div>
+          <pre class="description">Sample usage:
+
+from Ft.Xml import MarkupWriter
+writer = MarkupWriter(indent=u"yes")
+writer.startDocument()
+writer.startElement(u'xsa')
+writer.startElement(u'vendor')
+#Element with simple text (#PCDATA) content
+writer.simpleElement(u'name', content=u'Centigrade systems')
+#Note writer.text(content) still works
+writer.simpleElement(u'email', content=u"info@centigrade.bogus")
+writer.endElement(u'vendor')
+#Element with an attribute
+writer.startElement(u'product', attributes={u'id': u"100\u00B0"})
+#Note writer.attribute(name, value, namespace=None) still works
+writer.simpleElement(u'name', content=u"100\u00B0 Server")
+#XML fragment
+writer.xmlFragment('&lt;version&gt;1.0&lt;/version&gt;&lt;last-release&gt;20030401&lt;/last-release&gt;')
+#Empty element
+writer.simpleElement(u'changes')
+writer.endElement(u'product')
+writer.endElement(u'xsa')
+writer.endDocument()
+
+Note on the difference between 4Suite writers and printers
+Writer  - module that exposes a broad public API for building output
+          bit by bit
+Printer - module that simply takes a DOM and creates output from it
+          as a whole, within one API invokation</pre>
+          <h3>Methods</h3>
+          <dl class="methods">
+            <dt class="methoddef"><a name="MarkupWriter-__getattr__"><span class="method-name">__getattr__</span></a>(<span class="argument-name">self</span>, <span class="argument-name">value</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dt class="methoddef"><a name="MarkupWriter-__init__"><span class="method-name">__init__</span></a>(<span class="argument-name">self</span>, <span class="argument-name">stream</span><span class="argument-default">=&lt;open file '&lt;stdout&gt;', mode 'w' at 0xb7d98068&gt;</span>, <span class="argument-name">**wargs</span>)</dt>
+            <dd class="methoddesc">
+              <div class="abstract">Convenience factory function for Markup writers (based on
+xsl:output in XSLT)</div>
+            </dd>
+            <dd class="overrides"><b>Overrides: </b><span class="inherited-name">__init__</span> from class <span class="class-name"><span class="undocumented">object</span></span></dd>
+            <dt class="methoddef"><a name="MarkupWriter-simpleElement"><span class="method-name">simpleElement</span></a>(<span class="argument-name">self</span>, <span class="argument-name">tagName</span>, <span class="argument-name">namespace</span><span class="argument-default">=None</span>, <span class="argument-name">extraNss</span><span class="argument-default">=None</span>, <span class="argument-name">attributes</span><span class="argument-default">=None</span>, <span class="argument-name">content</span><span class="argument-default">=u''</span>)</dt>
+            <dd class="methoddesc">
+              <div class="abstract">Create a simple tag with optional attributes and content.  The
+complete element, start tag, optional text content, end tag, will
+all be generated by this one call.  Must *not* be matched with
+an endElement call.</div>
+              <pre class="description">Note: all "strings" in these parameters must be unicode objects
+tagName - qualified name of the element
+namespace - optional namespace URI
+attributes - optional dictionary mapping name to unicode value
+            the name can either be a unicode QName or a tuple
+            of (QName, namespace URI)
+content   - optional unicode object with the text body of the
+            simple element
+extraNss - optional dictionary (defaults to an empty one) that
+           creates additional namespace declarations that the
+           user wants to place on the specific element. Each key
+           is a ns prefix, and each value a ns name (URI).
+           You do not need to use extraNss if you will be using
+           a similar namespace parameter.  In fact, most people
+           will never need this parameter.</pre>
+            </dd>
+            <dt class="methoddef"><a name="MarkupWriter-startElement"><span class="method-name">startElement</span></a>(<span class="argument-name">self</span>, <span class="argument-name">tagName</span>, <span class="argument-name">namespace</span><span class="argument-default">=None</span>, <span class="argument-name">extraNss</span><span class="argument-default">=None</span>, <span class="argument-name">attributes</span><span class="argument-default">=None</span>)</dt>
+            <dd class="methoddesc">
+              <div class="abstract">Create a start tag with optional attributes.  Must eventually
+be matched with an endElement call</div>
+              <pre class="description">Note: all "strings" in these parameters must be unicode objects
+tagName - qualified name of the element (must be unicode)
+namespace - optional namespace URI
+attributes - optional dictionary mapping name to unicode value
+            the name can either be a unicode QName or a tuple
+            of (QName, namespace URI)
+extraNss - optional dictionary (defaults to an empty one) that
+           creates additional namespace declarations that the
+           user wants to place on the specific element. Each key
+           is a ns prefix, and each value a ns name (URI).
+           You do not need to use extraNss if you will be using
+           a similar namespace parameter.  In fact, most people
+           will never need this parameter.</pre>
+            </dd>
+            <dt class="methoddef"><a name="MarkupWriter-xmlFragment"><span class="method-name">xmlFragment</span></a>(<span class="argument-name">self</span>, <span class="argument-name">fragment</span>)</dt>
+            <dd class="methoddesc">
+              <div class="abstract">Incorporate a well-formed general entity into the output.
+fragment of
+fragment - string (must not be a Unicode object) to be incorporated
+           verbatim into the output, after testing for wellp-formedness</div>
+            </dd>
+          </dl>
+          <h3>Methods inherited from class <span class="undocumented">object</span></h3>
+          <div class="inherited"><span class="inherited-name">__delattr__</span>, <span class="inherited-name">__getattribute__</span>, <span class="inherited-name">__hash__</span>, <span class="inherited-name">__new__</span>, <span class="inherited-name">__reduce__</span>, <span class="inherited-name">__reduce_ex__</span>, <span class="inherited-name">__repr__</span>, <span class="inherited-name">__setattr__</span>, <span class="inherited-name">__str__</span></div>
+          <h3>Members</h3>
+          <dl class="members">
+            <dt class="memberdef"><a name="__dict__"><span class="member-name">__dict__</span></a> = &lt;attribute '__dict__' of 'MarkupWriter' objects&gt;</dt>
+            <dt class="memberdef"><a name="__weakref__"><span class="member-name">__weakref__</span></a> = &lt;attribute '__weakref__' of 'MarkupWriter' objects&gt;</dt>
+          </dl>
+          <h3>Members inherited from class <span class="undocumented">object</span></h3>
+          <div class="inherited"><span class="inherited-name">__class__</span></div>
+        </dd>
+        <dt class="classdef"><a name="ReaderException"></a>class <span class="class-name">ReaderException</span><span class="bases">(<span class="class-name"><a href="Ft.html#FtException">Ft.FtException</a></span>)</span></dt>
+        <dd class="classdesc">
+          <div class="abstract">Exception class for errors specific to XML reading
+(at a level above standard, non-namespace-aware parsing)</div>
+          <h3>Methods</h3>
+          <dl class="methods">
+            <dt class="methoddef"><a name="ReaderException-__init__"><span class="method-name">__init__</span></a>(<span class="argument-name">self</span>, <span class="argument-name">errorCode</span>, <span class="argument-name">systemId</span>, <span class="argument-name">lineNumber</span>, <span class="argument-name">columnNumber</span>, <span class="argument-name">**kwords</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dd class="overrides"><b>Overrides: </b><span class="inherited-name"><a href="Ft.html#FtException-__init__">__init__</a></span> from class <span class="class-name"><a href="Ft.html#FtException">FtException</a></span></dd>
+            <dt class="methoddef"><a name="ReaderException-__str__"><span class="method-name">__str__</span></a>(<span class="argument-name">self</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dd class="overrides"><b>Overrides: </b><span class="inherited-name"><a href="Ft.html#FtException-__str__">__str__</a></span> from class <span class="class-name"><a href="Ft.html#FtException">FtException</a></span></dd>
+          </dl>
+          <h3>Methods inherited from class <a href="Ft.html#FtException">Ft.FtException</a></h3>
+          <div class="inherited"><span class="inherited-name"><a href="Ft.html#FtException-__getattr__">__getattr__</a></span>, <span class="inherited-name"><a href="Ft.html#FtException-__repr__">__repr__</a></span></div>
+          <h3>Methods inherited from class <span class="undocumented">Exception</span></h3>
+          <div class="inherited"><span class="inherited-name">__getitem__</span></div>
+          <h3>Members</h3>
+          <dl class="members">
+            <dt class="memberdef"><a name="ASYNC_ENTITY"><span class="member-name">ASYNC_ENTITY</span></a> = 13</dt>
+            <dt class="memberdef"><a name="ATTRIBUTES_WITHOUT_ELEMENT"><span class="member-name">ATTRIBUTES_WITHOUT_ELEMENT</span></a> = 2000</dt>
+            <dt class="memberdef"><a name="ATTRIBUTE_DECLARED"><span class="member-name">ATTRIBUTE_DECLARED</span></a> = 2001</dt>
+            <dt class="memberdef"><a name="ATTRIBUTE_EXTERNAL_ENTITY_REF"><span class="member-name">ATTRIBUTE_EXTERNAL_ENTITY_REF</span></a> = 16</dt>
+            <dt class="memberdef"><a name="ATTRIBUTE_UNDECLARED_NOTATION"><span class="member-name">ATTRIBUTE_UNDECLARED_NOTATION</span></a> = 1023</dt>
+            <dt class="memberdef"><a name="BAD_CHAR_REF"><span class="member-name">BAD_CHAR_REF</span></a> = 14</dt>
+            <dt class="memberdef"><a name="BINARY_ENTITY_REF"><span class="member-name">BINARY_ENTITY_REF</span></a> = 15</dt>
+            <dt class="memberdef"><a name="DUPLICATE_ATTRIBUTE"><span class="member-name">DUPLICATE_ATTRIBUTE</span></a> = 8</dt>
+            <dt class="memberdef"><a name="DUPLICATE_ELEMENT_DECL"><span class="member-name">DUPLICATE_ELEMENT_DECL</span></a> = 1013</dt>
+            <dt class="memberdef"><a name="DUPLICATE_ID"><span class="member-name">DUPLICATE_ID</span></a> = 1007</dt>
+            <dt class="memberdef"><a name="DUPLICATE_ID_DECL"><span class="member-name">DUPLICATE_ID_DECL</span></a> = 1014</dt>
+            <dt class="memberdef"><a name="ENTITY_DECLARED"><span class="member-name">ENTITY_DECLARED</span></a> = 2002</dt>
+            <dt class="memberdef"><a name="ENTITY_DECLARED_IN_PE"><span class="member-name">ENTITY_DECLARED_IN_PE</span></a> = 24</dt>
+            <dt class="memberdef"><a name="ENTITY_UNDECLARED_NOTATION"><span class="member-name">ENTITY_UNDECLARED_NOTATION</span></a> = 1024</dt>
+            <dt class="memberdef"><a name="EXTERNAL_ENTITY_HANDLING"><span class="member-name">EXTERNAL_ENTITY_HANDLING</span></a> = 21</dt>
+            <dt class="memberdef"><a name="ID_ATTRIBUTE_DEFAULT"><span class="member-name">ID_ATTRIBUTE_DEFAULT</span></a> = 1015</dt>
+            <dt class="memberdef"><a name="ILLEGAL_PARAM_ENTITY_REF"><span class="member-name">ILLEGAL_PARAM_ENTITY_REF</span></a> = 10</dt>
+            <dt class="memberdef"><a name="INCOMPLETE_ELEMENT"><span class="member-name">INCOMPLETE_ELEMENT</span></a> = 1004</dt>
+            <dt class="memberdef"><a name="INCOMPLETE_PE"><span class="member-name">INCOMPLETE_PE</span></a> = 29</dt>
+            <dt class="memberdef"><a name="INCORRECT_ENCODING"><span class="member-name">INCORRECT_ENCODING</span></a> = 19</dt>
+            <dt class="memberdef"><a name="INVALID_ELEMENT"><span class="member-name">INVALID_ELEMENT</span></a> = 1001</dt>
+            <dt class="memberdef"><a name="INVALID_ENTITY"><span class="member-name">INVALID_ENTITY</span></a> = 1009</dt>
+            <dt class="memberdef"><a name="INVALID_ENUM_VALUE"><span class="member-name">INVALID_ENUM_VALUE</span></a> = 1022</dt>
+            <dt class="memberdef"><a name="INVALID_NAME_SEQ_VALUE"><span class="member-name">INVALID_NAME_SEQ_VALUE</span></a> = 1019</dt>
+            <dt class="memberdef"><a name="INVALID_NAME_VALUE"><span class="member-name">INVALID_NAME_VALUE</span></a> = 1018</dt>
+            <dt class="memberdef"><a name="INVALID_NMTOKEN_SEQ_VALUE"><span class="member-name">INVALID_NMTOKEN_SEQ_VALUE</span></a> = 1021</dt>
+            <dt class="memberdef"><a name="INVALID_NMTOKEN_VALUE"><span class="member-name">INVALID_NMTOKEN_VALUE</span></a> = 1020</dt>
+            <dt class="memberdef"><a name="INVALID_PUBLICID"><span class="member-name">INVALID_PUBLICID</span></a> = 32</dt>
+            <dt class="memberdef"><a name="INVALID_TEXT"><span class="member-name">INVALID_TEXT</span></a> = 1005</dt>
+            <dt class="memberdef"><a name="INVALID_TEXT_DECL"><span class="member-name">INVALID_TEXT_DECL</span></a> = 31</dt>
+            <dt class="memberdef"><a name="INVALID_TOKEN"><span class="member-name">INVALID_TOKEN</span></a> = 4</dt>
+            <dt class="memberdef"><a name="INVALID_XML_DECL"><span class="member-name">INVALID_XML_DECL</span></a> = 30</dt>
+            <dt class="memberdef"><a name="JUNK_AFTER_DOCUMENT_ELEMENT"><span class="member-name">JUNK_AFTER_DOCUMENT_ELEMENT</span></a> = 9</dt>
+            <dt class="memberdef"><a name="MISPLACED_XML_PI"><span class="member-name">MISPLACED_XML_PI</span></a> = 17</dt>
+            <dt class="memberdef"><a name="MISSING_ATTRIBUTE"><span class="member-name">MISSING_ATTRIBUTE</span></a> = 1011</dt>
+            <dt class="memberdef"><a name="MISSING_DOCTYPE"><span class="member-name">MISSING_DOCTYPE</span></a> = 1000</dt>
+            <dt class="memberdef"><a name="NOT_STANDALONE"><span class="member-name">NOT_STANDALONE</span></a> = 22</dt>
+            <dt class="memberdef"><a name="NO_ELEMENTS"><span class="member-name">NO_ELEMENTS</span></a> = 3</dt>
+            <dt class="memberdef"><a name="PARTIAL_CHAR"><span class="member-name">PARTIAL_CHAR</span></a> = 6</dt>
+            <dt class="memberdef"><a name="RECURSIVE_ENTITY_REF"><span class="member-name">RECURSIVE_ENTITY_REF</span></a> = 12</dt>
+            <dt class="memberdef"><a name="RECURSIVE_PARSE_ERROR"><span class="member-name">RECURSIVE_PARSE_ERROR</span></a> = 101</dt>
+            <dt class="memberdef"><a name="RESERVED_NAMESPACE_URI"><span class="member-name">RESERVED_NAMESPACE_URI</span></a> = 40</dt>
+            <dt class="memberdef"><a name="RESERVED_PREFIX_XML"><span class="member-name">RESERVED_PREFIX_XML</span></a> = 38</dt>
+            <dt class="memberdef"><a name="RESERVED_PREFIX_XMLNS"><span class="member-name">RESERVED_PREFIX_XMLNS</span></a> = 39</dt>
+            <dt class="memberdef"><a name="ROOT_ELEMENT_MISMATCH"><span class="member-name">ROOT_ELEMENT_MISMATCH</span></a> = 1002</dt>
+            <dt class="memberdef"><a name="SYNTAX_ERROR"><span class="member-name">SYNTAX_ERROR</span></a> = 2</dt>
+            <dt class="memberdef"><a name="TAG_MISMATCH"><span class="member-name">TAG_MISMATCH</span></a> = 7</dt>
+            <dt class="memberdef"><a name="UNBOUND_PREFIX"><span class="member-name">UNBOUND_PREFIX</span></a> = 27</dt>
+            <dt class="memberdef"><a name="UNCLOSED_CDATA_SECTION"><span class="member-name">UNCLOSED_CDATA_SECTION</span></a> = 20</dt>
+            <dt class="memberdef"><a name="UNCLOSED_TOKEN"><span class="member-name">UNCLOSED_TOKEN</span></a> = 5</dt>
+            <dt class="memberdef"><a name="UNDECLARED_ATTRIBUTE"><span class="member-name">UNDECLARED_ATTRIBUTE</span></a> = 1006</dt>
+            <dt class="memberdef"><a name="UNDECLARED_ELEMENT"><span class="member-name">UNDECLARED_ELEMENT</span></a> = 1003</dt>
+            <dt class="memberdef"><a name="UNDECLARED_ENTITY"><span class="member-name">UNDECLARED_ENTITY</span></a> = 1008</dt>
+            <dt class="memberdef"><a name="UNDECLARED_NOTATION"><span class="member-name">UNDECLARED_NOTATION</span></a> = 1010</dt>
+            <dt class="memberdef"><a name="UNDECLARED_PREFIX"><span class="member-name">UNDECLARED_PREFIX</span></a> = 28</dt>
+            <dt class="memberdef"><a name="UNDEFINED_ENTITY"><span class="member-name">UNDEFINED_ENTITY</span></a> = 11</dt>
+            <dt class="memberdef"><a name="UNDEFINED_ID"><span class="member-name">UNDEFINED_ID</span></a> = 1012</dt>
+            <dt class="memberdef"><a name="UNKNOWN_ENCODING"><span class="member-name">UNKNOWN_ENCODING</span></a> = 18</dt>
+            <dt class="memberdef"><a name="XML_PARSE_ERROR"><span class="member-name">XML_PARSE_ERROR</span></a> = 100</dt>
+            <dt class="memberdef"><a name="XML_SPACE_DECL"><span class="member-name">XML_SPACE_DECL</span></a> = 1016</dt>
+            <dt class="memberdef"><a name="XML_SPACE_VALUES"><span class="member-name">XML_SPACE_VALUES</span></a> = 1017</dt>
+          </dl>
+        </dd>
+        <dt class="classdef"><a name="XIncludeException"></a>class <span class="class-name">XIncludeException</span><span class="bases">(<span class="class-name"><a href="Ft.html#FtException">Ft.FtException</a></span>)</span></dt>
+        <dd class="classdesc">
+          <div class="abstract">Exception class for errors specific to XInclude processing</div>
+          <h3>Methods</h3>
+          <dl class="methods">
+            <dt class="methoddef"><a name="XIncludeException-__init__"><span class="method-name">__init__</span></a>(<span class="argument-name">self</span>, <span class="argument-name">errorCode</span>, <span class="argument-name">*args</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dd class="overrides"><b>Overrides: </b><span class="inherited-name"><a href="Ft.html#FtException-__init__">__init__</a></span> from class <span class="class-name"><a href="Ft.html#FtException">FtException</a></span></dd>
+          </dl>
+          <h3>Methods inherited from class <a href="Ft.html#FtException">Ft.FtException</a></h3>
+          <div class="inherited"><span class="inherited-name"><a href="Ft.html#FtException-__getattr__">__getattr__</a></span>, <span class="inherited-name"><a href="Ft.html#FtException-__repr__">__repr__</a></span>, <span class="inherited-name"><a href="Ft.html#FtException-__str__">__str__</a></span></div>
+          <h3>Methods inherited from class <span class="undocumented">Exception</span></h3>
+          <div class="inherited"><span class="inherited-name">__getitem__</span></div>
+          <h3>Members</h3>
+          <dl class="members">
+            <dt class="memberdef"><a name="FALLBACK_NOT_IN_INCLUDE"><span class="member-name">FALLBACK_NOT_IN_INCLUDE</span></a> = 16</dt>
+            <dt class="memberdef"><a name="FRAGMENT_IDENTIFIER"><span class="member-name">FRAGMENT_IDENTIFIER</span></a> = 13</dt>
+            <dt class="memberdef"><a name="INCLUDE_IN_INCLUDE"><span class="member-name">INCLUDE_IN_INCLUDE</span></a> = 15</dt>
+            <dt class="memberdef"><a name="INVALID_PARSE_ATTR"><span class="member-name">INVALID_PARSE_ATTR</span></a> = 11</dt>
+            <dt class="memberdef"><a name="MISSING_HREF"><span class="member-name">MISSING_HREF</span></a> = 10</dt>
+            <dt class="memberdef"><a name="MULTIPLE_FALLBACKS"><span class="member-name">MULTIPLE_FALLBACKS</span></a> = 17</dt>
+            <dt class="memberdef"><a name="TEXT_XPOINTER"><span class="member-name">TEXT_XPOINTER</span></a> = 12</dt>
+            <dt class="memberdef"><a name="UNSUPPORTED_XPOINTER"><span class="member-name">UNSUPPORTED_XPOINTER</span></a> = 14</dt>
+          </dl>
+        </dd>
+      </dl>
+    </div>
+    <div class="section">
+      <h2>Functions</h2>
+      <dl class="functions">
+        <dt class="functiondef"><a name="ApplyXUpdate"><span class="function-name">ApplyXUpdate</span></a>(<span class="argument-name">*args</span>, <span class="argument-name">**kw_args</span>)</dt>
+        <dd class="functiondesc">
+          <div class="abstract">#Wrap this so that we can import it later</div>
+        </dd>
+        <dt class="functiondef"><a name="Parse"><span class="function-name">Parse</span></a>(<span class="argument-name">source</span>)</dt>
+        <dd class="functiondesc">
+          <div class="abstract">Convenience function for parsing XML.  Use this function with a single
+argument, which must either be a string (not Unicode object), file-like
+object (stream), file path or URI.</div>
+          <pre class="description">Returns a Domlette node.
+
+Only pass strings or streams to this function if the XML is self-contained
+XML (i.e. not requiring access to any other resource such as external
+entities or includes).  If you get URI resolution errors, do not use this
+function: use the lower-level APIs instead.  As an example, if you want
+such resolution to use the current working directory as a base, parse
+as follows for strings:
+
+from Ft.Xml.Domlette import NonvalidatingReader
+from Ft.Lib import Uri
+
+XML = "&lt;!DOCTYPE a [ &lt;!ENTITY b "b.xml"&gt; ]&gt;&lt;a&gt;&amp;b;&lt;/a&gt;"
+
+base = Uri.OsPathToUri('')  #Turn CWD into a file: URL
+doc = NonvalidatingReader.parseString(XML, base)
+# during parsing, the replacement text for &amp;b;
+# will be obtained from b.xml in the CWD
+
+For streams, use "parseStream" rather than "parseString" in the above.</pre>
+        </dd>
+        <dt class="functiondef"><a name="ParsePath"><span class="function-name">ParsePath</span></a>(<span class="argument-name">source</span>)</dt>
+        <dd class="functiondesc"></dd>
+        <dt class="functiondef"><a name="SplitQName"><span class="function-name">SplitQName</span></a>(<span class="argument-name">qualifiedName</span>)</dt>
+        <dd class="functiondesc">
+          <div class="abstract">SplitQName(qualifiedName) -&gt; (prefix, localName)</div>
+          <pre class="description">where 'qualifiedName' is a QName according to XML Namespaces 1.0
+&lt;http://www.w3.org/TR/REC-xml-names&gt;.
+returns the name parts according to the spec.</pre>
+        </dd>
+      </dl>
+    </div>
+    <div class="section">
+      <h2>Globals</h2>
+      <dl class="globals">
+        <dt class="globaldef"><a name="EMPTY_NAMESPACE"><span class="global-name">EMPTY_NAMESPACE</span></a> = None</dt>
+        <dd class="globaldesc"></dd>
+        <dt class="globaldef"><a name="EMPTY_PREFIX"><span class="global-name">EMPTY_PREFIX</span></a> = None</dt>
+        <dd class="globaldesc"></dd>
+        <dt class="globaldef"><a name="HAS_PYEXPAT"><span class="global-name">HAS_PYEXPAT</span></a> = True</dt>
+        <dd class="globaldesc"></dd>
+        <dt class="globaldef"><a name="READ_EXTERNAL_DTD"><span class="global-name">READ_EXTERNAL_DTD</span></a> = True</dt>
+        <dd class="globaldesc"></dd>
+        <dt class="globaldef"><a name="XHTML_NAMESPACE"><span class="global-name">XHTML_NAMESPACE</span></a> = u'http://www.w3.org/1999/xhtml'</dt>
+        <dd class="globaldesc"></dd>
+        <dt class="globaldef"><a name="XMLNS_NAMESPACE"><span class="global-name">XMLNS_NAMESPACE</span></a> = u'http://www.w3.org/2000/xmlns/'</dt>
+        <dd class="globaldesc"></dd>
+        <dt class="globaldef"><a name="XML_NAMESPACE"><span class="global-name">XML_NAMESPACE</span></a> = u'http://www.w3.org/XML/1998/namespace'</dt>
+        <dd class="globaldesc"></dd>
+      </dl>
+    </div>
+    <div class="universal-footer">Last modified on 2006-09-18 11:05:26</div>
+  </body>
+</html>

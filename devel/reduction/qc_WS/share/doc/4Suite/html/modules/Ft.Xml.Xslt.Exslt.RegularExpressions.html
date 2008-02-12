@@ -1,0 +1,113 @@
+<html>
+  <head>
+    <meta content="text/html; charset=iso-8859-1" http-equiv="Content-Type">
+    <title>4Suite API Documentation: Ft.Xml.Xslt.Exslt.RegularExpressions</title>
+    <link href="modules.css" type="text/css" rel="stylesheet">
+  </head>
+  <body>
+    <div class="universal-header"><span class="universal-header-prefix">&nbsp;&nbsp;&nbsp;</span>&nbsp;<span class="universal-header-prefix">&nbsp;&nbsp;</span>&nbsp;<span class="universal-header-prefix">&nbsp;</span>&nbsp;<a href="../index.html">4Suite<sup>&trade;</sup> API Documentation</a></div>
+    <h1><span class="glyph-arrow">&#9658;</span> Module <span class="this-name"><a href="Ft.html" title="Ft">Ft</a>.<a href="Ft.Xml.html" title="Ft.Xml">Xml</a>.<a href="Ft.Xml.Xslt.html" title="Ft.Xml.Xslt">Xslt</a>.<a href="Ft.Xml.Xslt.Exslt.html" title="Ft.Xml.Xslt.Exslt">Exslt</a>.RegularExpressions</span></h1>
+    <div class="abstract">EXSLT 2.0 - Regular Expressions (http://www.exslt.org/regexp/index.html)
+WWW: http://4suite.org/XSLT        e-mail: support@4suite.org</div>
+    <pre class="description">Copyright (c) 2001 Fourthought Inc, USA.   All Rights Reserved.
+See  http://4suite.org/COPYRIGHT  for license and copyright information</pre>
+    <div class="summary-section">
+      <table cellpadding="0" cellspacing="0">
+        <tbody>
+          <tr>
+            <td valign="top">
+              <div class="summary-header">Functions:</div>
+              <div class="summary-list"><span class="function-name"><a href="#Match">Match</a></span>, <span class="function-name"><a href="#Replace">Replace</a></span>, <span class="function-name"><a href="#Test">Test</a></span></div>
+            </td>
+            <td width="7" valign="middle"></td>
+            <td bgcolor="#C5C5C5" valign="middle" width="1"></td>
+            <td width="7" valign="middle"></td>
+            <td valign="top">
+              <div class="summary-header">Globals:</div>
+              <div class="summary-list"><span class="global-name"><a href="#EXSL_REGEXP_NS">EXSL_REGEXP_NS</a></span>, <span class="global-name"><a href="#ExtElements">ExtElements</a></span>, <span class="global-name"><a href="#ExtFunctions">ExtFunctions</a></span>, <span class="global-name"><a href="#ExtNamespaces">ExtNamespaces</a></span></div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="section">
+      <h2>Functions</h2>
+      <dl class="functions">
+        <dt class="functiondef"><a name="Match"><span class="function-name">Match</span></a>(<span class="argument-name">context</span>, <span class="argument-name">source</span>, <span class="argument-name">pattern</span>, <span class="argument-name">flags</span><span class="argument-default">=''</span>)</dt>
+        <dd class="functiondesc">
+          <div class="abstract">The regexp:match function lets you get hold of the substrings of the
+string passed as the first argument that match the captured parts of
+the regular expression passed as the second argument.</div>
+          <pre class="description">The second argument is a regular expression that follows the Javascript
+regular expression syntax.
+
+The third argument is a string consisting of character flags to be used
+by the match. If a character is present then that flag is true. The
+flags are:
+  g: global match - the submatches from all the matches in the string
+                    are returned. If this character is not present, then
+                    only the submatches from the first match in the
+                    string are returned.
+  i: case insensitive - the regular expression is treated as case
+                        insensitive. If this character is not present,
+                        then the regular expression is case sensitive.
+
+The regexp:match function returns a node set of 'match' elements, each of
+whose string value is equal to a portion of the first argument string
+that was captured by the regular expression. If the match is not global,
+the first match element has a value equal to the portion of the string
+matched by the entire regular expression.</pre>
+        </dd>
+        <dt class="functiondef"><a name="Replace"><span class="function-name">Replace</span></a>(<span class="argument-name">context</span>, <span class="argument-name">source</span>, <span class="argument-name">pattern</span>, <span class="argument-name">flags</span>, <span class="argument-name">repl</span>)</dt>
+        <dd class="functiondesc">
+          <div class="abstract">The regexp:replace function replaces the parts of a string that match
+a regular expression with another string.</div>
+          <pre class="description">The first argument is the string to be matched and replaced. The second
+argument is a regular expression that follows the Javascript regular
+expression syntax. The fourth argument is the string to replace the
+matched parts of the string.
+
+The third argument is a string consisting of character flags to be used
+by the match. If a character is present then that flag is true. The flags
+are:
+  g: global replace - all occurrences of the regular expression in the
+                      string are replaced. If this character is not
+                      present, then only the first occurrence of the
+                      regular expression is replaced.
+  i: case insensitive - the regular expression is treated as case
+                        insensitive. If this character is not present,
+                        then the regular expression is case sensitive.</pre>
+        </dd>
+        <dt class="functiondef"><a name="Test"><span class="function-name">Test</span></a>(<span class="argument-name">context</span>, <span class="argument-name">source</span>, <span class="argument-name">pattern</span>, <span class="argument-name">flags</span><span class="argument-default">=''</span>)</dt>
+        <dd class="functiondesc">
+          <div class="abstract">The regexp:test function returns true if the string given as the first
+argument matches the regular expression given as the second argument.</div>
+          <pre class="description">The second argument is a regular expression that follows the Javascript
+regular expression syntax.
+
+The third argument is a string consisting of flags to be used by the test.
+If a character is present then that flag is true. The flags are:
+  g: global test - has no effect on this function, but is retained for
+                   consistency with regexp:match and regexp:replace.
+  i: case insensitive - the regular expression is treated as case
+                        insensitive. If this character is not present,
+                        then the regular expression is case sensitive.</pre>
+        </dd>
+      </dl>
+    </div>
+    <div class="section">
+      <h2>Globals</h2>
+      <dl class="globals">
+        <dt class="globaldef"><a name="EXSL_REGEXP_NS"><span class="global-name">EXSL_REGEXP_NS</span></a> = 'http://exslt.org/regular-expressions'</dt>
+        <dd class="globaldesc"></dd>
+        <dt class="globaldef"><a name="ExtElements"><span class="global-name">ExtElements</span></a> = {}</dt>
+        <dd class="globaldesc"></dd>
+        <dt class="globaldef"><a name="ExtFunctions"><span class="global-name">ExtFunctions</span></a> = {('http://exslt.org/regular-expressions', 'match'): &lt;function Match at 0xb75d225c&gt;, ('http://exslt.org/regular-expressions', 'replace'): &lt;function Replace at 0xb75d2294&gt;, ('http://exslt.org/regular-expressions', 'test'): &lt;function Test at 0xb75d2224&gt;}</dt>
+        <dd class="globaldesc"></dd>
+        <dt class="globaldef"><a name="ExtNamespaces"><span class="global-name">ExtNamespaces</span></a> = {'http://exslt.org/regular-expressions': 'regexp'}</dt>
+        <dd class="globaldesc"></dd>
+      </dl>
+    </div>
+    <div class="universal-footer">Last modified on 2006-12-18 15:29:56</div>
+  </body>
+</html>

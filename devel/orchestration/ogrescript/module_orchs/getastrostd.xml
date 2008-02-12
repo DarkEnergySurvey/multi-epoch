@@ -1,0 +1,145 @@
+<define procedure="Stage_getastrostd" ARG_0="int">
+    <properties file="${mypath}/module_orchs/getastrostd.properties"/>
+    <env/>
+    <properties sysprops="true"/>
+    <send>
+        <progress-event message="Begin Stage_getastrostd">
+            <header-property name="some-special-id" value="${ensemble.id}-Main-Begin-Stage_getastrostd"/>
+        </progress-event>
+    </send>
+    <echo stdout="true" message=" - Begin Stage_getastrostd"/>
+    <!-- loop over the CCD's -->
+    <declare name="end" long="$E{ ${ccd.stop} + 1 }"/>
+    <declare name="i" int="0"/>
+    <for var="i" from="${ccd.start}" condition="$E{${i} &lt; ${end}}">
+        <declare name="in" long="0"/>
+        <add-leading-zeros number="${i}" places="2">
+            <return-value defaultName="zerosAdded" assignedName="in"/>
+        </add-leading-zeros>
+        <if>
+            <equals first="${platform}" second="TG"/>
+            <declare global="true" name="usnobcat.dir" string="${local_catpath}"/>
+            <declare global="true" name="usnob.cat" string="${usnobcat.dir}/log/usnob.cat"/>
+            <echo stdout="true" message=" -- The produced catalogs can be found in ${usnobcat.dir}"/>
+            <else>
+                <declare global="true" name="usnobcat.dir" string="${workplace}/${uid}/data/${nite}/log"/>
+                <declare global="true" name="usnob.cat" string="${usnobcat.dir}/usnob.cat"/>
+            </else>
+        </if>
+        <echo stdout="true" message=" -- creating queries for CCD ${in}"/>
+        <delete dir="file:${usnob.cat}">
+            <configuration>
+                <property name="delete-fail-on-error" value="false" type="boolean"/>
+            </configuration>
+        </delete>
+        <!-- open SQL file and write header information -->
+        <declare name="usnob.sql" string="${sql.dir}/usnob_${nite}.sql"/>
+        <delete dir="file:${usnob.sql}">
+            <configuration>
+                <property name="delete-fail-on-error" value="false" type="boolean"/>
+            </configuration>
+        </delete>
+        <write-segments path="${usnob.sql}" append="true">
+            <segment lineBreaks="1">SET ECHO OFF NEWP 0 SPA 1 PAGES 0 FEED OFF HEAD OFF TRIMS ON LINESIZE 1000;</segment>
+            <segment lineBreaks="1">SPOOL ${usnob.cat} append;</segment>
+            <segment lineBreaks="1">select ra,dec,sra,sde,r1</segment>
+            <segment lineBreaks="1">from USNOB_CAT1 where</segment>
+        </write-segments>
+        <!-- make sql script for the wcsoffset and run query -->
+        <declare name="sql.script" string="${sql.dir}/usnob_${nite}_${in}.sql"/>
+        <delete dir="file:${sql.script}">
+            <configuration>
+                <property name="delete-fail-on-error" value="false" type="boolean"/>
+            </configuration>
+        </delete>
+        <declare name="offset.query.out" string="${sql.dir}/offset_${in}.dat"/>
+        <delete dir="file:${offset.query.out}">
+            <configuration>
+                <property name="delete-fail-on-error" value="false" type="boolean"/>
+            </configuration>
+        </delete>
+        <!-- set up for output of image data -->
+        <declare name="image.query.out" string="${sql.dir}/usnobout_${in}.dat"/>
+        <delete dir="file:${image.query.out}">
+            <configuration>
+                <property name="delete-fail-on-error" value="false" type="boolean"/>
+            </configuration>
+        </delete>
+        <!-- now write query -->
+        <write-segments path="${sql.script}" append="true">
+            <segment lineBreaks="1">SET ECHO OFF NEWP 0 SPA 1 PAGES 0 FEED OFF HEAD OFF TRIMS ON LINESIZE 1000;</segment>
+            <segment lineBreaks="1">SPOOL ${offset.query.out};</segment>
+            <segment lineBreaks="1">select chipid,raoffset,decoffset,rahwidth,</segment>
+            <segment lineBreaks="1">dechwidth from wcsoffset where</segment>
+            <segment lineBreaks="1">CHIPID = ${i} and</segment>
+            <segment lineBreaks="1">TELESCOPE like '%${telescope}%' and</segment>
+            <segment lineBreaks="1"> DETECTOR like '%${detector}%';</segment>
+            <segment lineBreaks="1">SPOOL off;</segment>
+            <segment lineBreaks="1">SPOOL ${image.query.out};</segment>
+            <segment lineBreaks="1">select imagename,ra,dec,ccd_number</segment>
+            <segment lineBreaks="1">from Files where</segment>
+            <segment lineBreaks="1">upper(IMAGETYPE) like '%OBJECT%' and</segment>
+            <segment lineBreaks="1">CCD_NUMBER = ${i} and NITE like '${nite}';</segment>
+            <segment lineBreaks="1">SPOOL off;</segment>
+            <segment lineBreaks="1">quit</segment>
+        </write-segments>
+        <!-- run sql query -->
+<!--
+            <declare name="sql.script" string="${sql.dir}/usnob_${nite}_${in}.sql"/>
+-->
+        <assign name="sql.script" string="${sql.dir}/usnob_${nite}_${in}.sql"/>
+        <stream-monitor-process execution-dir=".">
+            <command-line>${sql.exec} ${sql.command}</command-line>
+        </stream-monitor-process>
+        <!-- process output to create query for science images -->
+<!--
+            <declare name="image.query.out"  string="${sql.dir}/usnobout_${in}.dat"/>
+            <declare name="offset.query.out" string="${sql.dir}/offset_${in}.dat"/>
+-->
+        <assign name="image.query.out" string="${sql.dir}/usnobout_${in}.dat"/>
+        <assign name="offset.query.out" string="${sql.dir}/offset_${in}.dat"/>
+        <stream-monitor-process execution-dir=".">
+            <command-line>${usnob.exec} ${usnob.command}</command-line>
+        </stream-monitor-process>
+        <!-- write footer lines to the query file -->
+        <write-segments path="${usnob.sql}" append="true">
+            <segment lineBreaks="1">order by ra;</segment>
+            <segment lineBreaks="1">SPOOL off;</segment>
+            <segment lineBreaks="1">exit;</segment>
+        </write-segments>
+        <!-- execute the giant query -->
+        <echo stdout="true" message=" -- Executing global query for standards"/>
+        <assign name="usnob.sql" string="${sql.dir}/usnob_${nite}.sql"/>
+<!--
+         <declare name="usnob.sql" string="${sql.dir}/usnob_${nite}.sql"/>
+         <declare name="sql.script" string="${usnob.sql}"/>
+-->
+        <assign name="sql.script" string="${usnob.sql}"/>
+        <stream-monitor-process execution-dir=".">
+            <command-line>${sql.exec} ${sql.command}</command-line>
+        </stream-monitor-process>
+        <delete dir="file:${offset.query.out}">
+            <configuration>
+                <property name="delete-fail-on-error" value="false" type="boolean"/>
+            </configuration>
+        </delete>
+        <delete dir="file:${image.query.out}">
+            <configuration>
+                <property name="delete-fail-on-error" value="false" type="boolean"/>
+            </configuration>
+        </delete>
+        <!-- convert catalog to the fits file -->
+        <stream-monitor-process execution-dir=".">
+            <command-line>${ascii2ldac.exec} ${ascii2ldac.command}</command-line>
+        </stream-monitor-process>
+        <!-- end of the loop -->
+    </for>
+    <echo stdout="true" message=" - Stage_getastrostd done"/>
+    <echo stdout="true" message="     "/>
+    <send>
+        <progress-event message="End Stage_getastrostd">
+            <header-property name="some-special-id" value="${ensemble.id}-Main-End-Stage_getastrostd"/>
+        </progress-event>
+    </send>
+</define>
+

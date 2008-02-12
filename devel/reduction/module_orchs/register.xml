@@ -1,0 +1,32 @@
+   <target name="Stage_register" description="component register_job_with_monitor description">
+
+        <envtosysprops/>
+
+        <esequence> 
+
+
+        <print line="Running Stage_register"/>
+        <edeclare name="appbase"      string="${user.dir}"/>
+
+        <publish>
+           <event ensembleid="${ensemble.id}"
+                 workflowid="Main"
+                 nodeid="Begin Stage_register on ${orchestration.node}"
+                 channelid="metadata"
+                 originatortype="$R{nameval}"
+                 currentState="0">
+                  <property name="message"   value="Begin Stage_register on ${orchestration.node}"/>
+                  <property name="nite"      value="${nite}"/>
+                  <property name="site"      value="${site}"/>
+                  <property name="uid_in"    value="${uid_in}"/>
+                  <property name="ccd.start" value="${ccd.start}"/>
+                  <property name="ccd.stop"  value="${ccd.stop}"/>
+                  <property name="run.stage"  value="${run.stage}"/>
+                  <property name="tgrid_homepath"  value="${tgrid_homepath_${site}}"/>
+                  <property name="tgrid_archpath"  value="${tgrid_archpath_${site}}"/>
+           </event>
+        </publish>
+
+        </esequence> 
+
+   </target>

@@ -1,0 +1,118 @@
+<html>
+  <head>
+    <meta content="text/html; charset=iso-8859-1" http-equiv="Content-Type">
+    <title>4Suite API Documentation: Ft.Xml.ThirdParty.Xvif.xmlchargen</title>
+    <link href="modules.css" type="text/css" rel="stylesheet">
+  </head>
+  <body>
+    <div class="universal-header"><span class="universal-header-prefix">&nbsp;&nbsp;&nbsp;</span>&nbsp;<span class="universal-header-prefix">&nbsp;&nbsp;</span>&nbsp;<span class="universal-header-prefix">&nbsp;</span>&nbsp;<a href="../index.html">4Suite<sup>&trade;</sup> API Documentation</a></div>
+    <h1><span class="glyph-arrow">&#9658;</span> Module <span class="this-name"><a href="Ft.html" title="Ft">Ft</a>.<a href="Ft.Xml.html" title="Ft.Xml">Xml</a>.<a href="Ft.Xml.ThirdParty.html" title="Ft.Xml.ThirdParty">ThirdParty</a>.<a href="Ft.Xml.ThirdParty.Xvif.html" title="Ft.Xml.ThirdParty.Xvif">Xvif</a>.xmlchargen</span></h1>
+    <div class="abstract"># From 2nd edition</div>
+    <div class="summary-section">
+      <table cellpadding="0" cellspacing="0">
+        <tbody>
+          <tr>
+            <td valign="top">
+              <div class="summary-header">Classes:</div>
+              <div class="summary-list"><span class="class-name"><a href="#CharacterParser">CharacterParser</a></span></div>
+            </td>
+            <td width="7" valign="middle"></td>
+            <td width="1" valign="middle" bgcolor="#C5C5C5"></td>
+            <td width="7" valign="middle"></td>
+            <td valign="top">
+              <div class="summary-header">Functions:</div>
+              <div class="summary-list"><span class="function-name"><a href="#compatrepr">compatrepr</a></span>, <span class="function-name"><a href="#uniclass">uniclass</a></span>, <span class="function-name"><a href="#union">union</a></span></div>
+            </td>
+            <td width="7" valign="middle"></td>
+            <td width="1" valign="middle" bgcolor="#C5C5C5"></td>
+            <td width="7" valign="middle"></td>
+            <td valign="top">
+              <div class="summary-header">Globals:</div>
+              <div class="summary-list"><span class="global-name"><a href="#BaseChar">BaseChar</a></span>, <span class="global-name"><a href="#CombiningChar">CombiningChar</a></span>, <span class="global-name"><a href="#Digit">Digit</a></span>, <span class="global-name"><a href="#Extender">Extender</a></span>, <span class="global-name"><a href="#FirstNCNameChar">FirstNCNameChar</a></span>, <span class="global-name"><a href="#FirstNameChar">FirstNameChar</a></span>, <span class="global-name"><a href="#Ideographic">Ideographic</a></span>, <span class="global-name"><a href="#Letter">Letter</a></span>, <span class="global-name"><a href="#LetterDigit">LetterDigit</a></span>, <span class="global-name"><a href="#NCNameChar">NCNameChar</a></span>, <span class="global-name"><a href="#NameChar">NameChar</a></span>, <span class="global-name"><a href="#intervall">intervall</a></span>, <span class="global-name"><a href="#single">single</a></span></div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="section">
+      <h2>Classes</h2>
+      <dl class="classes">
+        <dt class="classdef"><a name="CharacterParser"></a>class <span class="class-name">CharacterParser</span></dt>
+        <dd class="classdesc">
+          <h3>Methods</h3>
+          <dl class="methods">
+            <dt class="methoddef"><a name="CharacterParser-__init__"><span class="method-name">__init__</span></a>(<span class="argument-name">self</span>, <span class="argument-name">chars</span><span class="argument-default">=None</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dt class="methoddef"><a name="CharacterParser-as_array"><span class="method-name">as_array</span></a>(<span class="argument-name">self</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dt class="methoddef"><a name="CharacterParser-as_chardict"><span class="method-name">as_chardict</span></a>(<span class="argument-name">self</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dt class="methoddef"><a name="CharacterParser-as_re_class"><span class="method-name">as_re_class</span></a>(<span class="argument-name">self</span>)</dt>
+            <dd class="methoddesc">
+              <div class="abstract">Return the character class as a regular expression</div>
+            </dd>
+            <dt class="methoddef"><a name="CharacterParser-as_spec_string"><span class="method-name">as_spec_string</span></a>(<span class="argument-name">self</span>)</dt>
+            <dd class="methoddesc">
+              <div class="abstract">Return the character class in the notation of the XML
+recommendation</div>
+            </dd>
+            <dt class="methoddef"><a name="CharacterParser-as_sre_class"><span class="method-name">as_sre_class</span></a>(<span class="argument-name">self</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dt class="methoddef"><a name="CharacterParser-build_alts"><span class="method-name">build_alts</span></a>(<span class="argument-name">self</span>)</dt>
+            <dd class="methoddesc"></dd>
+          </dl>
+        </dd>
+      </dl>
+    </div>
+    <div class="section">
+      <h2>Functions</h2>
+      <dl class="functions">
+        <dt class="functiondef"><a name="compatrepr"><span class="function-name">compatrepr</span></a>(<span class="argument-name">s</span>)</dt>
+        <dd class="functiondesc">
+          <div class="abstract">Return a repr of a string that is syntactically correct in
+Python 1.5 as well.</div>
+        </dd>
+        <dt class="functiondef"><a name="uniclass"><span class="function-name">uniclass</span></a>(<span class="argument-name">i</span>)</dt>
+        <dd class="functiondesc"></dd>
+        <dt class="functiondef"><a name="union"><span class="function-name">union</span></a>(<span class="argument-name">*args</span>)</dt>
+        <dd class="functiondesc"></dd>
+      </dl>
+    </div>
+    <div class="section">
+      <h2>Globals</h2>
+      <dl class="globals">
+        <dt class="globaldef"><a name="BaseChar"><span class="global-name">BaseChar</span></a> = &lt;Ft.Xml.ThirdParty.Xvif.xmlchargen.CharacterParser instance&gt;</dt>
+        <dd class="globaldesc"></dd>
+        <dt class="globaldef"><a name="CombiningChar"><span class="global-name">CombiningChar</span></a> = &lt;Ft.Xml.ThirdParty.Xvif.xmlchargen.CharacterParser instance&gt;</dt>
+        <dd class="globaldesc"></dd>
+        <dt class="globaldef"><a name="Digit"><span class="global-name">Digit</span></a> = &lt;Ft.Xml.ThirdParty.Xvif.xmlchargen.CharacterParser instance&gt;</dt>
+        <dd class="globaldesc"></dd>
+        <dt class="globaldef"><a name="Extender"><span class="global-name">Extender</span></a> = &lt;Ft.Xml.ThirdParty.Xvif.xmlchargen.CharacterParser instance&gt;</dt>
+        <dd class="globaldesc"></dd>
+        <dt class="globaldef"><a name="FirstNCNameChar"><span class="global-name">FirstNCNameChar</span></a> = &lt;Ft.Xml.ThirdParty.Xvif.xmlchargen.CharacterParser instance&gt;</dt>
+        <dd class="globaldesc"></dd>
+        <dt class="globaldef"><a name="FirstNameChar"><span class="global-name">FirstNameChar</span></a> = &lt;Ft.Xml.ThirdParty.Xvif.xmlchargen.CharacterParser instance&gt;</dt>
+        <dd class="globaldesc"></dd>
+        <dt class="globaldef"><a name="Ideographic"><span class="global-name">Ideographic</span></a> = &lt;Ft.Xml.ThirdParty.Xvif.xmlchargen.CharacterParser instance&gt;</dt>
+        <dd class="globaldesc"></dd>
+        <dt class="globaldef"><a name="Letter"><span class="global-name">Letter</span></a> = &lt;Ft.Xml.ThirdParty.Xvif.xmlchargen.CharacterParser instance&gt;</dt>
+        <dd class="globaldesc"></dd>
+        <dt class="globaldef"><a name="LetterDigit"><span class="global-name">LetterDigit</span></a> = &lt;Ft.Xml.ThirdParty.Xvif.xmlchargen.CharacterParser instance&gt;</dt>
+        <dd class="globaldesc"></dd>
+        <dt class="globaldef"><a name="NCNameChar"><span class="global-name">NCNameChar</span></a> = &lt;Ft.Xml.ThirdParty.Xvif.xmlchargen.CharacterParser instance&gt;</dt>
+        <dd class="globaldesc"></dd>
+        <dt class="globaldef"><a name="NameChar"><span class="global-name">NameChar</span></a> = &lt;Ft.Xml.ThirdParty.Xvif.xmlchargen.CharacterParser instance&gt;</dt>
+        <dd class="globaldesc"></dd>
+        <dt class="globaldef"><a name="intervall"><span class="global-name">intervall</span></a> = &lt;_sre.SRE_Pattern object&gt;</dt>
+        <dd class="globaldesc">
+          <div class="abstract">Compiled regular expression objects</div>
+        </dd>
+        <dt class="globaldef"><a name="single"><span class="global-name">single</span></a> = &lt;_sre.SRE_Pattern object&gt;</dt>
+        <dd class="globaldesc">
+          <div class="abstract">Compiled regular expression objects</div>
+        </dd>
+      </dl>
+    </div>
+    <div class="universal-footer">Last modified on 2003-12-07 15:45:34</div>
+  </body>
+</html>

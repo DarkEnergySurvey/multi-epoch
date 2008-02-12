@@ -1,0 +1,9 @@
+#!/bin/bash
+
+PODS=`ls -1 doc/*.pod`
+mkdir -p man/man1
+
+for p in $PODS; do
+  BASE=`basename $p .pod`
+  pod2man ${p} > man/man1/${BASE}.1
+done 

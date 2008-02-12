@@ -1,0 +1,102 @@
+#!/usr/bin/env perl
+########################################################################
+#  $Id$
+#
+#  $Rev::                                  $:  # Revision of last commit.
+#  $LastChangedBy::                        $:  # Author of last commit. 
+#  $LastChangedDate::                      $:  # Date of last commit.
+#
+#  Authors: 
+#         Michelle Gower (mgower@ncsa.uiuc.edu)
+#         Darren Adams (dadams@ncsa.uiuc.edu)
+#
+#  Developed at: 
+#  The National Center for Supercomputing Applications (NCSA).
+#
+#  Copyright (C) 2007 Board of Trustees of the University of Illinois. 
+#  All rights reserved.
+#
+#  DESCRIPTION:
+#
+#######################################################################
+
+use strict;
+use warnings;
+
+use Getopt::Long;
+use FindBin;
+use lib "$FindBin::Bin/../lib";
+use DES::utils::misc;
+use DES::utils::hist;
+use DES::utils::email;
+use DES::desconfig;
+
+my ($Config, $ConfigFile);
+my ($DebugFH, $Out, $Version);
+
+&Getopt::Long::Configure( 'noignorecase', 'no_autoabbrev');
+Getopt::Long::GetOptions(
+   'version|v' => \$Version
+);
+
+open $DebugFH, "> prestagesrc.out";
+local *STDOUT = $DebugFH;
+local *STDERR = $DebugFH;
+
+if (scalar(@ARGV) == 1)
+{
+  $ConfigFile = shift;
+}
+else
+{
+  print "Usage: desprestagesrc configfile\n";
+  close $DebugFH;
+  exit $FAILURE;
+}
+
+$Config = new DES::desconfig;
+$Config->readConfig($ConfigFile, 0, $DebugFH);
+
+my $Nite = $Config->getValue("nite");
+my %SearchDefs;
+$SearchDefs{"stage"} = "stagesrc";
+my $DestArchiveLoc=$Config->getValue("run_archive_loc", \%SearchDefs);
+$SearchDefs{"archive"} = $DestArchiveLoc;
+my $DestArchiveRoot=$Config->getValueReq("archive_root", \%SearchDefs);
+my $DestarchiveSite=$Config->getValueReq("site_name", \%SearchDefs);
+$SearchDefs{"site"} = $DestarchiveSite;
+my $DestServer = $Config->getValueReq("gridftp_host", \%SearchDefs);
+my $DestServerPort = $Config->getValue("gridftp_port", \%SearchDefs);
+
+# Make archive root and raw directory just in case, 
+# but don't bail on error message if already exists
+$Out = `uberftp -P $DestServerPort $DestServer "mkdir $DestArchiveRoot" 2>&1`;
+$Out = `uberftp -P $DestServerPort $DestServer "cd $DestArchiveRoot; mkdir raw;" 2>&1`; 
+
+$Out = `uberftp -P $DestServerPort $DestServer "cd $DestArchiveRoot/raw; mkdir $Nite; cd $Nite; mkdir src" 2>&1`;
+my $ExitCode = ($?>>8);
+
+print "prestagesrc: mkdir output\n";
+print "$Out\n";
+
+logEvent($Config, "stagesrc", "j", " ", "pretask");
+
+close $DebugFH;
+
+if ($ExitCode != 0) {
+   $ExitCode = $FAILURE;
+
+   my ($Msg1, $Msg2);
+   $Msg1 = "Stage stagesrc failed when making directories.\n\n";
+   $Msg2 .= "Usual problems are typos in archive_root or the.\n";
+   $Msg2 .= "src directory already exists.\n";
+   $Msg2 .= "\n\nOutput of the uberftp mkdir command:\n";
+   $Msg2 .= "$Out\n";
+   sendEmail($Config, undef, "stagesrc", $ExitCode, $Msg1, $Msg2);
+}
+
+posttasks($Config, "stagesrc", "j","", $ExitCode);
+
+close $DebugFH;
+exit $ExitCode;
+

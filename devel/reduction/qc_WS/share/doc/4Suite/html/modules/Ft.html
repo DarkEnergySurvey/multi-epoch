@@ -1,0 +1,164 @@
+<html>
+  <head>
+    <meta content="text/html; charset=iso-8859-1" http-equiv="Content-Type">
+    <title>4Suite API Documentation: Ft</title>
+    <link href="modules.css" type="text/css" rel="stylesheet">
+  </head>
+  <body>
+    <div class="universal-header"><span class="universal-header-prefix">&nbsp;&nbsp;&nbsp;</span>&nbsp;<span class="universal-header-prefix">&nbsp;&nbsp;</span>&nbsp;<span class="universal-header-prefix">&nbsp;</span>&nbsp;<a href="../index.html">4Suite<sup>&trade;</sup> API Documentation</a></div>
+    <h1><span class="glyph-arrow">&#9658;</span> Module <span class="this-name">Ft</span></h1>
+    <div class="abstract">4Suite: an open-source platform for XML and RDF processing.</div>
+    <pre class="description">Copyright 2004 Fourthought, Inc. (USA).
+Detailed license and copyright information: http://4suite.org/COPYRIGHT
+Project home, documentation, distributions: http://4suite.org/</pre>
+    <div class="summary-section">
+      <table cellpadding="0" cellspacing="0">
+        <tbody>
+          <tr>
+            <td valign="top">
+              <div class="summary-header">Classes:</div>
+              <div class="summary-list"><span class="class-name"><a href="#FtException">FtException</a></span>, <span class="class-name"><a href="#FtWarning">FtWarning</a></span></div>
+            </td>
+            <td width="7" valign="middle"></td>
+            <td bgcolor="#C5C5C5" valign="middle" width="1"></td>
+            <td width="7" valign="middle"></td>
+            <td valign="top">
+              <div class="summary-header">Functions:</div>
+              <div class="summary-list"><span class="function-name"><a href="#GetConfigVar">GetConfigVar</a></span>, <span class="function-name"><a href="#GetConfigVars">GetConfigVars</a></span>, <span class="function-name"><a href="#TranslateMessage">TranslateMessage</a></span></div>
+            </td>
+            <td width="7" valign="middle"></td>
+            <td bgcolor="#C5C5C5" valign="middle" width="1"></td>
+            <td width="7" valign="middle"></td>
+            <td valign="top">
+              <div class="summary-header">Globals:</div>
+              <div class="summary-list"><span class="global-name"><a href="#DEFAULT_ENCODING">DEFAULT_ENCODING</a></span>, <span class="global-name"><a href="#MAX_PYTHON_RECURSION_DEPTH">MAX_PYTHON_RECURSION_DEPTH</a></span>, <span class="global-name"><a href="#__version__">__version__</a></span></div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="section">
+      <h2>Modules</h2>
+      <table class="modules">
+        <tbody>
+          <tr>
+            <td class="moduledef" valign="top">
+              <div class="module-name"><a name="Lib"></a><a href="Ft.Lib.html">Lib</a></div>
+            </td>
+            <td class="moduledesc" valign="bottom">
+              <div class="abstract">Module providing common utilities for many 4Suite components,
+as well as for general use.</div>
+            </td>
+          </tr>
+          <tr>
+            <td class="moduledef" valign="top">
+              <div class="module-name"><a name="Xml"></a><a href="Ft.Xml.html">Xml</a></div>
+            </td>
+            <td class="moduledesc" valign="bottom">
+              <div class="abstract">Module providing utilities for processing XML files</div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="section">
+      <h2>Classes</h2>
+      <dl class="classes">
+        <dt class="classdef"><a name="FtException"></a>class <span class="class-name">FtException</span><span class="bases">(<span class="class-name"><span class="undocumented">Exception</span></span>)</span></dt>
+        <dd class="classdesc">
+          <div class="abstract">Base class for all 4Suite-specific exceptions</div>
+          <h3>Methods</h3>
+          <dl class="methods">
+            <dt class="methoddef"><a name="FtException-__getattr__"><span class="method-name">__getattr__</span></a>(<span class="argument-name">self</span>, <span class="argument-name">name</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dt class="methoddef"><a name="FtException-__init__"><span class="method-name">__init__</span></a>(<span class="argument-name">self</span>, <span class="argument-name">errorCode</span>, <span class="argument-name">messages</span>, <span class="argument-name">argtuple</span><span class="argument-default">=()</span>, <span class="argument-name">**kwargs</span>)</dt>
+            <dd class="methoddesc">
+              <div class="abstract">errorCode = Numeric ID for the type of error.
+messages = Mapping of errorCodes to localized error message strings.
+argtuple or keyword args = Values for message string formatting.</div>
+            </dd>
+            <dd class="overrides"><b>Overrides: </b><span class="inherited-name">__init__</span> from class <span class="class-name"><span class="undocumented">Exception</span></span></dd>
+            <dt class="methoddef"><a name="FtException-__repr__"><span class="method-name">__repr__</span></a>(<span class="argument-name">self</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dd class="overrides"><b>Overrides: </b><span class="inherited-name">__repr__</span> from class <span class="class-name"><span class="undocumented">Exception</span></span></dd>
+            <dt class="methoddef"><a name="FtException-__str__"><span class="method-name">__str__</span></a>(<span class="argument-name">self</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dd class="overrides"><b>Overrides: </b><span class="inherited-name">__str__</span> from class <span class="class-name"><span class="undocumented">Exception</span></span></dd>
+          </dl>
+          <h3>Methods inherited from class <span class="undocumented">Exception</span></h3>
+          <div class="inherited"><span class="inherited-name">__new__</span></div>
+          <h3>Methods inherited from class <span class="undocumented">BaseException</span></h3>
+          <div class="inherited"><span class="inherited-name">__delattr__</span>, <span class="inherited-name">__getattribute__</span>, <span class="inherited-name">__getitem__</span>, <span class="inherited-name">__reduce__</span>, <span class="inherited-name">__setattr__</span>, <span class="inherited-name">__setstate__</span></div>
+          <h3>Methods inherited from class <span class="undocumented">object</span></h3>
+          <div class="inherited"><span class="inherited-name">__hash__</span>, <span class="inherited-name">__reduce_ex__</span></div>
+          <h3>Members</h3>
+          <dl class="members">
+            <dt class="memberdef"><a name="__weakref__"><span class="member-name">__weakref__</span></a> = &lt;attribute '__weakref__' of 'FtException' objects&gt;</dt>
+          </dl>
+          <h3>Members inherited from class <span class="undocumented">BaseException</span></h3>
+          <div class="inherited"><span class="inherited-name">__dict__</span>, <span class="inherited-name">args</span>, <span class="inherited-name">message</span></div>
+          <h3>Members inherited from class <span class="undocumented">object</span></h3>
+          <div class="inherited"><span class="inherited-name">__class__</span></div>
+        </dd>
+        <dt class="classdef"><a name="FtWarning"></a>class <span class="class-name">FtWarning</span><span class="bases">(<span class="class-name"><span class="undocumented">Warning</span></span>)</span></dt>
+        <dd class="classdesc">
+          <div class="abstract">Base class for all 4Suite-specific warnings.</div>
+          <h3>Methods inherited from class <span class="undocumented">Warning</span></h3>
+          <div class="inherited"><span class="inherited-name">__init__</span>, <span class="inherited-name">__new__</span></div>
+          <h3>Methods inherited from class <span class="undocumented">BaseException</span></h3>
+          <div class="inherited"><span class="inherited-name">__delattr__</span>, <span class="inherited-name">__getattribute__</span>, <span class="inherited-name">__getitem__</span>, <span class="inherited-name">__reduce__</span>, <span class="inherited-name">__repr__</span>, <span class="inherited-name">__setattr__</span>, <span class="inherited-name">__setstate__</span>, <span class="inherited-name">__str__</span></div>
+          <h3>Methods inherited from class <span class="undocumented">object</span></h3>
+          <div class="inherited"><span class="inherited-name">__hash__</span>, <span class="inherited-name">__reduce_ex__</span></div>
+          <h3>Members</h3>
+          <dl class="members">
+            <dt class="memberdef"><a name="__weakref__"><span class="member-name">__weakref__</span></a> = &lt;attribute '__weakref__' of 'FtWarning' objects&gt;</dt>
+          </dl>
+          <h3>Members inherited from class <span class="undocumented">BaseException</span></h3>
+          <div class="inherited"><span class="inherited-name">__dict__</span>, <span class="inherited-name">args</span>, <span class="inherited-name">message</span></div>
+          <h3>Members inherited from class <span class="undocumented">object</span></h3>
+          <div class="inherited"><span class="inherited-name">__class__</span></div>
+        </dd>
+      </dl>
+    </div>
+    <div class="section">
+      <h2>Functions</h2>
+      <dl class="functions">
+        <dt class="functiondef"><a name="GetConfigVar"><span class="function-name">GetConfigVar</span></a>(<span class="argument-name">name</span>)</dt>
+        <dd class="functiondesc">
+          <div class="abstract">Return the value of a single variable using the dictionary returned
+by 'get_config_vars()'.  Equivalent to GetConfigVars().get(name)</div>
+        </dd>
+        <dt class="functiondef"><a name="GetConfigVars"><span class="function-name">GetConfigVars</span></a>(<span class="argument-name">*names</span>)</dt>
+        <dd class="functiondesc">
+          <div class="abstract">With no arguments, return a dictionary of all configuration variables
+relevant for the current installation.  With arguments, return a list
+of values that result from looking up each argument in the configuration
+variable dictionary.</div>
+          <pre class="description">The following are the currently defined variables and their meaning:
+
+NAME, FULLNAME, VERSION, URL - fields as given for call to setup()
+BINDIR - directory for user executables
+DATADIR - directory for read-only platform-independent data
+LIBDIR - directory for extra libraries
+LOCALEDIR - directory for message catalogs
+LOCALSTATEDIR - directory for modifiable host-specific data
+SYSCONFIDIR - directory for read-only host-specific data</pre>
+        </dd>
+        <dt class="functiondef"><a name="TranslateMessage"><span class="function-name">TranslateMessage</span></a> = gettext(<span class="argument-name">...</span>)</dt>
+        <dd class="functiondesc"></dd>
+      </dl>
+    </div>
+    <div class="section">
+      <h2>Globals</h2>
+      <dl class="globals">
+        <dt class="globaldef"><a name="DEFAULT_ENCODING"><span class="global-name">DEFAULT_ENCODING</span></a> = 'UTF-8'</dt>
+        <dd class="globaldesc"></dd>
+        <dt class="globaldef"><a name="MAX_PYTHON_RECURSION_DEPTH"><span class="global-name">MAX_PYTHON_RECURSION_DEPTH</span></a> = 10000</dt>
+        <dd class="globaldesc"></dd>
+        <dt class="globaldef"><a name="__version__"><span class="global-name">__version__</span></a> = '0.0'</dt>
+        <dd class="globaldesc"></dd>
+      </dl>
+    </div>
+    <div class="universal-footer">Last modified on 2006-09-24 14:37:46</div>
+  </body>
+</html>

@@ -1,0 +1,116 @@
+
+
+     <esequence>
+
+        <edeclare globalName="host" string="teragrid"/>
+        <rtexec inheritedEnv="false" execDir="." args="/bin/hostname -f" quiet="true">
+                <outMonitor file="hostname.out" append="false"/>
+                <errMonitor file="hostname.err" append="false"/>
+        </rtexec>
+
+        <esleep timeout="1000"/>
+
+        <read path="hostname.out" lines="true"/>
+        <ereturn name="host" get="string"/>
+
+        <publish>
+           <event ensembleid="${ensemble.id}"
+                 workflowid="ComputeEnvSetup"
+                 nodeid="Begin Stage_scampsetup on $G{host}"
+                 currentState="0">
+                  <property name="message" value="Begin Stage_scampsetup on $G{host}"/>
+           </event>
+        </publish>
+
+        <edeclare name="appbase"      string="${user.dir}"/>
+
+        <edeclare name="srcdir_bin"  string="gridftp://${binhost}${binpath}"/>
+        <edeclare name="srcdir_etc"  string="gridftp://${etchost}${etcpath}"/>
+
+        <edeclare name="targetdirbin" string="file://$R{appbase}/bin"/>
+        <edeclare name="targetdiretc" string="file://$R{appbase}/etc"/>
+
+        <print line="Stage_scampsetup - Transferring bin/ ...  "/>
+        <uricopy from="$R{srcdir_bin}" to="$R{targetdirbin}">
+        </uricopy>
+        <print line="Stage_scampsetup - Transferred bin/ "/>
+
+        <print line="Stage_scampsetup - Transferring etc/ ...  "/>
+        <uricopy from="$R{srcdir_etc}" to="$R{targetdiretc}">
+        </uricopy>
+        <print line="Stage_scampsetup - Transferred etc "/>
+
+        <print line="Stage_scampsetup - chmod ... "/>
+        <rtexec inheritedEnv="true" execDir="." args="${chmodpath} -R 755 bin" quiet="true">
+        </rtexec>
+        <print line="Stage_scampsetup - chmod done "/>
+
+        <print line="Stage_scampsetup - Creating directory workspaces ... "/>
+
+        <edeclare name="end" long="$E{ ${scamplist.number} + 1 }"/> 
+
+        <eloop counterName="i" initialValue="1">
+             <ecounter>
+               <expression infix="$R{i} &lt; $R{end}"/>
+             </ecounter>           
+
+              <!-- convert 1,...,9 to 01,...,09 -->
+
+          <econdblock type="else-if">
+           <econdtask>
+             <eeval>
+                <statement> 
+                 <ecompare long="$R{i}">
+                     <predicate long="10" comparator="LT"/>
+                 </ecompare> 
+               </statement>
+             </eeval>
+                <edeclare globalName="in" string="0$R{i}"/>
+             </econdtask>
+                <edeclare globalName="in" long="$R{i}"/>
+          </econdblock>
+ 
+            <delete dir="${uid}_scamp_$R{in}"/>
+            <mkdir dir="${uid}_scamp_$R{in}"/>
+            <delete dir="${uid}_scamp_$R{in}/bin"/>
+            <delete dir="${uid}_$R{in}_scamp/etc"/>
+
+            <rtexec execDir="." args="${cppath} -r bin etc ${uid}_scamp_$R{in}" quiet="true">
+            </rtexec>
+
+            <delete dir="${uid}_scamp_$R{in}/xml"/>
+            <mkdir dir="${uid}_scamp_$R{in}/xml"/>
+
+            <mkdir dir="${uid}_scamp_$R{in}/data"/>
+            <mkdir dir="${uid}_scamp_$R{in}/data/${nite}"/>
+            <mkdir dir="${uid}_scamp_$R{in}/data/${nite}/g"/>
+            <mkdir dir="${uid}_scamp_$R{in}/data/${nite}/r"/>
+            <mkdir dir="${uid}_scamp_$R{in}/data/${nite}/i"/>
+            <mkdir dir="${uid}_scamp_$R{in}/data/${nite}/z"/>
+            <mkdir dir="${uid}_scamp_$R{in}/data/${nite}/log"/>
+
+        </eloop>
+
+        <delete dir="bin"/>
+        <delete dir="etc"/>
+	<delete file="hostname.out"/>
+	<delete file="hostname.err"/>
+
+        <print line="Stage_scampsetup - Created ${scamplist.number} directory workspaces. "/>
+ 
+        <publish>
+           <event ensembleid="${ensemble.id}"
+                 workflowid="ComputeEnvSetup"
+                 nodeid="End Stage_scampsetup on $G{host}"
+                 currentState="1">
+                  <property name="message" value="End Stage_scampsetup on $G{host}"/>
+           </event>
+        </publish>
+
+        <print line="Stage_scampsetup - copy etc/ done "/>
+
+        <print line=" - Stage_scampsetup done"/>
+     </esequence>
+
+   </target>
+</project>

@@ -1,0 +1,161 @@
+<html>
+  <head>
+    <meta content="text/html; charset=iso-8859-1" http-equiv="Content-Type">
+    <title>4Suite API Documentation: Ft.Xml.XPath.CoreFunctions</title>
+    <link href="modules.css" type="text/css" rel="stylesheet">
+  </head>
+  <body>
+    <div class="universal-header"><span class="universal-header-prefix">&nbsp;&nbsp;&nbsp;</span>&nbsp;<span class="universal-header-prefix">&nbsp;&nbsp;</span>&nbsp;<span class="universal-header-prefix">&nbsp;</span>&nbsp;<a href="../index.html">4Suite<sup>&trade;</sup> API Documentation</a></div>
+    <h1><span class="glyph-arrow">&#9658;</span> Module <span class="this-name"><a href="Ft.html" title="Ft">Ft</a>.<a href="Ft.Xml.html" title="Ft.Xml">Xml</a>.<a href="Ft.Xml.XPath.html" title="Ft.Xml.XPath">XPath</a>.CoreFunctions</span></h1>
+    <div class="abstract">The implementation of the core functions from XPath 1.0.</div>
+    <pre class="description">Copyright 2006 Fourthought, Inc. (USA).
+Detailed license and copyright information: http://4suite.org/COPYRIGHT
+Project home, documentation, distributions: http://4suite.org/</pre>
+    <div class="summary-section">
+      <table cellpadding="0" cellspacing="0">
+        <tbody>
+          <tr>
+            <td valign="top">
+              <div class="summary-header">Functions:</div>
+              <div class="summary-list"><span class="function-name"><a href="#Boolean">Boolean</a></span>, <span class="function-name"><a href="#Ceiling">Ceiling</a></span>, <span class="function-name"><a href="#Concat">Concat</a></span>, <span class="function-name"><a href="#Contains">Contains</a></span>, <span class="function-name"><a href="#Count">Count</a></span>, <span class="function-name"><a href="#False">False</a></span>, <span class="function-name"><a href="#Floor">Floor</a></span>, <span class="function-name"><a href="#Id">Id</a></span>, <span class="function-name"><a href="#Lang">Lang</a></span>, <span class="function-name"><a href="#Last">Last</a></span>, <span class="function-name"><a href="#LocalName">LocalName</a></span>, <span class="function-name"><a href="#Name">Name</a></span>, <span class="function-name"><a href="#NamespaceUri">NamespaceUri</a></span>, <span class="function-name"><a href="#Normalize">Normalize</a></span>, <span class="function-name"><a href="#Not">Not</a></span>, <span class="function-name"><a href="#Number">Number</a></span>, <span class="function-name"><a href="#Position">Position</a></span>, <span class="function-name"><a href="#Round">Round</a></span>, <span class="function-name"><a href="#StartsWith">StartsWith</a></span>, <span class="function-name"><a href="#String">String</a></span>, <span class="function-name"><a href="#StringLength">StringLength</a></span>, <span class="function-name"><a href="#Substring">Substring</a></span>, <span class="function-name"><a href="#SubstringAfter">SubstringAfter</a></span>, <span class="function-name"><a href="#SubstringBefore">SubstringBefore</a></span>, <span class="function-name"><a href="#Sum">Sum</a></span>, <span class="function-name"><a href="#Translate">Translate</a></span>, <span class="function-name"><a href="#True">True</a></span></div>
+            </td>
+            <td width="7" valign="middle"></td>
+            <td bgcolor="#C5C5C5" valign="middle" width="1"></td>
+            <td width="7" valign="middle"></td>
+            <td valign="top">
+              <div class="summary-header">Globals:</div>
+              <div class="summary-list"><span class="global-name"><a href="#CoreFunctions">CoreFunctions</a></span>, <span class="global-name"><a href="#EMPTY_NAMESPACE">EMPTY_NAMESPACE</a></span>, <span class="global-name"><a href="#NAMESPACE_NODE">NAMESPACE_NODE</a></span>, <span class="global-name"><a href="#XML_NAMESPACE">XML_NAMESPACE</a></span></div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="section">
+      <h2>Functions</h2>
+      <dl class="functions">
+        <dt class="functiondef"><a name="Boolean"><span class="function-name">Boolean</span></a>(<span class="argument-name">context</span>, <span class="argument-name">object_</span>)</dt>
+        <dd class="functiondesc">
+          <div class="abstract">Function: &lt;boolean&gt; boolean(&lt;object&gt;)</div>
+        </dd>
+        <dt class="functiondef"><a name="Ceiling"><span class="function-name">Ceiling</span></a>(<span class="argument-name">context</span>, <span class="argument-name">object_</span>)</dt>
+        <dd class="functiondesc">
+          <div class="abstract">Function: &lt;number&gt; ceiling(&lt;number&gt;)</div>
+        </dd>
+        <dt class="functiondef"><a name="Concat"><span class="function-name">Concat</span></a>(<span class="argument-name">context</span>, <span class="argument-name">*args</span>)</dt>
+        <dd class="functiondesc">
+          <div class="abstract">Function: &lt;string&gt; concat(&lt;string&gt;, &lt;string&gt;, ...)</div>
+        </dd>
+        <dt class="functiondef"><a name="Contains"><span class="function-name">Contains</span></a>(<span class="argument-name">context</span>, <span class="argument-name">outer</span>, <span class="argument-name">inner</span>)</dt>
+        <dd class="functiondesc">
+          <div class="abstract">Function: &lt;string&gt; contains(&lt;string&gt;, &lt;string&gt;)</div>
+        </dd>
+        <dt class="functiondef"><a name="Count"><span class="function-name">Count</span></a>(<span class="argument-name">context</span>, <span class="argument-name">nodeSet</span>)</dt>
+        <dd class="functiondesc">
+          <div class="abstract">Function: &lt;number&gt; count(&lt;node-set&gt;)</div>
+        </dd>
+        <dt class="functiondef"><a name="False"><span class="function-name">False</span></a>(<span class="argument-name">context</span>)</dt>
+        <dd class="functiondesc">
+          <div class="abstract">Function: &lt;boolean&gt; false()</div>
+        </dd>
+        <dt class="functiondef"><a name="Floor"><span class="function-name">Floor</span></a>(<span class="argument-name">context</span>, <span class="argument-name">object_</span>)</dt>
+        <dd class="functiondesc">
+          <div class="abstract">Function: &lt;number&gt; floor(&lt;number&gt;)</div>
+        </dd>
+        <dt class="functiondef"><a name="Id"><span class="function-name">Id</span></a>(<span class="argument-name">context</span>, <span class="argument-name">object_</span>)</dt>
+        <dd class="functiondesc">
+          <div class="abstract">Function: &lt;node-set&gt; id(&lt;object&gt;)</div>
+        </dd>
+        <dt class="functiondef"><a name="Lang"><span class="function-name">Lang</span></a>(<span class="argument-name">context</span>, <span class="argument-name">lang</span>)</dt>
+        <dd class="functiondesc">
+          <div class="abstract">Function: &lt;boolean&gt; lang(&lt;string&gt;)</div>
+        </dd>
+        <dt class="functiondef"><a name="Last"><span class="function-name">Last</span></a>(<span class="argument-name">context</span>)</dt>
+        <dd class="functiondesc">
+          <div class="abstract">Function: &lt;number&gt; last()</div>
+        </dd>
+        <dt class="functiondef"><a name="LocalName"><span class="function-name">LocalName</span></a>(<span class="argument-name">context</span>, <span class="argument-name">nodeSet</span><span class="argument-default">=None</span>)</dt>
+        <dd class="functiondesc">
+          <div class="abstract">Function: &lt;string&gt; local-name(&lt;node-set&gt;?)</div>
+        </dd>
+        <dt class="functiondef"><a name="Name"><span class="function-name">Name</span></a>(<span class="argument-name">context</span>, <span class="argument-name">nodeSet</span><span class="argument-default">=None</span>)</dt>
+        <dd class="functiondesc">
+          <div class="abstract">Function: &lt;string&gt; name(&lt;node-set&gt;?)</div>
+        </dd>
+        <dt class="functiondef"><a name="NamespaceUri"><span class="function-name">NamespaceUri</span></a>(<span class="argument-name">context</span>, <span class="argument-name">nodeSet</span><span class="argument-default">=None</span>)</dt>
+        <dd class="functiondesc">
+          <div class="abstract">Function: &lt;string&gt; namespace-uri(&lt;node-set&gt;?)</div>
+        </dd>
+        <dt class="functiondef"><a name="Normalize"><span class="function-name">Normalize</span></a>(<span class="argument-name">context</span>, <span class="argument-name">st</span><span class="argument-default">=None</span>)</dt>
+        <dd class="functiondesc">
+          <div class="abstract">Function: &lt;string&gt; normalize-space(&lt;string&gt;?)</div>
+        </dd>
+        <dt class="functiondef"><a name="Not"><span class="function-name">Not</span></a>(<span class="argument-name">context</span>, <span class="argument-name">object_</span>)</dt>
+        <dd class="functiondesc">
+          <div class="abstract">Function: &lt;boolean&gt; not(&lt;boolean&gt;)</div>
+        </dd>
+        <dt class="functiondef"><a name="Number"><span class="function-name">Number</span></a>(<span class="argument-name">context</span>, <span class="argument-name">object_</span><span class="argument-default">=None</span>)</dt>
+        <dd class="functiondesc">
+          <div class="abstract">Function: &lt;number&gt; number(&lt;object&gt;?)</div>
+        </dd>
+        <dt class="functiondef"><a name="Position"><span class="function-name">Position</span></a>(<span class="argument-name">context</span>)</dt>
+        <dd class="functiondesc">
+          <div class="abstract">Function: &lt;number&gt; position()</div>
+        </dd>
+        <dt class="functiondef"><a name="Round"><span class="function-name">Round</span></a>(<span class="argument-name">context</span>, <span class="argument-name">object_</span>)</dt>
+        <dd class="functiondesc">
+          <div class="abstract">Function: &lt;number&gt; round(&lt;number&gt;)</div>
+        </dd>
+        <dt class="functiondef"><a name="StartsWith"><span class="function-name">StartsWith</span></a>(<span class="argument-name">context</span>, <span class="argument-name">outer</span>, <span class="argument-name">inner</span>)</dt>
+        <dd class="functiondesc">
+          <div class="abstract">Function: &lt;string&gt; starts-with(&lt;string&gt;, &lt;string&gt;)</div>
+        </dd>
+        <dt class="functiondef"><a name="String"><span class="function-name">String</span></a>(<span class="argument-name">context</span>, <span class="argument-name">object_</span><span class="argument-default">=None</span>)</dt>
+        <dd class="functiondesc">
+          <div class="abstract">Function: &lt;string&gt; string(&lt;object&gt;?)</div>
+        </dd>
+        <dt class="functiondef"><a name="StringLength"><span class="function-name">StringLength</span></a>(<span class="argument-name">context</span>, <span class="argument-name">st</span><span class="argument-default">=None</span>)</dt>
+        <dd class="functiondesc">
+          <div class="abstract">Function: &lt;number&gt; string-length(&lt;string&gt;?)</div>
+        </dd>
+        <dt class="functiondef"><a name="Substring"><span class="function-name">Substring</span></a>(<span class="argument-name">context</span>, <span class="argument-name">st</span>, <span class="argument-name">start</span>, <span class="argument-name">length</span><span class="argument-default">=None</span>)</dt>
+        <dd class="functiondesc">
+          <div class="abstract">Function: &lt;string&gt; substring(&lt;string&gt;, &lt;number&gt;, &lt;number&gt;?)</div>
+        </dd>
+        <dt class="functiondef"><a name="SubstringAfter"><span class="function-name">SubstringAfter</span></a>(<span class="argument-name">context</span>, <span class="argument-name">outer</span>, <span class="argument-name">inner</span>)</dt>
+        <dd class="functiondesc">
+          <div class="abstract">Function: &lt;string&gt; substring-after(&lt;string&gt;, &lt;string&gt;)</div>
+        </dd>
+        <dt class="functiondef"><a name="SubstringBefore"><span class="function-name">SubstringBefore</span></a>(<span class="argument-name">context</span>, <span class="argument-name">outer</span>, <span class="argument-name">inner</span>)</dt>
+        <dd class="functiondesc">
+          <div class="abstract">Function: &lt;string&gt; substring-before(&lt;string&gt;, &lt;string&gt;)</div>
+        </dd>
+        <dt class="functiondef"><a name="Sum"><span class="function-name">Sum</span></a>(<span class="argument-name">context</span>, <span class="argument-name">nodeSet</span>)</dt>
+        <dd class="functiondesc">
+          <div class="abstract">Function: &lt;number&gt; sum(&lt;node-set&gt;)</div>
+        </dd>
+        <dt class="functiondef"><a name="Translate"><span class="function-name">Translate</span></a>(<span class="argument-name">context</span>, <span class="argument-name">source</span>, <span class="argument-name">fromChars</span>, <span class="argument-name">toChars</span>)</dt>
+        <dd class="functiondesc">
+          <div class="abstract">Function: &lt;string&gt; translate(&lt;string&gt;, &lt;string&gt;, &lt;string&gt;)</div>
+        </dd>
+        <dt class="functiondef"><a name="True"><span class="function-name">True</span></a>(<span class="argument-name">context</span>)</dt>
+        <dd class="functiondesc">
+          <div class="abstract">Function: &lt;boolean&gt; true()</div>
+        </dd>
+      </dl>
+    </div>
+    <div class="section">
+      <h2>Globals</h2>
+      <dl class="globals">
+        <dt class="globaldef"><a name="CoreFunctions"><span class="global-name">CoreFunctions</span></a> = {(None, 'boolean'): &lt;function Boolean&gt;, (None, 'ceiling'): &lt;function Ceiling&gt;, (None, 'concat'): &lt;function Concat&gt;, (None, 'contains'): &lt;function Contains&gt;, (None, 'count'): &lt;function Count&gt;, (None, 'false'): &lt;function False&gt;, (None, 'floor'): &lt;function Floor&gt;, (None, 'id'): &lt;function Id&gt;, (None, 'lang'): &lt;function Lang&gt;, (None, 'last'): &lt;function Last&gt;, ...}</dt>
+        <dd class="globaldesc"></dd>
+        <dt class="globaldef"><a name="EMPTY_NAMESPACE"><span class="global-name">EMPTY_NAMESPACE</span></a> = None</dt>
+        <dd class="globaldesc"></dd>
+        <dt class="globaldef"><a name="NAMESPACE_NODE"><span class="global-name">NAMESPACE_NODE</span></a> = 13</dt>
+        <dd class="globaldesc"></dd>
+        <dt class="globaldef"><a name="XML_NAMESPACE"><span class="global-name">XML_NAMESPACE</span></a> = u'http://www.w3.org/XML/1998/namespace'</dt>
+        <dd class="globaldesc"></dd>
+      </dl>
+    </div>
+    <div class="universal-footer">Last modified on 2006-09-18 11:05:27</div>
+  </body>
+</html>

@@ -1,0 +1,97 @@
+#!/usr/bin/env perl
+########################################################################
+#  $Id$
+#
+#  $Rev::                                  $:  # Revision of last commit.
+#  $LastChangedBy::                        $:  # Author of last commit. 
+#  $LastChangedDate::                      $:  # Date of last commit.
+#
+#  Authors: 
+#         Michelle Gower (mgower@ncsa.uiuc.edu)
+#         Darren Adams (dadams@ncsa.uiuc.edu)
+#
+#  Developed at: 
+#  The National Center for Supercomputing Applications (NCSA).
+#
+#  Copyright (C) 2007 Board of Trustees of the University of Illinois. 
+#  All rights reserved.
+#
+#  DESCRIPTION:
+#
+#######################################################################
+
+use strict;
+use warnings;
+
+use Getopt::Long;
+use FindBin;
+use lib "$FindBin::Bin/../lib";
+use DES::utils::misc;
+use DES::utils::hist;
+use DES::utils::email;
+use DES::utils::posttasks;
+use DES::desconfig;
+
+my $Version;
+
+&Getopt::Long::Configure( 'noignorecase', 'no_autoabbrev');
+Getopt::Long::GetOptions(
+   'version|v' => \$Version
+);
+
+my $DebugFH;
+open $DebugFH, "> checkstagesrc.out";
+local *STDOUT = $DebugFH;
+local *STDERR = $DebugFH;
+
+my $DESHome = getHome() or die "Error: Can't determine DES_HOME";
+
+if (defined($Version))
+{
+  printVersion();
+  exit 0;
+}
+
+if ((scalar(@ARGV) < 1) || (2 < scalar(@ARGV)))
+{
+  print STDERR "Usage: descheckstagesrc [-version] configfile [exitcode]\n";
+  close $DebugFH;
+  exit 1;
+}
+
+my $ConfigFile = shift;
+my $ExitCode = shift;
+if (!defined($ExitCode))
+{
+  $ExitCode = $SUCCESS;
+}
+
+debug("descheckstagesrc", "configfile = '$ConfigFile'");
+debug("descheckstagesrc", "exitcode = '$ExitCode'");
+
+# read sysinfo file
+my $Config = new DES::desconfig;
+$Config->readConfig($ConfigFile, 0, \*STDERR);
+
+posttasks($Config, "stagesrc","j","", $ExitCode);
+logEvent($Config, "stagesrc","c","", "pretask");
+
+my ($Msg1, $Msg2);
+if ($ExitCode != 0) {
+   $Msg1 = "Stage stagesrc failed.\n\n";
+
+   $Msg2 = "----- stagesrc standard output -----\n";
+   $Msg2 .= `cat stagesrc.*.out`;      
+   $Msg2 .= "----- stagesrc standard error -----\n";
+   $Msg2 .= `cat stagesrc.*.err`;      
+}
+else {
+   $Msg1 = "Stage stagesrc completed successfully.\n\n";
+   $Msg2 = "";
+}
+sendEmail($Config, undef, "analysis", $ExitCode, $Msg1, $Msg2);
+
+posttasks($Config, "stagesrc", "c","", $ExitCode);
+close $DebugFH;
+
+exit $ExitCode;

@@ -1,0 +1,45 @@
+
+   <target name="Stage_createingestlists" description="Database query to produce image ingest lists">
+   <property file="${mypath}/module_orchs/createingestlists.properties"/>
+
+    <esequence>
+
+      <publish>
+         <event ensembleid="${ensemble.id}"
+             workflowid="Main"
+             nodeid="Begin Stage_createingestlists"
+             currentState="0">
+            <property name="message" value="Begin Stage_createingestlists"/>
+         </event>
+      </publish>
+
+     <print line=" - Begin Stage_createingestlists"/>
+
+	<!-- create job logging directory -->
+	<delete dir="${ingest.dir}" />
+	<mkdir dir="${ingest.dir}" />
+	<mkdir dir="${ingest.dir}/log" />
+
+        <!-- create image lists  -->
+	<esequence>
+	  <rtexec inheritedEnv="true" execDir="." 
+                args="${createingestlists.exec} ${createingestlists.args}" 
+		quiet="true">
+	    <outMonitor file="${createingestlists.log}"/>
+          </rtexec>
+        </esequence>
+           
+      <print line=" - Stage_createingestlists done"/>
+      <print line="     "/>
+
+     <publish>
+         <event ensembleid="${ensemble.id}"
+            workflowid="Main"
+            nodeid="End Stage_createingestlists"
+            currentState="0">
+           <property name="message" value="End Stage_createingestlists"/>
+         </event>
+     </publish>
+
+     </esequence>
+   </target>

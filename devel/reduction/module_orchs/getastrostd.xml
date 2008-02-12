@@ -1,0 +1,166 @@
+
+   <target name="Stage_getastrostd" description="Database query to produce astrometric standards lists">
+   <property file="${mypath}/module_orchs/getastrostd.properties"/>
+
+    <esequence>
+
+      <publish>
+         <event ensembleid="${ensemble.id}"
+             workflowid="Main"
+             nodeid="Begin Stage_getastrostd"
+             currentState="0">
+            <property name="message" value="Begin Stage_getastrostd"/>
+         </event>
+      </publish>
+
+     <print line=" - Begin Stage_getastrostd"/>
+     
+     <!-- loop over the CCD's -->
+     <edeclare name="end" long="$E{ ${ccd.stop} + 1 }"/> 
+     <eloop counterName="i" initialValue="${ccd.start}">
+        <ecounter>
+            <expression infix="$R{i} &lt; $R{end}"/>
+        </ecounter>	
+        <!-- convert 1,...,9 to 01,...,09 -->
+        <econdblock type="else-if">
+           <econdtask>
+             <eeval>
+                <statement> 
+                 <ecompare long="$R{i}">
+                     <predicate long="10" comparator="LT"/>
+                 </ecompare> 
+               </statement>
+             </eeval>
+                <edeclare globalName="in" string="0$R{i}"/>
+             </econdtask>
+                <edeclare globalName="in" long="$R{i}"/>
+        </econdblock>
+
+        <econdblock type="else-if">
+          <econdtask>
+          <eeval>
+             <statement>
+               <ecompare string="${platform}">
+                     <predicate string="TG" comparator="EQUALS"/>
+                 </ecompare>
+               </statement>
+          </eeval>
+              <esequence>
+                 <edeclare globalName="usnobcat.dir" string="${local_catpath}"/>
+                 <edeclare globalName="usnob.cat" string="$R{usnobcat.dir}/log/usnob.cat"/>
+                 <print line=" -- The produced catalogs can be found in $R{usnobcat.dir}"/>
+              </esequence>
+          </econdtask>
+              <esequence>
+                   <edeclare globalName="usnobcat.dir" string="${workplace}/${uid}/data/${nite}/log"/> 
+                   <edeclare globalName="usnob.cat" string="$R{usnobcat.dir}/usnob.cat"/>
+              </esequence> 
+        </econdblock>
+
+	<print line=" -- creating queries for CCD $R{in}"/>
+
+        <delete file="$R{usnob.cat}" quiet="true"/>
+
+	<!-- open SQL file and write header information -->
+        <edeclare name="usnob.sql"  string="${sql.dir}/usnob_${nite}.sql"/>     
+        <delete file="$R{usnob.sql}" quiet="true"/>
+        <write path="$R{usnob.sql}" text="true" 
+                    errorProperty="failed" rethrow="false" append="true"> 
+	  <segment string="SET ECHO OFF NEWP 0 SPA 1 PAGES 0 FEED OFF HEAD OFF TRIMS ON LINESIZE 1000;" lineBreaks="1"/>
+	  <segment string="SPOOL $R{usnob.cat} append;" lineBreaks="1"/>
+	  <segment string="select ra,dec,sra,sde,r1" lineBreaks="1"/>
+	  <segment string="from USNOB_CAT1 where" lineBreaks="1"/>
+	</write>
+
+        <!-- make sql script for the wcsoffset and run query -->
+        <esequence>         
+          <edeclare name="sql.script"   string="${sql.dir}/usnob_${nite}_$R{in}.sql"/>     
+          <delete file="$R{sql.script}" quiet="true"/>
+          <edeclare name="offset.query.out"  string="${sql.dir}/offset_$R{in}.dat"/> 
+          <delete file="$R{offset.query.out}" quiet="true"/>
+	  <!-- set up for output of image data -->
+          <edeclare name="image.query.out"  string="${sql.dir}/usnobout_$R{in}.dat"/> 
+          <delete file="$R{image.query.out}" quiet="true"/>
+	  <!-- now write query -->
+          <write path="$R{sql.script}" text="true" 
+	    errorProperty="failed" rethrow="false" append="true"> 
+	    <segment string="SET ECHO OFF NEWP 0 SPA 1 PAGES 0 FEED OFF HEAD OFF TRIMS ON LINESIZE 1000;"  lineBreaks="1"/>
+	    <segment string="SPOOL $R{offset.query.out};" lineBreaks="1"/>
+	    <segment string="select chipid,raoffset,decoffset,rahwidth," lineBreaks="1"/>
+	    <segment string="dechwidth from wcsoffset where" lineBreaks="1"/>
+	    <segment string="CHIPID = $R{i} and" lineBreaks="1"/>
+	    <segment string="TELESCOPE like '%${telescope}%' and" lineBreaks="1"/>
+	    <segment string=" DETECTOR like '%${detector}%';" lineBreaks="1"/>
+	    <segment string="SPOOL off;" lineBreaks="1"/>
+            <!-- make sql script for the science images -->
+	    <segment string="SPOOL $R{image.query.out};" lineBreaks="1"/>
+	    <segment string="select imagename,ra,dec,ccd_number" lineBreaks="1"/>
+	    <segment string="from Files where" lineBreaks="1"/>
+	    <segment string="upper(IMAGETYPE) like '%OBJECT%' and" lineBreaks="1"/>
+	    <segment string="CCD_NUMBER = $R{i} and NITE like '${nite}';" lineBreaks="1"/>
+            <segment string="SPOOL off;" lineBreaks="1"/>
+            <segment string="quit" lineBreaks="1"/>
+          </write>
+        </esequence>
+
+        <!-- run sql query -->
+        <esequence>
+          <edeclare name="sql.script" 
+	    string="${sql.dir}/usnob_${nite}_$R{in}.sql"/>     
+          <rtexec inheritedEnv="true" execDir="."
+               args="${sql.exec} ${sql.command}" quiet="true">
+          </rtexec>
+        </esequence>
+
+        <!-- process output to create query for science images -->
+        <esequence>
+          <edeclare name="image.query.out"  string="${sql.dir}/usnobout_$R{in}.dat"/> 
+          <edeclare name="offset.query.out" string="${sql.dir}/offset_$R{in}.dat"/> 
+          <rtexec inheritedEnv="true" execDir="."
+               args="${usnob.exec} ${usnob.command}" quiet="true">
+          </rtexec>
+
+          <!-- write footer lines to the query file -->
+          <write path="$R{usnob.sql}" text="true" 
+                    errorProperty="failed" rethrow="false" append="true"> 
+            <segment string="order by ra;" lineBreaks="1"/>
+	    <segment string="SPOOL off;" lineBreaks="1"/>
+	    <segment string="exit;" lineBreaks="1"/>
+	  </write>
+
+	  <!-- execute the giant query -->
+          <print line=" -- Executing global query for standards"/>
+          <edeclare name="usnob.sql" string="${sql.dir}/usnob_${nite}.sql"/>     
+          <edeclare name="sql.script" string="$R{usnob.sql}"/>     
+          <rtexec inheritedEnv="true" execDir="."
+               args="${sql.exec} ${sql.command}" quiet="true">
+          </rtexec>
+
+          <delete file="$R{offset.query.out}" quiet="true"/>
+          <delete file="$R{image.query.out}" quiet="true"/>
+            
+          <!-- convert catalog to the fits file -->
+          <rtexec inheritedEnv="true" execDir="."
+               args="${ascii2ldac.exec} ${ascii2ldac.command}" quiet="true">
+          </rtexec>
+        </esequence>
+      
+     <!-- end of the loop -->
+     </eloop>
+
+     <print line=" - Stage_getastrostd done"/>
+     <print line="     "/>
+
+     <publish>
+         <event ensembleid="${ensemble.id}"
+            workflowid="Main"
+            nodeid="End Stage_getastrostd"
+            currentState="0">
+           <property name="message" value="End Stage_getastrostd"/>
+         </event>
+     </publish>
+
+    </esequence>
+   </target>
+
+   

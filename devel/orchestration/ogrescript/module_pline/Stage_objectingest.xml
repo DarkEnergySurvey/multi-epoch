@@ -1,0 +1,304 @@
+  <target name="Stage_objectingest" description="ingest to the database">
+    <esequence>
+
+        <edeclare name="content_begin"  string="test begin"/>
+        <edeclare name="content_end"    string="test end"/>
+        <econdblock type="else-if">
+          <econdtask>
+            <eeval>
+             <statement>
+                <ecompare string="${platform}">
+                   <predicate string="TG" comparator="EQUALS"/>
+                </ecompare>
+             </statement>
+            </eeval>
+              <esequence>
+                <eassign name="content_begin"  string="Begin Stage_objectingest for ccd ${ccd.num} data on $G{host} for nite ${nite}"/>
+                <eassign name="content_end"    string="End Stage_objectingest for ccd ${ccd.num} data on $G{host} for nite ${nite}"/>
+              </esequence>
+          </econdtask>
+              <esequence>
+                <eassign name="content_begin"  string="Begin Stage_objectingest for ccd ${ccd.num} for nite ${nite}"/>
+                <eassign name="content_end"    string="End Stage_objectingest for ccd ${ccd.num} for nite ${nite}"/>
+              </esequence>
+        </econdblock>
+
+            <publish>
+              <event ensembleid="${ensemble.id}" workflowid="${jid}"
+                   nodeid="$R{content_begin}" currentState="1">
+                   <property name="message" value="$R{content_begin}"/>
+              </event>
+            </publish>
+
+      <print line=" -- Begin catalog_ingest for CCD ${ccd.num}"/>
+
+
+      <delete file="${objs.control.file}" quiet="true"/>
+      <edeclare name="control.file" string="${objs.control.file}"/>
+
+      <write path="$R{control.file}" text="true"
+              errorProperty="failed" rethrow="false">
+        <segment string="Load data" lineBreaks="1" />
+        <segment string="append into table ${object.table}" lineBreaks="1" />
+        <segment string="FIELDS TERMINATED BY '|'" lineBreaks="1" />
+        <segment string="trailing nullcols(" lineBreaks="1" />
+        <segment string="EQUINOX   decimal external," lineBreaks="1" />
+        <segment string="BAND     char," lineBreaks="1" />
+        <segment string="IMAGEID  integer external," lineBreaks="1" />
+        <segment string="ZEROPOINT  decimal external," lineBreaks="1" />
+        <segment string="ERRZEROPOINT  decimal external," lineBreaks="1" />
+        <segment string="OBJECT_NUMBER   integer external," lineBreaks="1" />
+        <segment string="MAG_AUTO   decimal external," lineBreaks="1" />
+        <segment string="MAGERR_AUTO decimal external," lineBreaks="1" />
+        <segment string="MAG_APER_1   decimal external," lineBreaks="1" />
+        <segment string="MAGERR_APER_1  decimal external," lineBreaks="1" />
+        <segment string="MAG_APER_2   decimal external," lineBreaks="1" />
+        <segment string="MAGERR_APER_2  decimal external," lineBreaks="1" />
+        <segment string="MAG_APER_3   decimal external," lineBreaks="1" />
+        <segment string="MAGERR_APER_3  decimal external," lineBreaks="1" />
+        <segment string="MAG_APER_4   decimal external," lineBreaks="1" />
+        <segment string="MAGERR_APER_4  decimal external," lineBreaks="1" />
+        <segment string="MAG_APER_5   decimal external," lineBreaks="1" />
+        <segment string="MAGERR_APER_5  decimal external," lineBreaks="1" />
+        <segment string="MAG_APER_6   decimal external," lineBreaks="1" />
+        <segment string="MAGERR_APER_6  decimal external," lineBreaks="1" />
+        <segment string="ALPHA_J2000   decimal external," lineBreaks="1" />
+        <segment string="DELTA_J2000   decimal external," lineBreaks="1" />
+        <segment string="ALPHAPEAK_J2000   decimal external," lineBreaks="1" />
+        <segment string="DELTAPEAK_J2000   decimal external," lineBreaks="1" />
+        <segment string="X2_WORLD   decimal external," lineBreaks="1" />
+        <segment string="ERRX2_WORLD   decimal external," lineBreaks="1" />
+        <segment string="Y2_WORLD  decimal external," lineBreaks="1" />
+        <segment string="ERRY2_WORLD   decimal external," lineBreaks="1" />
+        <segment string="XY_WORLD   decimal external," lineBreaks="1" />
+        <segment string="ERRXY_WORLD  decimal external," lineBreaks="1" />
+        <segment string="THRESHOLD  decimal external," lineBreaks="1" />
+        <segment string="X_IMAGE  decimal external," lineBreaks="1" />
+        <segment string="Y_IMAGE   decimal external," lineBreaks="1" />
+        <segment string="XMIN_IMAGE  integer external," lineBreaks="1" />
+        <segment string="YMIN_IMAGE   integer external," lineBreaks="1" />
+        <segment string="XMAX_IMAGE   integer  external," lineBreaks="1" />
+        <segment string="YMAX_IMAGE   integer external," lineBreaks="1" />
+        <segment string="X2_IMAGE   decimal external," lineBreaks="1" />
+        <segment string="ERRX2_IMAGE  decimal external," lineBreaks="1" />
+        <segment string="Y2_IMAGE  decimal external," lineBreaks="1" />
+        <segment string="ERRY2_IMAGE  decimal external," lineBreaks="1" />
+        <segment string="XY_IMAGE  decimal external," lineBreaks="1" />
+        <segment string="ERRXY_IMAGE  decimal external," lineBreaks="1" />
+        <segment string="A_IMAGE   decimal external," lineBreaks="1" />
+        <segment string="ERRA_IMAGE   decimal external," lineBreaks="1" />
+        <segment string="B_IMAGE  decimal external," lineBreaks="1" />
+        <segment string="ERRB_IMAGE   decimal external," lineBreaks="1" />
+        <segment string="THETA_IMAGE  decimal external," lineBreaks="1" />
+        <segment string="ERRTHETA_IMAGE  decimal external," lineBreaks="1" />
+        <segment string="ELLIPTICITY   decimal external," lineBreaks="1" />
+        <segment string="CLASS_STAR   decimal external," lineBreaks="1" />
+        <segment string="FLAGS   integer external," lineBreaks="1" />
+        <segment string="HTMID    integer external," lineBreaks="1" />
+        <segment string="CX       decimal external," lineBreaks="1" />
+        <segment string="CY       decimal external," lineBreaks="1" />
+        <segment string="CZ       decimal external terminated by whitespace," lineBreaks="1" />
+        <segment string="OBJECT_ID  &quot;${object.index}_seq.nextval&quot;)" lineBreaks="1" />
+
+      </write>
+
+      <edeclare name="list.dir" string="${local.out}"/>
+      <property name="source" value="file://${job.id}"/>
+
+      <delete file="${inputcat.list}" quiet="true"/>
+
+      <eloop counterName="i">
+          <ecounter>
+               <expression infix="$R{i} &lt; 4"/>
+          </ecounter>
+
+        <econdblock type="else-if">
+          <econdtask>
+            <eeval>
+               <statement>
+                 <ecompare long="0">
+                       <predicate long="$R{i}" comparator="EQUALS"/>
+                   </ecompare>
+                 </statement>
+            </eeval>
+                <edeclare globalname="band" string="g"/>
+          </econdtask>
+        </econdblock>
+
+        <econdblock type="else-if">
+          <econdtask>
+            <eeval>
+               <statement>
+                 <ecompare long="1">
+                       <predicate long="$R{i}" comparator="EQUALS"/>
+                   </ecompare>
+                 </statement>
+            </eeval>
+                <edeclare globalname="band" string="r"/>
+          </econdtask>
+        </econdblock>
+
+        <econdblock type="else-if">
+          <econdtask>
+            <eeval>
+               <statement>
+                 <ecompare long="2">
+                       <predicate long="$R{i}" comparator="EQUALS"/>
+                   </ecompare>
+                 </statement>
+            </eeval>
+                <edeclare globalname="band" string="i"/>
+          </econdtask>
+        </econdblock>
+
+        <econdblock type="else-if">
+          <econdtask>
+            <eeval>
+               <statement>
+                 <ecompare long="3">
+                       <predicate long="$R{i}" comparator="EQUALS"/>
+                   </ecompare>
+                 </statement>
+            </eeval>
+                <edeclare globalname="band" string="z"/>
+          </econdtask>
+        </econdblock>
+
+        <print line=" -- doing $G{band}-band ..."/>
+
+        <edeclare name="source1" string="data/${nite}/$G{band}/"/>
+
+        <edeclare globalName="sourcePattern2">
+          <uripattern baseUri="${source}/$R{source1}">
+              <nestedelement include="*"/>
+          </uripattern>
+        </edeclare>
+        <edeclare name="dirlist" null="true"/>
+        <urilist fullScan="true">
+           <nestedelement pattern="$G{sourcePattern2}"/>
+             <configuration>
+                 <attribute name="retainFiles"       value="false"/>
+                 <attribute name="retainDirectories" value="true"/>
+                 <attribute name="getNames" value="true"/>
+             </configuration>
+        </urilist>
+        <ereturn name="dirlist" get="simpleResult"/>
+
+        <eloop counterName="w">
+          <ecounter>
+               <expression infix="$R{w} &lt; $R{dirlist$I{L}}"/>
+          </ecounter>
+
+           <edeclare globalName="sourcePattern1">
+             <uripattern baseUri="${source}/$R{source1}/$R{dirlist$I{$R{w}}}">
+               <nestedelement include="${catpattern1}"/>
+             </uripattern>
+           </edeclare>
+           <edeclare name="filelist" null="true"/>
+           <urilist fullScan="true">
+             <nestedelement pattern="$G{sourcePattern1}"/>
+               <configuration>
+                 <attribute name="retainFiles"       value="true"/>
+                 <attribute name="retainDirectories" value="false"/>
+                 <attribute name="getNames" value="true"/>
+               </configuration>
+           </urilist>
+           <ereturn name="filelist" get="simpleResult"/>
+
+           <econdblock type="else-if">
+             <econdtask>
+              <eeval>
+               <statement>
+                 <ecompare long="0">
+                       <predicate long="$R{filelist$I{L}}" comparator="LT"/>
+                   </ecompare>
+                 </statement>
+              </eeval>
+                <esequence>
+                   <eloop counterName="v">
+                     <ecounter>
+                       <expression infix="$R{v} &lt; $R{filelist$I{L}}"/>
+                     </ecounter>
+
+                     <print line=" * Found $R{source1}$R{dirlist$I{$R{w}}}/$R{filelist$I{$R{v}}}"/>
+
+                     <write path="${inputcat.list}" text="true"
+                        errorProperty="failed" rethrow="false" append="true">
+                       <segment string="${jid}/$R{source1}$R{dirlist$I{$R{w}}}/$R{filelist$I{$R{v}}}" lineBreaks="1" />
+                     </write>
+
+                   </eloop>
+                </esequence>
+             </econdtask>
+           </econdblock>
+
+        </eloop>
+
+        <eloop counterName="w">
+          <ecounter>
+               <expression infix="$R{w} &lt; $R{dirlist$I{L}}"/>
+          </ecounter>
+
+           <edeclare globalName="sourcePattern1">
+             <uripattern baseUri="${source}/$R{source1}/$R{dirlist$I{$R{w}}}">
+               <nestedelement include="${catpattern0}"/>
+             </uripattern>
+           </edeclare>
+           <edeclare name="filelist" null="true"/>
+           <urilist fullScan="true">
+             <nestedelement pattern="$G{sourcePattern1}"/>
+               <configuration>
+                 <attribute name="retainFiles"       value="true"/>
+                 <attribute name="retainDirectories" value="false"/>
+                 <attribute name="getNames" value="true"/>
+               </configuration>
+           </urilist>
+           <ereturn name="filelist" get="simpleResult"/>
+
+           <econdblock type="else-if">
+             <econdtask>
+              <eeval>
+               <statement>
+                 <ecompare long="0">
+                       <predicate long="$R{filelist$I{L}}" comparator="LT"/>
+                   </ecompare>
+                 </statement>
+              </eeval>
+                <esequence>
+                   <eloop counterName="v">
+                     <ecounter>
+                       <expression infix="$R{v} &lt; $R{filelist$I{L}}"/>
+                     </ecounter>
+
+                     <print line=" * Found $R{source1}$R{dirlist$I{$R{w}}}/$R{filelist$I{$R{v}}}"/>
+
+                     <write path="${inputcat.list}" text="true"
+                        errorProperty="failed" rethrow="false" append="true">
+                       <segment string="${jid}/$R{source1}$R{dirlist$I{$R{w}}}/$R{filelist$I{$R{v}}}" lineBreaks="1" />
+                     </write>
+
+                   </eloop>
+                </esequence>
+             </econdtask>
+           </econdblock>
+
+        </eloop>
+
+       </eloop>
+
+      <rtexec inheritedEnv="false" execDir="${base.dir}"
+                args="${catingest.exec} ${catingest.args}" quiet="true">
+            <outMonitor file="${catingest.log}"/>
+      </rtexec>
+
+      <print line=" -- Stage_objectingest done"/>
+
+         <publish>
+            <event ensembleid="${ensemble.id}" workflowid="${jid}"
+                   nodeid="$R{content_end}" currentState="1">
+                  <property name="message" value="$R{content_end}"/>
+            </event>
+         </publish>
+
+       </esequence>
+  </target>

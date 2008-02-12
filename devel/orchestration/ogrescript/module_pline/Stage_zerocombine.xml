@@ -1,0 +1,65 @@
+   <target name="Stage_zerocombine" description="create zero correction image">
+        <esequence>
+
+        <edeclare name="content_begin"  string="test begin"/>
+        <edeclare name="content_end"    string="test end"/>
+        <econdblock type="else-if">
+          <econdtask>
+            <eeval>
+             <statement>
+                <ecompare string="${platform}">
+                   <predicate string="TG" comparator="EQUALS"/>
+                </ecompare>
+             </statement>
+            </eeval>
+              <esequence>
+                <eassign name="content_begin"  string="Begin Stage_zerocombine for ccd ${ccd.num} data on $G{host} for nite ${nite}"/>
+                <eassign name="content_end"    string="End Stage_zerocombine for ccd ${ccd.num} data on $G{host} for nite ${nite}"/>
+              </esequence>
+          </econdtask>
+              <esequence>
+                <eassign name="content_begin"  string="Begin Stage_zerocombine for ccd ${ccd.num} for nite ${nite}"/>
+                <eassign name="content_end"    string="End Stage_zerocombine for ccd ${ccd.num} for nite ${nite}"/>
+              </esequence>
+        </econdblock>
+
+            <publish>
+              <event ensembleid="${ensemble.id}" workflowid="${jid}"
+                   nodeid="$R{content_begin}" currentState="1">
+                   <property name="message" value="$R{content_begin}"/>
+              </event>
+            </publish>
+
+
+         <write path="${local.out}/${zerocombine.log}" text="true"
+                         errorProperty="failed" rethrow="false" append="true">
+                         <segment string=" -- Beginning zerocombine " lineBreaks="1"/>
+         </write>
+
+              <!-- Must make bias frame -->
+
+                <edeclare name="alist" string="${bias.list}"/>
+                <edeclare name="afile" string="${bias.fits.path}/${bias.fits.name}"/>
+                <rtexec inheritedEnv="false" execDir="${nite.dir}"
+                  args="${zerocombine.exec} ${zerocombine.args}" quiet="true">
+                  <errMonitor file="${local.out}/${zerocombine.log}"/>
+                  <outMonitor file="${local.out}/${zerocombine.log}"/>
+                </rtexec>
+
+
+         <write path="${local.out}/${zerocombine.log}" text="true"
+                         errorProperty="failed" rethrow="false" append="true">
+                         <segment string=" -- zerocombine done" lineBreaks="1"/>
+         </write>
+
+         <print line=" - Stage_zerocombine done"/>
+
+         <publish>
+            <event ensembleid="${ensemble.id}" workflowid="${jid}"
+                   nodeid="$R{content_end}" currentState="1">
+                  <property name="message" value="$R{content_end}"/>
+            </event>
+         </publish>
+
+        </esequence>
+   </target>

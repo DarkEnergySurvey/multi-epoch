@@ -1,0 +1,133 @@
+<html>
+  <head>
+    <meta content="text/html; charset=iso-8859-1" http-equiv="Content-Type">
+    <title>4Suite API Documentation: Ft.Xml.Xslt.MessageSource</title>
+    <link href="modules.css" type="text/css" rel="stylesheet">
+  </head>
+  <body>
+    <div class="universal-header"><span class="universal-header-prefix">&nbsp;&nbsp;&nbsp;</span>&nbsp;<span class="universal-header-prefix">&nbsp;&nbsp;</span>&nbsp;<span class="universal-header-prefix">&nbsp;</span>&nbsp;<a href="../index.html">4Suite<sup>&trade;</sup> API Documentation</a></div>
+    <h1><span class="glyph-arrow">&#9658;</span> Module <span class="this-name"><a href="Ft.html" title="Ft">Ft</a>.<a href="Ft.Xml.html" title="Ft.Xml">Xml</a>.<a href="Ft.Xml.Xslt.html" title="Ft.Xml.Xslt">Xslt</a>.MessageSource</span></h1>
+    <div class="abstract">XSLT error codes and messages</div>
+    <pre class="description">Copyright 2003 Fourthought, Inc. (USA).
+Detailed license and copyright information: http://4suite.org/COPYRIGHT
+Project home, documentation, distributions: http://4suite.org/</pre>
+    <div class="summary-section">
+      <table cellpadding="0" cellspacing="0">
+        <tbody>
+          <tr>
+            <td valign="top">
+              <div class="summary-header">Classes:</div>
+              <div class="summary-list"><span class="class-name"><a href="#Error">Error</a></span></div>
+            </td>
+            <td width="7" valign="middle"></td>
+            <td width="1" valign="middle" bgcolor="#C5C5C5"></td>
+            <td width="7" valign="middle"></td>
+            <td valign="top">
+              <div class="summary-header">Globals:</div>
+              <div class="summary-list"><span class="global-name"><a href="#BUILTIN_TEMPLATE_WITH_PARAMS">BUILTIN_TEMPLATE_WITH_PARAMS</a></span>, <span class="global-name"><a href="#DEFAULT_MESSAGE_PREFIX">DEFAULT_MESSAGE_PREFIX</a></span>, <span class="global-name"><a href="#DEFAULT_MESSAGE_SUFFIX">DEFAULT_MESSAGE_SUFFIX</a></span>, <span class="global-name"><a href="#EXPRESSION_POSITION_INFO">EXPRESSION_POSITION_INFO</a></span>, <span class="global-name"><a href="#POSITION_INFO">POSITION_INFO</a></span>, <span class="global-name"><a href="#TEMPLATE_CONFLICT_LOCATION">TEMPLATE_CONFLICT_LOCATION</a></span>, <span class="global-name"><a href="#XSLT_EXPRESSION_POSITION_INFO">XSLT_EXPRESSION_POSITION_INFO</a></span>, <span class="global-name"><a href="#g_errorMessages">g_errorMessages</a></span></div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="section">
+      <h2>Classes</h2>
+      <dl class="classes">
+        <dt class="classdef"><a name="Error"></a>class <span class="class-name">Error</span></dt>
+        <dd class="classdesc">
+          <h3>Members</h3>
+          <dl class="members">
+            <dt class="memberdef"><a name="APPLYIMPORTS_WITH_NULL_CURRENT_TEMPLATE"><span class="member-name">APPLYIMPORTS_WITH_NULL_CURRENT_TEMPLATE</span></a> = 100</dt>
+            <dt class="memberdef"><a name="ATTRIBUTE_ADDED_TOO_LATE"><span class="member-name">ATTRIBUTE_ADDED_TOO_LATE</span></a> = 150</dt>
+            <dt class="memberdef"><a name="ATTRIBUTE_ADDED_TO_NON_ELEMENT"><span class="member-name">ATTRIBUTE_ADDED_TO_NON_ELEMENT</span></a> = 152</dt>
+            <dt class="memberdef"><a name="AVT_EMPTY"><span class="member-name">AVT_EMPTY</span></a> = 84</dt>
+            <dt class="memberdef"><a name="AVT_SYNTAX"><span class="member-name">AVT_SYNTAX</span></a> = 83</dt>
+            <dt class="memberdef"><a name="BAD_ATTRIBUTE_NAME"><span class="member-name">BAD_ATTRIBUTE_NAME</span></a> = 154</dt>
+            <dt class="memberdef"><a name="CHOOSE_REQUIRES_WHEN"><span class="member-name">CHOOSE_REQUIRES_WHEN</span></a> = 121</dt>
+            <dt class="memberdef"><a name="CIRCULAR_ATTRIBUTE_SET"><span class="member-name">CIRCULAR_ATTRIBUTE_SET</span></a> = 222</dt>
+            <dt class="memberdef"><a name="CIRCULAR_INCLUDE"><span class="member-name">CIRCULAR_INCLUDE</span></a> = 113</dt>
+            <dt class="memberdef"><a name="CIRCULAR_VAR"><span class="member-name">CIRCULAR_VAR</span></a> = 29</dt>
+            <dt class="memberdef"><a name="DOC_FUNC_EMPTY_NODESET"><span class="member-name">DOC_FUNC_EMPTY_NODESET</span></a> = 1000</dt>
+            <dt class="memberdef"><a name="DUPLICATE_DECIMAL_FORMAT"><span class="member-name">DUPLICATE_DECIMAL_FORMAT</span></a> = 270</dt>
+            <dt class="memberdef"><a name="DUPLICATE_NAMED_TEMPLATE"><span class="member-name">DUPLICATE_NAMED_TEMPLATE</span></a> = 142</dt>
+            <dt class="memberdef"><a name="DUPLICATE_NAMESPACE_ALIAS"><span class="member-name">DUPLICATE_NAMESPACE_ALIAS</span></a> = 31</dt>
+            <dt class="memberdef"><a name="DUPLICATE_TOP_LEVEL_VAR"><span class="member-name">DUPLICATE_TOP_LEVEL_VAR</span></a> = 30</dt>
+            <dt class="memberdef"><a name="FWD_COMPAT_WITHOUT_FALLBACK"><span class="member-name">FWD_COMPAT_WITHOUT_FALLBACK</span></a> = 320</dt>
+            <dt class="memberdef"><a name="ILLEGAL_APPLYTEMPLATE_NODESET"><span class="member-name">ILLEGAL_APPLYTEMPLATE_NODESET</span></a> = 212</dt>
+            <dt class="memberdef"><a name="ILLEGAL_CHOOSE_CHILD"><span class="member-name">ILLEGAL_CHOOSE_CHILD</span></a> = 120</dt>
+            <dt class="memberdef"><a name="ILLEGAL_ELEMENT_CHILD"><span class="member-name">ILLEGAL_ELEMENT_CHILD</span></a> = 50</dt>
+            <dt class="memberdef"><a name="ILLEGAL_IMPORT"><span class="member-name">ILLEGAL_IMPORT</span></a> = 110</dt>
+            <dt class="memberdef"><a name="ILLEGAL_NULL_NAMESPACE_ATTR"><span class="member-name">ILLEGAL_NULL_NAMESPACE_ATTR</span></a> = 71</dt>
+            <dt class="memberdef"><a name="ILLEGAL_NUMBER_FORMAT_VALUE"><span class="member-name">ILLEGAL_NUMBER_FORMAT_VALUE</span></a> = 293</dt>
+            <dt class="memberdef"><a name="ILLEGAL_SHADOWING"><span class="member-name">ILLEGAL_SHADOWING</span></a> = 232</dt>
+            <dt class="memberdef"><a name="ILLEGAL_TEXT_CHILD"><span class="member-name">ILLEGAL_TEXT_CHILD</span></a> = 200</dt>
+            <dt class="memberdef"><a name="ILLEGAL_TEXT_CHILD_PARSE"><span class="member-name">ILLEGAL_TEXT_CHILD_PARSE</span></a> = 51</dt>
+            <dt class="memberdef"><a name="ILLEGAL_XML_PI"><span class="member-name">ILLEGAL_XML_PI</span></a> = 250</dt>
+            <dt class="memberdef"><a name="ILLEGAL_XSL_NAMESPACE_ATTR"><span class="member-name">ILLEGAL_XSL_NAMESPACE_ATTR</span></a> = 72</dt>
+            <dt class="memberdef"><a name="INCLUDE_NOT_FOUND"><span class="member-name">INCLUDE_NOT_FOUND</span></a> = 112</dt>
+            <dt class="memberdef"><a name="INVALID_ATTR_CHOICE"><span class="member-name">INVALID_ATTR_CHOICE</span></a> = 73</dt>
+            <dt class="memberdef"><a name="INVALID_AVT"><span class="member-name">INVALID_AVT</span></a> = 85</dt>
+            <dt class="memberdef"><a name="INVALID_CHAR_ATTR"><span class="member-name">INVALID_CHAR_ATTR</span></a> = 74</dt>
+            <dt class="memberdef"><a name="INVALID_EXPRESSION"><span class="member-name">INVALID_EXPRESSION</span></a> = 87</dt>
+            <dt class="memberdef"><a name="INVALID_FOREACH_SELECT"><span class="member-name">INVALID_FOREACH_SELECT</span></a> = 170</dt>
+            <dt class="memberdef"><a name="INVALID_ID_ATTR"><span class="member-name">INVALID_ID_ATTR</span></a> = 77</dt>
+            <dt class="memberdef"><a name="INVALID_NCNAME_ATTR"><span class="member-name">INVALID_NCNAME_ATTR</span></a> = 79</dt>
+            <dt class="memberdef"><a name="INVALID_NMTOKEN_ATTR"><span class="member-name">INVALID_NMTOKEN_ATTR</span></a> = 81</dt>
+            <dt class="memberdef"><a name="INVALID_NS_URIREF_ATTR"><span class="member-name">INVALID_NS_URIREF_ATTR</span></a> = 76</dt>
+            <dt class="memberdef"><a name="INVALID_NUMBER_ATTR"><span class="member-name">INVALID_NUMBER_ATTR</span></a> = 75</dt>
+            <dt class="memberdef"><a name="INVALID_PATTERN"><span class="member-name">INVALID_PATTERN</span></a> = 86</dt>
+            <dt class="memberdef"><a name="INVALID_PREFIX_ATTR"><span class="member-name">INVALID_PREFIX_ATTR</span></a> = 80</dt>
+            <dt class="memberdef"><a name="INVALID_QNAME_ARGUMENT"><span class="member-name">INVALID_QNAME_ARGUMENT</span></a> = 2002</dt>
+            <dt class="memberdef"><a name="INVALID_QNAME_ATTR"><span class="member-name">INVALID_QNAME_ATTR</span></a> = 78</dt>
+            <dt class="memberdef"><a name="LITERAL_RESULT_MISSING_VERSION"><span class="member-name">LITERAL_RESULT_MISSING_VERSION</span></a> = 22</dt>
+            <dt class="memberdef"><a name="MISSING_REQUIRED_ATTRIBUTE"><span class="member-name">MISSING_REQUIRED_ATTRIBUTE</span></a> = 70</dt>
+            <dt class="memberdef"><a name="MULTIPLE_MATCH_TEMPLATES"><span class="member-name">MULTIPLE_MATCH_TEMPLATES</span></a> = 141</dt>
+            <dt class="memberdef"><a name="NAMED_TEMPLATE_NOT_FOUND"><span class="member-name">NAMED_TEMPLATE_NOT_FOUND</span></a> = 131</dt>
+            <dt class="memberdef"><a name="NONTEXT_IN_ATTRIBUTE"><span class="member-name">NONTEXT_IN_ATTRIBUTE</span></a> = 153</dt>
+            <dt class="memberdef"><a name="NONTEXT_IN_COMMENT"><span class="member-name">NONTEXT_IN_COMMENT</span></a> = 310</dt>
+            <dt class="memberdef"><a name="NONTEXT_IN_PI"><span class="member-name">NONTEXT_IN_PI</span></a> = 251</dt>
+            <dt class="memberdef"><a name="NO_STYLESHEET"><span class="member-name">NO_STYLESHEET</span></a> = 20</dt>
+            <dt class="memberdef"><a name="QNAME_BUT_NOT_NCNAME"><span class="member-name">QNAME_BUT_NOT_NCNAME</span></a> = 82</dt>
+            <dt class="memberdef"><a name="RESTRICTED_OUTPUT_VIOLATION"><span class="member-name">RESTRICTED_OUTPUT_VIOLATION</span></a> = 7000</dt>
+            <dt class="memberdef"><a name="SOURCE_PARSE_ERROR"><span class="member-name">SOURCE_PARSE_ERROR</span></a> = 24</dt>
+            <dt class="memberdef"><a name="STYLESHEET_PARSE_ERROR"><span class="member-name">STYLESHEET_PARSE_ERROR</span></a> = 23</dt>
+            <dt class="memberdef"><a name="STYLESHEET_REQUESTED_TERMINATION"><span class="member-name">STYLESHEET_REQUESTED_TERMINATION</span></a> = 241</dt>
+            <dt class="memberdef"><a name="UNDEFINED_ATTRIBUTE_SET"><span class="member-name">UNDEFINED_ATTRIBUTE_SET</span></a> = 160</dt>
+            <dt class="memberdef"><a name="UNDEFINED_DECIMAL_FORMAT"><span class="member-name">UNDEFINED_DECIMAL_FORMAT</span></a> = 271</dt>
+            <dt class="memberdef"><a name="UNDEFINED_PREFIX"><span class="member-name">UNDEFINED_PREFIX</span></a> = 52</dt>
+            <dt class="memberdef"><a name="UNKNOWN_EXTENSION_ELEMENT"><span class="member-name">UNKNOWN_EXTENSION_ELEMENT</span></a> = 321</dt>
+            <dt class="memberdef"><a name="UNKNOWN_NODE_BASE_URI"><span class="member-name">UNKNOWN_NODE_BASE_URI</span></a> = 1001</dt>
+            <dt class="memberdef"><a name="UNKNOWN_OUTPUT_METHOD"><span class="member-name">UNKNOWN_OUTPUT_METHOD</span></a> = 260</dt>
+            <dt class="memberdef"><a name="UNSUPPORTED_NUMBER_LANG_VALUE"><span class="member-name">UNSUPPORTED_NUMBER_LANG_VALUE</span></a> = 294</dt>
+            <dt class="memberdef"><a name="UNSUPPORTED_NUMBER_LETTER_FOR_LANG"><span class="member-name">UNSUPPORTED_NUMBER_LETTER_FOR_LANG</span></a> = 295</dt>
+            <dt class="memberdef"><a name="VAR_WITH_CONTENT_AND_SELECT"><span class="member-name">VAR_WITH_CONTENT_AND_SELECT</span></a> = 233</dt>
+            <dt class="memberdef"><a name="WRONG_ARGUMENT_TYPE"><span class="member-name">WRONG_ARGUMENT_TYPE</span></a> = 2001</dt>
+            <dt class="memberdef"><a name="XSLT_ILLEGAL_ELEMENT"><span class="member-name">XSLT_ILLEGAL_ELEMENT</span></a> = 27</dt>
+          </dl>
+        </dd>
+      </dl>
+    </div>
+    <div class="section">
+      <h2>Globals</h2>
+      <dl class="globals">
+        <dt class="globaldef"><a name="BUILTIN_TEMPLATE_WITH_PARAMS"><span class="global-name">BUILTIN_TEMPLATE_WITH_PARAMS</span></a> = 'Built-in template invoked with params that will ...This message will only appear once per transform.'</dt>
+        <dd class="globaldesc"></dd>
+        <dt class="globaldef"><a name="DEFAULT_MESSAGE_PREFIX"><span class="global-name">DEFAULT_MESSAGE_PREFIX</span></a> = 'STYLESHEET MESSAGE:\n'</dt>
+        <dd class="globaldesc"></dd>
+        <dt class="globaldef"><a name="DEFAULT_MESSAGE_SUFFIX"><span class="global-name">DEFAULT_MESSAGE_SUFFIX</span></a> = '\nEND STYLESHEET MESSAGE\n'</dt>
+        <dd class="globaldesc"></dd>
+        <dt class="globaldef"><a name="EXPRESSION_POSITION_INFO"><span class="global-name">EXPRESSION_POSITION_INFO</span></a> = 'In stylesheet %s, line %s, column %s in "%s":\n%s'</dt>
+        <dd class="globaldesc"></dd>
+        <dt class="globaldef"><a name="POSITION_INFO"><span class="global-name">POSITION_INFO</span></a> = 'In stylesheet %s, line %s, column %s:\n%s'</dt>
+        <dd class="globaldesc"></dd>
+        <dt class="globaldef"><a name="TEMPLATE_CONFLICT_LOCATION"><span class="global-name">TEMPLATE_CONFLICT_LOCATION</span></a> = 'In stylesheet %s, line %s, column %s, pattern %s'</dt>
+        <dd class="globaldesc"></dd>
+        <dt class="globaldef"><a name="XSLT_EXPRESSION_POSITION_INFO"><span class="global-name">XSLT_EXPRESSION_POSITION_INFO</span></a> = '%s\nThe error occurred in the expression "%s".'</dt>
+        <dd class="globaldesc"></dd>
+        <dt class="globaldef"><a name="g_errorMessages"><span class="global-name">g_errorMessages</span></a> = {20: 'No stylesheets to process.', 22: 'Document root element must have a xsl:version attribute.  (see XSLT 1.0 sec. 2.3).', 23: 'Error parsing stylesheet (%s): %s', 24: 'Error parsing source document (%s): %s', 27: "Illegal element '%s' in XSLT Namespace (see XSLT 1.0 sec. 2.1).", 29: 'Circular variable reference error (see XSLT 1.0 sec. 11.4) for variable or parameter: (%s, %s)', 30: 'Top level variable %s has duplicate definitions ...e same import precedence.  (see XSLT 1.0 sec. 11)', 31: 'The namespace for "%s" has duplicate namespace a...ame import precedence.  (see XSLT 1.0 sec. 2.6.2)', 50: "Illegal child '%s' within element '%s'", 51: "Illegal literal text %s within element '%s'", ...}</dt>
+        <dd class="globaldesc"></dd>
+      </dl>
+    </div>
+    <div class="universal-footer">Last modified on 2005-04-18 16:47:00</div>
+  </body>
+</html>

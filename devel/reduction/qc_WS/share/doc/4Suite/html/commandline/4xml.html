@@ -1,0 +1,87 @@
+<html>
+  <head>
+    <meta content="text/html; charset=iso-8859-1" http-equiv="Content-Type">
+    <title>Command-line Application 4xml</title>
+    <link href="commandline.css" type="text/css" rel="stylesheet">
+  </head>
+  <body><a name="id183014312144"><h1>Commandline Application - 4xml</h1></a>
+    <h4>command-line tool for working with XML documents</h4>
+    <blockquote>4XML command-line application</blockquote>
+    <H2>Usage</H2>
+    <TABLE>
+      <TR VALIGN="top">
+        <TD>
+          <pre>4xml</pre>
+        </TD>
+        <TD>
+          <pre>[--help] [--version] [--validate] [--encoding=&lt;ENC&gt;]
+[--input-encoding=&lt;ENC&gt;] [--outfile=&lt;FILE&gt;] [--pretty]
+[--noserialize] [--html] [--noxinclude] [--rng=&lt;FILE&gt;]
+source-uri</pre>
+        </TD>
+      </TR>
+    </TABLE>
+    <h2>Options</h2>
+    <TABLE cellpadding="4">
+      <tr>
+        <th align="left">Name</th>
+        <th align="center">Description</th>
+      </tr>
+      <TR VALIGN="TOP">
+        <TD>-h, --help</TD>
+        <TD>show detailed help message</TD>
+      </TR>
+      <TR VALIGN="TOP">
+        <TD>-V, --version</TD>
+        <TD>display version information and exit</TD>
+      </TR>
+      <TR VALIGN="TOP">
+        <TD>-v, --validate</TD>
+        <TD>DTD validate the input file as it is being parsed</TD>
+      </TR>
+      <TR VALIGN="TOP">
+        <TD>-e, --encoding=&lt;ENC&gt;</TD>
+        <TD>The encoding to use for output</TD>
+      </TR>
+      <TR VALIGN="TOP">
+        <TD>--input-encoding=&lt;ENC&gt;</TD>
+        <TD>The encoding to assume for input</TD>
+      </TR>
+      <TR VALIGN="TOP">
+        <TD>-o, --outfile=&lt;FILE&gt;</TD>
+        <TD>Direct output to FILE (file will be overwritten if it exists)</TD>
+      </TR>
+      <TR VALIGN="TOP">
+        <TD>-p, --pretty</TD>
+        <TD>Pretty-print the result</TD>
+      </TR>
+      <TR VALIGN="TOP">
+        <TD>-n, --noserialize</TD>
+        <TD>Do not serialize; just parse</TD>
+      </TR>
+      <TR VALIGN="TOP">
+        <TD>--html</TD>
+        <TD>Use HTML mode when pretty-printing (emit XHTML as HTML)</TD>
+      </TR>
+      <TR VALIGN="TOP">
+        <TD>--noxinclude</TD>
+        <TD>Do not expand XIncludes</TD>
+      </TR>
+      <TR VALIGN="TOP">
+        <TD>--rng=&lt;FILE&gt;</TD>
+        <TD>Apply RELAX NG from the given file (technically RNG with XVIF features)</TD>
+      </TR>
+    </TABLE>
+    <H2>Arguments</H2>
+    <TABLE cellpadding="4">
+      <tr>
+        <th align="left">Name</th>
+        <th align="center">Description</th>
+      </tr>
+      <TR>
+        <TD>source-uri</TD>
+        <TD>The URI of the XML document to parse, or "-" to indicate standard input.</TD>
+      </TR>
+    </TABLE>
+  </body>
+</html>

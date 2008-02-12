@@ -1,0 +1,104 @@
+<html>
+  <head>
+    <meta content="text/html; charset=iso-8859-1" http-equiv="Content-Type">
+    <title>4Suite API Documentation: Ft.Xml.Lib.XmlString</title>
+    <link href="modules.css" type="text/css" rel="stylesheet">
+  </head>
+  <body>
+    <div class="universal-header"><span class="universal-header-prefix">&nbsp;&nbsp;&nbsp;</span>&nbsp;<span class="universal-header-prefix">&nbsp;&nbsp;</span>&nbsp;<span class="universal-header-prefix">&nbsp;</span>&nbsp;<a href="../index.html">4Suite<sup>&trade;</sup> API Documentation</a></div>
+    <h1><span class="glyph-arrow">&#9658;</span> Module <span class="this-name"><a href="Ft.html" title="Ft">Ft</a>.<a href="Ft.Xml.html" title="Ft.Xml">Xml</a>.<a href="Ft.Xml.Lib.html" title="Ft.Xml.Lib">Lib</a>.XmlString</span></h1>
+    <div class="abstract">Miscellaneous XML-specific string functions</div>
+    <pre class="description">Copyright 2005 Fourthought, Inc. (USA).
+Detailed license and copyright information: http://4suite.org/COPYRIGHT
+Project home, documentation, distributions: http://4suite.org/</pre>
+    <div class="summary-section">
+      <table cellpadding="0" cellspacing="0">
+        <tbody>
+          <tr>
+            <td valign="top">
+              <div class="summary-header">Functions:</div>
+              <div class="summary-list"><span class="function-name"><a href="#IsNCName">IsNCName</a></span>, <span class="function-name"><a href="#IsName">IsName</a></span>, <span class="function-name"><a href="#IsNmtoken">IsNmtoken</a></span>, <span class="function-name"><a href="#IsQName">IsQName</a></span>, <span class="function-name"><a href="#IsXml">IsXml</a></span>, <span class="function-name"><a href="#IsXmlSpace">IsXmlSpace</a></span>, <span class="function-name"><a href="#SplitQName">SplitQName</a></span>, <span class="function-name"><a href="#XmlStrLStrip">XmlStrLStrip</a></span>, <span class="function-name"><a href="#XmlStrRStrip">XmlStrRStrip</a></span>, <span class="function-name"><a href="#XmlStrStrip">XmlStrStrip</a></span></div>
+            </td>
+            <td width="7" valign="middle"></td>
+            <td width="1" valign="middle" bgcolor="#C5C5C5"></td>
+            <td width="7" valign="middle"></td>
+            <td valign="top">
+              <div class="summary-header">Globals:</div>
+              <div class="summary-list"><span class="global-name"><a href="#CAPI">CAPI</a></span></div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="section">
+      <h2>Functions</h2>
+      <dl class="functions">
+        <dt class="functiondef"><a name="IsNCName"><span class="function-name">IsNCName</span></a>(<span class="argument-name">s</span>)</dt>
+        <dd class="functiondesc">
+          <div class="abstract">IsNCName(s) -&gt; bool</div>
+          <pre class="description">Returns True if the given string matches the NCName production as defined
+by the W3C's Namespaces in XML Recommendation.</pre>
+        </dd>
+        <dt class="functiondef"><a name="IsName"><span class="function-name">IsName</span></a>(<span class="argument-name">s</span>)</dt>
+        <dd class="functiondesc">
+          <div class="abstract">IsName(s) -&gt; bool</div>
+          <pre class="description">Returns True if the given string matches the Name production as defined
+by the W3C's XML 1.0 Recommendation.</pre>
+        </dd>
+        <dt class="functiondef"><a name="IsNmtoken"><span class="function-name">IsNmtoken</span></a>(<span class="argument-name">s</span>)</dt>
+        <dd class="functiondesc">
+          <div class="abstract">IsNmtoken(s) -&gt; bool</div>
+          <pre class="description">Returns True if the given string matches the Nmtoken production as defined
+by the W3C's XML 1.0 Recommendation.</pre>
+        </dd>
+        <dt class="functiondef"><a name="IsQName"><span class="function-name">IsQName</span></a>(<span class="argument-name">s</span>)</dt>
+        <dd class="functiondesc">
+          <div class="abstract">IsQName(s) -&gt; bool</div>
+          <pre class="description">Returns True if the given string matches the QName production as defined
+by the W3C's Namespaces in XML Recommendation.</pre>
+        </dd>
+        <dt class="functiondef"><a name="IsXml"><span class="function-name">IsXml</span></a>(<span class="argument-name">S</span>)</dt>
+        <dd class="functiondesc">
+          <div class="abstract">IsXml(S) -&gt; bool</div>
+          <pre class="description">Return True if the given bytes represent a (possibly) well-formed XML
+document. (see http://www.w3.org/TR/REC-xml/#sec-guessing).</pre>
+        </dd>
+        <dt class="functiondef"><a name="IsXmlSpace"><span class="function-name">IsXmlSpace</span></a>(<span class="argument-name">S</span>)</dt>
+        <dd class="functiondesc">
+          <div class="abstract">IsXmlSpace(S) -&gt; bool</div>
+          <pre class="description">Return True if there are only whitespace characters in S, False otherwise.</pre>
+        </dd>
+        <dt class="functiondef"><a name="SplitQName"><span class="function-name">SplitQName</span></a>(<span class="argument-name">qualifiedName</span>)</dt>
+        <dd class="functiondesc">
+          <div class="abstract">SplitQName(qualifiedName) -&gt; (prefix, localName)</div>
+          <pre class="description">where 'qualifiedName' is a QName according to XML Namespaces 1.0
+&lt;http://www.w3.org/TR/REC-xml-names&gt;.
+returns the name parts according to the spec.</pre>
+        </dd>
+        <dt class="functiondef"><a name="XmlStrLStrip"><span class="function-name">XmlStrLStrip</span></a>(<span class="argument-name">S</span>)</dt>
+        <dd class="functiondesc">
+          <div class="abstract">XmlStrLStrip(S) -&gt; unicode</div>
+          <pre class="description">Return a copy of the string S with leading whitespace removed.</pre>
+        </dd>
+        <dt class="functiondef"><a name="XmlStrRStrip"><span class="function-name">XmlStrRStrip</span></a>(<span class="argument-name">S</span>)</dt>
+        <dd class="functiondesc">
+          <div class="abstract">XmlStrRStrip(S) -&gt; unicode</div>
+          <pre class="description">Return a copy of the string S with trailing whitespace removed.</pre>
+        </dd>
+        <dt class="functiondef"><a name="XmlStrStrip"><span class="function-name">XmlStrStrip</span></a>(<span class="argument-name">S</span>)</dt>
+        <dd class="functiondesc">
+          <div class="abstract">XmlStrStrip(S) -&gt; unicode</div>
+          <pre class="description">Return a copy of the string S with leading and trailing whitespace removed.</pre>
+        </dd>
+      </dl>
+    </div>
+    <div class="section">
+      <h2>Globals</h2>
+      <dl class="globals">
+        <dt class="globaldef"><a name="CAPI"><span class="global-name">CAPI</span></a> = &lt;PyCObject object at 0x20000000006a8df0&gt;</dt>
+        <dd class="globaldesc"></dd>
+      </dl>
+    </div>
+    <div class="universal-footer">Last modified on 2007-10-05 14:11:32</div>
+  </body>
+</html>

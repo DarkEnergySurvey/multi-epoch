@@ -1,0 +1,123 @@
+#!/usr/bin/env perl 
+########################################################################
+#  $Id$
+#
+#  $Rev::                                  $:  # Revision of last commit.
+#  $LastChangedBy::                        $:  # Author of last commit. 
+#  $LastChangedDate::                      $:  # Date of last commit.
+#
+#  Authors: 
+#         Michelle Gower (mgower@ncsa.uiuc.edu)
+#         Darren Adams (dadams@ncsa.uiuc.edu)
+#
+#  Developed at: 
+#  The National Center for Supercomputing Applications (NCSA).
+#
+#  Copyright (C) 2007 Board of Trustees of the University of Illinois. 
+#  All rights reserved.
+#
+#  DESCRIPTION:
+#
+#######################################################################
+
+use strict;
+use warnings;
+
+use Getopt::Long;
+use FindBin;
+use lib "$FindBin::Bin/../lib";
+use DES::utils::misc;
+use DES::utils::hist;
+use DES::desconfig;
+
+my $version;
+&Getopt::Long::Configure( 'noignorecase', 'no_autoabbrev');
+Getopt::Long::GetOptions(
+   'version|v' => \$version
+);
+
+my $DES_HOME = getHome() or die "Error: Can't determine DES_HOME";
+
+if (defined($version))
+{
+  printVersion();
+  exit 0;
+}
+
+if (scalar(@ARGV) != 2)
+{
+  print STDERR "Usage: desstagesrc [-version] configfile condorid\n";
+  exit 1;
+}
+
+my $configfile = shift;
+my $condorid = shift;
+
+# read sysinfo file
+my $config = new DES::desconfig;
+$config->readConfig($configfile, 0, \*STDERR);
+
+# log condor jobid
+$condorid = sprintf("%d", $condorid);
+logEvent($config, "stagesrc", "j", " ", "cid", $condorid);
+
+my %searchdefs;
+$searchdefs{"stage"} = "stagesrc";
+my $nite = $config->getValueReq("nite", \%searchdefs);
+
+# get source info 
+my $src_archive_location=$config->getValueReq("orig_archive_loc", \%searchdefs);
+$searchdefs{"archive"} = $src_archive_location;
+my $src_archive_root=$config->getValueReq("archive_root", \%searchdefs); 
+my $src_archive_site=$config->getValueReq("site_name", \%searchdefs);
+$searchdefs{"site"} = $src_archive_site;
+my $src_server = $config->getValueReq("gridftp_host", \%searchdefs);
+my $src_server_port = $config->getValue("gridftp_port", \%searchdefs);
+%searchdefs = ();
+
+# get destination info 
+$searchdefs{"stage"} = "stagesrc";
+my $dest_archive_location=$config->getValue("run_archive_loc", \%searchdefs);
+$searchdefs{"archive"} = $dest_archive_location;
+my $dest_archive_root=$config->getValueReq("archive_root", \%searchdefs); 
+my $dest_archive_site=$config->getValueReq("site_name", \%searchdefs);
+$searchdefs{"site"} = $dest_archive_site;
+my $dest_server = $config->getValueReq("gridftp_host", \%searchdefs);
+my $dest_server_port = $config->getValue("gridftp_port", \%searchdefs);
+
+my $transfer_method = 'guc_dcopy';
+my $transfer_stage = 'src';  # Hardwired for now?
+
+# Everything seems pretty generic above here
+
+my ($src_url, $dest_url);
+if ( $transfer_stage == 'src') {
+  $src_url = "$src_archive_root/raw/$nite/src";
+  $dest_url = "$dest_archive_root/raw/$nite/src";
+}
+
+
+if ($transfer_method == 'guc_dcopy') {
+  # Append port to server if provided:
+  $src_server = $src_server.":".$src_server_port if ($src_server_port);
+  $dest_server = $dest_server.":".$dest_server_port if ($dest_server_port);
+
+  # ensure trailing '/' is present for directory replication:
+  # need regex...
+  $src_url = $src_url.'/';
+  $dest_url = $dest_url.'/';
+
+  # Need to treat abs vs rel paths...
+
+  my $cmd = "globus-url-copy -v -r -cd -fast gsiftp://".$src_server.$src_url." gsiftp://".$dest_server.$dest_url;
+
+  print "cmd> $cmd\n";
+
+  my $out = `$cmd 2>&1`;
+  print "$out\n";
+  my $exitval = $?>>8;
+
+  exit $exitval;
+}
+elsif ($transfer_method == 'uber_dcopy') {
+}

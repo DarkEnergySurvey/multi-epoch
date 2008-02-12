@@ -1,0 +1,67 @@
+<?xml version="1.0"?>
+<!DOCTYPE project  [
+  <!ENTITY  Stage_register          SYSTEM "module_orchs/register.xml">
+  <!ENTITY  Stage_createlists       SYSTEM "module_orchs/createlists.xml">
+  <!ENTITY  Stage_createingestlists SYSTEM "module_orchs/createingestlists.xml">
+  <!ENTITY  Stage_getastrostd       SYSTEM "module_orchs/getastrostd.xml">
+  <!ENTITY  Stage_msetup            SYSTEM "module_orchs/msetup_osg.xml">
+  <!ENTITY  Stage_moveingestlists   SYSTEM "module_orchs/moveingestlists.xml">
+  <!ENTITY  Stage_movelist          SYSTEM "module_orchs/movelist.xml">
+  <!ENTITY  Stage_movecat           SYSTEM "module_orchs/movecat.xml">
+  <!ENTITY  Stage_makexml           SYSTEM "module_orchs/makexml.xml">
+  <!ENTITY  Stage_makexml_postscamp SYSTEM "module_orchs/makexml_postscamp.xml">
+  <!ENTITY  Stage_makeingestxml     SYSTEM "module_orchs/makeingestxml.xml">
+  <!ENTITY  Stage_runjobs           SYSTEM "module_orchs/runjobs_osg.xml">
+  <!ENTITY  Stage_runingestjobs     SYSTEM "module_orchs/runingestjobs.xml">
+
+  <!ENTITY  Stage_scampsetup        SYSTEM "module_scamp/scampsetup.xml">
+  <!ENTITY  Stage_scamp_astrostd    SYSTEM "module_scamp/scamp_astrostd.xml">
+  <!ENTITY  Stage_scamplist         SYSTEM "module_scamp/scamplist.xml">
+  <!ENTITY  Stage_runscamp          SYSTEM "module_scamp/runscamp.xml">
+
+]>
+
+<project name="pipeline" default="Stage_projects" basedir=".">
+ <property file="edit_OSG.properties"/>
+
+ &Stage_register;
+ &Stage_createlists;
+ &Stage_createingestlists;
+ &Stage_getastrostd;
+ &Stage_msetup;
+ &Stage_moveingestlists;
+ &Stage_movelist;
+ &Stage_movecat;
+ &Stage_makexml;
+ &Stage_makeingestxml;
+ &Stage_makexml_postscamp;
+ &Stage_runjobs;
+ &Stage_runingestjobs;
+
+ &Stage_scampsetup;
+ &Stage_scamplist;
+ &Stage_scamp_astrostd;
+ &Stage_runscamp;
+
+ <target name="Stage_OSG"
+       depends="Stage_register, Stage_msetup, Stage_createlists, Stage_movelist,Stage_makexml, Stage_runjobs"
+       description="OSG Stages">
+ </target>
+
+ <target name="Stage_Convert_Ingest"
+       depends="Stage_createingestlists, Stage_makeingestxml, Stage_moveingestlists, Stage_runingestjobs"
+       description="DES Convert and Ingest">
+ </target>
+
+ <target name="Stage_scamp"
+       depends="Stage_scampsetup, Stage_scamplist, Stage_scamp_astrostd, Stage_runscamp"
+       description="SCAMP">
+ </target>
+
+ <target name="Stage_postscamp"
+       depends="Stage_makexml_postscamp, Stage_runjobs"
+       description="Post_scamp Stages">
+ </target>
+
+</project>
+ 

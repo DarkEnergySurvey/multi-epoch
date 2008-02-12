@@ -1,0 +1,72 @@
+   <elf>
+      <workdir/>
+      <serial-scripts separate-script-dirs="false">
+         <ogrescript name="Stage_movelog">
+
+<properties file="../edit_BCS.properties"/>
+            <properties file="${mypath}/module_orchs/movelog.properties"/>
+
+            <env/>
+            <properties sysprops="true"/>
+            
+            
+            <send>
+               <progress-event message="Begin Stage_movelog">
+                  <header-property name="some-special-id" value="${ensemble.id}-Main-Begin-Stage_movelog"/>
+               </progress-event>
+            </send>
+            
+            <echo stdout="true" message=" - Begin Stage_movelog"/>
+            
+            <declare name="end" long="$E{ ${ccd.stop} + 1 }"/>
+            <declare name="i" int="0" />
+            <for var="i" from="${ccd.start}" condition="$E{${i} &lt; ${end}}">
+               
+               <declare name="in" long="0" />
+               <add-leading-zeros number="${i}" places="2">
+                  <return-value defaultName="zerosAdded" assignedName="in"/>
+               </add-leading-zeros>
+               
+               <echo stdout="true" message=" -- Running Stage_movelog - GridFTP /log dir for CCD${in} ... "/>
+               
+               <declare name="srcdir"  string="${local_listpath}/log"/>
+               <declare name="targetdir" string="${targetprot}://${tgrid_server_${site}}${tgrid_homepath_${site}}/${uid}_${in}/data/${nite}"/>
+              
+<!-- 
+               <copy sourceDir="${srcdir}" target="${targetdir}" />
+-->
+
+
+<copy>
+  <source base="file:${srcdir}/">
+    <include>*</include>
+  </source>
+  <target>file:${targetdir}</target>
+</copy>
+
+
+<!--
+   <copy taskName="test_copy" verbose="true">
+        <targetGroup targetURI="${targetdir}">
+               <pattern base="${srcdir}">
+               </pattern>
+        </targetGroup>
+   </copy>
+-->
+
+
+               
+            </for>
+            
+            <echo stdout="true" message=" - Stage_movelog done"/>
+            <echo stdout="true" message="  "/>
+            
+            <send>
+               <progress-event message="End Stage_movelog">
+                  <header-property name="some-special-id" value="${ensemble.id}-Main-End-Stage_movelog"/>
+               </progress-event>
+            </send>
+            
+         </ogrescript>
+      </serial-scripts>
+   </elf>

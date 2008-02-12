@@ -1,0 +1,154 @@
+<html>
+  <head>
+    <meta content="text/html; charset=iso-8859-1" http-equiv="Content-Type">
+    <title>4Suite API Documentation: Ft.Xml.MarkupWriter</title>
+    <link href="modules.css" type="text/css" rel="stylesheet">
+  </head>
+  <body>
+    <div class="universal-header"><span class="universal-header-prefix">&nbsp;&nbsp;&nbsp;</span>&nbsp;<span class="universal-header-prefix">&nbsp;&nbsp;</span>&nbsp;<span class="universal-header-prefix">&nbsp;</span>&nbsp;<a href="../index.html">4Suite<sup>&trade;</sup> API Documentation</a></div>
+    <h1><span class="glyph-arrow">&#9658;</span> Module <span class="this-name"><a href="Ft.html" title="Ft">Ft</a>.<a href="Ft.Xml.html" title="Ft.Xml">Xml</a>.MarkupWriter</span></h1>
+    <div class="abstract">MarkupWriter provides a very friendly interface for generating XML content</div>
+    <pre class="description">Copyright 2005 Fourthought, Inc. (USA).
+Detailed license and copyright information: http://4suite.org/COPYRIGHT
+Project home, documentation, distributions: http://4suite.org/</pre>
+    <div class="summary-section">
+      <table cellpadding="0" cellspacing="0">
+        <tbody>
+          <tr>
+            <td valign="top">
+              <div class="summary-header">Classes:</div>
+              <div class="summary-list"><span class="class-name"><a href="#MarkupWriter">MarkupWriter</a></span></div>
+            </td>
+            <td width="7" valign="middle"></td>
+            <td bgcolor="#C5C5C5" valign="middle" width="1"></td>
+            <td width="7" valign="middle"></td>
+            <td valign="top">
+              <div class="summary-header">Globals:</div>
+              <div class="summary-list"><span class="global-name"><a href="#EMPTY_NAMESPACE">EMPTY_NAMESPACE</a></span>, <span class="global-name"><a href="#EMPTY_PREFIX">EMPTY_PREFIX</a></span>, <span class="global-name"><a href="#XMLNS_NAMESPACE">XMLNS_NAMESPACE</a></span>, <span class="global-name"><a href="#XML_NAMESPACE">XML_NAMESPACE</a></span></div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="section">
+      <h2>Classes</h2>
+      <dl class="classes">
+        <dt class="classdef"><a name="MarkupWriter"></a>class <span class="class-name">MarkupWriter</span><span class="bases">(<span class="class-name"><span class="undocumented">object</span></span>)</span></dt>
+        <dd class="classdesc">
+          <div class="abstract">General-purpose utility class for generating XML (may eventually be
+expanded to produce more output types)</div>
+          <pre class="description">Sample usage:
+
+from Ft.Xml import MarkupWriter
+writer = MarkupWriter(indent=u"yes")
+writer.startDocument()
+writer.startElement(u'xsa')
+writer.startElement(u'vendor')
+#Element with simple text (#PCDATA) content
+writer.simpleElement(u'name', content=u'Centigrade systems')
+#Note writer.text(content) still works
+writer.simpleElement(u'email', content=u"info@centigrade.bogus")
+writer.endElement(u'vendor')
+#Element with an attribute
+writer.startElement(u'product', attributes={u'id': u"100\u00B0"})
+#Note writer.attribute(name, value, namespace=None) still works
+writer.simpleElement(u'name', content=u"100\u00B0 Server")
+#XML fragment
+writer.xmlFragment('&lt;version&gt;1.0&lt;/version&gt;&lt;last-release&gt;20030401&lt;/last-release&gt;')
+#Empty element
+writer.simpleElement(u'changes')
+writer.endElement(u'product')
+writer.endElement(u'xsa')
+writer.endDocument()
+
+Note on the difference between 4Suite writers and printers
+Writer  - module that exposes a broad public API for building output
+          bit by bit
+Printer - module that simply takes a DOM and creates output from it
+          as a whole, within one API invokation</pre>
+          <h3>Methods</h3>
+          <dl class="methods">
+            <dt class="methoddef"><a name="MarkupWriter-__getattr__"><span class="method-name">__getattr__</span></a>(<span class="argument-name">self</span>, <span class="argument-name">value</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dt class="methoddef"><a name="MarkupWriter-__init__"><span class="method-name">__init__</span></a>(<span class="argument-name">self</span>, <span class="argument-name">stream</span><span class="argument-default">=&lt;open file '&lt;stdout&gt;', mode 'w' at 0xb7d98068&gt;</span>, <span class="argument-name">**wargs</span>)</dt>
+            <dd class="methoddesc">
+              <div class="abstract">Convenience factory function for Markup writers (based on
+xsl:output in XSLT)</div>
+            </dd>
+            <dd class="overrides"><b>Overrides: </b><span class="inherited-name">__init__</span> from class <span class="class-name"><span class="undocumented">object</span></span></dd>
+            <dt class="methoddef"><a name="MarkupWriter-simpleElement"><span class="method-name">simpleElement</span></a>(<span class="argument-name">self</span>, <span class="argument-name">tagName</span>, <span class="argument-name">namespace</span><span class="argument-default">=None</span>, <span class="argument-name">extraNss</span><span class="argument-default">=None</span>, <span class="argument-name">attributes</span><span class="argument-default">=None</span>, <span class="argument-name">content</span><span class="argument-default">=u''</span>)</dt>
+            <dd class="methoddesc">
+              <div class="abstract">Create a simple tag with optional attributes and content.  The
+complete element, start tag, optional text content, end tag, will
+all be generated by this one call.  Must *not* be matched with
+an endElement call.</div>
+              <pre class="description">Note: all "strings" in these parameters must be unicode objects
+tagName - qualified name of the element
+namespace - optional namespace URI
+attributes - optional dictionary mapping name to unicode value
+            the name can either be a unicode QName or a tuple
+            of (QName, namespace URI)
+content   - optional unicode object with the text body of the
+            simple element
+extraNss - optional dictionary (defaults to an empty one) that
+           creates additional namespace declarations that the
+           user wants to place on the specific element. Each key
+           is a ns prefix, and each value a ns name (URI).
+           You do not need to use extraNss if you will be using
+           a similar namespace parameter.  In fact, most people
+           will never need this parameter.</pre>
+            </dd>
+            <dt class="methoddef"><a name="MarkupWriter-startElement"><span class="method-name">startElement</span></a>(<span class="argument-name">self</span>, <span class="argument-name">tagName</span>, <span class="argument-name">namespace</span><span class="argument-default">=None</span>, <span class="argument-name">extraNss</span><span class="argument-default">=None</span>, <span class="argument-name">attributes</span><span class="argument-default">=None</span>)</dt>
+            <dd class="methoddesc">
+              <div class="abstract">Create a start tag with optional attributes.  Must eventually
+be matched with an endElement call</div>
+              <pre class="description">Note: all "strings" in these parameters must be unicode objects
+tagName - qualified name of the element (must be unicode)
+namespace - optional namespace URI
+attributes - optional dictionary mapping name to unicode value
+            the name can either be a unicode QName or a tuple
+            of (QName, namespace URI)
+extraNss - optional dictionary (defaults to an empty one) that
+           creates additional namespace declarations that the
+           user wants to place on the specific element. Each key
+           is a ns prefix, and each value a ns name (URI).
+           You do not need to use extraNss if you will be using
+           a similar namespace parameter.  In fact, most people
+           will never need this parameter.</pre>
+            </dd>
+            <dt class="methoddef"><a name="MarkupWriter-xmlFragment"><span class="method-name">xmlFragment</span></a>(<span class="argument-name">self</span>, <span class="argument-name">fragment</span>)</dt>
+            <dd class="methoddesc">
+              <div class="abstract">Incorporate a well-formed general entity into the output.
+fragment of
+fragment - string (must not be a Unicode object) to be incorporated
+           verbatim into the output, after testing for wellp-formedness</div>
+            </dd>
+          </dl>
+          <h3>Methods inherited from class <span class="undocumented">object</span></h3>
+          <div class="inherited"><span class="inherited-name">__delattr__</span>, <span class="inherited-name">__getattribute__</span>, <span class="inherited-name">__hash__</span>, <span class="inherited-name">__new__</span>, <span class="inherited-name">__reduce__</span>, <span class="inherited-name">__reduce_ex__</span>, <span class="inherited-name">__repr__</span>, <span class="inherited-name">__setattr__</span>, <span class="inherited-name">__str__</span></div>
+          <h3>Members</h3>
+          <dl class="members">
+            <dt class="memberdef"><a name="__dict__"><span class="member-name">__dict__</span></a> = &lt;attribute '__dict__' of 'MarkupWriter' objects&gt;</dt>
+            <dt class="memberdef"><a name="__weakref__"><span class="member-name">__weakref__</span></a> = &lt;attribute '__weakref__' of 'MarkupWriter' objects&gt;</dt>
+          </dl>
+          <h3>Members inherited from class <span class="undocumented">object</span></h3>
+          <div class="inherited"><span class="inherited-name">__class__</span></div>
+        </dd>
+      </dl>
+    </div>
+    <div class="section">
+      <h2>Globals</h2>
+      <dl class="globals">
+        <dt class="globaldef"><a name="EMPTY_NAMESPACE"><span class="global-name">EMPTY_NAMESPACE</span></a> = None</dt>
+        <dd class="globaldesc"></dd>
+        <dt class="globaldef"><a name="EMPTY_PREFIX"><span class="global-name">EMPTY_PREFIX</span></a> = None</dt>
+        <dd class="globaldesc"></dd>
+        <dt class="globaldef"><a name="XMLNS_NAMESPACE"><span class="global-name">XMLNS_NAMESPACE</span></a> = u'http://www.w3.org/2000/xmlns/'</dt>
+        <dd class="globaldesc"></dd>
+        <dt class="globaldef"><a name="XML_NAMESPACE"><span class="global-name">XML_NAMESPACE</span></a> = u'http://www.w3.org/XML/1998/namespace'</dt>
+        <dd class="globaldesc"></dd>
+      </dl>
+    </div>
+    <div class="universal-footer">Last modified on 2006-04-28 13:54:48</div>
+  </body>
+</html>

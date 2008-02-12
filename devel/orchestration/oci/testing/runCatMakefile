@@ -1,0 +1,78 @@
+SHELL = /bin/sh
+.PHONY: all test check mostlyclean clean
+.SUFFIXES:
+.SUFFIXES: .c .o
+
+# include $(ORACLE_HOME)/rdbms/lib/env_rdbms.mk
+
+oracle_CFLAGS = -I$(ORACLE_HOME)/rdbms/demo -I$(ORACLE_HOME)/rdbms/public
+oracle_LDFLAGS = -L$(ORACLE_HOME)/lib -Wl,-rpath,$(ORACLE_HOME)/lib
+#oracle_LDFLAGS = -O -L$(ORACLE_HOME)/lib
+oracle_LDLIBS = -lclntsh -lm -lmcheck /home/pduda/des/trunk/development/lib/libcfitsio.a
+
+##CFLAGS = -I.. $(oracle_CFLAGS) -g -save-temps
+CFLAGS = -I.. $(oracle_CFLAGS) -g
+CC = gcc
+# CFLAGS = -g -Wall -W
+LDFLAGS = $(oracle_LDFLAGS)
+LDLIBS =  $(oracle_LDLIBS)
+
+RM = rm -fv
+
+test-prog = run-test
+
+##src = des_wrapper2.c testmain.c $(wildcard test_*.c)
+##src = testget2.c $(wildcard test_*.c)
+##src = testget3.c $(wildcard test_*.c)
+##src = des_wrapper2.c testmain2.c $(wildcard test_*.c)
+##src = testmain2.c $(wildcard test_*.c)
+##src = testmain3.c des_wrapper3.c $(wildcard test_*.c)
+##src = testmain4.c
+##src = testmain5.c desw.c
+##src = testmain6.c desw_m.c
+
+##src = new_joe.c desw_m.c
+##src = fix_new_joe.c fix_desw_m.c
+##src = testinst.c fix_desw_m.c
+
+
+##src = testall.c desw_rel.c
+
+
+##src = desctable.c
+
+##src = test_load_maybe.c desw_rel.c
+##src = multi_test_load_maybe.c desw_rel.c
+
+##src = insert_lot.c desw_rel.c archivesubs.c
+src = runCatalog_ingest.c desw_rel.c archivesubs.c
+
+
+##src = select_astrometric_standards.c
+
+##obj = $(src:.c=.o) /home/pduda/electric-fence-2.1.13/libefence.a
+obj = $(src:.c=.o) htm_aux.o imarithsubs.o catsubs.o
+
+all: $(test-prog)
+
+# Include the C/C++ include dependencies.
+##-include $(obj:.o=.d)
+
+# Generate C/C++ include dependencies.
+##%.d: %.c
+## 	./depend.sh $(<D) $(CFLAGS) $< > $@
+
+# Link the program.
+$(test-prog): $(obj)
+	$(CC) -o $@ $(LDFLAGS) $^ $(LDLIBS)
+
+# Run self-tests.
+test check: $(test-prog)
+	./$(test-prog)
+
+mostlyclean:
+	@$(RM) $(obj) $(obj:.o=.d)
+
+clean: mostlyclean
+	@$(RM) $(test-prog)
+

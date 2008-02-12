@@ -1,0 +1,132 @@
+<html>
+  <head>
+    <meta content="text/html; charset=iso-8859-1" http-equiv="Content-Type">
+    <title>4Suite API Documentation: Ft.Xml.Lib.HtmlPrinter</title>
+    <link href="modules.css" type="text/css" rel="stylesheet">
+  </head>
+  <body>
+    <div class="universal-header"><span class="universal-header-prefix">&nbsp;&nbsp;&nbsp;</span>&nbsp;<span class="universal-header-prefix">&nbsp;&nbsp;</span>&nbsp;<span class="universal-header-prefix">&nbsp;</span>&nbsp;<a href="../index.html">4Suite<sup>&trade;</sup> API Documentation</a></div>
+    <h1><span class="glyph-arrow">&#9658;</span> Module <span class="this-name"><a href="Ft.html" title="Ft">Ft</a>.<a href="Ft.Xml.html" title="Ft.Xml">Xml</a>.<a href="Ft.Xml.Lib.html" title="Ft.Xml.Lib">Lib</a>.HtmlPrinter</span></h1>
+    <div class="abstract">This module supports document serialization in HTML syntax.</div>
+    <pre class="description">Copyright 2005 Fourthought, Inc. (USA).
+Detailed license and copyright information: http://4suite.org/COPYRIGHT
+Project home, documentation, distributions: http://4suite.org/</pre>
+    <div class="summary-section">
+      <table cellpadding="0" cellspacing="0">
+        <tbody>
+          <tr>
+            <td valign="top">
+              <div class="summary-header">Classes:</div>
+              <div class="summary-list"><span class="class-name"><a href="#HtmlPrinter">HtmlPrinter</a></span></div>
+            </td>
+            <td width="7" valign="middle"></td>
+            <td width="1" valign="middle" bgcolor="#C5C5C5"></td>
+            <td width="7" valign="middle"></td>
+            <td valign="top">
+              <div class="summary-header">Globals:</div>
+              <div class="summary-list"><span class="global-name"><a href="#EMPTY_NAMESPACE">EMPTY_NAMESPACE</a></span></div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="section">
+      <h2>Classes</h2>
+      <dl class="classes">
+        <dt class="classdef"><a name="HtmlPrinter"></a>class <span class="class-name">HtmlPrinter</span><span class="bases">(<span class="class-name"><a href="Ft.Xml.Lib.XmlPrinter.html#XmlPrinter">Ft.Xml.Lib.XmlPrinter.XmlPrinter</a></span>)</span></dt>
+        <dd class="classdesc">
+          <div class="abstract">An HtmlPrinter instance provides functions for serializing an XML
+or XML-like document to a stream, based on SAX-like event calls
+initiated by an instance of Ft.Xml.Lib.Print.PrintVisitor.</div>
+          <pre class="description">The methods in this subclass of XmlPrinter attempt to emit a
+document conformant to the HTML 4.01 syntax, with no extra
+whitespace added for visual formatting. The degree of correctness
+of the output depends on the data supplied in the event calls; no
+checks are done for conditions that would result in syntax errors,
+such as two attributes with the same name, "--" in a comment, etc.</pre>
+          <h3>Methods</h3>
+          <dl class="methods">
+            <dt class="methoddef"><a name="HtmlPrinter-__init__"><span class="method-name">__init__</span></a>(<span class="argument-name">self</span>, <span class="argument-name">stream</span>, <span class="argument-name">encoding</span>)</dt>
+            <dd class="methoddesc">
+              <div class="abstract">Creates an HtmlPrinter instance.</div>
+              <pre class="description">stream must be a file-like object open for writing binary
+data. encoding specifies the encoding which is to be used for
+writing to the stream.</pre>
+            </dd>
+            <dd class="overrides"><b>Overrides: </b><span class="inherited-name"><a href="Ft.Xml.Lib.XmlPrinter.html#XmlPrinter-__init__">__init__</a></span> from class <span class="class-name"><a href="Ft.Xml.Lib.XmlPrinter.html#XmlPrinter">XmlPrinter</a></span></dd>
+            <dt class="methoddef"><a name="HtmlPrinter-attribute"><span class="method-name">attribute</span></a>(<span class="argument-name">self</span>, <span class="argument-name">elementUri</span>, <span class="argument-name">elementName</span>, <span class="argument-name">name</span>, <span class="argument-name">value</span>)</dt>
+            <dd class="methoddesc">
+              <div class="abstract">Handles an attribute event.</div>
+              <pre class="description">Extends the overridden method by writing boolean attributes in
+minimized form.</pre>
+            </dd>
+            <dd class="overrides"><b>Overrides: </b><span class="inherited-name"><a href="Ft.Xml.Lib.XmlPrinter.html#XmlPrinter-attribute">attribute</a></span> from class <span class="class-name"><a href="Ft.Xml.Lib.XmlPrinter.html#XmlPrinter">XmlPrinter</a></span></dd>
+            <dt class="methoddef"><a name="HtmlPrinter-doctype"><span class="method-name">doctype</span></a>(<span class="argument-name">self</span>, <span class="argument-name">name</span>, <span class="argument-name">publicId</span>, <span class="argument-name">systemId</span>)</dt>
+            <dd class="methoddesc">
+              <div class="abstract">Handles a doctype event.</div>
+              <pre class="description">Extends the overridden method by adding support for the case
+when there is a publicId and no systemId, which is allowed in
+HTML but not in XML.</pre>
+            </dd>
+            <dd class="overrides"><b>Overrides: </b><span class="inherited-name"><a href="Ft.Xml.Lib.XmlPrinter.html#XmlPrinter-doctype">doctype</a></span> from class <span class="class-name"><a href="Ft.Xml.Lib.XmlPrinter.html#XmlPrinter">XmlPrinter</a></span></dd>
+            <dt class="methoddef"><a name="HtmlPrinter-endElement"><span class="method-name">endElement</span></a>(<span class="argument-name">self</span>, <span class="argument-name">namespaceUri</span>, <span class="argument-name">tagName</span>)</dt>
+            <dd class="methoddesc">
+              <div class="abstract">Handles an endElement event.</div>
+              <pre class="description">Differs from the overridden method in that an end tag is not
+generated for certain elements.</pre>
+            </dd>
+            <dd class="overrides"><b>Overrides: </b><span class="inherited-name"><a href="Ft.Xml.Lib.XmlPrinter.html#XmlPrinter-endElement">endElement</a></span> from class <span class="class-name"><a href="Ft.Xml.Lib.XmlPrinter.html#XmlPrinter">XmlPrinter</a></span></dd>
+            <dt class="methoddef"><a name="HtmlPrinter-processingInstruction"><span class="method-name">processingInstruction</span></a>(<span class="argument-name">self</span>, <span class="argument-name">target</span>, <span class="argument-name">data</span>)</dt>
+            <dd class="methoddesc">
+              <div class="abstract">Handles a processingInstruction event.</div>
+              <pre class="description">Differs from the overridden method by writing the tag with
+no "?" at the end.</pre>
+            </dd>
+            <dd class="overrides"><b>Overrides: </b><span class="inherited-name"><a href="Ft.Xml.Lib.XmlPrinter.html#XmlPrinter-processingInstruction">processingInstruction</a></span> from class <span class="class-name"><a href="Ft.Xml.Lib.XmlPrinter.html#XmlPrinter">XmlPrinter</a></span></dd>
+            <dt class="methoddef"><a name="HtmlPrinter-startDocument"><span class="method-name">startDocument</span></a>(<span class="argument-name">self</span>, <span class="argument-name">version</span><span class="argument-default">='4.0'</span>, <span class="argument-name">standalone</span><span class="argument-default">=None</span>)</dt>
+            <dd class="methoddesc">
+              <div class="abstract">Handles a startDocument event.</div>
+              <pre class="description">Differs from the overridden method in that no XML declaration
+is written.</pre>
+            </dd>
+            <dd class="overrides"><b>Overrides: </b><span class="inherited-name"><a href="Ft.Xml.Lib.XmlPrinter.html#XmlPrinter-startDocument">startDocument</a></span> from class <span class="class-name"><a href="Ft.Xml.Lib.XmlPrinter.html#XmlPrinter">XmlPrinter</a></span></dd>
+            <dt class="methoddef"><a name="HtmlPrinter-startElement"><span class="method-name">startElement</span></a>(<span class="argument-name">self</span>, <span class="argument-name">namespaceUri</span>, <span class="argument-name">tagName</span>, <span class="argument-name">namespaces</span>, <span class="argument-name">attributes</span>)</dt>
+            <dd class="methoddesc">
+              <div class="abstract">Handles a startElement event.</div>
+              <pre class="description">Extends the overridden method by disabling output escaping for
+the content of certain elements (SCRIPT and STYLE).</pre>
+            </dd>
+            <dd class="overrides"><b>Overrides: </b><span class="inherited-name"><a href="Ft.Xml.Lib.XmlPrinter.html#XmlPrinter-startElement">startElement</a></span> from class <span class="class-name"><a href="Ft.Xml.Lib.XmlPrinter.html#XmlPrinter">XmlPrinter</a></span></dd>
+            <dt class="methoddef"><a name="HtmlPrinter-text"><span class="method-name">text</span></a>(<span class="argument-name">self</span>, <span class="argument-name">data</span>, <span class="argument-name">disableEscaping</span><span class="argument-default">=0</span>)</dt>
+            <dd class="methoddesc">
+              <div class="abstract">Handles a text event.</div>
+              <pre class="description">Extends the overridden method by disabling output escaping if
+in the content of certain elements like SCRIPT or STYLE.</pre>
+            </dd>
+            <dd class="overrides"><b>Overrides: </b><span class="inherited-name"><a href="Ft.Xml.Lib.XmlPrinter.html#XmlPrinter-text">text</a></span> from class <span class="class-name"><a href="Ft.Xml.Lib.XmlPrinter.html#XmlPrinter">XmlPrinter</a></span></dd>
+          </dl>
+          <h3>Methods inherited from class <a href="Ft.Xml.Lib.XmlPrinter.html#XmlPrinter">Ft.Xml.Lib.XmlPrinter.XmlPrinter</a></h3>
+          <div class="inherited"><span class="inherited-name"><a href="Ft.Xml.Lib.XmlPrinter.html#XmlPrinter-cdataSection">cdataSection</a></span>, <span class="inherited-name"><a href="Ft.Xml.Lib.XmlPrinter.html#XmlPrinter-comment">comment</a></span>, <span class="inherited-name"><a href="Ft.Xml.Lib.XmlPrinter.html#XmlPrinter-endDocument">endDocument</a></span>, <span class="inherited-name"><a href="Ft.Xml.Lib.XmlPrinter.html#XmlPrinter-reset">reset</a></span></div>
+          <h3>Members</h3>
+          <dl class="members">
+            <dt class="memberdef"><a name="attrEntitiesApos"><span class="member-name">attrEntitiesApos</span></a> = &lt;cEntityMap&gt;</dt>
+            <dt class="memberdef"><a name="attrEntitiesQuot"><span class="member-name">attrEntitiesQuot</span></a> = &lt;cEntityMap&gt;</dt>
+            <dt class="memberdef"><a name="booleanAttributes"><span class="member-name">booleanAttributes</span></a> = {'checked': ['input'], 'compact': ['dl', 'ol', 'ul', 'dir', 'menu', 'li'], 'declare': ['object'], 'defer': ['script'], 'disabled': ['input', 'select', 'optgroup', 'option', 'textarea', 'button'], 'ismap': ['img', 'input'], 'multiple': ['select'], 'nohref': ['area'], 'noresize': ['frame'], 'noshade': ['hr'], ...}</dt>
+            <dt class="memberdef"><a name="forbiddenEndElements"><span class="member-name">forbiddenEndElements</span></a> = {'area': True, 'base': True, 'basefont': True, 'br': True, 'col': True, 'frame': True, 'hr': True, 'img': True, 'input': True, 'isindex': True, ...}</dt>
+            <dt class="memberdef"><a name="noEscapeElements"><span class="member-name">noEscapeElements</span></a> = {'script': True, 'style': True}</dt>
+            <dt class="memberdef"><a name="textEntities"><span class="member-name">textEntities</span></a> = &lt;cEntityMap&gt;</dt>
+            <dt class="memberdef"><a name="uriAttributes"><span class="member-name">uriAttributes</span></a> = {'action': ['form'], 'background': ['body'], 'cite': ['blockquote', 'del', 'ins', 'q'], 'classid': ['object'], 'codebase': ['applet', 'object'], 'data': ['object'], 'href': ['a', 'area', 'base', 'link'], 'longdesc': ['frame', 'iframe', 'img'], 'profile': ['head'], 'src': ['frame', 'iframe', 'img', 'input', 'script'], ...}</dt>
+          </dl>
+        </dd>
+      </dl>
+    </div>
+    <div class="section">
+      <h2>Globals</h2>
+      <dl class="globals">
+        <dt class="globaldef"><a name="EMPTY_NAMESPACE"><span class="global-name">EMPTY_NAMESPACE</span></a> = None</dt>
+        <dd class="globaldesc"></dd>
+      </dl>
+    </div>
+    <div class="universal-footer">Last modified on 2005-04-18 16:47:00</div>
+  </body>
+</html>

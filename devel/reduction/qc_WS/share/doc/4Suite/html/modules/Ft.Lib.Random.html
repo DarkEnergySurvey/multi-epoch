@@ -1,0 +1,202 @@
+<html>
+  <head>
+    <meta content="text/html; charset=iso-8859-1" http-equiv="Content-Type">
+    <title>4Suite API Documentation: Ft.Lib.Random</title>
+    <link href="modules.css" type="text/css" rel="stylesheet">
+  </head>
+  <body>
+    <div class="universal-header"><span class="universal-header-prefix">&nbsp;&nbsp;&nbsp;</span>&nbsp;<span class="universal-header-prefix">&nbsp;&nbsp;</span>&nbsp;<span class="universal-header-prefix">&nbsp;</span>&nbsp;<a href="../index.html">4Suite<sup>&trade;</sup> API Documentation</a></div>
+    <h1><span class="glyph-arrow">&#9658;</span> Module <span class="this-name"><a href="Ft.html" title="Ft">Ft</a>.<a href="Ft.Lib.html" title="Ft.Lib">Lib</a>.Random</span></h1>
+    <div class="abstract">Thread-safe random number generation</div>
+    <pre class="description">Random number generation capabilities, speed, and thread safety in
+stdlib vary from version to version of Python. In addition, attempts to
+use an OS-specific random number source can result in unexpected
+exceptions being raised. Also, a bug in Python 2.3.0 can lead to a
+reduction in entropy, and a bug in Python 2.4.0 and 2.4.1 can result
+in exceptions related to open filehandles on some multithreaded Posix
+platforms.
+
+This module works around as many of these issues as it can by defining
+random number generator classes that can be used safely by multiple
+threads, using the best random number sources available. They support
+all versions of Python from 2.1 up, and fall back on more reliable
+generators when exception conditions occur. In addition, convenience
+functions equivalent to random.random() and os.urandom() are exposed.
+
+Copyright 2006 Fourthought, Inc. (USA).
+Detailed license and copyright information: http://4suite.org/COPYRIGHT
+Project home, documentation, distributions: http://4suite.org/</pre>
+    <div class="summary-section">
+      <table cellpadding="0" cellspacing="0">
+        <tbody>
+          <tr>
+            <td valign="top">
+              <div class="summary-header">Classes:</div>
+              <div class="summary-list"><span class="class-name"><a href="#FtRandom">FtRandom</a></span>, <span class="class-name"><a href="#FtSystemRandom">FtSystemRandom</a></span></div>
+            </td>
+            <td width="7" valign="middle"></td>
+            <td bgcolor="#C5C5C5" valign="middle" width="1"></td>
+            <td width="7" valign="middle"></td>
+            <td valign="top">
+              <div class="summary-header">Functions:</div>
+              <div class="summary-list"><span class="function-name"><a href="#GetRandomBytes">GetRandomBytes</a></span>, <span class="function-name"><a href="#Random">Random</a></span>, <span class="function-name"><a href="#urandom">urandom</a></span></div>
+            </td>
+            <td width="7" valign="middle"></td>
+            <td bgcolor="#C5C5C5" valign="middle" width="1"></td>
+            <td width="7" valign="middle"></td>
+            <td valign="top">
+              <div class="summary-header">Globals:</div>
+              <div class="summary-list"><span class="global-name"><a href="#DEFAULT_RNG">DEFAULT_RNG</a></span></div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="section">
+      <h2>Classes</h2>
+      <dl class="classes">
+        <dt class="classdef"><a name="FtRandom"></a>class <span class="class-name">FtRandom</span><span class="bases">(<span class="class-name"><span class="undocumented">random.Random</span></span>, <span class="class-name"><span class="undocumented">object</span></span>)</span></dt>
+        <dd class="classdesc">
+          <div class="abstract">The best available OS-agnostic PRNG, thread-safe.</div>
+          <pre class="description">Implements getrandbits() in all versions of Python.
+Also adds getrandbytes(), which returns a str of bytes.</pre>
+          <h3>Methods</h3>
+          <dl class="methods">
+            <dt class="methoddef"><a name="FtRandom-__init__"><span class="method-name">__init__</span></a>(<span class="argument-name">self</span>, <span class="argument-name">*args</span>, <span class="argument-name">**kwargs</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dd class="overrides"><b>Overrides: </b><span class="inherited-name">__init__</span> from class <span class="class-name"><span class="undocumented">Random</span></span></dd>
+            <dt class="methoddef"><a name="FtRandom-gauss"><span class="method-name">gauss</span></a> = _gauss(<span class="argument-name">self</span>, <span class="argument-name">*args</span>, <span class="argument-name">**kwargs</span>)</dt>
+            <dd class="methoddesc">
+              <div class="abstract">Gaussian distribution.</div>
+              <pre class="description">mu is the mean, and sigma is the standard deviation.
+
+Thread-safe.</pre>
+            </dd>
+            <dd class="overrides"><b>Overrides: </b><span class="inherited-name">gauss</span> from class <span class="class-name"><span class="undocumented">Random</span></span></dd>
+            <dt class="methoddef"><a name="FtRandom-getrandbytes"><span class="method-name">getrandbytes</span></a> = _getrandbytes(<span class="argument-name">self</span>, <span class="argument-name">k</span>)</dt>
+            <dd class="methoddesc">
+              <div class="abstract">getrandbytes(k) -&gt; x.  Returns k random bytes as a str.</div>
+            </dd>
+            <dt class="methoddef"><a name="FtRandom-seed"><span class="method-name">seed</span></a>(<span class="argument-name">self</span>, <span class="argument-name">a</span><span class="argument-default">=None</span>)</dt>
+            <dd class="methoddesc">
+              <div class="abstract">Initialize internal state from hashable object.</div>
+              <pre class="description">None or no argument seeds from current time or from an operating
+system specific randomness source if available.
+
+If a is not None or an int or long, hash(a) is used instead.</pre>
+            </dd>
+            <dd class="overrides"><b>Overrides: </b><span class="inherited-name">seed</span> from class <span class="class-name"><span class="undocumented">Random</span></span></dd>
+          </dl>
+          <h3>Methods inherited from class <span class="undocumented">random.Random</span></h3>
+          <div class="inherited"><span class="inherited-name">__getstate__</span>, <span class="inherited-name">__reduce__</span>, <span class="inherited-name">__setstate__</span>, <span class="inherited-name">betavariate</span>, <span class="inherited-name">choice</span>, <span class="inherited-name">expovariate</span>, <span class="inherited-name">gammavariate</span>, <span class="inherited-name">getstate</span>, <span class="inherited-name">lognormvariate</span>, <span class="inherited-name">normalvariate</span>, <span class="inherited-name">paretovariate</span>, <span class="inherited-name">randint</span>, <span class="inherited-name">randrange</span>, <span class="inherited-name">sample</span>, <span class="inherited-name">setstate</span>, <span class="inherited-name">shuffle</span>, <span class="inherited-name">uniform</span>, <span class="inherited-name">vonmisesvariate</span>, <span class="inherited-name">weibullvariate</span></div>
+          <h3>Methods inherited from class <span class="undocumented">_random.Random</span></h3>
+          <div class="inherited"><span class="inherited-name">__getattribute__</span>, <span class="inherited-name">__new__</span>, <span class="inherited-name">getrandbits</span>, <span class="inherited-name">jumpahead</span>, <span class="inherited-name">random</span></div>
+          <h3>Methods inherited from class <span class="undocumented">object</span></h3>
+          <div class="inherited"><span class="inherited-name">__delattr__</span>, <span class="inherited-name">__hash__</span>, <span class="inherited-name">__reduce_ex__</span>, <span class="inherited-name">__repr__</span>, <span class="inherited-name">__setattr__</span>, <span class="inherited-name">__str__</span></div>
+          <h3>Members inherited from class <span class="undocumented">random.Random</span></h3>
+          <div class="inherited"><span class="inherited-name">VERSION</span>, <span class="inherited-name">__dict__</span>, <span class="inherited-name">__weakref__</span></div>
+          <h3>Members inherited from class <span class="undocumented">object</span></h3>
+          <div class="inherited"><span class="inherited-name">__class__</span></div>
+        </dd>
+        <dt class="classdef"><a name="FtSystemRandom"></a>class <span class="class-name">FtSystemRandom</span><span class="bases">(<span class="class-name"><a href="Ft.Lib.Random.html#FtRandom">FtRandom</a></span>)</span></dt>
+        <dd class="classdesc">
+          <div class="abstract">A PRNG that uses an OS-specific random number source, if
+available, falling back on an instance of FtRandom.</div>
+          <pre class="description">Calls to seed(), jumpahead(), getstate() and setstate() only affect
+the fallback FtRandom instance.
+
+Implements getrandbits() in all versions of Python.
+Also adds getrandbytes(), which returns a str of bytes.</pre>
+          <h3>Methods</h3>
+          <dl class="methods">
+            <dt class="methoddef"><a name="FtSystemRandom-__init__"><span class="method-name">__init__</span></a>(<span class="argument-name">self</span>, <span class="argument-name">*args</span>, <span class="argument-name">**kwargs</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dd class="overrides"><b>Overrides: </b><span class="inherited-name"><a href="Ft.Lib.Random.html#FtRandom-__init__">__init__</a></span> from class <span class="class-name"><a href="Ft.Lib.Random.html#FtRandom">FtRandom</a></span></dd>
+            <dt class="methoddef"><a name="FtSystemRandom-getrandbits"><span class="method-name">getrandbits</span></a> = _getrandbits(<span class="argument-name">self</span>, <span class="argument-name">*args</span>, <span class="argument-name">**kwargs</span>)</dt>
+            <dd class="methoddesc">
+              <div class="abstract">getrandbits(k) -&gt; x.  Generates a long int with k random bits.</div>
+            </dd>
+            <dd class="overrides"><b>Overrides: </b><span class="inherited-name"><a href="Ft.Lib.Random.html#FtRandom-getrandbits">getrandbits</a></span> from class <span class="class-name"><a href="Ft.Lib.Random.html#FtRandom">FtRandom</a></span></dd>
+            <dt class="methoddef"><a name="FtSystemRandom-getrandbytes"><span class="method-name">getrandbytes</span></a> = _getrandbytes(<span class="argument-name">self</span>, <span class="argument-name">k</span>)</dt>
+            <dd class="methoddesc">
+              <div class="abstract">getrandbytes(k) -&gt; x.  Returns k random bytes as a str.</div>
+            </dd>
+            <dd class="overrides"><b>Overrides: </b><span class="inherited-name"><a href="Ft.Lib.Random.html#FtRandom-getrandbytes">getrandbytes</a></span> from class <span class="class-name"><a href="Ft.Lib.Random.html#FtRandom">FtRandom</a></span></dd>
+            <dt class="methoddef"><a name="FtSystemRandom-getstate"><span class="method-name">getstate</span></a>(<span class="argument-name">self</span>)</dt>
+            <dd class="methoddesc">
+              <div class="abstract">Return internal state; can be passed to setstate() later.</div>
+            </dd>
+            <dd class="overrides"><b>Overrides: </b><span class="inherited-name"><a href="Ft.Lib.Random.html#FtRandom-getstate">getstate</a></span> from class <span class="class-name"><a href="Ft.Lib.Random.html#FtRandom">FtRandom</a></span></dd>
+            <dt class="methoddef"><a name="FtSystemRandom-jumpahead"><span class="method-name">jumpahead</span></a>(<span class="argument-name">self</span>, <span class="argument-name">*args</span>, <span class="argument-name">**kwargs</span>)</dt>
+            <dd class="methoddesc">
+              <div class="abstract">Make the fallback PRNG (an instance of FtRandom) jump ahead</div>
+            </dd>
+            <dd class="overrides"><b>Overrides: </b><span class="inherited-name"><a href="Ft.Lib.Random.html#FtRandom-jumpahead">jumpahead</a></span> from class <span class="class-name"><a href="Ft.Lib.Random.html#FtRandom">FtRandom</a></span></dd>
+            <dt class="methoddef"><a name="FtSystemRandom-random"><span class="method-name">random</span></a> = _random(<span class="argument-name">self</span>)</dt>
+            <dd class="methoddesc">
+              <div class="abstract">Get the next random number in the range [0.0, 1.0).</div>
+            </dd>
+            <dd class="overrides"><b>Overrides: </b><span class="inherited-name"><a href="Ft.Lib.Random.html#FtRandom-random">random</a></span> from class <span class="class-name"><a href="Ft.Lib.Random.html#FtRandom">FtRandom</a></span></dd>
+            <dt class="methoddef"><a name="FtSystemRandom-seed"><span class="method-name">seed</span></a>(<span class="argument-name">self</span>, <span class="argument-name">*args</span>, <span class="argument-name">**kwargs</span>)</dt>
+            <dd class="methoddesc">
+              <div class="abstract">Seed the fallback PRNG (an instance of FtRandom)</div>
+            </dd>
+            <dd class="overrides"><b>Overrides: </b><span class="inherited-name"><a href="Ft.Lib.Random.html#FtRandom-seed">seed</a></span> from class <span class="class-name"><a href="Ft.Lib.Random.html#FtRandom">FtRandom</a></span></dd>
+            <dt class="methoddef"><a name="FtSystemRandom-setstate"><span class="method-name">setstate</span></a>(<span class="argument-name">self</span>, <span class="argument-name">state</span>)</dt>
+            <dd class="methoddesc">
+              <div class="abstract">Restore internal state from object returned by getstate().</div>
+            </dd>
+            <dd class="overrides"><b>Overrides: </b><span class="inherited-name"><a href="Ft.Lib.Random.html#FtRandom-setstate">setstate</a></span> from class <span class="class-name"><a href="Ft.Lib.Random.html#FtRandom">FtRandom</a></span></dd>
+          </dl>
+          <h3>Methods inherited from class <a href="Ft.Lib.Random.html#FtRandom">FtRandom</a></h3>
+          <div class="inherited"><span class="inherited-name"><a href="Ft.Lib.Random.html#FtRandom-gauss">gauss</a></span></div>
+          <h3>Methods inherited from class <span class="undocumented">random.Random</span></h3>
+          <div class="inherited"><span class="inherited-name">__getstate__</span>, <span class="inherited-name">__reduce__</span>, <span class="inherited-name">__setstate__</span>, <span class="inherited-name">betavariate</span>, <span class="inherited-name">choice</span>, <span class="inherited-name">expovariate</span>, <span class="inherited-name">gammavariate</span>, <span class="inherited-name">lognormvariate</span>, <span class="inherited-name">normalvariate</span>, <span class="inherited-name">paretovariate</span>, <span class="inherited-name">randint</span>, <span class="inherited-name">randrange</span>, <span class="inherited-name">sample</span>, <span class="inherited-name">shuffle</span>, <span class="inherited-name">uniform</span>, <span class="inherited-name">vonmisesvariate</span>, <span class="inherited-name">weibullvariate</span></div>
+          <h3>Methods inherited from class <span class="undocumented">_random.Random</span></h3>
+          <div class="inherited"><span class="inherited-name">__getattribute__</span>, <span class="inherited-name">__new__</span></div>
+          <h3>Methods inherited from class <span class="undocumented">object</span></h3>
+          <div class="inherited"><span class="inherited-name">__delattr__</span>, <span class="inherited-name">__hash__</span>, <span class="inherited-name">__reduce_ex__</span>, <span class="inherited-name">__repr__</span>, <span class="inherited-name">__setattr__</span>, <span class="inherited-name">__str__</span></div>
+          <h3>Members inherited from class <span class="undocumented">random.Random</span></h3>
+          <div class="inherited"><span class="inherited-name">VERSION</span>, <span class="inherited-name">__dict__</span>, <span class="inherited-name">__weakref__</span></div>
+          <h3>Members inherited from class <span class="undocumented">object</span></h3>
+          <div class="inherited"><span class="inherited-name">__class__</span></div>
+        </dd>
+      </dl>
+    </div>
+    <div class="section">
+      <h2>Functions</h2>
+      <dl class="functions">
+        <dt class="functiondef"><a name="GetRandomBytes"><span class="function-name">GetRandomBytes</span></a>(<span class="argument-name">numBytes</span>)</dt>
+        <dd class="functiondesc">
+          <div class="abstract">Returns a string of random bytes from the best RNG available.
+Equivalent to os.urandom(), but failsafe.</div>
+        </dd>
+        <dt class="functiondef"><a name="Random"><span class="function-name">Random</span></a>()</dt>
+        <dd class="functiondesc">
+          <div class="abstract">Returns a random float, n, where 0 &lt;= n &lt; 1</div>
+        </dd>
+        <dt class="functiondef"><a name="urandom"><span class="function-name">urandom</span></a>(<span class="argument-name">n</span>)</dt>
+        <dd class="functiondesc">
+          <div class="abstract">urandom(n) -&gt; str</div>
+          <pre class="description">Return a string of n random bytes suitable for cryptographic use.</pre>
+        </dd>
+      </dl>
+    </div>
+    <div class="section">
+      <h2>Globals</h2>
+      <dl class="globals">
+        <dt class="globaldef"><a name="DEFAULT_RNG"><span class="global-name">DEFAULT_RNG</span></a> = &lt;Ft.Lib.Random.FtSystemRandom object&gt;</dt>
+        <dd class="globaldesc">
+          <div class="abstract">A PRNG that uses an OS-specific random number source, if
+available, falling back on an instance of FtRandom.</div>
+          <pre class="description">Calls to seed(), jumpahead(), getstate() and setstate() only affect
+the fallback FtRandom instance.
+
+Implements getrandbits() in all versions of Python.
+Also adds getrandbytes(), which returns a str of bytes.</pre>
+        </dd>
+      </dl>
+    </div>
+    <div class="universal-footer">Last modified on 2006-04-28 13:54:39</div>
+  </body>
+</html>

@@ -1,0 +1,776 @@
+<html>
+  <head>
+    <meta content="text/html; charset=iso-8859-1" http-equiv="Content-Type">
+    <title>4Suite API Documentation: Ft.Xml.XPath.XPathTypes</title>
+    <link href="modules.css" type="text/css" rel="stylesheet">
+  </head>
+  <body>
+    <div class="universal-header"><span class="universal-header-prefix">&nbsp;&nbsp;&nbsp;</span>&nbsp;<span class="universal-header-prefix">&nbsp;&nbsp;</span>&nbsp;<span class="universal-header-prefix">&nbsp;</span>&nbsp;<a href="../index.html">4Suite<sup>&trade;</sup> API Documentation</a></div>
+    <h1><span class="glyph-arrow">&#9658;</span> Module <span class="this-name"><a href="Ft.html" title="Ft">Ft</a>.<a href="Ft.Xml.html" title="Ft.Xml">Xml</a>.<a href="Ft.Xml.XPath.html" title="Ft.Xml.XPath">XPath</a>.XPathTypes</span></h1>
+    <div class="abstract">Mappings between Python types and standard XPath object types</div>
+    <pre class="description">Copyright 2004 Fourthought, Inc. (USA).
+Detailed license and copyright information: http://4suite.org/COPYRIGHT
+Project home, documentation, distributions: http://4suite.org/</pre>
+    <div class="summary-section">
+      <table cellpadding="0" cellspacing="0">
+        <tbody>
+          <tr>
+            <td valign="top">
+              <div class="summary-header">Classes:</div>
+              <div class="summary-list"><span class="class-name"><a href="#BooleanType">BooleanType</a></span>, <span class="class-name"><a href="#NodesetType">NodesetType</a></span>, <span class="class-name"><a href="#NumberType">NumberType</a></span>, <span class="class-name"><a href="#StringType">StringType</a></span></div>
+            </td>
+            <td width="7" valign="middle"></td>
+            <td width="1" valign="middle" bgcolor="#C5C5C5"></td>
+            <td width="7" valign="middle"></td>
+            <td valign="top">
+              <div class="summary-header">Globals:</div>
+              <div class="summary-list"><span class="global-name"><a href="#g_xpathPrimitiveTypes">g_xpathPrimitiveTypes</a></span>, <span class="global-name"><a href="#g_xpathRecognizedNodes">g_xpathRecognizedNodes</a></span></div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="section">
+      <h2>Classes</h2>
+      <dl class="classes">
+        <dt class="classdef"><a name="BooleanType"></a>class <span class="class-name">BooleanType</span><span class="bases">(<span class="class-name"><span class="undocumented">object</span></span>)</span></dt>
+        <dd class="classdesc">
+          <h3>Methods</h3>
+          <dl class="methods">
+            <dt class="methoddef"><a name="boolean-__and__"><span class="method-name">__and__</span></a>(<span class="argument-name">...</span>)</dt>
+            <dd class="methoddesc">
+              <div class="abstract">x.__and__(y) &lt;==&gt; x&amp;y</div>
+            </dd>
+            <dt class="methoddef"><a name="boolean-__cmp__"><span class="method-name">__cmp__</span></a>(<span class="argument-name">...</span>)</dt>
+            <dd class="methoddesc">
+              <div class="abstract">x.__cmp__(y) &lt;==&gt; cmp(x,y)</div>
+            </dd>
+            <dt class="methoddef"><a name="boolean-__coerce__"><span class="method-name">__coerce__</span></a>(<span class="argument-name">...</span>)</dt>
+            <dd class="methoddesc">
+              <div class="abstract">x.__coerce__(y) &lt;==&gt; coerce(x, y)</div>
+            </dd>
+            <dt class="methoddef"><a name="boolean-__float__"><span class="method-name">__float__</span></a>(<span class="argument-name">...</span>)</dt>
+            <dd class="methoddesc">
+              <div class="abstract">x.__float__() &lt;==&gt; float(x)</div>
+            </dd>
+            <dt class="methoddef"><a name="boolean-__hash__"><span class="method-name">__hash__</span></a>(<span class="argument-name">...</span>)</dt>
+            <dd class="methoddesc">
+              <div class="abstract">x.__hash__() &lt;==&gt; hash(x)</div>
+            </dd>
+            <dt class="methoddef"><a name="boolean-__hex__"><span class="method-name">__hex__</span></a>(<span class="argument-name">...</span>)</dt>
+            <dd class="methoddesc">
+              <div class="abstract">x.__hex__() &lt;==&gt; hex(x)</div>
+            </dd>
+            <dt class="methoddef"><a name="boolean-__int__"><span class="method-name">__int__</span></a>(<span class="argument-name">...</span>)</dt>
+            <dd class="methoddesc">
+              <div class="abstract">x.__int__() &lt;==&gt; int(x)</div>
+            </dd>
+            <dt class="methoddef"><a name="boolean-__long__"><span class="method-name">__long__</span></a>(<span class="argument-name">...</span>)</dt>
+            <dd class="methoddesc">
+              <div class="abstract">x.__long__() &lt;==&gt; long(x)</div>
+            </dd>
+            <dt class="methoddef"><a name="boolean-__nonzero__"><span class="method-name">__nonzero__</span></a>(<span class="argument-name">...</span>)</dt>
+            <dd class="methoddesc">
+              <div class="abstract">x.__nonzero__() &lt;==&gt; x != 0</div>
+            </dd>
+            <dt class="methoddef"><a name="boolean-__oct__"><span class="method-name">__oct__</span></a>(<span class="argument-name">...</span>)</dt>
+            <dd class="methoddesc">
+              <div class="abstract">x.__oct__() &lt;==&gt; oct(x)</div>
+            </dd>
+            <dt class="methoddef"><a name="boolean-__or__"><span class="method-name">__or__</span></a>(<span class="argument-name">...</span>)</dt>
+            <dd class="methoddesc">
+              <div class="abstract">x.__or__(y) &lt;==&gt; x|y</div>
+            </dd>
+            <dt class="methoddef"><a name="boolean-__rand__"><span class="method-name">__rand__</span></a>(<span class="argument-name">...</span>)</dt>
+            <dd class="methoddesc">
+              <div class="abstract">x.__rand__(y) &lt;==&gt; y&amp;x</div>
+            </dd>
+            <dt class="methoddef"><a name="boolean-__repr__"><span class="method-name">__repr__</span></a>(<span class="argument-name">...</span>)</dt>
+            <dd class="methoddesc">
+              <div class="abstract">x.__repr__() &lt;==&gt; repr(x)</div>
+            </dd>
+            <dt class="methoddef"><a name="boolean-__ror__"><span class="method-name">__ror__</span></a>(<span class="argument-name">...</span>)</dt>
+            <dd class="methoddesc">
+              <div class="abstract">x.__ror__(y) &lt;==&gt; y|x</div>
+            </dd>
+            <dt class="methoddef"><a name="boolean-__rxor__"><span class="method-name">__rxor__</span></a>(<span class="argument-name">...</span>)</dt>
+            <dd class="methoddesc">
+              <div class="abstract">x.__rxor__(y) &lt;==&gt; y^x</div>
+            </dd>
+            <dt class="methoddef"><a name="boolean-__str__"><span class="method-name">__str__</span></a>(<span class="argument-name">...</span>)</dt>
+            <dd class="methoddesc">
+              <div class="abstract">x.__str__() &lt;==&gt; str(x)</div>
+            </dd>
+            <dt class="methoddef"><a name="boolean-__xor__"><span class="method-name">__xor__</span></a>(<span class="argument-name">...</span>)</dt>
+            <dd class="methoddesc">
+              <div class="abstract">x.__xor__(y) &lt;==&gt; x^y</div>
+            </dd>
+          </dl>
+          <h3>Methods inherited from class <span class="undocumented">object</span></h3>
+          <div class="inherited"><span class="inherited-name">__delattr__</span>, <span class="inherited-name">__getattribute__</span>, <span class="inherited-name">__init__</span>, <span class="inherited-name">__new__</span>, <span class="inherited-name">__reduce__</span>, <span class="inherited-name">__reduce_ex__</span>, <span class="inherited-name">__setattr__</span></div>
+          <h3>Members inherited from class <span class="undocumented">object</span></h3>
+          <div class="inherited"><span class="inherited-name">__class__</span></div>
+        </dd>
+        <dt class="classdef"><a name="NodesetType"></a>class <span class="class-name">NodesetType</span><span class="bases">(<span class="class-name"><span class="undocumented">object</span></span>)</span></dt>
+        <dd class="classdesc">
+          <div class="abstract">list() -&gt; new list
+list(sequence) -&gt; new list initialized from sequence's items</div>
+          <h3>Methods</h3>
+          <dl class="methods">
+            <dt class="methoddef"><a name="list-__add__"><span class="method-name">__add__</span></a>(<span class="argument-name">...</span>)</dt>
+            <dd class="methoddesc">
+              <div class="abstract">x.__add__(y) &lt;==&gt; x+y</div>
+            </dd>
+            <dt class="methoddef"><a name="list-__contains__"><span class="method-name">__contains__</span></a>(<span class="argument-name">...</span>)</dt>
+            <dd class="methoddesc">
+              <div class="abstract">x.__contains__(y) &lt;==&gt; y in x</div>
+            </dd>
+            <dt class="methoddef"><a name="list-__delitem__"><span class="method-name">__delitem__</span></a>(<span class="argument-name">...</span>)</dt>
+            <dd class="methoddesc">
+              <div class="abstract">x.__delitem__(y) &lt;==&gt; del x[y]</div>
+            </dd>
+            <dt class="methoddef"><a name="list-__delslice__"><span class="method-name">__delslice__</span></a>(<span class="argument-name">...</span>)</dt>
+            <dd class="methoddesc">
+              <div class="abstract">x.__delslice__(i, j) &lt;==&gt; del x[i:j]</div>
+              <pre class="description">Use of negative indices is not supported.</pre>
+            </dd>
+            <dt class="methoddef"><a name="list-__eq__"><span class="method-name">__eq__</span></a>(<span class="argument-name">...</span>)</dt>
+            <dd class="methoddesc">
+              <div class="abstract">x.__eq__(y) &lt;==&gt; x==y</div>
+            </dd>
+            <dt class="methoddef"><a name="list-__ge__"><span class="method-name">__ge__</span></a>(<span class="argument-name">...</span>)</dt>
+            <dd class="methoddesc">
+              <div class="abstract">x.__ge__(y) &lt;==&gt; x&gt;=y</div>
+            </dd>
+            <dt class="methoddef"><a name="list-__getattribute__"><span class="method-name">__getattribute__</span></a>(<span class="argument-name">...</span>)</dt>
+            <dd class="methoddesc">
+              <div class="abstract">x.__getattribute__('name') &lt;==&gt; x.name</div>
+            </dd>
+            <dt class="methoddef"><a name="list-__getitem__"><span class="method-name">__getitem__</span></a>(<span class="argument-name">...</span>)</dt>
+            <dd class="methoddesc">
+              <div class="abstract">x.__getitem__(y) &lt;==&gt; x[y]</div>
+            </dd>
+            <dt class="methoddef"><a name="list-__getslice__"><span class="method-name">__getslice__</span></a>(<span class="argument-name">...</span>)</dt>
+            <dd class="methoddesc">
+              <div class="abstract">x.__getslice__(i, j) &lt;==&gt; x[i:j]</div>
+              <pre class="description">Use of negative indices is not supported.</pre>
+            </dd>
+            <dt class="methoddef"><a name="list-__gt__"><span class="method-name">__gt__</span></a>(<span class="argument-name">...</span>)</dt>
+            <dd class="methoddesc">
+              <div class="abstract">x.__gt__(y) &lt;==&gt; x&gt;y</div>
+            </dd>
+            <dt class="methoddef"><a name="list-__hash__"><span class="method-name">__hash__</span></a>(<span class="argument-name">...</span>)</dt>
+            <dd class="methoddesc">
+              <div class="abstract">x.__hash__() &lt;==&gt; hash(x)</div>
+            </dd>
+            <dt class="methoddef"><a name="list-__iadd__"><span class="method-name">__iadd__</span></a>(<span class="argument-name">...</span>)</dt>
+            <dd class="methoddesc">
+              <div class="abstract">x.__iadd__(y) &lt;==&gt; x+=y</div>
+            </dd>
+            <dt class="methoddef"><a name="list-__imul__"><span class="method-name">__imul__</span></a>(<span class="argument-name">...</span>)</dt>
+            <dd class="methoddesc">
+              <div class="abstract">x.__imul__(y) &lt;==&gt; x*=y</div>
+            </dd>
+            <dt class="methoddef"><a name="list-__init__"><span class="method-name">__init__</span></a>(<span class="argument-name">...</span>)</dt>
+            <dd class="methoddesc">
+              <div class="abstract">x.__init__(...) initializes x; see x.__class__.__doc__ for signature</div>
+            </dd>
+            <dt class="methoddef"><a name="list-__iter__"><span class="method-name">__iter__</span></a>(<span class="argument-name">...</span>)</dt>
+            <dd class="methoddesc">
+              <div class="abstract">x.__iter__() &lt;==&gt; iter(x)</div>
+            </dd>
+            <dt class="methoddef"><a name="list-__le__"><span class="method-name">__le__</span></a>(<span class="argument-name">...</span>)</dt>
+            <dd class="methoddesc">
+              <div class="abstract">x.__le__(y) &lt;==&gt; x&lt;=y</div>
+            </dd>
+            <dt class="methoddef"><a name="list-__len__"><span class="method-name">__len__</span></a>(<span class="argument-name">...</span>)</dt>
+            <dd class="methoddesc">
+              <div class="abstract">x.__len__() &lt;==&gt; len(x)</div>
+            </dd>
+            <dt class="methoddef"><a name="list-__lt__"><span class="method-name">__lt__</span></a>(<span class="argument-name">...</span>)</dt>
+            <dd class="methoddesc">
+              <div class="abstract">x.__lt__(y) &lt;==&gt; x&lt;y</div>
+            </dd>
+            <dt class="methoddef"><a name="list-__mul__"><span class="method-name">__mul__</span></a>(<span class="argument-name">...</span>)</dt>
+            <dd class="methoddesc">
+              <div class="abstract">x.__mul__(n) &lt;==&gt; x*n</div>
+            </dd>
+            <dt class="methoddef"><a name="list-__ne__"><span class="method-name">__ne__</span></a>(<span class="argument-name">...</span>)</dt>
+            <dd class="methoddesc">
+              <div class="abstract">x.__ne__(y) &lt;==&gt; x!=y</div>
+            </dd>
+            <dt class="methoddef"><a name="list-__new__"><span class="method-name">__new__</span></a>(<span class="argument-name">...</span>)</dt>
+            <dd class="methoddesc">
+              <div class="abstract">T.__new__(S, ...) -&gt; a new object with type S, a subtype of T</div>
+            </dd>
+            <dd class="overrides"><b>Overrides: </b><span class="inherited-name">__new__</span> from class <span class="class-name"><span class="undocumented">object</span></span></dd>
+            <dt class="methoddef"><a name="list-__repr__"><span class="method-name">__repr__</span></a>(<span class="argument-name">...</span>)</dt>
+            <dd class="methoddesc">
+              <div class="abstract">x.__repr__() &lt;==&gt; repr(x)</div>
+            </dd>
+            <dt class="methoddef"><a name="list-__reversed__"><span class="method-name">__reversed__</span></a>(<span class="argument-name">...</span>)</dt>
+            <dd class="methoddesc">
+              <div class="abstract">L.__reversed__() -- return a reverse iterator over the list</div>
+            </dd>
+            <dt class="methoddef"><a name="list-__rmul__"><span class="method-name">__rmul__</span></a>(<span class="argument-name">...</span>)</dt>
+            <dd class="methoddesc">
+              <div class="abstract">x.__rmul__(n) &lt;==&gt; n*x</div>
+            </dd>
+            <dt class="methoddef"><a name="list-__setitem__"><span class="method-name">__setitem__</span></a>(<span class="argument-name">...</span>)</dt>
+            <dd class="methoddesc">
+              <div class="abstract">x.__setitem__(i, y) &lt;==&gt; x[i]=y</div>
+            </dd>
+            <dt class="methoddef"><a name="list-__setslice__"><span class="method-name">__setslice__</span></a>(<span class="argument-name">...</span>)</dt>
+            <dd class="methoddesc">
+              <div class="abstract">x.__setslice__(i, j, y) &lt;==&gt; x[i:j]=y</div>
+              <pre class="description">Use  of negative indices is not supported.</pre>
+            </dd>
+            <dt class="methoddef"><a name="list-append"><span class="method-name">append</span></a>(<span class="argument-name">...</span>)</dt>
+            <dd class="methoddesc">
+              <div class="abstract">L.append(object) -- append object to end</div>
+            </dd>
+            <dt class="methoddef"><a name="list-count"><span class="method-name">count</span></a>(<span class="argument-name">...</span>)</dt>
+            <dd class="methoddesc">
+              <div class="abstract">L.count(value) -&gt; integer -- return number of occurrences of value</div>
+            </dd>
+            <dt class="methoddef"><a name="list-extend"><span class="method-name">extend</span></a>(<span class="argument-name">...</span>)</dt>
+            <dd class="methoddesc">
+              <div class="abstract">L.extend(iterable) -- extend list by appending elements from the iterable</div>
+            </dd>
+            <dt class="methoddef"><a name="list-index"><span class="method-name">index</span></a>(<span class="argument-name">...</span>)</dt>
+            <dd class="methoddesc">
+              <div class="abstract">L.index(value, [start, [stop]]) -&gt; integer -- return first index of value</div>
+            </dd>
+            <dt class="methoddef"><a name="list-insert"><span class="method-name">insert</span></a>(<span class="argument-name">...</span>)</dt>
+            <dd class="methoddesc">
+              <div class="abstract">L.insert(index, object) -- insert object before index</div>
+            </dd>
+            <dt class="methoddef"><a name="list-pop"><span class="method-name">pop</span></a>(<span class="argument-name">...</span>)</dt>
+            <dd class="methoddesc">
+              <div class="abstract">L.pop([index]) -&gt; item -- remove and return item at index (default last)</div>
+            </dd>
+            <dt class="methoddef"><a name="list-remove"><span class="method-name">remove</span></a>(<span class="argument-name">...</span>)</dt>
+            <dd class="methoddesc">
+              <div class="abstract">L.remove(value) -- remove first occurrence of value</div>
+            </dd>
+            <dt class="methoddef"><a name="list-reverse"><span class="method-name">reverse</span></a>(<span class="argument-name">...</span>)</dt>
+            <dd class="methoddesc">
+              <div class="abstract">L.reverse() -- reverse *IN PLACE*</div>
+            </dd>
+            <dt class="methoddef"><a name="list-sort"><span class="method-name">sort</span></a>(<span class="argument-name">...</span>)</dt>
+            <dd class="methoddesc">
+              <div class="abstract">L.sort(cmp=None, key=None, reverse=False) -- stable sort *IN PLACE*;
+cmp(x, y) -&gt; -1, 0, 1</div>
+            </dd>
+          </dl>
+          <h3>Methods inherited from class <span class="undocumented">object</span></h3>
+          <div class="inherited"><span class="inherited-name">__delattr__</span>, <span class="inherited-name">__reduce__</span>, <span class="inherited-name">__reduce_ex__</span>, <span class="inherited-name">__setattr__</span>, <span class="inherited-name">__str__</span></div>
+          <h3>Members inherited from class <span class="undocumented">object</span></h3>
+          <div class="inherited"><span class="inherited-name">__class__</span></div>
+        </dd>
+        <dt class="classdef"><a name="NumberType"></a>class <span class="class-name">NumberType</span><span class="bases">(<span class="class-name"><span class="undocumented">object</span></span>)</span></dt>
+        <dd class="classdesc">
+          <div class="abstract">float(x) -&gt; floating point number</div>
+          <pre class="description">Convert a string or number to a floating point number, if possible.</pre>
+          <h3>Methods</h3>
+          <dl class="methods">
+            <dt class="methoddef"><a name="float-__abs__"><span class="method-name">__abs__</span></a>(<span class="argument-name">...</span>)</dt>
+            <dd class="methoddesc">
+              <div class="abstract">x.__abs__() &lt;==&gt; abs(x)</div>
+            </dd>
+            <dt class="methoddef"><a name="float-__add__"><span class="method-name">__add__</span></a>(<span class="argument-name">...</span>)</dt>
+            <dd class="methoddesc">
+              <div class="abstract">x.__add__(y) &lt;==&gt; x+y</div>
+            </dd>
+            <dt class="methoddef"><a name="float-__coerce__"><span class="method-name">__coerce__</span></a>(<span class="argument-name">...</span>)</dt>
+            <dd class="methoddesc">
+              <div class="abstract">x.__coerce__(y) &lt;==&gt; coerce(x, y)</div>
+            </dd>
+            <dt class="methoddef"><a name="float-__div__"><span class="method-name">__div__</span></a>(<span class="argument-name">...</span>)</dt>
+            <dd class="methoddesc">
+              <div class="abstract">x.__div__(y) &lt;==&gt; x/y</div>
+            </dd>
+            <dt class="methoddef"><a name="float-__divmod__"><span class="method-name">__divmod__</span></a>(<span class="argument-name">...</span>)</dt>
+            <dd class="methoddesc">
+              <div class="abstract">x.__divmod__(y) &lt;==&gt; divmod(x, y)</div>
+            </dd>
+            <dt class="methoddef"><a name="float-__eq__"><span class="method-name">__eq__</span></a>(<span class="argument-name">...</span>)</dt>
+            <dd class="methoddesc">
+              <div class="abstract">x.__eq__(y) &lt;==&gt; x==y</div>
+            </dd>
+            <dt class="methoddef"><a name="float-__float__"><span class="method-name">__float__</span></a>(<span class="argument-name">...</span>)</dt>
+            <dd class="methoddesc">
+              <div class="abstract">x.__float__() &lt;==&gt; float(x)</div>
+            </dd>
+            <dt class="methoddef"><a name="float-__floordiv__"><span class="method-name">__floordiv__</span></a>(<span class="argument-name">...</span>)</dt>
+            <dd class="methoddesc">
+              <div class="abstract">x.__floordiv__(y) &lt;==&gt; x//y</div>
+            </dd>
+            <dt class="methoddef"><a name="float-__ge__"><span class="method-name">__ge__</span></a>(<span class="argument-name">...</span>)</dt>
+            <dd class="methoddesc">
+              <div class="abstract">x.__ge__(y) &lt;==&gt; x&gt;=y</div>
+            </dd>
+            <dt class="methoddef"><a name="float-__getattribute__"><span class="method-name">__getattribute__</span></a>(<span class="argument-name">...</span>)</dt>
+            <dd class="methoddesc">
+              <div class="abstract">x.__getattribute__('name') &lt;==&gt; x.name</div>
+            </dd>
+            <dt class="methoddef"><a name="float-__getnewargs__"><span class="method-name">__getnewargs__</span></a>(<span class="argument-name">...</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dt class="methoddef"><a name="float-__gt__"><span class="method-name">__gt__</span></a>(<span class="argument-name">...</span>)</dt>
+            <dd class="methoddesc">
+              <div class="abstract">x.__gt__(y) &lt;==&gt; x&gt;y</div>
+            </dd>
+            <dt class="methoddef"><a name="float-__hash__"><span class="method-name">__hash__</span></a>(<span class="argument-name">...</span>)</dt>
+            <dd class="methoddesc">
+              <div class="abstract">x.__hash__() &lt;==&gt; hash(x)</div>
+            </dd>
+            <dt class="methoddef"><a name="float-__int__"><span class="method-name">__int__</span></a>(<span class="argument-name">...</span>)</dt>
+            <dd class="methoddesc">
+              <div class="abstract">x.__int__() &lt;==&gt; int(x)</div>
+            </dd>
+            <dt class="methoddef"><a name="float-__le__"><span class="method-name">__le__</span></a>(<span class="argument-name">...</span>)</dt>
+            <dd class="methoddesc">
+              <div class="abstract">x.__le__(y) &lt;==&gt; x&lt;=y</div>
+            </dd>
+            <dt class="methoddef"><a name="float-__long__"><span class="method-name">__long__</span></a>(<span class="argument-name">...</span>)</dt>
+            <dd class="methoddesc">
+              <div class="abstract">x.__long__() &lt;==&gt; long(x)</div>
+            </dd>
+            <dt class="methoddef"><a name="float-__lt__"><span class="method-name">__lt__</span></a>(<span class="argument-name">...</span>)</dt>
+            <dd class="methoddesc">
+              <div class="abstract">x.__lt__(y) &lt;==&gt; x&lt;y</div>
+            </dd>
+            <dt class="methoddef"><a name="float-__mod__"><span class="method-name">__mod__</span></a>(<span class="argument-name">...</span>)</dt>
+            <dd class="methoddesc">
+              <div class="abstract">x.__mod__(y) &lt;==&gt; x%y</div>
+            </dd>
+            <dt class="methoddef"><a name="float-__mul__"><span class="method-name">__mul__</span></a>(<span class="argument-name">...</span>)</dt>
+            <dd class="methoddesc">
+              <div class="abstract">x.__mul__(y) &lt;==&gt; x*y</div>
+            </dd>
+            <dt class="methoddef"><a name="float-__ne__"><span class="method-name">__ne__</span></a>(<span class="argument-name">...</span>)</dt>
+            <dd class="methoddesc">
+              <div class="abstract">x.__ne__(y) &lt;==&gt; x!=y</div>
+            </dd>
+            <dt class="methoddef"><a name="float-__neg__"><span class="method-name">__neg__</span></a>(<span class="argument-name">...</span>)</dt>
+            <dd class="methoddesc">
+              <div class="abstract">x.__neg__() &lt;==&gt; -x</div>
+            </dd>
+            <dt class="methoddef"><a name="float-__new__"><span class="method-name">__new__</span></a>(<span class="argument-name">...</span>)</dt>
+            <dd class="methoddesc">
+              <div class="abstract">T.__new__(S, ...) -&gt; a new object with type S, a subtype of T</div>
+            </dd>
+            <dd class="overrides"><b>Overrides: </b><span class="inherited-name">__new__</span> from class <span class="class-name"><span class="undocumented">object</span></span></dd>
+            <dt class="methoddef"><a name="float-__nonzero__"><span class="method-name">__nonzero__</span></a>(<span class="argument-name">...</span>)</dt>
+            <dd class="methoddesc">
+              <div class="abstract">x.__nonzero__() &lt;==&gt; x != 0</div>
+            </dd>
+            <dt class="methoddef"><a name="float-__pos__"><span class="method-name">__pos__</span></a>(<span class="argument-name">...</span>)</dt>
+            <dd class="methoddesc">
+              <div class="abstract">x.__pos__() &lt;==&gt; +x</div>
+            </dd>
+            <dt class="methoddef"><a name="float-__pow__"><span class="method-name">__pow__</span></a>(<span class="argument-name">...</span>)</dt>
+            <dd class="methoddesc">
+              <div class="abstract">x.__pow__(y[, z]) &lt;==&gt; pow(x, y[, z])</div>
+            </dd>
+            <dt class="methoddef"><a name="float-__radd__"><span class="method-name">__radd__</span></a>(<span class="argument-name">...</span>)</dt>
+            <dd class="methoddesc">
+              <div class="abstract">x.__radd__(y) &lt;==&gt; y+x</div>
+            </dd>
+            <dt class="methoddef"><a name="float-__rdiv__"><span class="method-name">__rdiv__</span></a>(<span class="argument-name">...</span>)</dt>
+            <dd class="methoddesc">
+              <div class="abstract">x.__rdiv__(y) &lt;==&gt; y/x</div>
+            </dd>
+            <dt class="methoddef"><a name="float-__rdivmod__"><span class="method-name">__rdivmod__</span></a>(<span class="argument-name">...</span>)</dt>
+            <dd class="methoddesc">
+              <div class="abstract">x.__rdivmod__(y) &lt;==&gt; divmod(y, x)</div>
+            </dd>
+            <dt class="methoddef"><a name="float-__repr__"><span class="method-name">__repr__</span></a>(<span class="argument-name">...</span>)</dt>
+            <dd class="methoddesc">
+              <div class="abstract">x.__repr__() &lt;==&gt; repr(x)</div>
+            </dd>
+            <dt class="methoddef"><a name="float-__rfloordiv__"><span class="method-name">__rfloordiv__</span></a>(<span class="argument-name">...</span>)</dt>
+            <dd class="methoddesc">
+              <div class="abstract">x.__rfloordiv__(y) &lt;==&gt; y//x</div>
+            </dd>
+            <dt class="methoddef"><a name="float-__rmod__"><span class="method-name">__rmod__</span></a>(<span class="argument-name">...</span>)</dt>
+            <dd class="methoddesc">
+              <div class="abstract">x.__rmod__(y) &lt;==&gt; y%x</div>
+            </dd>
+            <dt class="methoddef"><a name="float-__rmul__"><span class="method-name">__rmul__</span></a>(<span class="argument-name">...</span>)</dt>
+            <dd class="methoddesc">
+              <div class="abstract">x.__rmul__(y) &lt;==&gt; y*x</div>
+            </dd>
+            <dt class="methoddef"><a name="float-__rpow__"><span class="method-name">__rpow__</span></a>(<span class="argument-name">...</span>)</dt>
+            <dd class="methoddesc">
+              <div class="abstract">y.__rpow__(x[, z]) &lt;==&gt; pow(x, y[, z])</div>
+            </dd>
+            <dt class="methoddef"><a name="float-__rsub__"><span class="method-name">__rsub__</span></a>(<span class="argument-name">...</span>)</dt>
+            <dd class="methoddesc">
+              <div class="abstract">x.__rsub__(y) &lt;==&gt; y-x</div>
+            </dd>
+            <dt class="methoddef"><a name="float-__rtruediv__"><span class="method-name">__rtruediv__</span></a>(<span class="argument-name">...</span>)</dt>
+            <dd class="methoddesc">
+              <div class="abstract">x.__rtruediv__(y) &lt;==&gt; y/x</div>
+            </dd>
+            <dt class="methoddef"><a name="float-__str__"><span class="method-name">__str__</span></a>(<span class="argument-name">...</span>)</dt>
+            <dd class="methoddesc">
+              <div class="abstract">x.__str__() &lt;==&gt; str(x)</div>
+            </dd>
+            <dt class="methoddef"><a name="float-__sub__"><span class="method-name">__sub__</span></a>(<span class="argument-name">...</span>)</dt>
+            <dd class="methoddesc">
+              <div class="abstract">x.__sub__(y) &lt;==&gt; x-y</div>
+            </dd>
+            <dt class="methoddef"><a name="float-__truediv__"><span class="method-name">__truediv__</span></a>(<span class="argument-name">...</span>)</dt>
+            <dd class="methoddesc">
+              <div class="abstract">x.__truediv__(y) &lt;==&gt; x/y</div>
+            </dd>
+          </dl>
+          <h3>Methods inherited from class <span class="undocumented">object</span></h3>
+          <div class="inherited"><span class="inherited-name">__delattr__</span>, <span class="inherited-name">__init__</span>, <span class="inherited-name">__reduce__</span>, <span class="inherited-name">__reduce_ex__</span>, <span class="inherited-name">__setattr__</span></div>
+          <h3>Members inherited from class <span class="undocumented">object</span></h3>
+          <div class="inherited"><span class="inherited-name">__class__</span></div>
+        </dd>
+        <dt class="classdef"><a name="StringType"></a>class <span class="class-name">StringType</span><span class="bases">(<span class="class-name"><span class="undocumented">basestring</span></span>)</span></dt>
+        <dd class="classdesc">
+          <div class="abstract">unicode(string [, encoding[, errors]]) -&gt; object</div>
+          <pre class="description">Create a new Unicode object from the given encoded string.
+encoding defaults to the current default string encoding.
+errors can be 'strict', 'replace' or 'ignore' and defaults to 'strict'.</pre>
+          <h3>Methods</h3>
+          <dl class="methods">
+            <dt class="methoddef"><a name="unicode-__add__"><span class="method-name">__add__</span></a>(<span class="argument-name">...</span>)</dt>
+            <dd class="methoddesc">
+              <div class="abstract">x.__add__(y) &lt;==&gt; x+y</div>
+            </dd>
+            <dt class="methoddef"><a name="unicode-__cmp__"><span class="method-name">__cmp__</span></a>(<span class="argument-name">...</span>)</dt>
+            <dd class="methoddesc">
+              <div class="abstract">x.__cmp__(y) &lt;==&gt; cmp(x,y)</div>
+            </dd>
+            <dt class="methoddef"><a name="unicode-__contains__"><span class="method-name">__contains__</span></a>(<span class="argument-name">...</span>)</dt>
+            <dd class="methoddesc">
+              <div class="abstract">x.__contains__(y) &lt;==&gt; y in x</div>
+            </dd>
+            <dt class="methoddef"><a name="unicode-__getattribute__"><span class="method-name">__getattribute__</span></a>(<span class="argument-name">...</span>)</dt>
+            <dd class="methoddesc">
+              <div class="abstract">x.__getattribute__('name') &lt;==&gt; x.name</div>
+            </dd>
+            <dt class="methoddef"><a name="unicode-__getitem__"><span class="method-name">__getitem__</span></a>(<span class="argument-name">...</span>)</dt>
+            <dd class="methoddesc">
+              <div class="abstract">x.__getitem__(y) &lt;==&gt; x[y]</div>
+            </dd>
+            <dt class="methoddef"><a name="unicode-__getnewargs__"><span class="method-name">__getnewargs__</span></a>(<span class="argument-name">...</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dt class="methoddef"><a name="unicode-__getslice__"><span class="method-name">__getslice__</span></a>(<span class="argument-name">...</span>)</dt>
+            <dd class="methoddesc">
+              <div class="abstract">x.__getslice__(i, j) &lt;==&gt; x[i:j]</div>
+              <pre class="description">Use of negative indices is not supported.</pre>
+            </dd>
+            <dt class="methoddef"><a name="unicode-__hash__"><span class="method-name">__hash__</span></a>(<span class="argument-name">...</span>)</dt>
+            <dd class="methoddesc">
+              <div class="abstract">x.__hash__() &lt;==&gt; hash(x)</div>
+            </dd>
+            <dt class="methoddef"><a name="unicode-__len__"><span class="method-name">__len__</span></a>(<span class="argument-name">...</span>)</dt>
+            <dd class="methoddesc">
+              <div class="abstract">x.__len__() &lt;==&gt; len(x)</div>
+            </dd>
+            <dt class="methoddef"><a name="unicode-__mod__"><span class="method-name">__mod__</span></a>(<span class="argument-name">...</span>)</dt>
+            <dd class="methoddesc">
+              <div class="abstract">x.__mod__(y) &lt;==&gt; x%y</div>
+            </dd>
+            <dt class="methoddef"><a name="unicode-__mul__"><span class="method-name">__mul__</span></a>(<span class="argument-name">...</span>)</dt>
+            <dd class="methoddesc">
+              <div class="abstract">x.__mul__(n) &lt;==&gt; x*n</div>
+            </dd>
+            <dt class="methoddef"><a name="unicode-__new__"><span class="method-name">__new__</span></a>(<span class="argument-name">...</span>)</dt>
+            <dd class="methoddesc">
+              <div class="abstract">T.__new__(S, ...) -&gt; a new object with type S, a subtype of T</div>
+            </dd>
+            <dd class="overrides"><b>Overrides: </b><span class="inherited-name">__new__</span> from class <span class="class-name"><span class="undocumented">basestring</span></span></dd>
+            <dt class="methoddef"><a name="unicode-__repr__"><span class="method-name">__repr__</span></a>(<span class="argument-name">...</span>)</dt>
+            <dd class="methoddesc">
+              <div class="abstract">x.__repr__() &lt;==&gt; repr(x)</div>
+            </dd>
+            <dt class="methoddef"><a name="unicode-__rmod__"><span class="method-name">__rmod__</span></a>(<span class="argument-name">...</span>)</dt>
+            <dd class="methoddesc">
+              <div class="abstract">x.__rmod__(y) &lt;==&gt; y%x</div>
+            </dd>
+            <dt class="methoddef"><a name="unicode-__rmul__"><span class="method-name">__rmul__</span></a>(<span class="argument-name">...</span>)</dt>
+            <dd class="methoddesc">
+              <div class="abstract">x.__rmul__(n) &lt;==&gt; n*x</div>
+            </dd>
+            <dt class="methoddef"><a name="unicode-__str__"><span class="method-name">__str__</span></a>(<span class="argument-name">...</span>)</dt>
+            <dd class="methoddesc">
+              <div class="abstract">x.__str__() &lt;==&gt; str(x)</div>
+            </dd>
+            <dt class="methoddef"><a name="unicode-capitalize"><span class="method-name">capitalize</span></a>(<span class="argument-name">...</span>)</dt>
+            <dd class="methoddesc">
+              <div class="abstract">S.capitalize() -&gt; unicode</div>
+              <pre class="description">Return a capitalized version of S, i.e. make the first character
+have upper case.</pre>
+            </dd>
+            <dt class="methoddef"><a name="unicode-center"><span class="method-name">center</span></a>(<span class="argument-name">...</span>)</dt>
+            <dd class="methoddesc">
+              <div class="abstract">S.center(width[, fillchar]) -&gt; unicode</div>
+              <pre class="description">Return S centered in a Unicode string of length width. Padding is
+done using the specified fill character (default is a space)</pre>
+            </dd>
+            <dt class="methoddef"><a name="unicode-count"><span class="method-name">count</span></a>(<span class="argument-name">...</span>)</dt>
+            <dd class="methoddesc">
+              <div class="abstract">S.count(sub[, start[, end]]) -&gt; int</div>
+              <pre class="description">Return the number of occurrences of substring sub in Unicode string
+S[start:end].  Optional arguments start and end are
+interpreted as in slice notation.</pre>
+            </dd>
+            <dt class="methoddef"><a name="unicode-decode"><span class="method-name">decode</span></a>(<span class="argument-name">...</span>)</dt>
+            <dd class="methoddesc">
+              <div class="abstract">S.decode([encoding[,errors]]) -&gt; string or unicode</div>
+              <pre class="description">Decodes S using the codec registered for encoding. encoding defaults
+to the default encoding. errors may be given to set a different error
+handling scheme. Default is 'strict' meaning that encoding errors raise
+a UnicodeDecodeError. Other possible values are 'ignore' and 'replace'
+as well as any other name registerd with codecs.register_error that is
+able to handle UnicodeDecodeErrors.</pre>
+            </dd>
+            <dt class="methoddef"><a name="unicode-encode"><span class="method-name">encode</span></a>(<span class="argument-name">...</span>)</dt>
+            <dd class="methoddesc">
+              <div class="abstract">S.encode([encoding[,errors]]) -&gt; string or unicode</div>
+              <pre class="description">Encodes S using the codec registered for encoding. encoding defaults
+to the default encoding. errors may be given to set a different error
+handling scheme. Default is 'strict' meaning that encoding errors raise
+a UnicodeEncodeError. Other possible values are 'ignore', 'replace' and
+'xmlcharrefreplace' as well as any other name registered with
+codecs.register_error that can handle UnicodeEncodeErrors.</pre>
+            </dd>
+            <dt class="methoddef"><a name="unicode-endswith"><span class="method-name">endswith</span></a>(<span class="argument-name">...</span>)</dt>
+            <dd class="methoddesc">
+              <div class="abstract">S.endswith(suffix[, start[, end]]) -&gt; bool</div>
+              <pre class="description">Return True if S ends with the specified suffix, False otherwise.
+With optional start, test S beginning at that position.
+With optional end, stop comparing S at that position.</pre>
+            </dd>
+            <dt class="methoddef"><a name="unicode-expandtabs"><span class="method-name">expandtabs</span></a>(<span class="argument-name">...</span>)</dt>
+            <dd class="methoddesc">
+              <div class="abstract">S.expandtabs([tabsize]) -&gt; unicode</div>
+              <pre class="description">Return a copy of S where all tab characters are expanded using spaces.
+If tabsize is not given, a tab size of 8 characters is assumed.</pre>
+            </dd>
+            <dt class="methoddef"><a name="unicode-find"><span class="method-name">find</span></a>(<span class="argument-name">...</span>)</dt>
+            <dd class="methoddesc">
+              <div class="abstract">S.find(sub [,start [,end]]) -&gt; int</div>
+              <pre class="description">Return the lowest index in S where substring sub is found,
+such that sub is contained within s[start,end].  Optional
+arguments start and end are interpreted as in slice notation.
+
+Return -1 on failure.</pre>
+            </dd>
+            <dt class="methoddef"><a name="unicode-index"><span class="method-name">index</span></a>(<span class="argument-name">...</span>)</dt>
+            <dd class="methoddesc">
+              <div class="abstract">S.index(sub [,start [,end]]) -&gt; int</div>
+              <pre class="description">Like S.find() but raise ValueError when the substring is not found.</pre>
+            </dd>
+            <dt class="methoddef"><a name="unicode-isalnum"><span class="method-name">isalnum</span></a>(<span class="argument-name">...</span>)</dt>
+            <dd class="methoddesc">
+              <div class="abstract">S.isalnum() -&gt; bool</div>
+              <pre class="description">Return True if all characters in S are alphanumeric
+and there is at least one character in S, False otherwise.</pre>
+            </dd>
+            <dt class="methoddef"><a name="unicode-isalpha"><span class="method-name">isalpha</span></a>(<span class="argument-name">...</span>)</dt>
+            <dd class="methoddesc">
+              <div class="abstract">S.isalpha() -&gt; bool</div>
+              <pre class="description">Return True if all characters in S are alphabetic
+and there is at least one character in S, False otherwise.</pre>
+            </dd>
+            <dt class="methoddef"><a name="unicode-isdecimal"><span class="method-name">isdecimal</span></a>(<span class="argument-name">...</span>)</dt>
+            <dd class="methoddesc">
+              <div class="abstract">S.isdecimal() -&gt; bool</div>
+              <pre class="description">Return True if there are only decimal characters in S,
+False otherwise.</pre>
+            </dd>
+            <dt class="methoddef"><a name="unicode-isdigit"><span class="method-name">isdigit</span></a>(<span class="argument-name">...</span>)</dt>
+            <dd class="methoddesc">
+              <div class="abstract">S.isdigit() -&gt; bool</div>
+              <pre class="description">Return True if all characters in S are digits
+and there is at least one character in S, False otherwise.</pre>
+            </dd>
+            <dt class="methoddef"><a name="unicode-islower"><span class="method-name">islower</span></a>(<span class="argument-name">...</span>)</dt>
+            <dd class="methoddesc">
+              <div class="abstract">S.islower() -&gt; bool</div>
+              <pre class="description">Return True if all cased characters in S are lowercase and there is
+at least one cased character in S, False otherwise.</pre>
+            </dd>
+            <dt class="methoddef"><a name="unicode-isnumeric"><span class="method-name">isnumeric</span></a>(<span class="argument-name">...</span>)</dt>
+            <dd class="methoddesc">
+              <div class="abstract">S.isnumeric() -&gt; bool</div>
+              <pre class="description">Return True if there are only numeric characters in S,
+False otherwise.</pre>
+            </dd>
+            <dt class="methoddef"><a name="unicode-isspace"><span class="method-name">isspace</span></a>(<span class="argument-name">...</span>)</dt>
+            <dd class="methoddesc">
+              <div class="abstract">S.isspace() -&gt; bool</div>
+              <pre class="description">Return True if all characters in S are whitespace
+and there is at least one character in S, False otherwise.</pre>
+            </dd>
+            <dt class="methoddef"><a name="unicode-istitle"><span class="method-name">istitle</span></a>(<span class="argument-name">...</span>)</dt>
+            <dd class="methoddesc">
+              <div class="abstract">S.istitle() -&gt; bool</div>
+              <pre class="description">Return True if S is a titlecased string and there is at least one
+character in S, i.e. upper- and titlecase characters may only
+follow uncased characters and lowercase characters only cased ones.
+Return False otherwise.</pre>
+            </dd>
+            <dt class="methoddef"><a name="unicode-isupper"><span class="method-name">isupper</span></a>(<span class="argument-name">...</span>)</dt>
+            <dd class="methoddesc">
+              <div class="abstract">S.isupper() -&gt; bool</div>
+              <pre class="description">Return True if all cased characters in S are uppercase and there is
+at least one cased character in S, False otherwise.</pre>
+            </dd>
+            <dt class="methoddef"><a name="unicode-join"><span class="method-name">join</span></a>(<span class="argument-name">...</span>)</dt>
+            <dd class="methoddesc">
+              <div class="abstract">S.join(sequence) -&gt; unicode</div>
+              <pre class="description">Return a string which is the concatenation of the strings in the
+sequence.  The separator between elements is S.</pre>
+            </dd>
+            <dt class="methoddef"><a name="unicode-ljust"><span class="method-name">ljust</span></a>(<span class="argument-name">...</span>)</dt>
+            <dd class="methoddesc">
+              <div class="abstract">S.ljust(width[, fillchar]) -&gt; int</div>
+              <pre class="description">Return S left justified in a Unicode string of length width. Padding is
+done using the specified fill character (default is a space).</pre>
+            </dd>
+            <dt class="methoddef"><a name="unicode-lower"><span class="method-name">lower</span></a>(<span class="argument-name">...</span>)</dt>
+            <dd class="methoddesc">
+              <div class="abstract">S.lower() -&gt; unicode</div>
+              <pre class="description">Return a copy of the string S converted to lowercase.</pre>
+            </dd>
+            <dt class="methoddef"><a name="unicode-lstrip"><span class="method-name">lstrip</span></a>(<span class="argument-name">...</span>)</dt>
+            <dd class="methoddesc">
+              <div class="abstract">S.lstrip([chars]) -&gt; unicode</div>
+              <pre class="description">Return a copy of the string S with leading whitespace removed.
+If chars is given and not None, remove characters in chars instead.
+If chars is a str, it will be converted to unicode before stripping</pre>
+            </dd>
+            <dt class="methoddef"><a name="unicode-replace"><span class="method-name">replace</span></a>(<span class="argument-name">...</span>)</dt>
+            <dd class="methoddesc">
+              <div class="abstract">S.replace (old, new[, maxsplit]) -&gt; unicode</div>
+              <pre class="description">Return a copy of S with all occurrences of substring
+old replaced by new.  If the optional argument maxsplit is
+given, only the first maxsplit occurrences are replaced.</pre>
+            </dd>
+            <dt class="methoddef"><a name="unicode-rfind"><span class="method-name">rfind</span></a>(<span class="argument-name">...</span>)</dt>
+            <dd class="methoddesc">
+              <div class="abstract">S.rfind(sub [,start [,end]]) -&gt; int</div>
+              <pre class="description">Return the highest index in S where substring sub is found,
+such that sub is contained within s[start,end].  Optional
+arguments start and end are interpreted as in slice notation.
+
+Return -1 on failure.</pre>
+            </dd>
+            <dt class="methoddef"><a name="unicode-rindex"><span class="method-name">rindex</span></a>(<span class="argument-name">...</span>)</dt>
+            <dd class="methoddesc">
+              <div class="abstract">S.rindex(sub [,start [,end]]) -&gt; int</div>
+              <pre class="description">Like S.rfind() but raise ValueError when the substring is not found.</pre>
+            </dd>
+            <dt class="methoddef"><a name="unicode-rjust"><span class="method-name">rjust</span></a>(<span class="argument-name">...</span>)</dt>
+            <dd class="methoddesc">
+              <div class="abstract">S.rjust(width[, fillchar]) -&gt; unicode</div>
+              <pre class="description">Return S right justified in a Unicode string of length width. Padding is
+done using the specified fill character (default is a space).</pre>
+            </dd>
+            <dt class="methoddef"><a name="unicode-rsplit"><span class="method-name">rsplit</span></a>(<span class="argument-name">...</span>)</dt>
+            <dd class="methoddesc">
+              <div class="abstract">S.rsplit([sep [,maxsplit]]) -&gt; list of strings</div>
+              <pre class="description">Return a list of the words in S, using sep as the
+delimiter string, starting at the end of the string and
+working to the front.  If maxsplit is given, at most maxsplit
+splits are done. If sep is not specified, any whitespace string
+is a separator.</pre>
+            </dd>
+            <dt class="methoddef"><a name="unicode-rstrip"><span class="method-name">rstrip</span></a>(<span class="argument-name">...</span>)</dt>
+            <dd class="methoddesc">
+              <div class="abstract">S.rstrip([chars]) -&gt; unicode</div>
+              <pre class="description">Return a copy of the string S with trailing whitespace removed.
+If chars is given and not None, remove characters in chars instead.
+If chars is a str, it will be converted to unicode before stripping</pre>
+            </dd>
+            <dt class="methoddef"><a name="unicode-split"><span class="method-name">split</span></a>(<span class="argument-name">...</span>)</dt>
+            <dd class="methoddesc">
+              <div class="abstract">S.split([sep [,maxsplit]]) -&gt; list of strings</div>
+              <pre class="description">Return a list of the words in S, using sep as the
+delimiter string.  If maxsplit is given, at most maxsplit
+splits are done. If sep is not specified or is None,
+any whitespace string is a separator.</pre>
+            </dd>
+            <dt class="methoddef"><a name="unicode-splitlines"><span class="method-name">splitlines</span></a>(<span class="argument-name">...</span>)</dt>
+            <dd class="methoddesc">
+              <div class="abstract">S.splitlines([keepends]]) -&gt; list of strings</div>
+              <pre class="description">Return a list of the lines in S, breaking at line boundaries.
+Line breaks are not included in the resulting list unless keepends
+is given and true.</pre>
+            </dd>
+            <dt class="methoddef"><a name="unicode-startswith"><span class="method-name">startswith</span></a>(<span class="argument-name">...</span>)</dt>
+            <dd class="methoddesc">
+              <div class="abstract">S.startswith(prefix[, start[, end]]) -&gt; bool</div>
+              <pre class="description">Return True if S starts with the specified prefix, False otherwise.
+With optional start, test S beginning at that position.
+With optional end, stop comparing S at that position.</pre>
+            </dd>
+            <dt class="methoddef"><a name="unicode-strip"><span class="method-name">strip</span></a>(<span class="argument-name">...</span>)</dt>
+            <dd class="methoddesc">
+              <div class="abstract">S.strip([chars]) -&gt; unicode</div>
+              <pre class="description">Return a copy of the string S with leading and trailing
+whitespace removed.
+If chars is given and not None, remove characters in chars instead.
+If chars is a str, it will be converted to unicode before stripping</pre>
+            </dd>
+            <dt class="methoddef"><a name="unicode-swapcase"><span class="method-name">swapcase</span></a>(<span class="argument-name">...</span>)</dt>
+            <dd class="methoddesc">
+              <div class="abstract">S.swapcase() -&gt; unicode</div>
+              <pre class="description">Return a copy of S with uppercase characters converted to lowercase
+and vice versa.</pre>
+            </dd>
+            <dt class="methoddef"><a name="unicode-title"><span class="method-name">title</span></a>(<span class="argument-name">...</span>)</dt>
+            <dd class="methoddesc">
+              <div class="abstract">S.title() -&gt; unicode</div>
+              <pre class="description">Return a titlecased version of S, i.e. words start with title case
+characters, all remaining cased characters have lower case.</pre>
+            </dd>
+            <dt class="methoddef"><a name="unicode-translate"><span class="method-name">translate</span></a>(<span class="argument-name">...</span>)</dt>
+            <dd class="methoddesc">
+              <div class="abstract">S.translate(table) -&gt; unicode</div>
+              <pre class="description">Return a copy of the string S, where all characters have been mapped
+through the given translation table, which must be a mapping of
+Unicode ordinals to Unicode ordinals, Unicode strings or None.
+Unmapped characters are left untouched. Characters mapped to None
+are deleted.</pre>
+            </dd>
+            <dt class="methoddef"><a name="unicode-upper"><span class="method-name">upper</span></a>(<span class="argument-name">...</span>)</dt>
+            <dd class="methoddesc">
+              <div class="abstract">S.upper() -&gt; unicode</div>
+              <pre class="description">Return a copy of S converted to uppercase.</pre>
+            </dd>
+            <dt class="methoddef"><a name="unicode-zfill"><span class="method-name">zfill</span></a>(<span class="argument-name">...</span>)</dt>
+            <dd class="methoddesc">
+              <div class="abstract">S.zfill(width) -&gt; unicode</div>
+              <pre class="description">Pad a numeric string x with zeros on the left, to fill a field
+of the specified width. The string x is never truncated.</pre>
+            </dd>
+          </dl>
+          <h3>Methods inherited from class <span class="undocumented">object</span></h3>
+          <div class="inherited"><span class="inherited-name">__delattr__</span>, <span class="inherited-name">__init__</span>, <span class="inherited-name">__reduce__</span>, <span class="inherited-name">__reduce_ex__</span>, <span class="inherited-name">__setattr__</span></div>
+          <h3>Members inherited from class <span class="undocumented">object</span></h3>
+          <div class="inherited"><span class="inherited-name">__class__</span></div>
+        </dd>
+      </dl>
+    </div>
+    <div class="section">
+      <h2>Globals</h2>
+      <dl class="globals">
+        <dt class="globaldef"><a name="g_xpathPrimitiveTypes"><span class="global-name">g_xpathPrimitiveTypes</span></a> = {&lt;type 'float'&gt;: 'number', &lt;type 'int'&gt;: 'number', &lt;type 'list'&gt;: 'node-set', &lt;type 'long'&gt;: 'number', &lt;type 'str'&gt;: 'string', &lt;type 'object'&gt;: 'object', &lt;type 'unicode'&gt;: 'string', &lt;type 'bool'&gt;: 'boolean', &lt;type 'boolean'&gt;: 'boolean'}</dt>
+        <dd class="globaldesc"></dd>
+        <dt class="globaldef"><a name="g_xpathRecognizedNodes"><span class="global-name">g_xpathRecognizedNodes</span></a> = {1: True, 2: True, 3: True, 7: True, 8: True, 9: True, 13: True}</dt>
+        <dd class="globaldesc"></dd>
+      </dl>
+    </div>
+    <div class="universal-footer">Last modified on 2005-08-02 16:43:00</div>
+  </body>
+</html>

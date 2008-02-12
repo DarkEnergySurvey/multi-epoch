@@ -1,0 +1,83 @@
+<html>
+  <head>
+    <meta content="text/html; charset=iso-8859-1" http-equiv="Content-Type">
+    <title>4Suite API Documentation: Ft.Lib.DistExt.SDist</title>
+    <link href="modules.css" type="text/css" rel="stylesheet">
+  </head>
+  <body>
+    <div class="universal-header"><span class="universal-header-prefix">&nbsp;&nbsp;&nbsp;</span>&nbsp;<span class="universal-header-prefix">&nbsp;&nbsp;</span>&nbsp;<span class="universal-header-prefix">&nbsp;</span>&nbsp;<a href="../index.html">4Suite<sup>&trade;</sup> API Documentation</a></div>
+    <h1><span class="glyph-arrow">&#9658;</span> Module <span class="this-name"><a href="Ft.html" title="Ft">Ft</a>.<a href="Ft.Lib.html" title="Ft.Lib">Lib</a>.<a href="Ft.Lib.DistExt.html" title="Ft.Lib.DistExt">DistExt</a>.SDist</span></h1>
+    <div class="summary-section">
+      <table cellpadding="0" cellspacing="0">
+        <tbody>
+          <tr>
+            <td valign="top">
+              <div class="summary-header">Classes:</div>
+              <div class="summary-list"><span class="class-name"><a href="#SDist">SDist</a></span></div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="section">
+      <h2>Classes</h2>
+      <dl class="classes">
+        <dt class="classdef"><a name="SDist"></a>class <span class="class-name">SDist</span><span class="bases">(<span class="class-name"><span class="undocumented">distutils.command.sdist.sdist</span></span>)</span></dt>
+        <dd class="classdesc">
+          <div class="abstract">Extended 'sdist' command that uses 'manifest_templates' from the
+distribution options instead of manifest files.</div>
+          <h3>Methods</h3>
+          <dl class="methods">
+            <dt class="methoddef"><a name="SDist-add_defaults"><span class="method-name">add_defaults</span></a>(<span class="argument-name">self</span>)</dt>
+            <dd class="methoddesc">
+              <div class="abstract">Add all the default files to self.filelist:
+- setup.py
+- README or README.txt (in all directories)
+- all pure Python modules mentioned in setup script
+- all C sources listed as part of extensions or C libraries
+  in the setup script (doesn't catch C headers!)</div>
+            </dd>
+            <dd class="overrides"><b>Overrides: </b><span class="inherited-name">add_defaults</span> from class <span class="class-name"><span class="undocumented">sdist</span></span></dd>
+            <dt class="methoddef"><a name="SDist-check_distribution"><span class="method-name">check_distribution</span></a>(<span class="argument-name">self</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dt class="methoddef"><a name="SDist-get_file_list"><span class="method-name">get_file_list</span></a>(<span class="argument-name">self</span>)</dt>
+            <dd class="methoddesc">
+              <div class="abstract">Figure out the list of files to include in the source
+distribution, and put it in 'self.filelist'.</div>
+            </dd>
+            <dd class="overrides"><b>Overrides: </b><span class="inherited-name">get_file_list</span> from class <span class="class-name"><span class="undocumented">sdist</span></span></dd>
+            <dt class="methoddef"><a name="SDist-make_distribution"><span class="method-name">make_distribution</span></a>(<span class="argument-name">self</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dd class="overrides"><b>Overrides: </b><span class="inherited-name">make_distribution</span> from class <span class="class-name"><span class="undocumented">sdist</span></span></dd>
+            <dt class="methoddef"><a name="SDist-prune_file_list"><span class="method-name">prune_file_list</span></a>(<span class="argument-name">self</span>, <span class="argument-name">filelist</span>)</dt>
+            <dd class="methoddesc">
+              <div class="abstract">Prune off branches that might slip into the file list as created
+by 'read_template()', but really don't belong there:
+  * the build tree (typically "build")
+  * the release tree itself (only an issue if we ran "sdist"
+    previously with --keep-temp, or it aborted)
+  * any RCS or CVS directories</div>
+            </dd>
+            <dd class="overrides"><b>Overrides: </b><span class="inherited-name">prune_file_list</span> from class <span class="class-name"><span class="undocumented">sdist</span></span></dd>
+          </dl>
+          <h3>Methods inherited from class <span class="undocumented">distutils.command.sdist.sdist</span></h3>
+          <div class="inherited"><span class="inherited-name">check_metadata</span>, <span class="inherited-name">finalize_options</span>, <span class="inherited-name">get_archive_files</span>, <span class="inherited-name">initialize_options</span>, <span class="inherited-name">make_release_tree</span>, <span class="inherited-name">read_manifest</span>, <span class="inherited-name">read_template</span>, <span class="inherited-name">run</span>, <span class="inherited-name">write_manifest</span></div>
+          <h3>Methods inherited from class <span class="undocumented">distutils.cmd.Command</span></h3>
+          <div class="inherited"><span class="inherited-name">__getattr__</span>, <span class="inherited-name">__init__</span>, <span class="inherited-name">announce</span>, <span class="inherited-name">copy_file</span>, <span class="inherited-name">copy_tree</span>, <span class="inherited-name">debug_print</span>, <span class="inherited-name">dump_options</span>, <span class="inherited-name">ensure_dirname</span>, <span class="inherited-name">ensure_filename</span>, <span class="inherited-name">ensure_finalized</span>, <span class="inherited-name">ensure_string</span>, <span class="inherited-name">ensure_string_list</span>, <span class="inherited-name">execute</span>, <span class="inherited-name">get_command_name</span>, <span class="inherited-name">get_finalized_command</span>, <span class="inherited-name">get_sub_commands</span>, <span class="inherited-name">make_archive</span>, <span class="inherited-name">make_file</span>, <span class="inherited-name">mkpath</span>, <span class="inherited-name">move_file</span>, <span class="inherited-name">reinitialize_command</span>, <span class="inherited-name">run_command</span>, <span class="inherited-name">set_undefined_options</span>, <span class="inherited-name">spawn</span>, <span class="inherited-name">warn</span></div>
+          <h3>Members</h3>
+          <dl class="members">
+            <dt class="memberdef"><a name="command_name"><span class="member-name">command_name</span></a> = 'sdist'</dt>
+            <dt class="memberdef"><a name="description"><span class="member-name">description</span></a> = 'create a source distribution (tarball, zip file, etc.)'</dt>
+            <dt class="memberdef"><a name="negative_opt"><span class="member-name">negative_opt</span></a> = {}</dt>
+            <dt class="memberdef"><a name="user_options"><span class="member-name">user_options</span></a> = [('use-defaults', None, 'include the default file set in the manifest [default; disable with --no-defaults]'), ('no-defaults', None, "don't include the default file set"), ('prune', None, 'specifically exclude files/directories that shou...VS dirs, etc.) [default; disable with --no-prune]'), ('no-prune', None, "don't automatically exclude anything"), ('formats=', None, 'formats for source distribution (comma-separated list)'), ('keep-temp', 'k', 'keep the distribution tree around after creating archive file(s)'), ('dist-dir=', 'd', 'directory to put the source distribution archive(s) in [default: dist]')]</dt>
+          </dl>
+          <h3>Members inherited from class <span class="undocumented">distutils.command.sdist.sdist</span></h3>
+          <div class="inherited"><span class="inherited-name">boolean_options</span>, <span class="inherited-name">default_format</span>, <span class="inherited-name">help_options</span></div>
+          <h3>Members inherited from class <span class="undocumented">distutils.cmd.Command</span></h3>
+          <div class="inherited"><span class="inherited-name">sub_commands</span></div>
+        </dd>
+      </dl>
+    </div>
+    <div class="universal-footer">Last modified on 2006-10-18 13:10:09</div>
+  </body>
+</html>

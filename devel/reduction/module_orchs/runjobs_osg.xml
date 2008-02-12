@@ -1,0 +1,227 @@
+  <target name="Stage_runjobs" description="Running pipeline reductions">
+   <property file="${mypath}/module_orchs/runjobs_osg.properties"/>
+
+     <envtosysprops/>
+     <esequence>
+
+      <publish>
+            <event ensembleid="${ensemble.id}"
+                   workflowid="Main"
+                   nodeid="Begin Stage_runjobs"
+                   currentState="0">
+               <property name="message" value="Begin Stage_runjobs"/>
+            </event>
+      </publish>
+
+      <print line=" - Begin Stage_runjobs"/>
+
+      <edeclare name="appbase"      string="${user.dir}"/>
+
+      <econdblock type="else-if">
+        <econdtask>
+          <eeval>
+             <statement>
+               <ecompare string="${platform}">
+                     <predicate string="OSG" comparator="EQUALS"/>
+                 </ecompare>
+               </statement>
+          </eeval>
+              <esequence>
+
+                <print line=" -- Running parallel jobs for ${project} pipeline"/>
+
+                <print line=" -- Submit jobs to the TeraGrid "/>
+
+                <edeclare name="condor_location"     null="true"/>
+                <getsysprop name="condor.location"/>
+                <ereturn name="condor_location"      get="value"/>
+
+                <edeclare name="appbase"      string="${user.dir}"/>
+                <edeclare name="currentuser"  string="${user.name}"/>
+                <edeclare name="condorsubmit" string="$R{condor_location}/bin/condor_submit"/>
+                <edeclare name="condorq"      string="$R{condor_location}/bin/condor_q"/>
+                <edeclare name="mxc"     string="maxCputime=${maxcputime}"/>
+                <edeclare name="mxw"     string="maxwalltime=${maxwalltime}"/>
+                <edeclare name="jobsing" string="jobtype=single"/>
+                <edeclare name="fastio"  string="host_types=fastio"/>
+
+                <edeclare name="line1"  string="universe=grid"/>
+                <edeclare name="line1a" string="type = gt2"/>
+                <edeclare name="line2"  string="executable=${tgrid_ogre_${site}}/bin/ogrelaunch"/>  
+                <edeclare name="line2B" string="globusrsl = ($R{jobsing})($R{mxw})"/>
+
+                <edeclare name="line4"  string="transfer_executable=false"/>
+                <edeclare name="line4a" string="notification = NEVER"/>
+                <edeclare name="line4b" string="transfer_output = true "/>
+                <edeclare name="line4c" string="transfer_error = true "/>
+                <edeclare name="line4d" string="stream_output=false"/>
+                <edeclare name="line4e" string="stream_error=false"/>
+
+                <edeclare name="line5" string="globusscheduler=${tgrid_jobserver_${site}}/${jobmanager_${site}}"/>
+
+                <edeclare name="line10" string="queue"/>
+
+
+                <edeclare name="end" long="$E{ ${ccd.stop} + 1 }"/> 
+
+                <!-- Getting the current number of condor jobs -->
+                <rtexec inheritedEnv="true" execDir="$R{appbase}"
+                       args="$R{condorq}" quiet="true">
+                    <outMonitor file="$R{appbase}/jobs/${uid}/condorq.out" append="false">
+                     <filterQueue>
+                       <rTStreamFilter pattern="$R{currentuser}" line="multiline"/>
+                     </filterQueue>
+                    </outMonitor>
+                    <errMonitor file="$R{appbase}/jobs/${uid}/condorq.err" append="false"/>
+                </rtexec>
+                <esleep timeout="1000"/>
+
+                <edeclare name="stacklevel" int="0"/>
+                <read path="$R{appbase}/jobs/${uid}/condorq.out" lines="true"/>
+                <ereturn name="stacklevel" get="lineCount"/>
+
+	        <print line=" -- Condor stack currently has $R{stacklevel} jobs" />
+
+
+                <eloop counterName="i" initialValue="${ccd.start}">
+                 <ecounter>
+                   <expression infix="$R{i} &lt; $R{end}"/>
+                 </ecounter>           
+
+                 <!-- convert 1,...,9 to 01,...,09 -->
+                 <econdblock type="else-if">
+                  <econdtask>
+                   <eeval>
+                     <statement> 
+                       <ecompare long="$R{i}">
+                         <predicate long="10" comparator="LT"/>
+                       </ecompare> 
+                     </statement>
+                   </eeval>
+                     <edeclare globalName="in" string="0$R{i}"/>
+                  </econdtask>
+                     <edeclare globalName="in" long="$R{i}"/>
+                 </econdblock>
+  
+                 <print line=" -- Stage_runjobs loop : Writing ${uid}/$R{in}/$R{in}.condor for nite=${nite} "/>
+
+                 <edeclare name="line3" string="arguments=${project}_$R{in}.xml ${run.stage}"/>
+
+                 <edeclare name="line6" string="output=jobs/${uid}/$R{in}/$R{in}_condor.out"/>
+                 <edeclare name="line7" string="error=jobs/${uid}/$R{in}/$R{in}_condor.err"/>
+                 <edeclare name="line8" string="log=jobs/${uid}/$R{in}/$R{in}_condor.log"/>
+                 <edeclare name="line9" string="remote_initialdir=${tgrid_homepath_${site}}/${uid}_$R{in}/xml"/>
+
+                 <write path="$R{appbase}/jobs/${uid}/$R{in}/$R{in}.condor" text="true"
+                       errorProperty="failed" rethrow="false">
+                      <segment string="$R{line1}" lineBreaks="1"/>
+                      <segment string="$R{line1a}" lineBreaks="1"/>
+                      <segment string="$R{line2}" lineBreaks="1"/>
+                      <segment string="$R{line2B}" lineBreaks="1"/>
+                      <segment string="$R{line3}" lineBreaks="1"/>
+                      <segment string="$R{line4}" lineBreaks="1"/>
+                      <segment string="$R{line4a}" lineBreaks="1"/>
+                      <segment string="$R{line4b}" lineBreaks="1"/>
+                      <segment string="$R{line4c}" lineBreaks="1"/>
+                      <segment string="$R{line4d}" lineBreaks="1"/>
+                      <segment string="$R{line4e}" lineBreaks="1"/>
+                      <segment string="$R{line5}" lineBreaks="1"/>
+                      <segment string="$R{line6}" lineBreaks="1"/>
+                      <segment string="$R{line7}" lineBreaks="1"/>
+                      <segment string="$R{line8}" lineBreaks="1"/>
+                      <segment string="$R{line9}" lineBreaks="1"/>
+                      <segment string="$R{line10}" tabs="1"/>
+                 </write>
+
+                 <print line=" -- --------------------"/>
+
+
+
+                 <print line=" -- Submitting ${uid}/$R{in}/$R{in}.condor  "/>
+
+                 <rtexec inheritedEnv="true" execDir="$R{appbase}"
+                        args="$R{condorsubmit} $R{appbase}/jobs/${uid}/$R{in}/$R{in}.condor"
+                        quiet="true">
+                     <outMonitor file="$R{appbase}/jobs/${uid}/$R{in}/$R{in}.out"/>
+                     <errMonitor file="$R{appbase}/jobs/${uid}/$R{in}/$R{in}.err"/>
+                 </rtexec>
+
+                 <esleep timeout="2800"/>
+
+                 <print line=" -- $R{in}: Let's wait a bit "/>
+                 <esleep timeout="2800"/>
+
+	        </eloop>
+
+                <print line=" -- --------------------"/>
+
+                <edeclare name="linecount" int="500"/>
+                <eloop counterName="j">
+                  <ecounter>
+		    <expression infix="( ( $R{j} &lt; 2800 ) &amp;&amp; ( $R{linecount} &gt; $R{stacklevel} ) )"/>
+                  </ecounter>
+                  <esleep timeout="2800"/>
+
+                  <rtexec inheritedEnv="true" execDir="$R{appbase}"
+                           args="$R{condorq}" quiet="true">
+                       <outMonitor file="$R{appbase}/jobs/${uid}/$R{in}/condorq.out" append="false">
+                           <filterQueue>
+                              <rTStreamFilter pattern="$R{currentuser}" line="multiline"/>
+                           </filterQueue>
+                       </outMonitor>
+                       <errMonitor file="$R{appbase}/jobs/${uid}/$R{in}/condorq.err" append="false"/>
+                  </rtexec>
+
+                  <esleep timeout="2800"/>
+
+                  <read path="$R{appbase}/jobs/${uid}/$R{in}/condorq.out" lines="true"/>
+                  <ereturn name="linecount" get="lineCount"/>
+
+                  <print line="      -- Condor stack has $R{linecount} jobs ($R{j})"/>
+
+             </eloop>
+
+             <print line=" -- Condor Queue is clear. "/>
+         
+            </esequence>
+        </econdtask>
+               <esequence>
+
+                 <print line=" -- Running sequential jobs for ${project} pipeline"/>
+
+                 <edeclare name="end" long="$E{ ${ccd.stop} + 1 }"/> 
+
+                 <eloop counterName="i" initialValue="${ccd.start}">
+                  <ecounter>
+                   <expression infix="$R{i} &lt; $R{end}"/>
+                 </ecounter>           
+                 
+                  <print line=" -- Processing CCD0$R{i}..."/>
+
+                  <rtexec inheritedEnv="true" execDir="${workplace}/${uid}"
+                       args="${ogre.launch} ${ogre.command}"
+                        quiet="true">
+                     <outMonitor file="${workplace}/${uid}/data/${nite}/log/OGRE.log"/>
+                     <errMonitor file="${workplace}/${uid}/data/${nite}/log/OGRE.log"/>
+                 </rtexec>
+
+                </eloop>
+
+            </esequence>
+     </econdblock>
+
+     <print line=" - Stage_runjobs done"/>
+     <print line=" "/>
+
+     <publish>
+          <event ensembleid="${ensemble.id}"
+                 workflowid="Main"
+                 nodeid="End Stage_runjobs"
+                 currentState="1">
+               <property name="message" value="End Stage_runjobs"/>
+          </event>
+     </publish>       
+
+    </esequence>
+  </target>
+

@@ -1,0 +1,257 @@
+<html>
+  <head>
+    <meta content="text/html; charset=iso-8859-1" http-equiv="Content-Type">
+    <title>4Suite API Documentation: Ft.Xml.Xslt.Exslt.DateTime</title>
+    <link href="modules.css" type="text/css" rel="stylesheet">
+  </head>
+  <body>
+    <div class="universal-header"><span class="universal-header-prefix">&nbsp;&nbsp;&nbsp;</span>&nbsp;<span class="universal-header-prefix">&nbsp;&nbsp;</span>&nbsp;<span class="universal-header-prefix">&nbsp;</span>&nbsp;<a href="../index.html">4Suite<sup>&trade;</sup> API Documentation</a></div>
+    <h1><span class="glyph-arrow">&#9658;</span> Module <span class="this-name"><a href="Ft.html" title="Ft">Ft</a>.<a href="Ft.Xml.html" title="Ft.Xml">Xml</a>.<a href="Ft.Xml.Xslt.html" title="Ft.Xml.Xslt">Xslt</a>.<a href="Ft.Xml.Xslt.Exslt.html" title="Ft.Xml.Xslt.Exslt">Exslt</a>.DateTime</span></h1>
+    <div class="abstract">Implementation of EXSLT Dates and Times module</div>
+    <pre class="description">Copyright 2003 Fourthought, Inc. (USA).
+Detailed license and copyright information: http://4suite.org/COPYRIGHT
+Project home, documentation, distributions: http://4suite.org/</pre>
+    <div class="summary-section">
+      <table cellpadding="0" cellspacing="0">
+        <tbody>
+          <tr>
+            <td valign="top">
+              <div class="summary-header">Classes:</div>
+              <div class="summary-list"><span class="class-name"><a href="#DateFormatElement">DateFormatElement</a></span></div>
+            </td>
+            <td width="7" valign="middle"></td>
+            <td bgcolor="#C5C5C5" valign="middle" width="1"></td>
+            <td width="7" valign="middle"></td>
+            <td valign="top">
+              <div class="summary-header">Functions:</div>
+              <div class="summary-list"><span class="function-name"><a href="#Add">Add</a></span>, <span class="function-name"><a href="#AddDuration">AddDuration</a></span>, <span class="function-name"><a href="#Date">Date</a></span>, <span class="function-name"><a href="#DateTime">DateTime</a></span>, <span class="function-name"><a href="#DayAbbreviation">DayAbbreviation</a></span>, <span class="function-name"><a href="#DayInMonth">DayInMonth</a></span>, <span class="function-name"><a href="#DayInWeek">DayInWeek</a></span>, <span class="function-name"><a href="#DayInYear">DayInYear</a></span>, <span class="function-name"><a href="#DayName">DayName</a></span>, <span class="function-name"><a href="#DayOfWeekInMonth">DayOfWeekInMonth</a></span>, <span class="function-name"><a href="#Difference">Difference</a></span>, <span class="function-name"><a href="#Duration">Duration</a></span>, <span class="function-name"><a href="#FormatDate">FormatDate</a></span>, <span class="function-name"><a href="#HourInDay">HourInDay</a></span>, <span class="function-name"><a href="#LeapYear">LeapYear</a></span>, <span class="function-name"><a href="#MinuteInHour">MinuteInHour</a></span>, <span class="function-name"><a href="#MonthAbbreviation">MonthAbbreviation</a></span>, <span class="function-name"><a href="#MonthInYear">MonthInYear</a></span>, <span class="function-name"><a href="#MonthName">MonthName</a></span>, <span class="function-name"><a href="#ParseDate">ParseDate</a></span>, <span class="function-name"><a href="#SecondInMinute">SecondInMinute</a></span>, <span class="function-name"><a href="#Seconds">Seconds</a></span>, <span class="function-name"><a href="#Sum">Sum</a></span>, <span class="function-name"><a href="#Time">Time</a></span>, <span class="function-name"><a href="#WeekInMonth">WeekInMonth</a></span>, <span class="function-name"><a href="#WeekInYear">WeekInYear</a></span>, <span class="function-name"><a href="#Year">Year</a></span></div>
+            </td>
+            <td width="7" valign="middle"></td>
+            <td bgcolor="#C5C5C5" valign="middle" width="1"></td>
+            <td width="7" valign="middle"></td>
+            <td valign="top">
+              <div class="summary-header">Globals:</div>
+              <div class="summary-list"><span class="global-name"><a href="#EXSL_DATE_TIME_NS">EXSL_DATE_TIME_NS</a></span>, <span class="global-name"><a href="#ExtElements">ExtElements</a></span>, <span class="global-name"><a href="#ExtFunctions">ExtFunctions</a></span>, <span class="global-name"><a href="#ExtNamespaces">ExtNamespaces</a></span></div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="section">
+      <h2>Classes</h2>
+      <dl class="classes">
+        <dt class="classdef"><a name="DateFormatElement"></a>class <span class="class-name">DateFormatElement</span><span class="bases">(<span class="class-name"><a href="Ft.Xml.Xslt.StylesheetTree.html#XsltElement">Ft.Xml.Xslt.StylesheetTree.XsltElement</a></span>)</span></dt>
+        <dd class="classdesc">
+          <div class="abstract">The date:date-format element declares a date format, which controls the
+interpretation of a format pattern used by the date:format-date and
+date:parse-date functions.</div>
+          <pre class="description">Unimplemented (actually unused by afore mentioned functions).</pre>
+          <h3>Methods inherited from class <a href="Ft.Xml.Xslt.StylesheetTree.html#XsltElement">Ft.Xml.Xslt.StylesheetTree.XsltElement</a></h3>
+          <div class="inherited"><span class="inherited-name"><a href="Ft.Xml.Xslt.StylesheetTree.html#XsltElement-__init__">__init__</a></span>, <span class="inherited-name"><a href="Ft.Xml.Xslt.StylesheetTree.html#XsltElement-__str__">__str__</a></span>, <span class="inherited-name"><a href="Ft.Xml.Xslt.StylesheetTree.html#XsltElement-appendChild">appendChild</a></span>, <span class="inherited-name"><a href="Ft.Xml.Xslt.StylesheetTree.html#XsltElement-expandQName">expandQName</a></span>, <span class="inherited-name"><a href="Ft.Xml.Xslt.StylesheetTree.html#XsltElement-insertChild">insertChild</a></span>, <span class="inherited-name"><a href="Ft.Xml.Xslt.StylesheetTree.html#XsltElement-instantiate">instantiate</a></span>, <span class="inherited-name"><a href="Ft.Xml.Xslt.StylesheetTree.html#XsltElement-parseAVT">parseAVT</a></span>, <span class="inherited-name"><a href="Ft.Xml.Xslt.StylesheetTree.html#XsltElement-parseExpression">parseExpression</a></span>, <span class="inherited-name"><a href="Ft.Xml.Xslt.StylesheetTree.html#XsltElement-parsePattern">parsePattern</a></span>, <span class="inherited-name"><a href="Ft.Xml.Xslt.StylesheetTree.html#XsltElement-processChildren">processChildren</a></span>, <span class="inherited-name"><a href="Ft.Xml.Xslt.StylesheetTree.html#XsltElement-splitQName">splitQName</a></span></div>
+          <h3>Methods inherited from class <a href="Ft.Xml.Xslt.StylesheetTree.html#XsltNode">Ft.Xml.Xslt.StylesheetTree.XsltNode</a></h3>
+          <div class="inherited"><span class="inherited-name"><a href="Ft.Xml.Xslt.StylesheetTree.html#XsltNode-idle">idle</a></span>, <span class="inherited-name"><a href="Ft.Xml.Xslt.StylesheetTree.html#XsltNode-isLastChild">isLastChild</a></span>, <span class="inherited-name"><a href="Ft.Xml.Xslt.StylesheetTree.html#XsltNode-isPseudoNode">isPseudoNode</a></span>, <span class="inherited-name"><a href="Ft.Xml.Xslt.StylesheetTree.html#XsltNode-pprint">pprint</a></span>, <span class="inherited-name"><a href="Ft.Xml.Xslt.StylesheetTree.html#XsltNode-prime">prime</a></span>, <span class="inherited-name"><a href="Ft.Xml.Xslt.StylesheetTree.html#XsltNode-setup">setup</a></span></div>
+          <h3>Members inherited from class <a href="Ft.Xml.Xslt.StylesheetTree.html#XsltElement">Ft.Xml.Xslt.StylesheetTree.XsltElement</a></h3>
+          <div class="inherited"><span class="inherited-name"><a href="Ft.Xml.Xslt.StylesheetTree.html#XsltElement-category">category</a></span>, <span class="inherited-name"><a href="Ft.Xml.Xslt.StylesheetTree.html#XsltElement-content">content</a></span>, <span class="inherited-name"><a href="Ft.Xml.Xslt.StylesheetTree.html#XsltElement-legalAttrs">legalAttrs</a></span>, <span class="inherited-name"><a href="Ft.Xml.Xslt.StylesheetTree.html#XsltElement-validator">validator</a></span></div>
+          <h3>Members inherited from class <a href="Ft.Xml.Xslt.StylesheetTree.html#XsltNode">Ft.Xml.Xslt.StylesheetTree.XsltNode</a></h3>
+          <div class="inherited"><span class="inherited-name"><a href="Ft.Xml.Xslt.StylesheetTree.html#XsltNode-attributes">attributes</a></span>, <span class="inherited-name"><a href="Ft.Xml.Xslt.StylesheetTree.html#XsltNode-baseUri">baseUri</a></span>, <span class="inherited-name"><a href="Ft.Xml.Xslt.StylesheetTree.html#XsltNode-children">children</a></span>, <span class="inherited-name"><a href="Ft.Xml.Xslt.StylesheetTree.html#XsltNode-columnNumber">columnNumber</a></span>, <span class="inherited-name"><a href="Ft.Xml.Xslt.StylesheetTree.html#XsltNode-doesIdle">doesIdle</a></span>, <span class="inherited-name"><a href="Ft.Xml.Xslt.StylesheetTree.html#XsltNode-doesPrime">doesPrime</a></span>, <span class="inherited-name"><a href="Ft.Xml.Xslt.StylesheetTree.html#XsltNode-doesSetup">doesSetup</a></span>, <span class="inherited-name"><a href="Ft.Xml.Xslt.StylesheetTree.html#XsltNode-expandedName">expandedName</a></span>, <span class="inherited-name"><a href="Ft.Xml.Xslt.StylesheetTree.html#XsltNode-importIndex">importIndex</a></span>, <span class="inherited-name"><a href="Ft.Xml.Xslt.StylesheetTree.html#XsltNode-lineNumber">lineNumber</a></span>, <span class="inherited-name"><a href="Ft.Xml.Xslt.StylesheetTree.html#XsltNode-nodeName">nodeName</a></span>, <span class="inherited-name"><a href="Ft.Xml.Xslt.StylesheetTree.html#XsltNode-parent">parent</a></span>, <span class="inherited-name"><a href="Ft.Xml.Xslt.StylesheetTree.html#XsltNode-root">root</a></span></div>
+        </dd>
+      </dl>
+    </div>
+    <div class="section">
+      <h2>Functions</h2>
+      <dl class="functions">
+        <dt class="functiondef"><a name="Add"><span class="function-name">Add</span></a>(<span class="argument-name">context</span>, <span class="argument-name">dateTime</span>, <span class="argument-name">duration</span>)</dt>
+        <dd class="functiondesc">
+          <div class="abstract">The date:add function returns the result of adding a duration to a dateTime.</div>
+          <pre class="description">Implements version 2.</pre>
+        </dd>
+        <dt class="functiondef"><a name="AddDuration"><span class="function-name">AddDuration</span></a>(<span class="argument-name">context</span>, <span class="argument-name">duration1</span>, <span class="argument-name">duration2</span>)</dt>
+        <dd class="functiondesc">
+          <div class="abstract">The date:add-duration function returns the duration resulting from adding
+two durations together.</div>
+          <pre class="description">Implements version 2.</pre>
+        </dd>
+        <dt class="functiondef"><a name="Date"><span class="function-name">Date</span></a>(<span class="argument-name">context</span>, <span class="argument-name">dateTime</span><span class="argument-default">=None</span>)</dt>
+        <dd class="functiondesc">
+          <div class="abstract">The date:date function returns the date portion of the dateTime
+argument if present, or of the current local date/time. The
+argument can be given in xs:dateTime or xs:date format.</div>
+          <pre class="description">Implements version 2.</pre>
+        </dd>
+        <dt class="functiondef"><a name="DateTime"><span class="function-name">DateTime</span></a>(<span class="argument-name">context</span>)</dt>
+        <dd class="functiondesc">
+          <div class="abstract">The date:date-time function returns the current local date/time as an
+ISO 8601 formatted date/time string, with a time zone.</div>
+          <pre class="description">Implements version 1.</pre>
+        </dd>
+        <dt class="functiondef"><a name="DayAbbreviation"><span class="function-name">DayAbbreviation</span></a>(<span class="argument-name">context</span>, <span class="argument-name">dateTime</span><span class="argument-default">=None</span>)</dt>
+        <dd class="functiondesc">
+          <div class="abstract">The date:day-abbreviation function returns the English abbreviation
+for the day name of a given date.</div>
+          <pre class="description">Implements version 2.</pre>
+        </dd>
+        <dt class="functiondef"><a name="DayInMonth"><span class="function-name">DayInMonth</span></a>(<span class="argument-name">context</span>, <span class="argument-name">dateTime</span><span class="argument-default">=None</span>)</dt>
+        <dd class="functiondesc">
+          <div class="abstract">The date:day-in-month function returns the numerical date, i.e.
+27 for the 27th of March.</div>
+          <pre class="description">Implements version 2.</pre>
+        </dd>
+        <dt class="functiondef"><a name="DayInWeek"><span class="function-name">DayInWeek</span></a>(<span class="argument-name">context</span>, <span class="argument-name">dateTime</span><span class="argument-default">=None</span>)</dt>
+        <dd class="functiondesc">
+          <div class="abstract">The date:day-in-week function returns a number representing the
+weekday of a given date. Sunday is 1, Saturday is 7.</div>
+          <pre class="description">Implements version 2.</pre>
+        </dd>
+        <dt class="functiondef"><a name="DayInYear"><span class="function-name">DayInYear</span></a>(<span class="argument-name">context</span>, <span class="argument-name">dateTime</span><span class="argument-default">=None</span>)</dt>
+        <dd class="functiondesc">
+          <div class="abstract">The date:day-in-year function returns a number representing
+the position of a date in the year.</div>
+          <pre class="description">Implements version 2.</pre>
+        </dd>
+        <dt class="functiondef"><a name="DayName"><span class="function-name">DayName</span></a>(<span class="argument-name">context</span>, <span class="argument-name">dateTime</span><span class="argument-default">=None</span>)</dt>
+        <dd class="functiondesc">
+          <div class="abstract">The date:day-name function returns the full English day name of
+a given date.</div>
+          <pre class="description">Implements version 2.</pre>
+        </dd>
+        <dt class="functiondef"><a name="DayOfWeekInMonth"><span class="function-name">DayOfWeekInMonth</span></a>(<span class="argument-name">context</span>, <span class="argument-name">dateTime</span><span class="argument-default">=None</span>)</dt>
+        <dd class="functiondesc">
+          <div class="abstract">The date:day-of-week-in-month function returns the day-of-the-week
+in a month of a date as a number (e.g. 3 for the 3rd Tuesday in May).</div>
+          <pre class="description">Implements version 2.</pre>
+        </dd>
+        <dt class="functiondef"><a name="Difference"><span class="function-name">Difference</span></a>(<span class="argument-name">context</span>, <span class="argument-name">start</span>, <span class="argument-name">end</span>)</dt>
+        <dd class="functiondesc">
+          <div class="abstract">The date:difference function returns the difference between the first date
+and the second date as a duration in string form.</div>
+          <pre class="description">Implements version 1.</pre>
+        </dd>
+        <dt class="functiondef"><a name="Duration"><span class="function-name">Duration</span></a>(<span class="argument-name">context</span>, <span class="argument-name">seconds</span><span class="argument-default">=None</span>)</dt>
+        <dd class="functiondesc">
+          <div class="abstract">The date:duration function returns a duration string representing the
+number of seconds specified by the argument string. If no argument is
+given, then the result of calling date:seconds without any arguments is
+used as a default argument.</div>
+          <pre class="description">Implements version 1.</pre>
+        </dd>
+        <dt class="functiondef"><a name="FormatDate"><span class="function-name">FormatDate</span></a>(<span class="argument-name">context</span>, <span class="argument-name">dateTime</span>, <span class="argument-name">pattern</span>)</dt>
+        <dd class="functiondesc">
+          <div class="abstract">The date:format-date function formats a date/time according to a pattern.</div>
+          <pre class="description">The first argument to date:format-date specifies the date/time to be
+formatted. It must be right or left-truncated date/time strings in one of
+the formats defined in XML Schema Part 2: Datatypes.  The permitted
+formats are as follows: xs:dateTime, xs:date, xs:time, xs:gYearMonth,
+xs:gYear, xs:gMonthDay, xs:gMonth and xs:gDay.
+
+The second argument is a string that gives the format pattern used to
+format the date. The format pattern must be in the syntax specified by
+the JDK 1.1 SimpleDateFormat class. The format pattern string is
+interpreted as described for the JDK 1.1 SimpleDateFormat class.
+
+Implements version 2.</pre>
+        </dd>
+        <dt class="functiondef"><a name="HourInDay"><span class="function-name">HourInDay</span></a>(<span class="argument-name">context</span>, <span class="argument-name">dateTime</span><span class="argument-default">=None</span>)</dt>
+        <dd class="functiondesc">
+          <div class="abstract">The date:hour-in-date function returns the hour portion of a date-
+time string as an integer.</div>
+          <pre class="description">Implements version 2.</pre>
+        </dd>
+        <dt class="functiondef"><a name="LeapYear"><span class="function-name">LeapYear</span></a>(<span class="argument-name">context</span>, <span class="argument-name">dateTime</span><span class="argument-default">=None</span>)</dt>
+        <dd class="functiondesc">
+          <div class="abstract">The date:leap-year function returns true if the year argument
+(defaults to current year) is a leap year, false otherwise.</div>
+          <pre class="description">Implements version 1.</pre>
+        </dd>
+        <dt class="functiondef"><a name="MinuteInHour"><span class="function-name">MinuteInHour</span></a>(<span class="argument-name">context</span>, <span class="argument-name">dateTime</span><span class="argument-default">=None</span>)</dt>
+        <dd class="functiondesc">
+          <div class="abstract">The date:minute-in-hour function returns the minute portion of a
+date-time string as an integer.</div>
+          <pre class="description">Implements version 2.</pre>
+        </dd>
+        <dt class="functiondef"><a name="MonthAbbreviation"><span class="function-name">MonthAbbreviation</span></a>(<span class="argument-name">context</span>, <span class="argument-name">dateTime</span><span class="argument-default">=None</span>)</dt>
+        <dd class="functiondesc">
+          <div class="abstract">The date:month-abbreviation function returns the abbreviation
+of the month of a date.</div>
+          <pre class="description">Implements version 2.</pre>
+        </dd>
+        <dt class="functiondef"><a name="MonthInYear"><span class="function-name">MonthInYear</span></a>(<span class="argument-name">context</span>, <span class="argument-name">dateTime</span><span class="argument-default">=None</span>)</dt>
+        <dd class="functiondesc">
+          <div class="abstract">The date:month-in-year function returns the month portion of
+the dateTime argument (defaults to current month) as an integer.</div>
+          <pre class="description">Implements version 2.</pre>
+        </dd>
+        <dt class="functiondef"><a name="MonthName"><span class="function-name">MonthName</span></a>(<span class="argument-name">context</span>, <span class="argument-name">dateTime</span><span class="argument-default">=None</span>)</dt>
+        <dd class="functiondesc">
+          <div class="abstract">The date:month-name function returns the full English name
+of the month portion of a date.</div>
+          <pre class="description">Implements version 2.</pre>
+        </dd>
+        <dt class="functiondef"><a name="ParseDate"><span class="function-name">ParseDate</span></a>(<span class="argument-name">context</span>, <span class="argument-name">dateString</span>, <span class="argument-name">pattern</span>)</dt>
+        <dd class="functiondesc"></dd>
+        <dt class="functiondef"><a name="SecondInMinute"><span class="function-name">SecondInMinute</span></a>(<span class="argument-name">context</span>, <span class="argument-name">dateTime</span><span class="argument-default">=None</span>)</dt>
+        <dd class="functiondesc">
+          <div class="abstract">The date:second-in-minute function returns the seconds portion
+of a date-time string as an integer.</div>
+          <pre class="description">Implements version 2.</pre>
+        </dd>
+        <dt class="functiondef"><a name="Seconds"><span class="function-name">Seconds</span></a>(<span class="argument-name">context</span>, <span class="argument-name">string</span><span class="argument-default">=None</span>)</dt>
+        <dd class="functiondesc">
+          <div class="abstract">The date:seconds function returns the number of seconds specified by the
+argument string. If no argument is given, then the current local
+date/time, as returned by date:date-time is used as a default argument.</div>
+          <pre class="description">Implements version 1.</pre>
+        </dd>
+        <dt class="functiondef"><a name="Sum"><span class="function-name">Sum</span></a>(<span class="argument-name">context</span>, <span class="argument-name">nodeset</span>)</dt>
+        <dd class="functiondesc">
+          <div class="abstract">The date:sum function adds a set of durations together. The string values
+of the nodes in the node set passed as an argument are interpreted as
+durations and added together as if using the date:add-duration function.</div>
+          <pre class="description">Implements version 1.</pre>
+        </dd>
+        <dt class="functiondef"><a name="Time"><span class="function-name">Time</span></a>(<span class="argument-name">context</span>, <span class="argument-name">dateTime</span><span class="argument-default">=None</span>)</dt>
+        <dd class="functiondesc">
+          <div class="abstract">The date:time function returns the time portion of the dateTime
+argument if present, or of the current local date/time. The
+argument can be given in xs:dateTime or xs:time format.</div>
+          <pre class="description">Implements version 2.</pre>
+        </dd>
+        <dt class="functiondef"><a name="WeekInMonth"><span class="function-name">WeekInMonth</span></a>(<span class="argument-name">context</span>, <span class="argument-name">dateTime</span><span class="argument-default">=None</span>)</dt>
+        <dd class="functiondesc">
+          <div class="abstract">The date:week-in-month function returns the week in a month of a date as
+a number. If no argument is given, then the current local date/time, as
+returned by date:date-time is used the default argument. For the purposes
+of numbering, the first day of the month is in week 1 and new weeks begin
+on a Monday (so the first and last weeks in a month will often have less
+than 7 days in them).</div>
+          <pre class="description">Implements version 3.</pre>
+        </dd>
+        <dt class="functiondef"><a name="WeekInYear"><span class="function-name">WeekInYear</span></a>(<span class="argument-name">context</span>, <span class="argument-name">dateTime</span><span class="argument-default">=None</span>)</dt>
+        <dd class="functiondesc">
+          <div class="abstract">The date:week-in-year function returns a number representing
+the week of the year a date is in.</div>
+          <pre class="description">Implements version 3.</pre>
+        </dd>
+        <dt class="functiondef"><a name="Year"><span class="function-name">Year</span></a>(<span class="argument-name">context</span>, <span class="argument-name">dateTime</span><span class="argument-default">=None</span>)</dt>
+        <dd class="functiondesc">
+          <div class="abstract">The date:year function returns the year portion of the
+dateTime supplied, or of the current year, as an integer.</div>
+          <pre class="description">Implements version 2.</pre>
+        </dd>
+      </dl>
+    </div>
+    <div class="section">
+      <h2>Globals</h2>
+      <dl class="globals">
+        <dt class="globaldef"><a name="EXSL_DATE_TIME_NS"><span class="global-name">EXSL_DATE_TIME_NS</span></a> = 'http://exslt.org/dates-and-times'</dt>
+        <dd class="globaldesc"></dd>
+        <dt class="globaldef"><a name="ExtElements"><span class="global-name">ExtElements</span></a> = {}</dt>
+        <dd class="globaldesc"></dd>
+        <dt class="globaldef"><a name="ExtFunctions"><span class="global-name">ExtFunctions</span></a> = {('http://exslt.org/dates-and-times', 'add'): &lt;function Add&gt;, ('http://exslt.org/dates-and-times', 'add-duration'): &lt;function AddDuration&gt;, ('http://exslt.org/dates-and-times', 'date'): &lt;function Date&gt;, ('http://exslt.org/dates-and-times', 'date-time'): &lt;function DateTime&gt;, ('http://exslt.org/dates-and-times', 'day-abbreviation'): &lt;function DayAbbreviation&gt;, ('http://exslt.org/dates-and-times', 'day-in-month'): &lt;function DayInMonth&gt;, ('http://exslt.org/dates-and-times', 'day-in-week'): &lt;function DayInWeek&gt;, ('http://exslt.org/dates-and-times', 'day-in-year'): &lt;function DayInYear&gt;, ('http://exslt.org/dates-and-times', 'day-name'): &lt;function DayName&gt;, ('http://exslt.org/dates-and-times', 'day-of-week-in-month'): &lt;function DayOfWeekInMonth&gt;, ...}</dt>
+        <dd class="globaldesc"></dd>
+        <dt class="globaldef"><a name="ExtNamespaces"><span class="global-name">ExtNamespaces</span></a> = {'http://exslt.org/dates-and-times': 'date'}</dt>
+        <dd class="globaldesc"></dd>
+      </dl>
+    </div>
+    <div class="universal-footer">Last modified on 2006-08-31 12:39:08</div>
+  </body>
+</html>

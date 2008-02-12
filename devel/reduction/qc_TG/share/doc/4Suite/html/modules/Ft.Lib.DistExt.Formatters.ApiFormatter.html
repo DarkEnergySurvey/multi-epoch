@@ -1,0 +1,111 @@
+<html>
+  <head>
+    <meta content="text/html; charset=iso-8859-1" http-equiv="Content-Type">
+    <title>4Suite API Documentation: Ft.Lib.DistExt.Formatters.ApiFormatter</title>
+    <link href="modules.css" type="text/css" rel="stylesheet">
+  </head>
+  <body>
+    <div class="universal-header"><span class="universal-header-prefix">&nbsp;&nbsp;&nbsp;</span>&nbsp;<span class="universal-header-prefix">&nbsp;&nbsp;</span>&nbsp;<span class="universal-header-prefix">&nbsp;</span>&nbsp;<a href="../index.html">4Suite<sup>&trade;</sup> API Documentation</a></div>
+    <h1><span class="glyph-arrow">&#9658;</span> Module <span class="this-name"><a href="Ft.html" title="Ft">Ft</a>.<a href="Ft.Lib.html" title="Ft.Lib">Lib</a>.<a href="Ft.Lib.DistExt.html" title="Ft.Lib.DistExt">DistExt</a>.<a href="Ft.Lib.DistExt.Formatters.html" title="Ft.Lib.DistExt.Formatters">Formatters</a>.ApiFormatter</span></h1>
+    <div class="summary-section">
+      <table cellpadding="0" cellspacing="0">
+        <tbody>
+          <tr>
+            <td valign="top">
+              <div class="summary-header">Classes:</div>
+              <div class="summary-list"><span class="class-name"><a href="#ApiFormatter">ApiFormatter</a></span></div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="section">
+      <h2>Classes</h2>
+      <dl class="classes">
+        <dt class="classdef"><a name="ApiFormatter"></a>class <span class="class-name">ApiFormatter</span><span class="bases">(<span class="class-name"><a href="Ft.Lib.DistExt.Formatters.XmlFormatter.html#XmlFormatter">Ft.Lib.DistExt.Formatters.XmlFormatter.XmlFormatter</a></span>)</span></dt>
+        <dd class="classdesc">
+          <h3>Methods</h3>
+          <dl class="methods">
+            <dt class="methoddef"><a name="ApiFormatter-__init__"><span class="method-name">__init__</span></a>(<span class="argument-name">self</span>, <span class="argument-name">command</span>, <span class="argument-name">modules</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dd class="overrides"><b>Overrides: </b><span class="inherited-name"><a href="Ft.Lib.DistExt.Formatters.XmlFormatter.html#XmlFormatter-__init__">__init__</a></span> from class <span class="class-name"><a href="Ft.Lib.DistExt.Formatters.XmlFormatter.html#XmlFormatter">XmlFormatter</a></span></dd>
+            <dt class="methoddef"><a name="ApiFormatter-doc_arguments"><span class="method-name">doc_arguments</span></a>(<span class="argument-name">self</span>, <span class="argument-name">object</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dt class="methoddef"><a name="ApiFormatter-doc_class"><span class="method-name">doc_class</span></a>(<span class="argument-name">self</span>, <span class="argument-name">klass</span>, <span class="argument-name">name</span>)</dt>
+            <dd class="methoddesc">
+              <div class="abstract">Produce XML documentation for a given class object.</div>
+            </dd>
+            <dt class="methoddef"><a name="ApiFormatter-doc_function"><span class="method-name">doc_function</span></a>(<span class="argument-name">self</span>, <span class="argument-name">func</span>, <span class="argument-name">name</span>)</dt>
+            <dd class="methoddesc">
+              <div class="abstract">Document a function</div>
+            </dd>
+            <dt class="methoddef"><a name="ApiFormatter-doc_global"><span class="method-name">doc_global</span></a>(<span class="argument-name">self</span>, <span class="argument-name">object</span>, <span class="argument-name">name</span>)</dt>
+            <dd class="methoddesc">
+              <div class="abstract">Produce XML documentation for a data object.</div>
+            </dd>
+            <dt class="methoddef"><a name="ApiFormatter-doc_inherited"><span class="method-name">doc_inherited</span></a>(<span class="argument-name">self</span>, <span class="argument-name">object</span>, <span class="argument-name">name</span>, <span class="argument-name">klass</span>, <span class="argument-name">kind</span>)</dt>
+            <dd class="methoddesc">
+              <div class="abstract">Produce XML documentation for an inherited object.</div>
+            </dd>
+            <dt class="methoddef"><a name="ApiFormatter-doc_member"><span class="method-name">doc_member</span></a>(<span class="argument-name">self</span>, <span class="argument-name">object</span>, <span class="argument-name">name</span>, <span class="argument-name">klass</span>, <span class="argument-name">kind</span>)</dt>
+            <dd class="methoddesc">
+              <div class="abstract">Produce XML documentation for a data object.</div>
+            </dd>
+            <dt class="methoddef"><a name="ApiFormatter-doc_method"><span class="method-name">doc_method</span></a>(<span class="argument-name">self</span>, <span class="argument-name">method</span>, <span class="argument-name">name</span>, <span class="argument-name">klass</span>, <span class="argument-name">kind</span>)</dt>
+            <dd class="methoddesc">
+              <div class="abstract">Document a method, class method or static method as given by 'kind'</div>
+            </dd>
+            <dt class="methoddef"><a name="ApiFormatter-doc_methoddescriptor"><span class="method-name">doc_methoddescriptor</span></a>(<span class="argument-name">self</span>, <span class="argument-name">descr</span>, <span class="argument-name">name</span>, <span class="argument-name">klass</span>, <span class="argument-name">kind</span>)</dt>
+            <dd class="methoddesc">
+              <div class="abstract">Document a class method or static method as given by 'kind'</div>
+            </dd>
+            <dt class="methoddef"><a name="ApiFormatter-doc_submodule"><span class="method-name">doc_submodule</span></a>(<span class="argument-name">self</span>, <span class="argument-name">module</span>, <span class="argument-name">name</span>)</dt>
+            <dd class="methoddesc">
+              <div class="abstract">Produce XML documentation for a submodule</div>
+            </dd>
+            <dt class="methoddef"><a name="ApiFormatter-document"><span class="method-name">document</span></a>(<span class="argument-name">self</span>, <span class="argument-name">module</span>)</dt>
+            <dd class="methoddesc">
+              <div class="abstract">Produce documentation for a given module object.</div>
+            </dd>
+            <dd class="overrides"><b>Overrides: </b><span class="inherited-name"><a href="Ft.Lib.DistExt.Formatters.XmlFormatter.html#XmlFormatter-document">document</a></span> from class <span class="class-name"><a href="Ft.Lib.DistExt.Formatters.XmlFormatter.html#XmlFormatter">XmlFormatter</a></span></dd>
+            <dt class="methoddef"><a name="ApiFormatter-format_arg"><span class="method-name">format_arg</span></a>(<span class="argument-name">self</span>, <span class="argument-name">arg</span>, <span class="argument-name">default</span><span class="argument-default">=None</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dt class="methoddef"><a name="ApiFormatter-isdocumented"><span class="method-name">isdocumented</span></a>(<span class="argument-name">self</span>, <span class="argument-name">name</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dt class="methoddef"><a name="ApiFormatter-ispublic"><span class="method-name">ispublic</span></a>(<span class="argument-name">self</span>, <span class="argument-name">name</span>)</dt>
+            <dd class="methoddesc">
+              <div class="abstract"># Some names are not invisible, but are still not public.  Such names
+# which are not public are still documented, but this documentation is
+# not displayed, because these "private" names should not be used
+# outside the given module.</div>
+            </dd>
+            <dt class="methoddef"><a name="ApiFormatter-write_description"><span class="method-name">write_description</span></a>(<span class="argument-name">self</span>, <span class="argument-name">object</span>)</dt>
+            <dd class="methoddesc">
+              <div class="abstract">Produce XML tag(s) for an object description.</div>
+            </dd>
+          </dl>
+          <h3>Methods inherited from class <a href="Ft.Lib.DistExt.Formatters.XmlFormatter.html#XmlFormatter">Ft.Lib.DistExt.Formatters.XmlFormatter.XmlFormatter</a></h3>
+          <div class="inherited"><span class="inherited-name"><a href="Ft.Lib.DistExt.Formatters.XmlFormatter.html#XmlFormatter-end_element">end_element</a></span>, <span class="inherited-name"><a href="Ft.Lib.DistExt.Formatters.XmlFormatter.html#XmlFormatter-format">format</a></span>, <span class="inherited-name"><a href="Ft.Lib.DistExt.Formatters.XmlFormatter.html#XmlFormatter-section">section</a></span>, <span class="inherited-name"><a href="Ft.Lib.DistExt.Formatters.XmlFormatter.html#XmlFormatter-start_element">start_element</a></span>, <span class="inherited-name"><a href="Ft.Lib.DistExt.Formatters.XmlFormatter.html#XmlFormatter-warn">warn</a></span>, <span class="inherited-name"><a href="Ft.Lib.DistExt.Formatters.XmlFormatter.html#XmlFormatter-write_element">write_element</a></span></div>
+          <h3>Methods inherited from class <a href="Ft.Lib.DistExt.Formatters.XmlFormatter.html#XmlRepr">Ft.Lib.DistExt.Formatters.XmlFormatter.XmlRepr</a></h3>
+          <div class="inherited"><span class="inherited-name"><a href="Ft.Lib.DistExt.Formatters.XmlFormatter.html#XmlRepr-escape">escape</a></span>, <span class="inherited-name"><a href="Ft.Lib.DistExt.Formatters.XmlFormatter.html#XmlRepr-repr">repr</a></span>, <span class="inherited-name"><a href="Ft.Lib.DistExt.Formatters.XmlFormatter.html#XmlRepr-repr_str">repr_str</a></span>, <span class="inherited-name"><a href="Ft.Lib.DistExt.Formatters.XmlFormatter.html#XmlRepr-repr_unicode">repr_unicode</a></span></div>
+          <h3>Methods inherited from class <span class="undocumented">pydoc.TextRepr</span></h3>
+          <div class="inherited"><span class="inherited-name">repr1</span>, <span class="inherited-name">repr_instance</span>, <span class="inherited-name">repr_string</span></div>
+          <h3>Methods inherited from class <span class="undocumented">repr.Repr</span></h3>
+          <div class="inherited"><span class="inherited-name">repr_array</span>, <span class="inherited-name">repr_deque</span>, <span class="inherited-name">repr_dict</span>, <span class="inherited-name">repr_frozenset</span>, <span class="inherited-name">repr_list</span>, <span class="inherited-name">repr_long</span>, <span class="inherited-name">repr_set</span>, <span class="inherited-name">repr_tuple</span></div>
+          <h3>Members</h3>
+          <dl class="members">
+            <dt class="memberdef"><a name="document_type"><span class="member-name">document_type</span></a> = &lt;type 'module'&gt;</dt>
+            <dd class="memberdesc">
+              <div class="abstract">module(name[, doc])</div>
+              <pre class="description">Create a module object.
+The name must be a string; the optional doc argument can have any type.</pre>
+            </dd>
+          </dl>
+          <h3>Members inherited from class <a href="Ft.Lib.DistExt.Formatters.XmlFormatter.html#XmlFormatter">Ft.Lib.DistExt.Formatters.XmlFormatter.XmlFormatter</a></h3>
+          <div class="inherited"><span class="inherited-name"><a href="Ft.Lib.DistExt.Formatters.XmlFormatter.html#XmlFormatter-indent">indent</a></span></div>
+        </dd>
+      </dl>
+    </div>
+    <div class="universal-footer">Last modified on 2006-08-17 13:09:43</div>
+  </body>
+</html>

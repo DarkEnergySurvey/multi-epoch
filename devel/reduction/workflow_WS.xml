@@ -1,0 +1,78 @@
+<?xml version="1.0"?>
+<!DOCTYPE project  [
+  <!ENTITY  Stage_register          SYSTEM "module_orchs/register.xml">
+  <!ENTITY  Stage_createlists       SYSTEM "module_orchs/createlists.xml">
+  <!ENTITY  Stage_createingestlists SYSTEM "module_orchs/createingestlists.xml">
+  <!ENTITY  Stage_getastrostd       SYSTEM "module_orchs/getastrostd.xml">
+  <!ENTITY  Stage_msetup            SYSTEM "module_orchs/msetup.xml">
+  <!ENTITY  Stage_moveingestlists   SYSTEM "module_orchs/moveingestlists.xml">
+  <!ENTITY  Stage_movelist          SYSTEM "module_orchs/movelist.xml">
+  <!ENTITY  Stage_movecat           SYSTEM "module_orchs/movecat.xml">
+  <!ENTITY  Stage_makexml           SYSTEM "module_orchs/makexml.xml">
+  <!ENTITY  Stage_makexml_postscamp SYSTEM "module_orchs/makexml_postscamp.xml">
+  <!ENTITY  Stage_makeingestxml     SYSTEM "module_orchs/makeingestxml.xml">
+  <!ENTITY  Stage_runjobs           SYSTEM "module_orchs/runjobs.xml">
+  <!ENTITY  Stage_runingestjobs     SYSTEM "module_orchs/runingestjobs.xml">
+
+  <!ENTITY  Stage_scamplist         SYSTEM "module_scamp/scamplist.xml">
+  <!ENTITY  Stage_scamp_astrostd    SYSTEM "module_scamp/scamp_astrostd.xml">
+  <!ENTITY  Stage_runscamp          SYSTEM "module_scamp/runscamp.xml">
+
+  <!ENTITY  Stage_runpsm            SYSTEM "module_psmft/runpsm.xml">
+  <!ENTITY  Stage_checkpsm          SYSTEM "module_psmft/checkpsm.xml">
+  <!ENTITY  Stage_updatezp          SYSTEM "module_psmft/updatezp.xml">
+
+]>
+
+<project name="pipeline" default="Stage_projects" basedir=".">
+ <property file="edit_WS.properties"/>
+
+ &Stage_register;
+ &Stage_createlists;
+ &Stage_createingestlists;
+ &Stage_getastrostd;
+ &Stage_msetup;
+ &Stage_moveingestlists;
+ &Stage_movelist;
+ &Stage_movecat;
+ &Stage_makexml;
+ &Stage_makeingestxml;
+ &Stage_makexml_postscamp;
+ &Stage_runjobs;
+ &Stage_runingestjobs;
+
+ &Stage_scamplist;
+ &Stage_scamp_astrostd;
+ &Stage_runscamp;
+
+ &Stage_runpsm;
+ &Stage_checkpsm;
+ &Stage_updatezp;
+
+ <target name="Stage_WS"
+       depends="Stage_msetup, Stage_createlists, Stage_makexml, Stage_runjobs"
+       description="WS Stages">
+ </target>
+
+ <target name="Stage_scamp"
+       depends="Stage_scamplist, Stage_scamp_astrostd, Stage_runscamp"
+       description="SCAMP">
+ </target>
+
+ <target name="Stage_postscamp"
+       depends="Stage_makexml_postscamp, Stage_runjobs"
+       description="Post_scamp Stages">
+ </target>
+
+ <target name="Stage_psm"
+       depends="Stage_runpsm, Stage_checkpsm, Stage_updatezp"
+       description="PSM Stages">
+ </target>
+
+ <target name="Stage_Convert_Ingest"
+       depends="Stage_createingestlists, Stage_makeingestxml, Stage_runingestjobs"
+       description="WS Convert and Ingest">
+ </target>
+
+</project>
+ 

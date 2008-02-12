@@ -1,0 +1,140 @@
+<html>
+  <head>
+    <meta content="text/html; charset=iso-8859-1" http-equiv="Content-Type">
+    <title>Command-line Application 4xslt</title>
+    <link href="commandline.css" type="text/css" rel="stylesheet">
+  </head>
+  <body><a name="id183014312144"><h1>Commandline Application - 4xslt</h1></a>
+    <h4>command-line tool for performing XSLT transformations on XMLdocuments</h4>
+    <blockquote>4XSLT command-line application</blockquote>
+    <H2>Usage</H2>
+    <TABLE>
+      <TR VALIGN="top">
+        <TD>
+          <pre>4xslt</pre>
+        </TD>
+        <TD>
+          <pre>[--help] [--version] [--validate] [--ignore]
+[--media=&lt;MEDIA&gt;] [--define=&lt;NAME=VALUE&gt;]
+[--prefix=&lt;PREFIX=NSURI&gt;] [--alt-sty-path=&lt;PATH&gt;]
+[--alt-sty-uri=&lt;URI&gt;] [--outfile=&lt;FILE&gt;]
+[--stacktrace-on-error] [--noxinclude] [--trace]
+[--trace-file=&lt;FILE&gt;] [[--reflex] | [--compile] |
+[--instant] | [--chain]] [--time] [--msg-prefix=&lt;STRING&gt;]
+[--msg-suffix=&lt;STRING&gt;] [--no-messages] source-uri
+[stylesheet-uri]...</pre>
+        </TD>
+      </TR>
+    </TABLE>
+    <h2>Options</h2>
+    <TABLE cellpadding="4">
+      <tr>
+        <th align="left">Name</th>
+        <th align="center">Description</th>
+      </tr>
+      <TR VALIGN="TOP">
+        <TD>-h, --help</TD>
+        <TD>show detailed help message</TD>
+      </TR>
+      <TR VALIGN="TOP">
+        <TD>-V, --version</TD>
+        <TD>display version information and exit</TD>
+      </TR>
+      <TR VALIGN="TOP">
+        <TD>-v, --validate</TD>
+        <TD>Validate the input file as it is being parsed</TD>
+      </TR>
+      <TR VALIGN="TOP">
+        <TD>-i, --ignore</TD>
+        <TD>Ignore &lt;?xml-stylesheet ...?&gt; instructions</TD>
+      </TR>
+      <TR VALIGN="TOP">
+        <TD>--media=&lt;MEDIA&gt;</TD>
+        <TD>Set media to honor in xml-stylesheet PIs</TD>
+      </TR>
+      <TR VALIGN="TOP">
+        <TD>-D, --define=&lt;NAME=VALUE&gt;</TD>
+        <TD>Bind a top-level parameter</TD>
+      </TR>
+      <TR VALIGN="TOP">
+        <TD>-P, --prefix=&lt;PREFIX=NSURI&gt;</TD>
+        <TD>Assign a namespace to a prefix used in a top-level parameter</TD>
+      </TR>
+      <TR VALIGN="TOP">
+        <TD>-I, --alt-sty-path=&lt;PATH&gt;</TD>
+        <TD>Same as --alt-sty-uri but uses OS path</TD>
+      </TR>
+      <TR VALIGN="TOP">
+        <TD>--alt-sty-uri=&lt;URI&gt;</TD>
+        <TD>Define an add'l base URI for imports and includes</TD>
+      </TR>
+      <TR VALIGN="TOP">
+        <TD>-o, --outfile=&lt;FILE&gt;</TD>
+        <TD>Direct transformation output to FILE (file will be overwritten if it exists)</TD>
+      </TR>
+      <TR VALIGN="TOP">
+        <TD>-e, --stacktrace-on-error</TD>
+        <TD>Display a stack trace when an error occurs</TD>
+      </TR>
+      <TR VALIGN="TOP">
+        <TD>--noxinclude</TD>
+        <TD>Do not expand XIncludes in source document and stylesheet</TD>
+      </TR>
+      <TR VALIGN="TOP">
+        <TD>--trace</TD>
+        <TD>Send execution trace output to stderr or file set by --trace-file</TD>
+      </TR>
+      <TR VALIGN="TOP">
+        <TD>--trace-file=&lt;FILE&gt;</TD>
+        <TD>Trace file for execution trace output when using --trace</TD>
+      </TR>
+      <TR VALIGN="TOP">
+        <TD>--reflex</TD>
+        <TD>Reflexive transform (use the stylesheet as the source document).</TD>
+      </TR>
+      <TR VALIGN="TOP">
+        <TD>--compile</TD>
+        <TD>Compile an instant stylesheet. The result is written to stdout, unless -o is used.</TD>
+      </TR>
+      <TR VALIGN="TOP">
+        <TD>--instant</TD>
+        <TD>The stylesheet is "instant" (compiled). Only one stylesheet can be specified with this option.</TD>
+      </TR>
+      <TR VALIGN="TOP">
+        <TD>--chain</TD>
+        <TD>Chain the stylesheets (result of transforming with the first is the source document for transforming with the second, and so on). Without this option, each extra stylesheet is imported by the preceding one.</TD>
+      </TR>
+      <TR VALIGN="TOP">
+        <TD>--time</TD>
+        <TD>Display the elapsed transformation time on stderr</TD>
+      </TR>
+      <TR VALIGN="TOP">
+        <TD>--msg-prefix=&lt;STRING&gt;</TD>
+        <TD>Prepend string to xsl:message output</TD>
+      </TR>
+      <TR VALIGN="TOP">
+        <TD>--msg-suffix=&lt;STRING&gt;</TD>
+        <TD>Append string to xsl:message output</TD>
+      </TR>
+      <TR VALIGN="TOP">
+        <TD>--no-messages</TD>
+        <TD>Suppress xsl:message output and warnings</TD>
+      </TR>
+    </TABLE>
+    <H2>Arguments</H2>
+    <TABLE cellpadding="4">
+      <tr>
+        <th align="left">Name</th>
+        <th align="center">Description</th>
+      </tr>
+      <TR>
+        <TD>source-uri</TD>
+        <TD>The URI of the XML document to transform, or "-" to indicate standard input. If using --reflex, it is also the stylesheet. If using --compile, it is the stylesheet to compile.</TD>
+      </TR>
+      <TR>
+        <TD>stylesheet-uri</TD>
+        <TD>The URI(s) of the stylesheet(s) to apply.</TD>
+      </TR>
+    </TABLE>
+  </body>
+</html>

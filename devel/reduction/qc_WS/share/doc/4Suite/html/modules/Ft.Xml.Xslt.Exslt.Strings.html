@@ -1,0 +1,130 @@
+<html>
+  <head>
+    <meta content="text/html; charset=iso-8859-1" http-equiv="Content-Type">
+    <title>4Suite API Documentation: Ft.Xml.Xslt.Exslt.Strings</title>
+    <link href="modules.css" type="text/css" rel="stylesheet">
+  </head>
+  <body>
+    <div class="universal-header"><span class="universal-header-prefix">&nbsp;&nbsp;&nbsp;</span>&nbsp;<span class="universal-header-prefix">&nbsp;&nbsp;</span>&nbsp;<span class="universal-header-prefix">&nbsp;</span>&nbsp;<a href="../index.html">4Suite<sup>&trade;</sup> API Documentation</a></div>
+    <h1><span class="glyph-arrow">&#9658;</span> Module <span class="this-name"><a href="Ft.html" title="Ft">Ft</a>.<a href="Ft.Xml.html" title="Ft.Xml">Xml</a>.<a href="Ft.Xml.Xslt.html" title="Ft.Xml.Xslt">Xslt</a>.<a href="Ft.Xml.Xslt.Exslt.html" title="Ft.Xml.Xslt.Exslt">Exslt</a>.Strings</span></h1>
+    <div class="abstract">EXSLT - Strings</div>
+    <pre class="description">Copyright 2005 Fourthought, Inc. (USA).
+Detailed license and copyright information: http://4suite.org/COPYRIGHT
+Project home, documentation, distributions: http://4suite.org/</pre>
+    <div class="summary-section">
+      <table cellpadding="0" cellspacing="0">
+        <tbody>
+          <tr>
+            <td valign="top">
+              <div class="summary-header">Functions:</div>
+              <div class="summary-list"><span class="function-name"><a href="#Align">Align</a></span>, <span class="function-name"><a href="#Concat">Concat</a></span>, <span class="function-name"><a href="#DecodeUri">DecodeUri</a></span>, <span class="function-name"><a href="#EncodeUri">EncodeUri</a></span>, <span class="function-name"><a href="#Padding">Padding</a></span>, <span class="function-name"><a href="#Replace">Replace</a></span>, <span class="function-name"><a href="#Split">Split</a></span>, <span class="function-name"><a href="#Tokenize">Tokenize</a></span></div>
+            </td>
+            <td width="7" valign="middle"></td>
+            <td bgcolor="#C5C5C5" valign="middle" width="1"></td>
+            <td width="7" valign="middle"></td>
+            <td valign="top">
+              <div class="summary-header">Globals:</div>
+              <div class="summary-list"><span class="global-name"><a href="#EXSL_STRINGS_NS">EXSL_STRINGS_NS</a></span>, <span class="global-name"><a href="#ExtElements">ExtElements</a></span>, <span class="global-name"><a href="#ExtFunctions">ExtFunctions</a></span>, <span class="global-name"><a href="#ExtNamespaces">ExtNamespaces</a></span>, <span class="global-name"><a href="#NAMESPACE_NODE">NAMESPACE_NODE</a></span></div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="section">
+      <h2>Functions</h2>
+      <dl class="functions">
+        <dt class="functiondef"><a name="Align"><span class="function-name">Align</span></a>(<span class="argument-name">context</span>, <span class="argument-name">target</span>, <span class="argument-name">padding</span>, <span class="argument-name">alignment</span><span class="argument-default">=''</span>)</dt>
+        <dd class="functiondesc">
+          <div class="abstract">The str:align function aligns a string within another string.</div>
+          <pre class="description">See http://exslt.org/str/functions/align/str.align.html for further
+explanation.</pre>
+        </dd>
+        <dt class="functiondef"><a name="Concat"><span class="function-name">Concat</span></a>(<span class="argument-name">context</span>, <span class="argument-name">nodeset</span>)</dt>
+        <dd class="functiondesc">
+          <div class="abstract">The str:concat function takes a node set and returns the concatenation of
+the string values of the nodes in that node set. If the node set is empty,
+it returns an empty string.</div>
+        </dd>
+        <dt class="functiondef"><a name="DecodeUri"><span class="function-name">DecodeUri</span></a>(<span class="argument-name">context</span>, <span class="argument-name">uri</span>, <span class="argument-name">encoding</span><span class="argument-default">=u'UTF-8'</span>)</dt>
+        <dd class="functiondesc">
+          <div class="abstract">The str:decode-uri function decodes a percent-encoded string, such as
+one would find in a URI.</div>
+        </dd>
+        <dt class="functiondef"><a name="EncodeUri"><span class="function-name">EncodeUri</span></a>(<span class="argument-name">context</span>, <span class="argument-name">uri</span>, <span class="argument-name">escapeReserved</span>, <span class="argument-name">encoding</span><span class="argument-default">=u'UTF-8'</span>)</dt>
+        <dd class="functiondesc">
+          <div class="abstract">The str:encode-uri function percent-encodes a string for embedding in a URI.
+The second argument is a boolean indicating whether to escape reserved characters;
+if true, the given string can be a URI already, with just some of its characters
+needing to be escaped (not recommended, but users who don't understand the nuances
+of the URI syntax tend to prefer it over assembling a URI piece-by-piece).</div>
+        </dd>
+        <dt class="functiondef"><a name="Padding"><span class="function-name">Padding</span></a>(<span class="argument-name">context</span>, <span class="argument-name">length</span>, <span class="argument-name">chars</span><span class="argument-default">=None</span>)</dt>
+        <dd class="functiondesc">
+          <div class="abstract">The str:padding function creates a padding string of a certain length.</div>
+          <pre class="description">The second argument gives a string to be used to create the padding.
+This string is repeated as many times as is necessary to create a string
+of the length specified by the first argument; if the string is more than
+a character long, it may have to be truncated to produce the required
+length. If no second argument is specified, it defaults to a space (' ').</pre>
+        </dd>
+        <dt class="functiondef"><a name="Replace"><span class="function-name">Replace</span></a>(<span class="argument-name">context</span>, <span class="argument-name">s</span>, <span class="argument-name">searchNodes</span>, <span class="argument-name">replNodes</span>)</dt>
+        <dd class="functiondesc">
+          <div class="abstract">The str:replace function converts a string to a node-set, with
+each instance of a substring from a given list (obtained from the
+string-values of nodes in the second argument) replaced by the
+node at the corresponding position of the node-set given as the
+third argument. Unreplaced substrings become text nodes.</div>
+          <pre class="description">The second and third arguments can be any type of object; if
+either is not a node-set, it is treated as if it were a node-set
+of just one text node, formed from the object's string-value.
+
+Attribute and namespace nodes in the replacement set are
+erroneous but are treated as empty text nodes.
+
+All occurrences of the longest substrings are replaced first,
+and once a replacement is made, that span of the original string
+is no longer eligible for future replacements.
+
+An empty search string matches between every character of the
+original string.
+
+See http://exslt.org/str/functions/replace/str.replace.html for details.</pre>
+        </dd>
+        <dt class="functiondef"><a name="Split"><span class="function-name">Split</span></a>(<span class="argument-name">context</span>, <span class="argument-name">string</span>, <span class="argument-name">pattern</span><span class="argument-default">=u' '</span>)</dt>
+        <dd class="functiondesc">
+          <div class="abstract">The str:split function splits up a string and returns a node set of
+token elements, each containing one token from the string.</div>
+          <pre class="description">The first argument is the string to be split. The second argument is a
+pattern string (default=' '). The string given by the first argument is
+split at any occurrence of this pattern. An empty string pattern will
+result in a split on every character in the string.</pre>
+        </dd>
+        <dt class="functiondef"><a name="Tokenize"><span class="function-name">Tokenize</span></a>(<span class="argument-name">context</span>, <span class="argument-name">string</span>, <span class="argument-name">delimiters</span><span class="argument-default">='\t\n\r '</span>)</dt>
+        <dd class="functiondesc">
+          <div class="abstract">The str:tokenize function splits up a string and returns a node set of
+'token' elements, each containing one token from the string.</div>
+          <pre class="description">The first argument is the string to be tokenized. The second argument
+is a string consisting of a number of characters. Each character in
+this string is taken as a delimiting character. The string given by the
+first argument is split at any occurrence of any of these characters.</pre>
+        </dd>
+      </dl>
+    </div>
+    <div class="section">
+      <h2>Globals</h2>
+      <dl class="globals">
+        <dt class="globaldef"><a name="EXSL_STRINGS_NS"><span class="global-name">EXSL_STRINGS_NS</span></a> = 'http://exslt.org/strings'</dt>
+        <dd class="globaldesc"></dd>
+        <dt class="globaldef"><a name="ExtElements"><span class="global-name">ExtElements</span></a> = {}</dt>
+        <dd class="globaldesc"></dd>
+        <dt class="globaldef"><a name="ExtFunctions"><span class="global-name">ExtFunctions</span></a> = {('http://exslt.org/strings', 'align'): &lt;function Align at 0xb75d256c&gt;, ('http://exslt.org/strings', 'concat'): &lt;function Concat at 0xb75d2534&gt;, ('http://exslt.org/strings', 'decode-uri'): &lt;function DecodeUri at 0xb75d26f4&gt;, ('http://exslt.org/strings', 'encode-uri'): &lt;function EncodeUri at 0xb75d248c&gt;, ('http://exslt.org/strings', 'padding'): &lt;function Padding at 0xb75d2684&gt;, ('http://exslt.org/strings', 'replace'): &lt;function Replace at 0xb75d25dc&gt;, ('http://exslt.org/strings', 'split'): &lt;function Split at 0xb75d24fc&gt;, ('http://exslt.org/strings', 'tokenize'): &lt;function Tokenize at 0xb75d25a4&gt;}</dt>
+        <dd class="globaldesc"></dd>
+        <dt class="globaldef"><a name="ExtNamespaces"><span class="global-name">ExtNamespaces</span></a> = {'http://exslt.org/strings': 'str'}</dt>
+        <dd class="globaldesc"></dd>
+        <dt class="globaldef"><a name="NAMESPACE_NODE"><span class="global-name">NAMESPACE_NODE</span></a> = 13</dt>
+        <dd class="globaldesc"></dd>
+      </dl>
+    </div>
+    <div class="universal-footer">Last modified on 2006-12-18 15:29:56</div>
+  </body>
+</html>

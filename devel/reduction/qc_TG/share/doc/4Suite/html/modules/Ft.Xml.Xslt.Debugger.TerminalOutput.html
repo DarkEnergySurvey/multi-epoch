@@ -1,0 +1,105 @@
+<html>
+  <head>
+    <meta content="text/html; charset=iso-8859-1" http-equiv="Content-Type">
+    <title>4Suite API Documentation: Ft.Xml.Xslt.Debugger.TerminalOutput</title>
+    <link href="modules.css" type="text/css" rel="stylesheet">
+  </head>
+  <body>
+    <div class="universal-header"><span class="universal-header-prefix">&nbsp;&nbsp;&nbsp;</span>&nbsp;<span class="universal-header-prefix">&nbsp;&nbsp;</span>&nbsp;<span class="universal-header-prefix">&nbsp;</span>&nbsp;<a href="../index.html">4Suite<sup>&trade;</sup> API Documentation</a></div>
+    <h1><span class="glyph-arrow">&#9658;</span> Module <span class="this-name"><a href="Ft.html" title="Ft">Ft</a>.<a href="Ft.Xml.html" title="Ft.Xml">Xml</a>.<a href="Ft.Xml.Xslt.html" title="Ft.Xml.Xslt">Xslt</a>.<a href="Ft.Xml.Xslt.Debugger.html" title="Ft.Xml.Xslt.Debugger">Debugger</a>.TerminalOutput</span></h1>
+    <div class="abstract">Output handler to route debugger messages to a terminal</div>
+    <pre class="description">Copyright 2004 Fourthought, Inc. (USA).
+Detailed license and copyright information: http://4suite.org/COPYRIGHT
+Project home, documentation, distributions: http://4suite.org/</pre>
+    <div class="summary-section">
+      <table cellpadding="0" cellspacing="0">
+        <tbody>
+          <tr>
+            <td valign="top">
+              <div class="summary-header">Classes:</div>
+              <div class="summary-list"><span class="class-name"><a href="#TerminalOutputHandler">TerminalOutputHandler</a></span></div>
+            </td>
+            <td width="7" valign="middle"></td>
+            <td width="1" valign="middle" bgcolor="#C5C5C5"></td>
+            <td width="7" valign="middle"></td>
+            <td valign="top">
+              <div class="summary-header">Globals:</div>
+              <div class="summary-list"><span class="global-name"><a href="#NAMESPACE_NODE">NAMESPACE_NODE</a></span>, <span class="global-name"><a href="#g_commandPrint">g_commandPrint</a></span>, <span class="global-name"><a href="#g_detailedHelp">g_detailedHelp</a></span>, <span class="global-name"><a href="#g_help">g_help</a></span>, <span class="global-name"><a href="#g_stringTypes">g_stringTypes</a></span></div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="section">
+      <h2>Classes</h2>
+      <dl class="classes">
+        <dt class="classdef"><a name="TerminalOutputHandler"></a>class <span class="class-name">TerminalOutputHandler</span></dt>
+        <dd class="classdesc">
+          <h3>Methods</h3>
+          <dl class="methods">
+            <dt class="methoddef"><a name="TerminalOutputHandler-display"><span class="method-name">display</span></a>(<span class="argument-name">self</span>, <span class="argument-name">msg</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dt class="methoddef"><a name="TerminalOutputHandler-display_backTrace"><span class="method-name">display_backTrace</span></a>(<span class="argument-name">self</span>, <span class="argument-name">tb</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dt class="methoddef"><a name="TerminalOutputHandler-display_breakpoints"><span class="method-name">display_breakpoints</span></a>(<span class="argument-name">self</span>, <span class="argument-name">bps</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dt class="methoddef"><a name="TerminalOutputHandler-display_context"><span class="method-name">display_context</span></a>(<span class="argument-name">self</span>, <span class="argument-name">context</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dt class="methoddef"><a name="TerminalOutputHandler-display_contextCurrentNode"><span class="method-name">display_contextCurrentNode</span></a>(<span class="argument-name">self</span>, <span class="argument-name">cn</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dt class="methoddef"><a name="TerminalOutputHandler-display_contextMode"><span class="method-name">display_contextMode</span></a>(<span class="argument-name">self</span>, <span class="argument-name">mode</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dt class="methoddef"><a name="TerminalOutputHandler-display_contextNode"><span class="method-name">display_contextNode</span></a>(<span class="argument-name">self</span>, <span class="argument-name">node</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dt class="methoddef"><a name="TerminalOutputHandler-display_contextPosition"><span class="method-name">display_contextPosition</span></a>(<span class="argument-name">self</span>, <span class="argument-name">position</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dt class="methoddef"><a name="TerminalOutputHandler-display_contextSize"><span class="method-name">display_contextSize</span></a>(<span class="argument-name">self</span>, <span class="argument-name">size</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dt class="methoddef"><a name="TerminalOutputHandler-display_currentCommand"><span class="method-name">display_currentCommand</span></a>(<span class="argument-name">self</span>, <span class="argument-name">cmd</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dt class="methoddef"><a name="TerminalOutputHandler-display_currentPosition"><span class="method-name">display_currentPosition</span></a>(<span class="argument-name">self</span>, <span class="argument-name">node</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dt class="methoddef"><a name="TerminalOutputHandler-display_error"><span class="method-name">display_error</span></a>(<span class="argument-name">self</span>, <span class="argument-name">err</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dt class="methoddef"><a name="TerminalOutputHandler-display_exception"><span class="method-name">display_exception</span></a>(<span class="argument-name">self</span>, <span class="argument-name">etype</span>, <span class="argument-name">value</span>, <span class="argument-name">tb</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dt class="methoddef"><a name="TerminalOutputHandler-display_expressionResults"><span class="method-name">display_expressionResults</span></a>(<span class="argument-name">self</span>, <span class="argument-name">expr</span>, <span class="argument-name">rt</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dt class="methoddef"><a name="TerminalOutputHandler-display_help"><span class="method-name">display_help</span></a>(<span class="argument-name">self</span>, <span class="argument-name">args</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dt class="methoddef"><a name="TerminalOutputHandler-display_lastOutputs"><span class="method-name">display_lastOutputs</span></a>(<span class="argument-name">self</span>, <span class="argument-name">lo</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dt class="methoddef"><a name="TerminalOutputHandler-display_lastResult"><span class="method-name">display_lastResult</span></a>(<span class="argument-name">self</span>, <span class="argument-name">lr</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dt class="methoddef"><a name="TerminalOutputHandler-display_node"><span class="method-name">display_node</span></a> = <a href="#TerminalOutputHandler-_printNode">_printNode</a>(<span class="argument-name">self</span>, <span class="argument-name">node</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dt class="methoddef"><a name="TerminalOutputHandler-display_selectResults"><span class="method-name">display_selectResults</span></a>(<span class="argument-name">self</span>, <span class="argument-name">expr</span>, <span class="argument-name">rt</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dt class="methoddef"><a name="TerminalOutputHandler-display_sheet"><span class="method-name">display_sheet</span></a>(<span class="argument-name">self</span>, <span class="argument-name">node</span>, <span class="argument-name">start</span><span class="argument-default">=None</span>, <span class="argument-name">end</span><span class="argument-default">=None</span>, <span class="argument-name">fileName</span><span class="argument-default">=None</span>)</dt>
+            <dd class="methoddesc"></dd>
+          </dl>
+          <h3>Members</h3>
+          <dl class="members">
+            <dt class="memberdef"><a name="g_fileLineCache"><span class="member-name">g_fileLineCache</span></a> = {}</dt>
+          </dl>
+        </dd>
+      </dl>
+    </div>
+    <div class="section">
+      <h2>Globals</h2>
+      <dl class="globals">
+        <dt class="globaldef"><a name="NAMESPACE_NODE"><span class="global-name">NAMESPACE_NODE</span></a> = 13</dt>
+        <dd class="globaldesc"></dd>
+        <dt class="globaldef"><a name="g_commandPrint"><span class="global-name">g_commandPrint</span></a> = {1: 'Run', 2: 'Quit', 3: 'Print', 4: 'Run to Template', 5: 'List Sheet', 6: 'Back Trace', 7: 'Step', 8: 'Next', 9: 'Test XPath', 10: 'Evaluate Expression', ...}</dt>
+        <dd class="globaldesc"></dd>
+        <dt class="globaldef"><a name="g_detailedHelp"><span class="global-name">g_detailedHelp</span></a> = {'avt': 'Evaluate a attribute value template at the current context', 'b': 'Set a break point in stylesheet', 'bt': 'Print the call stack', 'db': 'Delete a break point in stylesheet', 'eval': 'Evaluate a XPath expression at the current context', 'help': 'help', 'lb': 'List break points', 'ls': 'List Sheet\n\n  ls [fileName:][start[-end]]\n\n    f...e default is nine lines after the current line\n\n\n', 'lt': 'Print the current template', 'match': 'Evaluate a XPattern expression at the current context', ...}</dt>
+        <dd class="globaldesc"></dd>
+        <dt class="globaldef"><a name="g_help"><span class="global-name">g_help</span></a> = {'avt': 'Evaluate a attribute value template at the current context', 'b': 'Set a break point in stylesheet', 'bt': 'Print the call stack', 'db': 'Delete a break point in stylesheet', 'eval': 'Evaluate a XPath expression at the current context', 'help': 'help', 'lb': 'List break points', 'ls': 'List the current stylesheet', 'lt': 'Print the current template', 'match': 'Evaluate a XPattern expression at the current context', ...}</dt>
+        <dd class="globaldesc"></dd>
+        <dt class="globaldef"><a name="g_stringTypes"><span class="global-name">g_stringTypes</span></a> = [&lt;type 'str'&gt;, &lt;type 'unicode'&gt;]</dt>
+        <dd class="globaldesc"></dd>
+      </dl>
+    </div>
+    <div class="universal-footer">Last modified on 2004-10-04 16:55:00</div>
+  </body>
+</html>

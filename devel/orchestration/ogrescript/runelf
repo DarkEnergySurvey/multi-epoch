@@ -1,0 +1,146 @@
+#!/usr/bin/perl
+
+
+use strict;
+use Getopt::Long;
+require Pod::Usage;
+use Data::Dumper;
+use File::Basename;
+
+
+my %stages = (
+               bcs   => ["module_orchs/msetup.xml", "module_orchs/createlists.xml", "module_orchs/makexml.xml", "module_orchs/runjobs.xml"],
+               scamp => ["module_scamp/scamplist.xml", "module_scamp/runscamp.xml"],
+               post  => ["module_orchs/makexml_postscamp.xml", "module_orchs/runjobs.xml"],
+             );
+
+my ($proj, $trg);
+
+GetOptions( 'project|p=s'   => \$proj,
+            'target|t=s'    => \$trg )
+  or Pod::Usage::pod2usage(0);
+
+my $file = $ARGV[0];
+my $stage = $ARGV[1];
+
+##if( !defined($proj) )
+##{
+##  print "runelf -project|-p=[BCS|DES] -target|-t=[bcs|scamp|post]\n";
+##  print "\texample: runelf -p=BCS -t=scamp\n";
+##}
+
+##for my $t (@{$stages{$trg}})
+##{
+##  print "module_orchs/run.sh $t\n";
+##}
+
+
+
+##open FILE, "<edit_$proj.properties" or die "No properties file for project: $proj\n";
+open FILE, "<$file" or die "No properties file for project: $proj\n";
+
+my $slist;
+
+
+##       description="BCS Stages">
+## </target>
+my $v;
+my $g;
+my $ent;
+my $stg;
+my $dps;
+my @dps;
+my $trg;
+my $prop;
+my %deps;
+my @ents;
+
+while(<FILE>)
+{
+## <!ENTITY  Stage_createlists       SYSTEM "module_orchs/createlists.xml">
+  if( $_ =~ m!ENTITY! )
+  {
+    my @t = split /\b([ <! "]+)\b/, $_;
+##    my @t = split /\b([ <! "]+)\b/, $_;
+##    my @t = split /\b([A-Za-z.<!\"]+)\b/, $_;
+##    my @t = split /\s([A-Za-z]+)\s/, $_;
+$stg = $t[2];
+($ent,$g) = split /"/, $t[6];
+push @ents, "<import file=\"$ent\"/>\n"; 
+  }
+##       depends="Stage_msetup, Stage_createlists, Stage_makexml, Stage_runjobs"
+  elsif( $_ =~ m!depends! )
+  {
+($v, $dps) = split /"/, $_;
+@dps = split /,/, $dps;
+$deps{$trg} = [ @dps ];
+  }
+## <target name="Stage_BCS"
+  elsif( $_ =~ m!<target! )
+  {
+($v, $trg) = split /"/, $_;
+  }
+## <property file="edit_BCS.properties"/>
+  elsif( $_ =~ m!<property! )
+  {
+$prop = $_;
+  }
+}
+
+close FILE;
+
+
+##print Dumper @ents;
+##print "\n\n";
+##print Dumper $deps{$stage};
+##print Dumper %deps;
+
+##for (@{$deps{$stage}})
+##{
+##  s/^\s+//;
+##  print "<call procedure=\"$_\"/>\n";
+##}
+
+
+open TMP, "<workflow.xml.tmp";
+open OUT, ">work_out.xml.test3";
+
+while( <TMP> )
+{
+
+  if( $_ =~ m!PROPERTIES! )
+  {
+    my @props = split /\"/, $prop;
+    print OUT "<properties file=\"$props[1]\"/>\n";
+  }
+  elsif( $_ =~ m!IMPORT! )
+  {
+    for (@ents)
+    {
+      print OUT "$_";
+    }
+  }
+  elsif( $_ =~ m!CALLS! )
+  {
+    for (@{$deps{$stage}})
+    {
+      s/^\s+//;
+      print OUT "<call procedure=\"$_\"/>\n";
+    }
+  }
+  else
+  {
+    print OUT $_;
+  }
+}
+
+close TMP;
+close OUT;
+
+##system( "run.sh work_out.xml.test3" );
+
+my $pid = open( README, "run.sh work_out.xml.test3 |" );
+while( <README> )
+{
+  print $_;
+}

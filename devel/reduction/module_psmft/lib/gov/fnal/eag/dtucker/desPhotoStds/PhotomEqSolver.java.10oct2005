@@ -1,0 +1,563 @@
+package gov.fnal.eag.dtucker.desPhotoStds;
+
+import java.io.IOException;
+import java.sql.*;
+import hep.aida.*;
+import java.util.Date;
+
+/**
+ * This class defines methods for solving the photometric zeropoint, a, 
+ * and the first-order extinction, k, for a given filter for a given night
+ * by fitting the following equation for standard star observations:
+ *    m_inst-m_std = a + kX,
+ * where m_inst is the instrumental (observed) mag of a standard star,
+ * m_std is the known calibrated mag of the standard star, and 
+ * X is the airmass of the observation.
+ * @author dtucker
+ *
+ */
+public class PhotomEqSolver {
+    
+    //Instance variables dealing with the SQL database
+    private String sqlDriver = "oracle.jdbc.driver.OracleDriver";
+    private String url       = "jdbc:oracle:thin:@//talamlx.ncsa.uiuc.edu:1521/";
+    private String dbName    = "des";
+    private String user      = "dummy";
+    private String passwd    = "dummy";
+  
+    //Instance variables dealing with this run of the Photometric Standards Module
+    private Date date = new Date();
+    private String psmVersion = null;
+    
+    //Instance variables dealing with the observed data to be calibrated
+    private String obsTable  = "des_testobs";
+    private double mjdLo     = 55135.0;
+    private double mjdHi     = 55136.0;
+    private int    ccdid     = 29;
+    private String filter    = "r";
+    
+    //Instance variables dealing with the standard star list
+    private String stdTable  = "des_stripe82_stds_v1";
+    
+    //Instance variables dealing with the output of the fit
+    private String fitTable  = "des_testfit";
+    
+    //General instance variables...
+    private String[] filterList = {"u", "g", "r", "i", "z"};
+    private int verbose = 0;
+    
+    public void solve () throws Exception {
+        
+        if (verbose > 0) {
+            System.out.println("The beginning...");
+        }
+            
+        int filterIndex = -1;
+        for (int j=0; j < filterList.length; j++) {
+            if (filter.equals(filterList[j])) {
+                filterIndex = j;
+                break;
+            }
+        }
+        if (verbose > 0) {
+            System.out.println("filterIndex for filter " + filter + " is " + filterIndex + ".");
+        }
+        if (filterIndex < 0) {
+            System.out.println("Incompatible filter index.  Throwing Exception!");
+            throw new Exception();
+        }
+        
+        //Stuff from JAS3/JAIDA
+        IAnalysisFactory af = IAnalysisFactory.create();
+        ITree tree = af.createTreeFactory().create();
+        IDataPointSetFactory dpsf = af.createDataPointSetFactory(tree);
+        IFunctionFactory funcF = af.createFunctionFactory(tree);
+        IFitFactory fitF = af.createFitFactory();
+        IFitter fitter = fitF.createFitter("Chi2", "uncmin");
+        IDataPointSet dataPointSet = dpsf.create("dataPointSet", "two dimensional IDataPointSet", 2);
+        
+        //Establish connection to database
+        if (verbose > 0) {
+            System.out.println("Establishing connection to database.");
+        }
+        Class.forName(sqlDriver);
+        String fullURL = url+dbName;
+        Connection db = DriverManager.getConnection(fullURL, user, passwd);
+                
+        //Find ra, dec range std star observations to be calibrated
+        if (verbose > 0) {
+            System.out.println("Finding ra, dec range std star observations to be calibrated.");
+        }
+        // if ccdid >= 0, only consider stars on the named ccd;
+        // otherwise, consider stars on all ccds
+        String query0 = null;
+        if (ccdid >= 0) { 
+            query0 = "SELECT min(ra), max(ra), min(dec), max(dec) " +
+            "FROM " + obsTable + " " +  
+            "WHERE (mjd BETWEEN " + mjdLo + " AND " + mjdHi + " ) AND ccd = " + ccdid;
+        } else {
+            query0 = "SELECT min(ra), max(ra), min(dec), max(dec) " +
+            "FROM " + obsTable + " " +  
+            "WHERE (mjd BETWEEN " + mjdLo + " AND " + mjdHi + " )";
+        }
+        if (verbose > 0) {  
+            System.out.println("query0 = " + query0);
+        }
+        Statement st0 = db.createStatement();
+        ResultSet rs0 = st0.executeQuery(query0);
+        rs0.next();
+        // We ignore the 24h/0h wraparound for now...
+        double raMin  = rs0.getDouble(1);
+        double raMax  = rs0.getDouble(2);
+        double decMin = rs0.getDouble(3);
+        double decMax = rs0.getDouble(4);
+        rs0.close();
+        st0.close();
+        if (verbose > 0) {
+            System.out.println("   min(ra)  = " + raMin);
+            System.out.println("   max(ra)  = " + raMax);
+            System.out.println("   min(dec) = " + decMin);
+            System.out.println("   max(dec) = " + decMax);
+        }
+        
+        //Define queries for matching std star observed aperture mags with their std mags... 
+        if (verbose > 0) {
+            System.out.println("Defining match queries.");
+        }
+        String query1 = "SELECT * " +
+        "FROM " + stdTable + " "  + 
+        "WHERE (radeg  BETWEEN " + raMin  + " AND " + raMax  + " ) " +
+        "AND   (decdeg BETWEEN " + decMin + " AND " + decMax + " ) "; 
+        Statement st1 = db.createStatement();
+        if (verbose > 0) {
+            System.out.println("query1 = " + query1);
+        }
+        
+        // if ccdid >= 0, only consider stars on the named ccd;
+        // otherwise, consider stars on all ccds
+        String query2 = null;
+        if (ccdid >= 0) {
+            query2 = "SELECT exptime, airmass, counts2 " +
+            "FROM  " + obsTable + " "  + 
+            "WHERE (ra BETWEEN ? AND ?) AND (dec BETWEEN ? AND ?) AND " +
+            "trim(filter) = '"+filter+"' AND counts2 > 0. AND exptime > 0. AND " +
+            "ccd = "+ccdid;
+        } else {
+            query2 = "SELECT exptime, airmass, counts2 " +
+            "FROM  " + obsTable + " "  + 
+            "WHERE (ra BETWEEN ? AND ?) AND (dec BETWEEN ? AND ?) AND " +
+            "trim(filter) = '"+filter+"' AND counts2 > 0. AND exptime > 0.";
+        }
+            
+        PreparedStatement st2 = db.prepareStatement(query2);
+        if (verbose > 0) {
+            System.out.println("query2 = " + query2);
+        }
+        
+        //Querying database... 
+        if (verbose > 0) {
+            System.out.println("Querying database.");
+        }
+        
+        int i = 0;
+        double[] stdmag    = new double[5];
+        double[] stdmagerr = new double[5];
+        
+        ResultSet rs1 = st1.executeQuery(query1);
+        
+        while (rs1.next()) {
+            double raStd  = rs1.getDouble("radeg");
+            double decStd = rs1.getDouble("decdeg");
+            for (int j=0; j<filterList.length; j++) {
+                String magColumnName    = "stdmag_"+filterList[j];
+                String magerrColumnName = "stdmagerr_"+filterList[j];
+                stdmag[j]    = (double) rs1.getFloat(magColumnName);
+                stdmagerr[j] = (double) rs1.getFloat(magerrColumnName);
+            }
+            
+            // If the stdmag or the stdmagerr for the filter being solved for
+            // doesn't make sense, then skip this std star...
+            if (stdmag[filterIndex] < 0. || stdmagerr[filterIndex] < 0) {
+                continue;
+            }
+            
+            // Search in a small (ra,dec) box for observations that match
+            // the standard star.
+            // We ignore the 24h/0h wraparound for now...
+            double raLo  = raStd  - 0.0001;
+            double raHi  = raStd  + 0.0001;
+            double decLo = decStd - 0.0001;
+            double decHi = decStd + 0.0001;
+            
+            st2.setDouble(1,raLo);
+            st2.setDouble(2,raHi);
+            st2.setDouble(3,decLo);
+            st2.setDouble(4,decHi);
+            
+            ResultSet rs2 = st2.executeQuery();
+            
+            while (rs2.next()) {
+                
+                double exptime = (double) rs2.getFloat("exptime");
+                double airmass = (double) rs2.getFloat("airmass");
+                double counts2 = (double) rs2.getFloat("counts2");   
+                
+                double instmag = -2.5*0.4342944819*Math.log(counts2/exptime);
+                double deltamag = instmag-stdmag[filterIndex];
+                dataPointSet.addPoint();
+                IDataPoint dp = dataPointSet.point(i);
+                dp.coordinate(0).setValue(airmass);
+                dp.coordinate(1).setValue(deltamag);
+                dp.coordinate(1).setErrorPlus(0.02);
+                dp.coordinate(1).setErrorMinus(0.02);
+                if (verbose > 0) {
+                    if (i%100 == 1) {
+                        System.out.println("  " + i + " " + 
+                                raStd + " " + decStd + " " + stdmag[filterIndex] + " " + counts2 );
+                    }
+                }
+                i++;
+            }                              
+            
+            rs2.close();
+            
+        }
+        
+        rs1.close();
+        st1.close();
+        st2.close();
+        
+        if (verbose > 0) {
+            System.out.println("Plotting data points");
+        }
+        
+        IPlotter plotter = af.createPlotterFactory().create("a plot");
+        plotter.region(0).plot(dataPointSet);
+        //plotter.show();
+        
+        if (verbose > 0) {
+            System.out.println("Fitting data points.");
+        }
+        IFunction line = funcF.createFunctionByName("line", "p1");
+        IFitResult result = fitter.fit(dataPointSet, line);
+        
+        
+        System.out.println("Plotting fit.");
+        plotter.region(0).plot(result.fittedFunction());
+        try {
+            String qaPlotFile = "PSM_QA_"+filter+".ps";
+            plotter.writeToFile(qaPlotFile, "ps");
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        
+        String names[] = result.fittedParameterNames();
+        double a = result.fittedParameter(names[0]);
+        double b = 0.0;
+        double k = result.fittedParameter(names[1]);
+        
+        double [] errors = result.errors();
+        double aerr = errors[0];
+        double berr = 0.0;
+        double kerr = errors[1];
+        
+        double chi2 = result.quality();
+        double rms = -1.0;
+        int    dof = result.ndf();
+        int    photometricFlag = -1;
+        
+        //Calculate rms of solution...
+        double sum  = 0.;
+        double sum2 = 0.;
+        int ntot = dataPointSet.size();
+        if (ntot > 0) {
+            for (int j=0; j < ntot; j++) {
+                IDataPoint dp = dataPointSet.point(j);
+                double airmass  = dp.coordinate(0).value();
+                double deltamag = dp.coordinate(1).value();
+                double res = deltamag - (a + k*airmass);
+                sum  = sum  + res;
+                sum2 = sum2 + res*res;
+            }
+            double ave = sum/ntot;
+            double ave2 = sum2/ntot;
+            rms = ave2 - ave*ave;
+            if (rms < 0.02) {
+                photometricFlag = 1;
+            } else {
+                photometricFlag = 0;
+            }
+        }
+        
+        if (verbose > 0) {
+            
+            System.out.println("Outputting results of fit.");
+            System.out.println("Fit Method Name= " + result.fitMethodName());
+            System.out.println("MJD range= " + mjdLo + " - " + mjdHi);
+            System.out.println("filter= " + filter);
+            System.out.println("a= " + a + ", aerr= " + aerr);
+            System.out.println("b= " + b + ", berr= " + berr);
+            System.out.println("k= " + k + ", kerr= " + kerr);
+            System.out.println("rms=" + rms);
+            System.out.println("Chi2=" + chi2);
+            System.out.println("dof=" + dof);
+            
+        }
+        
+        // there is probably a better way to add a timestamp...
+        //java.util.Date d = new java.util.Date();
+        Timestamp tt = new Timestamp(date.getTime());
+        
+        String values = mjdLo  + ", " + mjdHi + ", " + 
+                        ccdid + ", '" + filter + "', " +
+                        a + ", " + aerr + ", " + 
+                        b + ", " + berr + ", " + 
+                        k + ", " + kerr + ", " + 
+                        rms + ", " + chi2 + ", " + dof + ", " + 
+                        photometricFlag + ", '" + psmVersion + 
+                        "', to_timestamp('" + tt.toString() + "','YYYY-MM-DD HH24:MI:SS.FF3')";
+        
+        if (verbose > 0) {
+            System.out.println(values);
+        }
+        
+        Statement stmt = db.createStatement();
+        stmt.executeUpdate("INSERT INTO " + fitTable + " " + 
+                "VALUES (" + values + " )");
+        stmt.close();
+        
+        db.close();
+        
+        if (verbose > 0) {
+            System.out.println("That's all, folks!");
+        }     
+        
+    }
+    
+    
+    /**
+     * @return Returns the sqlDriver.
+     */
+    public String getSqlDriver() {
+        return sqlDriver;
+    }
+    
+    /**
+     * @param sqlDriver The sqlDriver to set.
+     */
+    public void setSqlDriver(String sqlDriver) {
+        this.sqlDriver = sqlDriver;
+    }
+    
+    /**
+     * @return Returns the dbName.
+     */
+    public String getDbName() {
+        return dbName;
+    }
+        
+    /**
+     * @param dbName The dbName to set.
+     */
+    public void setDbName(String dbName) {
+        this.dbName = dbName;
+    }
+    
+    /**
+     * @return Returns the url.
+     */
+    public String getUrl() {
+        return url;
+    }
+    
+    /**
+     * @param url The url to set.
+     */
+    public void setUrl(String url) {
+        this.url = url;
+    }
+    
+    /**
+     * @return Returns the user.
+     */
+    public String getUser() {
+        return user;
+    }
+    
+    /**
+     * @param user The user to set.
+     */
+    public void setUser(String user) {
+        this.user = user;
+    }
+    
+    /**
+     * @return Returns the ccdid.
+     */
+    public int getCcdid() {
+        return ccdid;
+    }
+    
+    /**
+     * @param ccdid The ccdid to set.
+     */
+    public void setCcdid(int ccdid) {
+        this.ccdid = ccdid;
+    }
+    
+    /**
+     * @return Returns the mjdHi.
+     */
+    public double getMjdHi() {
+        return mjdHi;
+    }
+    
+    /**
+     * @param mjdHi The mjdHi to set.
+     */
+    public void setMjdHi(double mjdHi) {
+        this.mjdHi = mjdHi;
+    }
+    
+    /**
+     * @return Returns the mjdLo.
+     */
+    public double getMjdLo() {
+        return mjdLo;
+    }
+    
+    /**
+     * @param mjdLo The mjdLo to set.
+     */
+    public void setMjdLo(double mjdLo) {
+        this.mjdLo = mjdLo;
+    }
+        
+    /**
+     * @return Returns the obsTable.
+     */
+    public String getObsTable() {
+        return obsTable;
+    }
+        
+    /**
+     * @param obsTable The obsTable to set.
+     */
+    public void setObsTable(String obsTable) {
+        this.obsTable = obsTable;
+    }
+    
+    /**
+     * @return Returns the stdTable.
+     */
+    public String getStdTable() {
+        return stdTable;
+    }    
+    
+    /**
+     * @param stdTable The stdTable to set.
+     */
+    public void setStdTable(String stdTable) {
+        this.stdTable = stdTable;
+    }
+
+    /**
+     * @return Returns the filter.
+     */
+    public String getFilter() {
+        return filter;
+    }
+    
+    /**
+     * @param filter The filter to set.
+     */
+    public void setFilter(String filter) {
+        this.filter = filter;
+    }
+      
+    /**
+     * @return Returns the filterList.
+     */
+    public String[] getFilterList() {
+        return filterList;
+    }
+    
+    /**
+     * @param filterList The filterList to set.
+     */
+    public void setFilterList(String[] filterList) {
+        this.filterList = filterList;
+    }
+    
+    /**
+     * @return Returns the verbose.
+     */
+    public int getVerbose() {
+        return verbose;
+    }
+    
+    /**
+     * @param verbose The verbose to set.
+     */
+    public void setVerbose(int verbose) {
+        this.verbose = verbose;
+    }
+    
+    /**
+     * @return Returns the fitTable.
+     */
+    public String getFitTable() {
+        return fitTable;
+    }
+        
+    /**
+     * @param fitTable The fitTable to set.
+     */
+    public void setFitTable(String fitTable) {
+        this.fitTable = fitTable;
+    }
+    
+    /**
+     * @return Returns the date.
+     */
+    public Date getDate() {
+        return date;
+    }
+
+    /**
+     * @param date The date to set.
+     */
+    public void setDate(Date date) {
+        this.date = date;
+    }
+    
+    /**
+     * @return Returns the passwd.
+     */
+    public String getPasswd() {
+        return passwd;
+    }
+    
+    /**
+     * @param passwd The passwd to set.
+     */
+    public void setPasswd(String passwd) {
+        this.passwd = passwd;
+    }
+    
+    /**
+     * @return Returns the psmVersion.
+     */
+    public String getPsmVersion() {
+        return psmVersion;
+    }
+    
+    /**
+     * @param psmVersion The psmVersion to set.
+     */
+    public void setPsmVersion(String psmVersion) {
+        this.psmVersion = psmVersion;
+    }
+
+}

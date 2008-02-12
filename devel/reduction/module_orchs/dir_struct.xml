@@ -1,0 +1,153 @@
+
+
+     <esequence>
+
+        <edeclare globalName="host" string="teragrid"/>
+        <rtexec inheritedEnv="false" execDir="." args="/bin/hostname -f" quiet="true">
+                <outMonitor file="hostname.out" append="false"/>
+                <errMonitor file="hostname.err" append="false"/>
+        </rtexec>
+
+        <esleep timeout="1000"/>
+
+        <read path="hostname.out" lines="true"/>
+        <ereturn name="host" get="string"/>
+
+        <publish>
+           <event ensembleid="${ensemble.id}"
+                 workflowid="ComputeEnvSetup"
+                 nodeid="Begin Stage_setup on $G{host}"
+                 currentState="0">
+                  <property name="message" value="Begin Stage_setup on $G{host}"/>
+           </event>
+        </publish>
+
+
+        <edeclare name="appbase"      string="${user.dir}"/>
+
+        <edeclare name="srcdir_bin"  string="gridftp://${binhost}${binpath}"/>
+        <edeclare name="srcdir_etc"  string="gridftp://${etchost}${etcpath}"/>
+        <edeclare name="srcdir_qc"  string="gridftp://${qchost}${qcpath}"/>
+
+        <edeclare name="targetdirbin" string="file://$R{appbase}/bin"/>
+        <edeclare name="targetdiretc" string="file://$R{appbase}/etc"/>
+        <edeclare name="targetdirqc" string="file://$R{appbase}/qc"/>
+
+        <delete dir="$R{appbase}/qc"/>
+
+        <print line="Stage_setup - Transferring bin/ ...  "/>
+        <uricopy from="$R{srcdir_bin}" to="$R{targetdirbin}">
+        </uricopy>
+        <print line="Stage_setup - Transferred bin/ "/>
+
+        <print line="Stage_setup - Transferring etc/ ...  "/>
+        <uricopy from="$R{srcdir_etc}" to="$R{targetdiretc}">
+        </uricopy>
+        <print line="Stage_setup - Transferred etc "/>
+
+        <print line="Stage_setup - Transferring qc/ ...  "/>
+        <uricopy from="$R{srcdir_qc}" to="$R{targetdirqc}">
+        </uricopy>
+        <print line="Stage_setup - Transferred qc "/>
+
+        <print line="Stage_setup - chmod ... "/>
+        <rtexec inheritedEnv="true" execDir="." args="${chmodpath} -R 755 bin" quiet="true">
+        </rtexec>
+        <rtexec inheritedEnv="true" execDir="." args="${chmodpath} -R 755 qc" quiet="true">
+        </rtexec>
+        <print line="Stage_setup - chmod done "/>
+
+        <print line="Stage_setup - Creating directory workspaces ... "/>
+
+        <edeclare name="end" long="$E{ ${ccdstop} + 1 }"/> 
+
+        <eloop counterName="i" initialValue="${ccdstart}">
+             <ecounter>
+               <expression infix="$R{i} &lt; $R{end}"/>
+             </ecounter>           
+
+              <!-- convert 1,...,9 to 01,...,09 -->
+
+          <econdblock type="else-if">
+           <econdtask>
+             <eeval>
+                <statement> 
+                 <ecompare long="$R{i}">
+                     <predicate long="10" comparator="LT"/>
+                 </ecompare> 
+               </statement>
+             </eeval>
+                <edeclare globalName="in" string="0$R{i}"/>
+             </econdtask>
+                <edeclare globalName="in" long="$R{i}"/>
+          </econdblock>
+ 
+            <delete dir="${uid}_$R{in}"/>
+            <mkdir dir="${uid}_$R{in}"/>
+            <!--delete dir="${uid}_$R{in}/bin"/-->
+            <!--delete dir="${uid}_$R{in}/etc"/-->
+            <!--delete dir="${uid}_$R{in}/qc"/-->
+
+            <rtexec execDir="." args="${cppath} -r bin etc ${uid}_$R{in}" quiet="true">
+            </rtexec>
+
+            <rtexec inheritedEnv="false" execDir="." args="${lnpath} -s $R{appbase}/qc $R{appbase}/${uid}_$R{in}/qc" quiet="true">
+            </rtexec>
+
+            <!--delete dir="${uid}_$R{in}/xml"/-->
+            <mkdir dir="${uid}_$R{in}/xml"/>
+
+            <mkdir dir="${uid}_$R{in}/data"/>
+            <mkdir dir="${uid}_$R{in}/data/${nite}"/>
+            <mkdir dir="${uid}_$R{in}/data/${nite}/g"/>
+            <mkdir dir="${uid}_$R{in}/data/${nite}/r"/>
+            <mkdir dir="${uid}_$R{in}/data/${nite}/i"/>
+            <mkdir dir="${uid}_$R{in}/data/${nite}/z"/>
+            <mkdir dir="${uid}_$R{in}/data/${nite}/log"/>
+            <mkdir dir="${uid}_$R{in}/data/${nite}/cal"/>
+            <mkdir dir="${uid}_$R{in}/data/${nite}/cal/bias"/>
+            <mkdir dir="${uid}_$R{in}/data/${nite}/cal/bpm"/>
+            <mkdir dir="${uid}_$R{in}/data/${nite}/cal/flat_g"/>
+            <mkdir dir="${uid}_$R{in}/data/${nite}/cal/flat_i"/>
+            <mkdir dir="${uid}_$R{in}/data/${nite}/cal/flat_r"/>
+            <mkdir dir="${uid}_$R{in}/data/${nite}/cal/flat_z"/>
+            <mkdir dir="${uid}_$R{in}/data/${nite}/cal/fringe_g"/>
+            <mkdir dir="${uid}_$R{in}/data/${nite}/cal/fringe_i"/>
+            <mkdir dir="${uid}_$R{in}/data/${nite}/cal/fringe_r"/>
+            <mkdir dir="${uid}_$R{in}/data/${nite}/cal/fringe_z"/>
+            <mkdir dir="${uid}_$R{in}/data/${nite}/cal/illum_g"/>
+            <mkdir dir="${uid}_$R{in}/data/${nite}/cal/illum_i"/>
+            <mkdir dir="${uid}_$R{in}/data/${nite}/cal/illum_r"/>
+            <mkdir dir="${uid}_$R{in}/data/${nite}/cal/illum_z"/>
+            <mkdir dir="${uid}_$R{in}/data/${nite}/cal/scicombine_g"/>
+            <mkdir dir="${uid}_$R{in}/data/${nite}/cal/scicombine_i"/>
+            <mkdir dir="${uid}_$R{in}/data/${nite}/cal/scicombine_r"/>
+            <mkdir dir="${uid}_$R{in}/data/${nite}/cal/scicombine_z"/>
+
+        </eloop>
+
+        <delete dir="bin"/>
+        <delete dir="etc"/>
+        <!--delete dir="qc"/-->
+	<delete file="hostname.out"/>
+	<delete file="hostname.err"/>
+
+
+        <print line="Stage_setup - Created ${ccdstart} to ${ccdstop} directory workspaces. "/>
+ 
+        <publish>
+           <event ensembleid="${ensemble.id}"
+                 workflowid="ComputeEnvSetup"
+                 nodeid="End Stage_setup on $G{host}"
+                 currentState="1">
+                  <property name="message" value="End Stage_setup on $G{host}"/>
+           </event>
+        </publish>
+
+        <print line="Stage_setup - copy etc/ done "/>
+
+        <print line=" - Stage_setup done"/>
+     </esequence>
+
+   </target>
+</project>

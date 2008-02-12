@@ -1,0 +1,219 @@
+#!/usr/bin/env perl
+########################################################################
+#  $Id$
+#
+#  $Rev::                                  $:  # Revision of last commit.
+#  $LastChangedBy::                        $:  # Author of last commit. 
+#  $LastChangedDate::                      $:  # Date of last commit.
+#
+#  Authors: 
+#         Michelle Gower (mgower@ncsa.uiuc.edu)
+#         Darren Adams (dadams@ncsa.uiuc.edu)
+#
+#  Developed at: 
+#  The National Center for Supercomputing Applications (NCSA).
+#
+#  Copyright (C) 2007 Board of Trustees of the University of Illinois. 
+#  All rights reserved.
+#
+#  DESCRIPTION:
+#    Does not remove the raw/src directory unless option -rmsrc
+#
+#######################################################################
+
+use strict;
+use warnings;
+
+use Getopt::Long;
+
+use FindBin;
+use lib "$FindBin::Bin/../lib";
+
+use DES::utils::misc;
+use DES::utils::dbutils;
+use DES::utils::desdbutils;
+use DES::desconfig;
+
+my ($desfile);
+my ($out, $stat, $rmcmd);
+my ($config);
+my ($nite, $uniqname, @localanalysisdirs);
+my ($uniqname_fromcfg, $archiveRoot, $db_server, $runSite, $runArchiveLoc);
+my ($help, $version, $rmsrc);
+my ($homedir, $usercfgdir);
+my ($descfg, $desdb);
+
+
+&Getopt::Long::Configure( 'noignorecase', 'no_autoabbrev');
+$stat = Getopt::Long::GetOptions(
+      'help|h'  => \$help,
+      'version|v' => \$version,
+      'rmsrc' => \$rmsrc,
+      'f=s' => \$desfile,
+);
+
+my $DES_HOME = getHome() or die "Error: Can't determine DES_HOME";
+
+if (defined($version))
+{
+  printVersion();
+  exit 0;
+}
+
+if (defined($help))
+{
+  printUsage();
+  exit 0;
+}
+
+if (scalar(@ARGV) == 1)
+{
+  $nite = $ARGV[0];
+}
+else
+{
+  printUsage();
+  exit 0;
+}
+
+$config = new DES::desconfig;
+$usercfgdir = $config->getValueReq("usercfgdir");
+$uniqname = "_NA_";
+
+@localanalysisdirs = <DESjobs/${nite}_*>;
+if ( scalar(@localanalysisdirs) > 1 )
+{
+  print "desclobbernite cannot currently handle more than one analysis for same nite\n";
+  exit 1;
+}
+elsif (scalar(@localanalysisdirs) == 1)
+{
+  print "Will remove local subdirectory:  ", $localanalysisdirs[0],"\n";
+  ($uniqname) = $localanalysisdirs[0] =~ m/DESjobs\/(\S+)/;
+  $config->readConfig("DESjobs/$uniqname/internal/$uniqname.descfg", 0, \*STDERR);
+}
+else
+{
+   print "Could not find DESjob directory for $nite\n";
+   print "Reading system level DES configuration file \n";
+   # read system level DES configuration file
+   if (-r "${DES_HOME}/etc/des.cfg")
+   {
+      $config->readConfig("${DES_HOME}/etc/des.cfg", 0, \*STDERR);
+   }
+
+   # read user level DES configuration file
+   if (-r "$usercfgdir/des.cfg")
+   {
+      $config->readConfig("$usercfgdir/des.cfg", 0, \*STDERR);
+   }
+   if (!defined($desfile))
+   {
+     print "No desfile specified...defaulting to DESFILE\n";
+     $desfile = "DESFILE";
+   }
+
+   if (-r $desfile)
+   {
+      $config->readConfig($desfile, 0, \*STDERR);
+   }
+   else
+   {
+     print "Cannot read desfile '$desfile'\n";
+     print "Using system and user config information\n";
+   }
+}
+
+my %searchdefs;
+$runSite = $config->getValue("run_site");
+$searchdefs{"site"} = $runSite;
+$runArchiveLoc = $config->getValue("run_archive_loc", \%searchdefs);
+$searchdefs{"archive"} = $runArchiveLoc;
+$archiveRoot = $config->getValue("archive_root", \%searchdefs);
+if (($runSite =~ /\S/) && ($archiveRoot =~ /\S/))
+{
+   print "remote runSite = '$runSite\n";
+   print "remote archive root = '$archiveRoot'\n";
+   if (defined($rmsrc))
+   {
+      print "\tALSO removing src subdirectory\n";
+   }
+   else
+   {
+      print "\tNOT removing src subdirectory\n";
+   }
+}
+else
+{
+   print "Missing remote runSite values\n";
+   print "Skipping remote runSite clobber\n";
+}
+
+$desdb = connectDESdb($config);
+$db_server = $desdb->{"db_server"};
+
+print "database server '$db_server'\n";
+
+print "\nAre you sure you want to do this [YES/NO]?   ";
+my $ans = <STDIN>;
+chomp($ans);
+if ($ans =~ /^yes$/i)
+{
+   # delete nite entries from db
+   print STDERR "Deleting nite entries from db...";
+   my $dbq2 = <<STR;
+DELETE FROM FILES WHERE NITE='$nite'
+STR
+
+   my $sth = $desdb->{dbh}->prepare($dbq2);
+   $sth->execute();
+   print STDERR "done\n";
+
+   # remote nite directory from remote runSite
+   if (($runSite =~ /\S/) && ($archiveRoot =~ /\S/))
+   {
+      print STDERR "Removing nite directory from $runSite...";
+      my $loginHost = $config->getValueReq("login_host", \%searchdefs);
+      my $loginPort = $config->getValue("login_gsissh_port", \%searchdefs);
+      my $cmdStart = "gsissh ";
+      if ($loginPort =~ /\d/)
+      {
+         $cmdStart .= "-p $loginPort ";
+      }
+      $rmcmd = "$cmdStart $loginHost \"cd $archiveRoot/raw/$nite; rm -rf bin etc log raw\"";
+      $out = `$rmcmd 2>&1`;
+  
+      if (defined($rmsrc))
+      {
+         $rmcmd = "$cmdStart $loginHost \"cd $archiveRoot/raw/$nite; rm -rf src; cd ..; rmdir $nite\"";
+         $out = `$rmcmd 2>&1`;
+      }
+  
+      $rmcmd = "$cmdStart $loginHost \"cd $archiveRoot/red; rm -rf \*_${nite}_\*\"";
+      $out = `$rmcmd 2>&1`;
+      $rmcmd = "$cmdStart $loginHost \"cd $archiveRoot/red; rm -rf \*_${nite}.\*\"";
+      $out = `$rmcmd 2>&1`;
+      print "done\n";
+   }
+
+   # last step - remove local dir
+   if ( -d "DESjobs/$uniqname" )
+   {
+      print STDERR "Removing local nite directory...";
+      $out = `rm -rf DESjobs/$uniqname 2>&1`; 
+      print STDERR "done\n";
+   }
+
+   print "\n\nNITE CLOBBER COMPLETE\n\n";
+}
+else
+{
+   print "\n\nABORTING CLOBBER\n\n";
+}
+
+exit 0;
+
+sub printUsage
+{
+  print "Usage: desclobbernite [-f DESFILE] [-rmsrc] nite\n";
+}

@@ -1,0 +1,79 @@
+<define procedure="Stage_moveingestlists" ARG_0="int">
+    <properties file="${mypath}/module_orchs/moveingestlists.properties"/>
+    <env/>
+    <properties sysprops="true"/>
+    <send>
+        <progress-event message="Begin Stage_moveingestlists">
+            <header-property name="some-special-id" value="${ensemble.id}-Main-Begin-Stage_moveingestlists"/>
+        </progress-event>
+    </send>
+    <echo stdout="true" message=" - Begin Stage_moveingestlists"/>
+    <echo stdout="true" message=" -- Running Stage_moveingestlists - GridFTP image lists and scripts ... "/>
+    <declare name="locallogdir" string="${ingest.dir}/log"/>
+    <declare name="targetlogdir" string="${targetprot}://${tgrid_server_${site}}${tgrid_homepath_${site}}/../raw/${nite}"/>
+<!--
+            <copy sourceDir="${locallogdir}" target="${targetlogdir}" />
+-->
+    <copy>
+        <source base="file:${locallogdir}/">
+            <include>*</include>
+        </source>
+        <target>file:${targetlogdir}</target>
+    </copy>
+<!--
+   <copy taskName="test_copy" verbose="true">
+        <targetGroup targetURI="${targetlogdir}">
+               <pattern base="${locallogdir}">
+               </pattern>
+        </targetGroup>
+   </copy>
+-->
+    <echo stdout="true" message=" -- GridFTP bin ... "/>
+    <declare name="localbindir" string="${mypath}/bin_${project}"/>
+    <declare name="targetbindir" string="${targetprot}://${tgrid_server_${site}}${tgrid_homepath_${site}}/../raw/${nite}/bin"/>
+<!--
+            <copy sourceDir="${localbindir}" target="${targetbindir}" />
+-->
+    <copy>
+        <source base="file:${localbindir}/">
+            <include>*</include>
+        </source>
+        <target>file:${targetbindir}</target>
+    </copy>
+<!--
+   <copy taskName="test_copy" verbose="true">
+        <targetGroup targetURI="${targetbindir}">
+               <pattern base="${localbindir}">
+               </pattern>
+        </targetGroup>
+   </copy>
+-->
+    <echo stdout="true" message=" -- GridFTP etc ... "/>
+    <declare name="localetcdir" string="${mypath}/etc"/>
+    <declare name="targetetcdir" string="${targetprot}://${tgrid_server_${site}}${tgrid_homepath_${site}}/../raw/${nite}"/>
+<!--
+            <copy sourceDir="${localetcdir}" target="${targetetcdir}" />
+-->
+    <copy>
+        <source base="file:${localetcdir}/">
+            <include>*</include>
+        </source>
+        <target>file:${targetetcdir}</target>
+    </copy>
+<!--
+   <copy taskName="test_copy" verbose="true">
+        <targetGroup targetURI="${targetetcdir}">
+               <pattern base="${localetcdir}">
+               </pattern>
+        </targetGroup>
+   </copy>
+-->
+    <echo stdout="true" message=" - Stage_moveingestlists done"/>
+    <echo stdout="true" message="  "/>
+    <send>
+        <progress-event message="End Stage_moveingestlists">
+            <header-property name="some-special-id" value="${ensemble.id}-Main-End-Stage_moveingestlists"/>
+        </progress-event>
+    </send>
+</define>
+

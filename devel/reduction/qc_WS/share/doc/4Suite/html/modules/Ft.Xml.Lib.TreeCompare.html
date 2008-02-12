@@ -1,0 +1,189 @@
+<html>
+  <head>
+    <meta content="text/html; charset=iso-8859-1" http-equiv="Content-Type">
+    <title>4Suite API Documentation: Ft.Xml.Lib.TreeCompare</title>
+    <link href="modules.css" type="text/css" rel="stylesheet">
+  </head>
+  <body>
+    <div class="universal-header"><span class="universal-header-prefix">&nbsp;&nbsp;&nbsp;</span>&nbsp;<span class="universal-header-prefix">&nbsp;&nbsp;</span>&nbsp;<span class="universal-header-prefix">&nbsp;</span>&nbsp;<a href="../index.html">4Suite<sup>&trade;</sup> API Documentation</a></div>
+    <h1><span class="glyph-arrow">&#9658;</span> Module <span class="this-name"><a href="Ft.html" title="Ft">Ft</a>.<a href="Ft.Xml.html" title="Ft.Xml">Xml</a>.<a href="Ft.Xml.Lib.html" title="Ft.Xml.Lib">Lib</a>.TreeCompare</span></h1>
+    <div class="abstract">Comparison functions for XML and HTML documents
+(mainly used in the test suites)</div>
+    <pre class="description">Copyright 2005 Fourthought, Inc. (USA).
+Detailed license and copyright information: http://4suite.org/COPYRIGHT
+Project home, documentation, distributions: http://4suite.org/</pre>
+    <div class="summary-section">
+      <table cellpadding="0" cellspacing="0">
+        <tbody>
+          <tr>
+            <td valign="top">
+              <div class="summary-header">Classes:</div>
+              <div class="summary-list"><span class="class-name"><a href="#SGMLParserEventGenerator">SGMLParserEventGenerator</a></span></div>
+            </td>
+            <td width="7" valign="middle"></td>
+            <td bgcolor="#C5C5C5" valign="middle" width="1"></td>
+            <td width="7" valign="middle"></td>
+            <td valign="top">
+              <div class="summary-header">Functions:</div>
+              <div class="summary-list"><span class="function-name"><a href="#CompareHTML">CompareHTML</a></span>, <span class="function-name"><a href="#HtmlTreeCompare">HtmlTreeCompare</a></span>, <span class="function-name"><a href="#NoWsTreeCompare">NoWsTreeCompare</a></span>, <span class="function-name"><a href="#NodeCompare">NodeCompare</a></span>, <span class="function-name"><a href="#TreeCompare">TreeCompare</a></span>, <span class="function-name"><a href="#XmlTreeCompare">XmlTreeCompare</a></span></div>
+            </td>
+            <td width="7" valign="middle"></td>
+            <td bgcolor="#C5C5C5" valign="middle" width="1"></td>
+            <td width="7" valign="middle"></td>
+            <td valign="top">
+              <div class="summary-header">Globals:</div>
+              <div class="summary-list"><span class="global-name"><a href="#BASIC_RESOLVER">BASIC_RESOLVER</a></span>, <span class="global-name"><a href="#FORBIDDEN_END_ELEMENTS">FORBIDDEN_END_ELEMENTS</a></span>, <span class="global-name"><a href="#READ_EXTERNAL_DTD">READ_EXTERNAL_DTD</a></span>, <span class="global-name"><a href="#XMLNS_NAMESPACE">XMLNS_NAMESPACE</a></span>, <span class="global-name"><a href="#g_doctypeTest">g_doctypeTest</a></span>, <span class="global-name"><a href="#g_htmlTest">g_htmlTest</a></span>, <span class="global-name"><a href="#g_xmlEmptyTagPattern">g_xmlEmptyTagPattern</a></span>, <span class="global-name"><a href="#g_xmlTest">g_xmlTest</a></span></div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="section">
+      <h2>Classes</h2>
+      <dl class="classes">
+        <dt class="classdef"><a name="SGMLParserEventGenerator"></a>class <span class="class-name">SGMLParserEventGenerator</span><span class="bases">(<span class="class-name"><span class="undocumented">sgmllib.SGMLParser</span></span>)</span></dt>
+        <dd class="classdesc">
+          <div class="abstract">An HTML parser that meets our needs better than Python's
+htmllib.HTMLParser, and that works with Python 2.1.</div>
+          <pre class="description">Used by CompareHTML().</pre>
+          <h3>Methods</h3>
+          <dl class="methods">
+            <dt class="methoddef"><a name="SGMLParserEventGenerator-__init__"><span class="method-name">__init__</span></a>(<span class="argument-name">self</span>, <span class="argument-name">verbose</span><span class="argument-default">=0</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dd class="overrides"><b>Overrides: </b><span class="inherited-name">__init__</span> from class <span class="class-name"><span class="undocumented">SGMLParser</span></span></dd>
+            <dt class="methoddef"><a name="SGMLParserEventGenerator-close"><span class="method-name">close</span></a>(<span class="argument-name">self</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dd class="overrides"><b>Overrides: </b><span class="inherited-name">close</span> from class <span class="class-name"><span class="undocumented">SGMLParser</span></span></dd>
+            <dt class="methoddef"><a name="SGMLParserEventGenerator-flush"><span class="method-name">flush</span></a>(<span class="argument-name">self</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dt class="methoddef"><a name="SGMLParserEventGenerator-handle_comment"><span class="method-name">handle_comment</span></a>(<span class="argument-name">self</span>, <span class="argument-name">data</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dd class="overrides"><b>Overrides: </b><span class="inherited-name">handle_comment</span> from class <span class="class-name"><span class="undocumented">SGMLParser</span></span></dd>
+            <dt class="methoddef"><a name="SGMLParserEventGenerator-handle_data"><span class="method-name">handle_data</span></a>(<span class="argument-name">self</span>, <span class="argument-name">data</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dd class="overrides"><b>Overrides: </b><span class="inherited-name">handle_data</span> from class <span class="class-name"><span class="undocumented">SGMLParser</span></span></dd>
+            <dt class="methoddef"><a name="SGMLParserEventGenerator-unknown_charref"><span class="method-name">unknown_charref</span></a>(<span class="argument-name">self</span>, <span class="argument-name">ref</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dd class="overrides"><b>Overrides: </b><span class="inherited-name">unknown_charref</span> from class <span class="class-name"><span class="undocumented">SGMLParser</span></span></dd>
+            <dt class="methoddef"><a name="SGMLParserEventGenerator-unknown_endtag"><span class="method-name">unknown_endtag</span></a>(<span class="argument-name">self</span>, <span class="argument-name">tag</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dd class="overrides"><b>Overrides: </b><span class="inherited-name">unknown_endtag</span> from class <span class="class-name"><span class="undocumented">SGMLParser</span></span></dd>
+            <dt class="methoddef"><a name="SGMLParserEventGenerator-unknown_entityref"><span class="method-name">unknown_entityref</span></a>(<span class="argument-name">self</span>, <span class="argument-name">ref</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dd class="overrides"><b>Overrides: </b><span class="inherited-name">unknown_entityref</span> from class <span class="class-name"><span class="undocumented">SGMLParser</span></span></dd>
+            <dt class="methoddef"><a name="SGMLParserEventGenerator-unknown_starttag"><span class="method-name">unknown_starttag</span></a>(<span class="argument-name">self</span>, <span class="argument-name">tagname</span>, <span class="argument-name">attrs</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dd class="overrides"><b>Overrides: </b><span class="inherited-name">unknown_starttag</span> from class <span class="class-name"><span class="undocumented">SGMLParser</span></span></dd>
+          </dl>
+          <h3>Methods inherited from class <span class="undocumented">sgmllib.SGMLParser</span></h3>
+          <div class="inherited"><span class="inherited-name">error</span>, <span class="inherited-name">feed</span>, <span class="inherited-name">finish_endtag</span>, <span class="inherited-name">finish_shorttag</span>, <span class="inherited-name">finish_starttag</span>, <span class="inherited-name">get_starttag_text</span>, <span class="inherited-name">goahead</span>, <span class="inherited-name">handle_charref</span>, <span class="inherited-name">handle_decl</span>, <span class="inherited-name">handle_endtag</span>, <span class="inherited-name">handle_entityref</span>, <span class="inherited-name">handle_pi</span>, <span class="inherited-name">handle_starttag</span>, <span class="inherited-name">parse_endtag</span>, <span class="inherited-name">parse_pi</span>, <span class="inherited-name">parse_starttag</span>, <span class="inherited-name">report_unbalanced</span>, <span class="inherited-name">reset</span>, <span class="inherited-name">setliteral</span>, <span class="inherited-name">setnomoretags</span></div>
+          <h3>Methods inherited from class <span class="undocumented">markupbase.ParserBase</span></h3>
+          <div class="inherited"><span class="inherited-name">getpos</span>, <span class="inherited-name">parse_comment</span>, <span class="inherited-name">parse_declaration</span>, <span class="inherited-name">parse_marked_section</span>, <span class="inherited-name">unknown_decl</span>, <span class="inherited-name">updatepos</span></div>
+          <h3>Members</h3>
+          <dl class="members">
+            <dt class="memberdef"><a name="CHARREF_EVENT"><span class="member-name">CHARREF_EVENT</span></a> = 7</dt>
+            <dt class="memberdef"><a name="COMMENT_EVENT"><span class="member-name">COMMENT_EVENT</span></a> = 2</dt>
+            <dt class="memberdef"><a name="END_TAG_EVENT"><span class="member-name">END_TAG_EVENT</span></a> = 4</dt>
+            <dt class="memberdef"><a name="ENTITYREF_EVENT"><span class="member-name">ENTITYREF_EVENT</span></a> = 6</dt>
+            <dt class="memberdef"><a name="START_TAG_EVENT"><span class="member-name">START_TAG_EVENT</span></a> = 3</dt>
+            <dt class="memberdef"><a name="TEXT_EVENT"><span class="member-name">TEXT_EVENT</span></a> = 1</dt>
+          </dl>
+          <h3>Members inherited from class <span class="undocumented">sgmllib.SGMLParser</span></h3>
+          <div class="inherited"><span class="inherited-name">entitydefs</span></div>
+        </dd>
+      </dl>
+    </div>
+    <div class="section">
+      <h2>Functions</h2>
+      <dl class="functions">
+        <dt class="functiondef"><a name="CompareHTML"><span class="function-name">CompareHTML</span></a>(<span class="argument-name">html1</span>, <span class="argument-name">html2</span>, <span class="argument-name">ignoreWhitespace</span><span class="argument-default">=0</span>)</dt>
+        <dd class="functiondesc">
+          <div class="abstract">A cmp()-like function that compares two HTML strings by parsing
+with sgmllib.SGMLParser and comparing events until a mismatch is
+found. It has the side effect of reporting differences to stdout.</div>
+          <pre class="description">ignoreWhitespace controls whether whitespace differences in text
+events are ignored.</pre>
+        </dd>
+        <dt class="functiondef"><a name="HtmlTreeCompare"><span class="function-name">HtmlTreeCompare</span></a>(<span class="argument-name">expected</span>, <span class="argument-name">compared</span>)</dt>
+        <dd class="functiondesc">
+          <div class="abstract">Compare two HTML strings.  The result is similar to the builtin cmp()
+function such that non-zero indicates non equal and zero means equal.</div>
+        </dd>
+        <dt class="functiondef"><a name="NoWsTreeCompare"><span class="function-name">NoWsTreeCompare</span></a>(<span class="argument-name">expected</span>, <span class="argument-name">compared</span>)</dt>
+        <dd class="functiondesc">
+          <div class="abstract">Equivalent to calling TreeCompare() with ignoreWhitespace=1.</div>
+        </dd>
+        <dt class="functiondef"><a name="NodeCompare"><span class="function-name">NodeCompare</span></a>(<span class="argument-name">node1</span>, <span class="argument-name">node2</span>, <span class="argument-name">ignoreWhitespace</span><span class="argument-default">=0</span>, <span class="argument-name">ignoreComments</span><span class="argument-default">=0</span>, <span class="argument-name">ignoreNsDecls</span><span class="argument-default">=0</span>)</dt>
+        <dd class="functiondesc">
+          <div class="abstract">A function that compares two XML DOM nodes by traversing their
+attributes and descendants recursively until a mismatch is found.
+It has the side effect of reporting differences to stdout. Returns
+true if the nodes compare equal.</div>
+          <pre class="description">ignoreWhitespace controls whether whitespace differences in text
+nodes are ignored.
+
+ignoreComments controls whether comment nodes are ignored.
+
+ignoreNsDecls controls whether namespace declarations are ignored.</pre>
+        </dd>
+        <dt class="functiondef"><a name="TreeCompare"><span class="function-name">TreeCompare</span></a>(<span class="argument-name">expected</span>, <span class="argument-name">compared</span>, <span class="argument-name">ignoreWhitespace</span><span class="argument-default">=0</span>, <span class="argument-name">baseUri</span><span class="argument-default">=None</span>, <span class="argument-name">readExtDtd</span><span class="argument-default">=True</span>, <span class="argument-name">ignoreNsDecls</span><span class="argument-default">=0</span>, <span class="argument-name">asEntity</span><span class="argument-default">=False</span>)</dt>
+        <dd class="functiondesc">
+          <div class="abstract">A cmp()-like function that compares two XML or HTML strings and
+has the side effect of reporting differences to stdout. Returns
+false if the nodes compare equal.</div>
+          <pre class="description">XML strings are parsed into a Domlette and compared node-by-node.
+HTML strings are parsed with an SGML parser and are compared
+event-by-event. The markup type is guessed based on clues in the
+expected string.
+
+ignoreWhitespace controls whether whitespace differences in text
+nodes are ignored.
+
+'file:' URIs based on the current working directory are generated
+for each document. The baseUri argument is an optional absolute URI
+to use as the basis of the generated URIs, if a 'file' URI is
+undesirable.
+
+readExtDtd controls whether the external DTD subset is read
+when parsing XML. It does not affect the reading of external
+entities declared in the internal DTD subset.
+
+ignoreNsDecls controls whether namespace declarations are ignored
+when comparing XML documents.</pre>
+        </dd>
+        <dt class="functiondef"><a name="XmlTreeCompare"><span class="function-name">XmlTreeCompare</span></a>(<span class="argument-name">expected</span>, <span class="argument-name">compared</span>)</dt>
+        <dd class="functiondesc"></dd>
+      </dl>
+    </div>
+    <div class="section">
+      <h2>Globals</h2>
+      <dl class="globals">
+        <dt class="globaldef"><a name="BASIC_RESOLVER"><span class="global-name">BASIC_RESOLVER</span></a> = &lt;Ft.Lib.Uri.FtUriResolver instance&gt;</dt>
+        <dd class="globaldesc"></dd>
+        <dt class="globaldef"><a name="FORBIDDEN_END_ELEMENTS"><span class="global-name">FORBIDDEN_END_ELEMENTS</span></a> = ['img', 'area', 'basefont', 'frame', 'isindex', 'meta', 'param', 'hr', 'base', 'link', 'br', 'input', 'col']</dt>
+        <dd class="globaldesc"></dd>
+        <dt class="globaldef"><a name="READ_EXTERNAL_DTD"><span class="global-name">READ_EXTERNAL_DTD</span></a> = True</dt>
+        <dd class="globaldesc"></dd>
+        <dt class="globaldef"><a name="XMLNS_NAMESPACE"><span class="global-name">XMLNS_NAMESPACE</span></a> = u'http://www.w3.org/2000/xmlns/'</dt>
+        <dd class="globaldesc"></dd>
+        <dt class="globaldef"><a name="g_doctypeTest"><span class="global-name">g_doctypeTest</span></a> = &lt;_sre.SRE_Pattern object&gt;</dt>
+        <dd class="globaldesc">
+          <div class="abstract">Compiled regular expression objects</div>
+        </dd>
+        <dt class="globaldef"><a name="g_htmlTest"><span class="global-name">g_htmlTest</span></a> = &lt;_sre.SRE_Pattern object&gt;</dt>
+        <dd class="globaldesc">
+          <div class="abstract">Compiled regular expression objects</div>
+        </dd>
+        <dt class="globaldef"><a name="g_xmlEmptyTagPattern"><span class="global-name">g_xmlEmptyTagPattern</span></a> = &lt;_sre.SRE_Pattern object&gt;</dt>
+        <dd class="globaldesc">
+          <div class="abstract">Compiled regular expression objects</div>
+        </dd>
+        <dt class="globaldef"><a name="g_xmlTest"><span class="global-name">g_xmlTest</span></a> = &lt;_sre.SRE_Pattern object&gt;</dt>
+        <dd class="globaldesc">
+          <div class="abstract">Compiled regular expression objects</div>
+        </dd>
+      </dl>
+    </div>
+    <div class="universal-footer">Last modified on 2005-04-18 16:47:00</div>
+  </body>
+</html>

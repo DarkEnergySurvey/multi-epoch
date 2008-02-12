@@ -1,0 +1,70 @@
+  <target name="Stage_updatezp" description="Updating ZP">
+   <property file="${mypath}/module_psmft/updatezp.properties"/>
+
+     <envtosysprops/>
+     <esequence>
+
+      <publish>
+            <event ensembleid="${ensemble.id}"
+                   workflowid="Main"
+                   nodeid="Begin Stage_updatezp"
+                   currentState="0">
+               <property name="message" value="Begin Stage_updatezp"/>
+            </event>
+      </publish>
+
+      <print line=" - Begin Stage_updatezp"/>
+      <edeclare name="psmout" string="${mypath}/jobs/${uid}_PSM"/>
+
+      <mkdir  dir="$R{psmout}"/>
+
+      <rtexec inheritedEnv="true" execDir="${mypath}"
+              args="${updatezp.exec} ${updatezp.args_g}" quiet="true">
+        <outMonitor file="$R{psmout}/updatezp_g.log"/>
+        <errMonitor file="$R{psmout}/updatezp_g.log"/>
+      </rtexec>
+
+      <print line=" - Done g-band"/>
+
+      <rtexec inheritedEnv="true" execDir="${mypath}"
+              args="${updatezp.exec} ${updatezp.args_r}" quiet="true">
+        <outMonitor file="$R{psmout}/updatezp_r.log"/>
+        <errMonitor file="$R{psmout}/updatezp_r.log"/>
+      </rtexec>
+
+      <print line=" - Done r-band"/>
+
+      <rtexec inheritedEnv="true" execDir="${mypath}"
+              args="${updatezp.exec} ${updatezp.args_i}" quiet="true">
+        <outMonitor file="$R{psmout}/updatezp_i.log"/>
+        <errMonitor file="$R{psmout}/updatezp_i.log"/>
+      </rtexec>
+
+      <print line=" - Done i-band"/>
+
+      <rtexec inheritedEnv="true" execDir="${mypath}"
+              args="${updatezp.exec} ${updatezp.args_z}" quiet="true">
+        <outMonitor file="$R{psmout}/updatezp_z.log"/>
+        <errMonitor file="$R{psmout}/updatezp_z.log"/>
+      </rtexec>
+
+      <print line=" - Done z-band"/>
+
+      <delete file="${mypath}/update_zeropoint.update"/>
+      <delete file="${mypath}/update_zeropoint.sql"/>
+      <delete file="${mypath}/update_zeropoint.ingest"/>
+
+      <print line=" - Stage_updatezp done"/>
+      <print line=" "/>
+
+      <publish>
+          <event ensembleid="${ensemble.id}"
+                 workflowid="Main"
+                 nodeid="End Stage_updatezp"
+                 currentState="1">
+               <property name="message" value="End Stage_updatezp"/>
+          </event>
+      </publish>
+
+     </esequence>
+  </target>

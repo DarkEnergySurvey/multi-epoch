@@ -1,0 +1,217 @@
+<html>
+  <head>
+    <meta content="text/html; charset=iso-8859-1" http-equiv="Content-Type">
+    <title>4Suite API Documentation: Ft.Lib.DistExt.Dist</title>
+    <link href="modules.css" type="text/css" rel="stylesheet">
+  </head>
+  <body>
+    <div class="universal-header"><span class="universal-header-prefix">&nbsp;&nbsp;&nbsp;</span>&nbsp;<span class="universal-header-prefix">&nbsp;&nbsp;</span>&nbsp;<span class="universal-header-prefix">&nbsp;</span>&nbsp;<a href="../index.html">4Suite<sup>&trade;</sup> API Documentation</a></div>
+    <h1><span class="glyph-arrow">&#9658;</span> Module <span class="this-name"><a href="Ft.html" title="Ft">Ft</a>.<a href="Ft.Lib.html" title="Ft.Lib">Lib</a>.<a href="Ft.Lib.DistExt.html" title="Ft.Lib.DistExt">DistExt</a>.Dist</span></h1>
+    <div class="summary-section">
+      <table cellpadding="0" cellspacing="0">
+        <tbody>
+          <tr>
+            <td valign="top">
+              <div class="summary-header">Classes:</div>
+              <div class="summary-list"><span class="class-name"><a href="#Dist">Dist</a></span>, <span class="class-name"><a href="#DistributionMetadata">DistributionMetadata</a></span></div>
+            </td>
+            <td width="7" valign="middle"></td>
+            <td width="1" valign="middle" bgcolor="#C5C5C5"></td>
+            <td width="7" valign="middle"></td>
+            <td valign="top">
+              <div class="summary-header">Globals:</div>
+              <div class="summary-list"><span class="global-name"><a href="#DEBUG">DEBUG</a></span></div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="section">
+      <h2>Classes</h2>
+      <dl class="classes">
+        <dt class="classdef"><a name="Dist"></a>class <span class="class-name">Dist</span><span class="bases">(<span class="class-name"><span class="undocumented">distutils.dist.Distribution</span></span>)</span></dt>
+        <dd class="classdesc">
+          <div class="abstract">An enhanced version of core Distutils' Distribution class.</div>
+          <pre class="description">Currently supported features, for *all* Python (2.2+) versions:
+(from Python 2.3+)
+download_url, classifiers - PEP 314 metadata fields
+
+(from Python 2.5+)
+install_egg_info command - for setuptools
+requires, provides, obsoletes - PEP 314 metadata fields
+
+(only available in 4Suite)
+requires_python - [PEP 345] a list of version restrictions for Python
+requires_external - [PEP 345] a list of external requirements
+command_mapping - maps command names to a module/class name that differs
+                  from the actual command name</pre>
+          <h3>Methods</h3>
+          <dl class="methods">
+            <dt class="methoddef"><a name="Dist-__init__"><span class="method-name">__init__</span></a>(<span class="argument-name">self</span>, <span class="argument-name">attrs</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dd class="overrides"><b>Overrides: </b><span class="inherited-name">__init__</span> from class <span class="class-name"><span class="undocumented">Distribution</span></span></dd>
+            <dt class="methoddef"><a name="Dist-announce"><span class="method-name">announce</span></a>(<span class="argument-name">self</span>, <span class="argument-name">msg</span>, <span class="argument-name">level</span><span class="argument-default">=1</span>)</dt>
+            <dd class="methoddesc">
+              <div class="abstract">If the current verbosity level is of greater than or equal to
+'level' print 'msg' to stdout.</div>
+            </dd>
+            <dd class="overrides"><b>Overrides: </b><span class="inherited-name">announce</span> from class <span class="class-name"><span class="undocumented">Distribution</span></span></dd>
+            <dt class="methoddef"><a name="Dist-finalize_options"><span class="method-name">finalize_options</span></a>(<span class="argument-name">self</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dd class="overrides"><b>Overrides: </b><span class="inherited-name">finalize_options</span> from class <span class="class-name"><span class="undocumented">Distribution</span></span></dd>
+            <dt class="methoddef"><a name="Dist-get_allfiles"><span class="method-name">get_allfiles</span></a>(<span class="argument-name">self</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dt class="methoddef"><a name="Dist-get_command_class"><span class="method-name">get_command_class</span></a>(<span class="argument-name">self</span>, <span class="argument-name">command</span>)</dt>
+            <dd class="methoddesc">
+              <div class="abstract">Extends Distribution.get_command_class() to search 'command_mapping'
+for modules that implement that requested command.</div>
+            </dd>
+            <dd class="overrides"><b>Overrides: </b><span class="inherited-name">get_command_class</span> from class <span class="class-name"><span class="undocumented">Distribution</span></span></dd>
+            <dt class="methoddef"><a name="Dist-get_command_list"><span class="method-name">get_command_list</span></a>(<span class="argument-name">self</span>)</dt>
+            <dd class="methoddesc">
+              <div class="abstract">Overridden to add the commands defined by 'command_mapping' to the
+list of (command, description) tuples.</div>
+            </dd>
+            <dd class="overrides"><b>Overrides: </b><span class="inherited-name">get_command_list</span> from class <span class="class-name"><span class="undocumented">Distribution</span></span></dd>
+            <dt class="methoddef"><a name="Dist-get_source_files"><span class="method-name">get_source_files</span></a>(<span class="argument-name">self</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dt class="methoddef"><a name="Dist-has_bgen"><span class="method-name">has_bgen</span></a>(<span class="argument-name">self</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dt class="methoddef"><a name="Dist-has_devel"><span class="method-name">has_devel</span></a>(<span class="argument-name">self</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dt class="methoddef"><a name="Dist-has_docs"><span class="method-name">has_docs</span></a>(<span class="argument-name">self</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dt class="methoddef"><a name="Dist-has_l10n"><span class="method-name">has_l10n</span></a>(<span class="argument-name">self</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dt class="methoddef"><a name="Dist-has_localstate"><span class="method-name">has_localstate</span></a>(<span class="argument-name">self</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dt class="methoddef"><a name="Dist-has_sysconf"><span class="method-name">has_sysconf</span></a>(<span class="argument-name">self</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dt class="methoddef"><a name="Dist-has_text"><span class="method-name">has_text</span></a>(<span class="argument-name">self</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dt class="methoddef"><a name="Dist-print_commands"><span class="method-name">print_commands</span></a>(<span class="argument-name">self</span>)</dt>
+            <dd class="methoddesc">
+              <div class="abstract">Overridden to add the commands defined by 'command_mapping' to the
+list of "standard commands".</div>
+            </dd>
+            <dd class="overrides"><b>Overrides: </b><span class="inherited-name">print_commands</span> from class <span class="class-name"><span class="undocumented">Distribution</span></span></dd>
+            <dt class="methoddef"><a name="Dist-print_option_list"><span class="method-name">print_option_list</span></a>(<span class="argument-name">self</span>, <span class="argument-name">options</span>, <span class="argument-name">header</span>, <span class="argument-name">max_length</span>)</dt>
+            <dd class="methoddesc"></dd>
+          </dl>
+          <h3>Methods inherited from class <span class="undocumented">distutils.dist.Distribution</span></h3>
+          <div class="inherited"><span class="inherited-name">dump_option_dicts</span>, <span class="inherited-name">find_config_files</span>, <span class="inherited-name">get_command_obj</span>, <span class="inherited-name">get_command_packages</span>, <span class="inherited-name">get_option_dict</span>, <span class="inherited-name">handle_display_options</span>, <span class="inherited-name">has_c_libraries</span>, <span class="inherited-name">has_data_files</span>, <span class="inherited-name">has_ext_modules</span>, <span class="inherited-name">has_headers</span>, <span class="inherited-name">has_modules</span>, <span class="inherited-name">has_pure_modules</span>, <span class="inherited-name">has_scripts</span>, <span class="inherited-name">is_pure</span>, <span class="inherited-name">parse_command_line</span>, <span class="inherited-name">parse_config_files</span>, <span class="inherited-name">print_command_list</span>, <span class="inherited-name">reinitialize_command</span>, <span class="inherited-name">run_command</span>, <span class="inherited-name">run_commands</span></div>
+          <h3>Members</h3>
+          <dl class="members">
+            <dt class="memberdef"><a name="command_aliases"><span class="member-name">command_aliases</span></a> = {'bdist_wininst': 'bdist_inno', 'install_docs': 'install_html'}</dt>
+            <dt class="memberdef"><a name="command_mapping"><span class="member-name">command_mapping</span></a> = {'bdist': 'BDist', 'bdist_dumb': None, 'bdist_egg': 'BDistEgg', 'bdist_inno': 'BDistInno', 'bdist_msi': None, 'bdist_rpm': 'BDistRpm', 'build': 'Build', 'build_clib': None, 'build_docs': 'BuildDocs', 'build_ext': 'BuildExt', ...}</dt>
+            <dt class="memberdef"><a name="source_package"><span class="member-name">source_package</span></a> = False</dt>
+            <dt class="memberdef"><a name="standard_commands"><span class="member-name">standard_commands</span></a> = ['config', 'build', 'clean', 'install', 'sdist', 'register', 'bdist', 'upload', 'generate']</dt>
+            <dt class="memberdef"><a name="toplevel_options"><span class="member-name">toplevel_options</span></a> = [('source-package', 's', 'run as if from a source dist (developer testing)')]</dt>
+          </dl>
+          <h3>Members inherited from class <span class="undocumented">distutils.dist.Distribution</span></h3>
+          <div class="inherited"><span class="inherited-name">common_usage</span>, <span class="inherited-name">display_option_names</span>, <span class="inherited-name">display_options</span>, <span class="inherited-name">global_options</span>, <span class="inherited-name">negative_opt</span></div>
+        </dd>
+        <dt class="classdef"><a name="DistributionMetadata"></a>class <span class="class-name">DistributionMetadata</span><span class="bases">(<span class="class-name"><span class="undocumented">distutils.dist.DistributionMetadata</span></span>)</span></dt>
+        <dd class="classdesc">
+          <h3>Methods</h3>
+          <dl class="methods">
+            <dt class="methoddef"><a name="DistributionMetadata-from_filename"><span class="method-name">from_filename</span></a>(<span class="argument-name">...</span>)</dt>
+            <dd class="methoddesc">
+              <div class="abstract">classmethod(function) -&gt; method</div>
+              <pre class="description">Convert a function to be a class method.
+
+A class method receives the class as implicit first argument,
+just like an instance method receives the instance.
+To declare a class method, use this idiom:
+
+  class C:
+      def f(cls, arg1, arg2, ...): ...
+      f = classmethod(f)
+
+It can be called either on the class (e.g. C.f()) or on an instance
+(e.g. C().f()).  The instance is ignored except for its class.
+If a class method is called for a derived class, the derived class
+object is passed as the implied first argument.
+
+Class methods are different than C++ or Java static methods.
+If you want those, see the staticmethod builtin.</pre>
+            </dd>
+            <dt class="methoddef"><a name="DistributionMetadata-from_stream"><span class="method-name">from_stream</span></a>(<span class="argument-name">...</span>)</dt>
+            <dd class="methoddesc">
+              <div class="abstract">classmethod(function) -&gt; method</div>
+              <pre class="description">Convert a function to be a class method.
+
+A class method receives the class as implicit first argument,
+just like an instance method receives the instance.
+To declare a class method, use this idiom:
+
+  class C:
+      def f(cls, arg1, arg2, ...): ...
+      f = classmethod(f)
+
+It can be called either on the class (e.g. C.f()) or on an instance
+(e.g. C().f()).  The instance is ignored except for its class.
+If a class method is called for a derived class, the derived class
+object is passed as the implied first argument.
+
+Class methods are different than C++ or Java static methods.
+If you want those, see the staticmethod builtin.</pre>
+            </dd>
+            <dt class="methoddef"><a name="DistributionMetadata-from_string"><span class="method-name">from_string</span></a>(<span class="argument-name">...</span>)</dt>
+            <dd class="methoddesc">
+              <div class="abstract">classmethod(function) -&gt; method</div>
+              <pre class="description">Convert a function to be a class method.
+
+A class method receives the class as implicit first argument,
+just like an instance method receives the instance.
+To declare a class method, use this idiom:
+
+  class C:
+      def f(cls, arg1, arg2, ...): ...
+      f = classmethod(f)
+
+It can be called either on the class (e.g. C.f()) or on an instance
+(e.g. C().f()).  The instance is ignored except for its class.
+If a class method is called for a derived class, the derived class
+object is passed as the implied first argument.
+
+Class methods are different than C++ or Java static methods.
+If you want those, see the staticmethod builtin.</pre>
+            </dd>
+            <dt class="methoddef"><a name="DistributionMetadata-get_requires_external"><span class="method-name">get_requires_external</span></a>(<span class="argument-name">self</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dt class="methoddef"><a name="DistributionMetadata-get_requires_python"><span class="method-name">get_requires_python</span></a>(<span class="argument-name">self</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dt class="methoddef"><a name="DistributionMetadata-set_requires_external"><span class="method-name">set_requires_external</span></a>(<span class="argument-name">self</span>, <span class="argument-name">value</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dt class="methoddef"><a name="DistributionMetadata-set_requires_python"><span class="method-name">set_requires_python</span></a>(<span class="argument-name">self</span>, <span class="argument-name">value</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dt class="methoddef"><a name="DistributionMetadata-write_pkg_file"><span class="method-name">write_pkg_file</span></a>(<span class="argument-name">self</span>, <span class="argument-name">file</span>)</dt>
+            <dd class="methoddesc">
+              <div class="abstract">Write the PKG-INFO format data to a file object.</div>
+              <pre class="description">Supports metadata version 1.2 (PEP 345), 1.1 (PEP 314) and
+1.0 (PEP 241) in a lowest common denominator fashion.</pre>
+            </dd>
+            <dd class="overrides"><b>Overrides: </b><span class="inherited-name">write_pkg_file</span> from class <span class="class-name"><span class="undocumented">DistributionMetadata</span></span></dd>
+          </dl>
+          <h3>Methods inherited from class <span class="undocumented">distutils.dist.DistributionMetadata</span></h3>
+          <div class="inherited"><span class="inherited-name">__init__</span>, <span class="inherited-name">get_author</span>, <span class="inherited-name">get_author_email</span>, <span class="inherited-name">get_classifiers</span>, <span class="inherited-name">get_contact</span>, <span class="inherited-name">get_contact_email</span>, <span class="inherited-name">get_description</span>, <span class="inherited-name">get_download_url</span>, <span class="inherited-name">get_fullname</span>, <span class="inherited-name">get_keywords</span>, <span class="inherited-name">get_licence</span>, <span class="inherited-name">get_license</span>, <span class="inherited-name">get_long_description</span>, <span class="inherited-name">get_maintainer</span>, <span class="inherited-name">get_maintainer_email</span>, <span class="inherited-name">get_name</span>, <span class="inherited-name">get_obsoletes</span>, <span class="inherited-name">get_platforms</span>, <span class="inherited-name">get_provides</span>, <span class="inherited-name">get_requires</span>, <span class="inherited-name">get_url</span>, <span class="inherited-name">get_version</span>, <span class="inherited-name">set_obsoletes</span>, <span class="inherited-name">set_provides</span>, <span class="inherited-name">set_requires</span>, <span class="inherited-name">write_pkg_info</span></div>
+          <h3>Members</h3>
+          <dl class="members">
+            <dt class="memberdef"><a name="copyright"><span class="member-name">copyright</span></a> = None</dt>
+            <dt class="memberdef"><a name="requires_external"><span class="member-name">requires_external</span></a> = None</dt>
+            <dt class="memberdef"><a name="requires_python"><span class="member-name">requires_python</span></a> = None</dt>
+          </dl>
+        </dd>
+      </dl>
+    </div>
+    <div class="section">
+      <h2>Globals</h2>
+      <dl class="globals">
+        <dt class="globaldef"><a name="DEBUG"><span class="global-name">DEBUG</span></a> = None</dt>
+        <dd class="globaldesc"></dd>
+      </dl>
+    </div>
+    <div class="universal-footer">Last modified on 2006-10-20 13:54:38</div>
+  </body>
+</html>

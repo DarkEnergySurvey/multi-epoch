@@ -1,0 +1,541 @@
+<html>
+  <head>
+    <meta content="text/html; charset=iso-8859-1" http-equiv="Content-Type">
+    <title>4Suite API Documentation: Ft.Lib.DistExt</title>
+    <link href="modules.css" type="text/css" rel="stylesheet">
+  </head>
+  <body>
+    <div class="universal-header"><span class="universal-header-prefix">&nbsp;&nbsp;&nbsp;</span>&nbsp;<span class="universal-header-prefix">&nbsp;&nbsp;</span>&nbsp;<span class="universal-header-prefix">&nbsp;</span>&nbsp;<a href="../index.html">4Suite<sup>&trade;</sup> API Documentation</a></div>
+    <h1><span class="glyph-arrow">&#9658;</span> Module <span class="this-name"><a href="Ft.html" title="Ft">Ft</a>.<a href="Ft.Lib.html" title="Ft.Lib">Lib</a>.DistExt</span></h1>
+    <div class="abstract">Extensions to distutils to support building, installing, packaging 4Suite</div>
+    <pre class="description">Copyright 2005 Fourthought, Inc. (USA).
+Detailed license and copyright information: http://4suite.org/COPYRIGHT
+Project home, documentation, distributions: http://4suite.org/</pre>
+    <div class="summary-section">
+      <table cellpadding="0" cellspacing="0">
+        <tbody>
+          <tr>
+            <td valign="top">
+              <div class="summary-header">Classes:</div>
+              <div class="summary-list"><span class="class-name"><a href="#Document">Document</a></span>, <span class="class-name"><a href="#Executable">Executable</a></span>, <span class="class-name"><a href="#Extension">Extension</a></span>, <span class="class-name"><a href="#ExtensionsDocument">ExtensionsDocument</a></span>, <span class="class-name"><a href="#File">File</a></span>, <span class="class-name"><a href="#FileList">FileList</a></span>, <span class="class-name"><a href="#Localization">Localization</a></span>, <span class="class-name"><a href="#ModulesDocument">ModulesDocument</a></span>, <span class="class-name"><a href="#Script">Script</a></span></div>
+            </td>
+            <td width="7" valign="middle"></td>
+            <td bgcolor="#C5C5C5" valign="middle" width="1"></td>
+            <td width="7" valign="middle"></td>
+            <td valign="top">
+              <div class="summary-header">Functions:</div>
+              <div class="summary-list"><span class="function-name"><a href="#EnsureVersion">EnsureVersion</a></span>, <span class="function-name"><a href="#setup">setup</a></span></div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="section">
+      <h2>Modules</h2>
+      <table class="modules">
+        <tbody>
+          <tr>
+            <td class="moduledef" valign="top">
+              <div class="module-name"><a name="BDist"></a><a href="Ft.Lib.DistExt.BDist.html">BDist</a></div>
+            </td>
+            <td class="moduledesc" valign="bottom"></td>
+          </tr>
+          <tr>
+            <td class="moduledef" valign="top">
+              <div class="module-name"><a name="BDistEgg"></a><a href="Ft.Lib.DistExt.BDistEgg.html">BDistEgg</a></div>
+            </td>
+            <td class="moduledesc" valign="bottom"></td>
+          </tr>
+          <tr>
+            <td class="moduledef" valign="top">
+              <div class="module-name"><a name="BDistInno"></a><a href="Ft.Lib.DistExt.BDistInno.html">BDistInno</a></div>
+            </td>
+            <td class="moduledesc" valign="bottom"></td>
+          </tr>
+          <tr>
+            <td class="moduledef" valign="top">
+              <div class="module-name"><a name="BDistRpm"></a><a href="Ft.Lib.DistExt.BDistRpm.html">BDistRpm</a></div>
+            </td>
+            <td class="moduledesc" valign="bottom"></td>
+          </tr>
+          <tr>
+            <td class="moduledef" valign="top">
+              <div class="module-name"><a name="Build"></a><a href="Ft.Lib.DistExt.Build.html">Build</a></div>
+            </td>
+            <td class="moduledesc" valign="bottom"></td>
+          </tr>
+          <tr>
+            <td class="moduledef" valign="top">
+              <div class="module-name"><a name="BuildDocs"></a><a href="Ft.Lib.DistExt.BuildDocs.html">BuildDocs</a></div>
+            </td>
+            <td class="moduledesc" valign="bottom">
+              <div class="abstract">Main distutils extensions for generating documentation</div>
+            </td>
+          </tr>
+          <tr>
+            <td class="moduledef" valign="top">
+              <div class="module-name"><a name="BuildExt"></a><a href="Ft.Lib.DistExt.BuildExt.html">BuildExt</a></div>
+            </td>
+            <td class="moduledesc" valign="bottom"></td>
+          </tr>
+          <tr>
+            <td class="moduledef" valign="top">
+              <div class="module-name"><a name="BuildL10n"></a><a href="Ft.Lib.DistExt.BuildL10n.html">BuildL10n</a></div>
+            </td>
+            <td class="moduledesc" valign="bottom"></td>
+          </tr>
+          <tr>
+            <td class="moduledef" valign="top">
+              <div class="module-name"><a name="BuildPy"></a><a href="Ft.Lib.DistExt.BuildPy.html">BuildPy</a></div>
+            </td>
+            <td class="moduledesc" valign="bottom"></td>
+          </tr>
+          <tr>
+            <td class="moduledef" valign="top">
+              <div class="module-name"><a name="BuildScripts"></a><a href="Ft.Lib.DistExt.BuildScripts.html">BuildScripts</a></div>
+            </td>
+            <td class="moduledesc" valign="bottom"></td>
+          </tr>
+          <tr>
+            <td class="moduledef" valign="top">
+              <div class="module-name"><a name="Config"></a><a href="Ft.Lib.DistExt.Config.html">Config</a></div>
+            </td>
+            <td class="moduledesc" valign="bottom"></td>
+          </tr>
+          <tr>
+            <td class="moduledef" valign="top">
+              <div class="module-name"><a name="Dist"></a><a href="Ft.Lib.DistExt.Dist.html">Dist</a></div>
+            </td>
+            <td class="moduledesc" valign="bottom"></td>
+          </tr>
+          <tr>
+            <td class="moduledef" valign="top">
+              <div class="module-name"><a name="Formatters"></a><a href="Ft.Lib.DistExt.Formatters.html">Formatters</a></div>
+            </td>
+            <td class="moduledesc" valign="bottom"></td>
+          </tr>
+          <tr>
+            <td class="moduledef" valign="top">
+              <div class="module-name"><a name="Generate"></a><a href="Ft.Lib.DistExt.Generate.html">Generate</a></div>
+            </td>
+            <td class="moduledesc" valign="bottom"></td>
+          </tr>
+          <tr>
+            <td class="moduledef" valign="top">
+              <div class="module-name"><a name="GenerateBisonGen"></a><a href="Ft.Lib.DistExt.GenerateBisonGen.html">GenerateBisonGen</a></div>
+            </td>
+            <td class="moduledesc" valign="bottom"></td>
+          </tr>
+          <tr>
+            <td class="moduledef" valign="top">
+              <div class="module-name"><a name="GenerateL10n"></a><a href="Ft.Lib.DistExt.GenerateL10n.html">GenerateL10n</a></div>
+            </td>
+            <td class="moduledesc" valign="bottom"></td>
+          </tr>
+          <tr>
+            <td class="moduledef" valign="top">
+              <div class="module-name"><a name="ImageHlp"></a><a href="Ft.Lib.DistExt.ImageHlp.html">ImageHlp</a></div>
+            </td>
+            <td class="moduledesc" valign="bottom"></td>
+          </tr>
+          <tr>
+            <td class="moduledef" valign="top">
+              <div class="module-name"><a name="Install"></a><a href="Ft.Lib.DistExt.Install.html">Install</a></div>
+            </td>
+            <td class="moduledesc" valign="bottom"></td>
+          </tr>
+          <tr>
+            <td class="moduledef" valign="top">
+              <div class="module-name"><a name="InstallConfig"></a><a href="Ft.Lib.DistExt.InstallConfig.html">InstallConfig</a></div>
+            </td>
+            <td class="moduledesc" valign="bottom">
+              <div class="abstract">distutils command for installing the configuration file.</div>
+            </td>
+          </tr>
+          <tr>
+            <td class="moduledef" valign="top">
+              <div class="module-name"><a name="InstallData"></a><a href="Ft.Lib.DistExt.InstallData.html">InstallData</a></div>
+            </td>
+            <td class="moduledesc" valign="bottom"></td>
+          </tr>
+          <tr>
+            <td class="moduledef" valign="top">
+              <div class="module-name"><a name="InstallDevel"></a><a href="Ft.Lib.DistExt.InstallDevel.html">InstallDevel</a></div>
+            </td>
+            <td class="moduledesc" valign="bottom"></td>
+          </tr>
+          <tr>
+            <td class="moduledef" valign="top">
+              <div class="module-name"><a name="InstallDocs"></a><a href="Ft.Lib.DistExt.InstallDocs.html">InstallDocs</a></div>
+            </td>
+            <td class="moduledesc" valign="bottom"></td>
+          </tr>
+          <tr>
+            <td class="moduledef" valign="top">
+              <div class="module-name"><a name="InstallEggInfo"></a><a href="Ft.Lib.DistExt.InstallEggInfo.html">InstallEggInfo</a></div>
+            </td>
+            <td class="moduledesc" valign="bottom">
+              <div class="abstract">distutils.command.install_egg_info</div>
+            </td>
+          </tr>
+          <tr>
+            <td class="moduledef" valign="top">
+              <div class="module-name"><a name="InstallHtml"></a><a href="Ft.Lib.DistExt.InstallHtml.html">InstallHtml</a></div>
+            </td>
+            <td class="moduledesc" valign="bottom"></td>
+          </tr>
+          <tr>
+            <td class="moduledef" valign="top">
+              <div class="module-name"><a name="InstallL10n"></a><a href="Ft.Lib.DistExt.InstallL10n.html">InstallL10n</a></div>
+            </td>
+            <td class="moduledesc" valign="bottom"></td>
+          </tr>
+          <tr>
+            <td class="moduledef" valign="top">
+              <div class="module-name"><a name="InstallLib"></a><a href="Ft.Lib.DistExt.InstallLib.html">InstallLib</a></div>
+            </td>
+            <td class="moduledesc" valign="bottom"></td>
+          </tr>
+          <tr>
+            <td class="moduledef" valign="top">
+              <div class="module-name"><a name="InstallLocalState"></a><a href="Ft.Lib.DistExt.InstallLocalState.html">InstallLocalState</a></div>
+            </td>
+            <td class="moduledesc" valign="bottom"></td>
+          </tr>
+          <tr>
+            <td class="moduledef" valign="top">
+              <div class="module-name"><a name="InstallMisc"></a><a href="Ft.Lib.DistExt.InstallMisc.html">InstallMisc</a></div>
+            </td>
+            <td class="moduledesc" valign="bottom"></td>
+          </tr>
+          <tr>
+            <td class="moduledef" valign="top">
+              <div class="module-name"><a name="InstallScripts"></a><a href="Ft.Lib.DistExt.InstallScripts.html">InstallScripts</a></div>
+            </td>
+            <td class="moduledesc" valign="bottom"></td>
+          </tr>
+          <tr>
+            <td class="moduledef" valign="top">
+              <div class="module-name"><a name="InstallSysconf"></a><a href="Ft.Lib.DistExt.InstallSysconf.html">InstallSysconf</a></div>
+            </td>
+            <td class="moduledesc" valign="bottom"></td>
+          </tr>
+          <tr>
+            <td class="moduledef" valign="top">
+              <div class="module-name"><a name="InstallText"></a><a href="Ft.Lib.DistExt.InstallText.html">InstallText</a></div>
+            </td>
+            <td class="moduledesc" valign="bottom"></td>
+          </tr>
+          <tr>
+            <td class="moduledef" valign="top">
+              <div class="module-name"><a name="ModuleFinder"></a><a href="Ft.Lib.DistExt.ModuleFinder.html">ModuleFinder</a></div>
+            </td>
+            <td class="moduledesc" valign="bottom">
+              <div class="abstract">Utilities to help applications using modulefinder get all of the modules
+and data files used throughout 4Suite.</div>
+            </td>
+          </tr>
+          <tr>
+            <td class="moduledef" valign="top">
+              <div class="module-name"><a name="PackageManager"></a><a href="Ft.Lib.DistExt.PackageManager.html">PackageManager</a></div>
+            </td>
+            <td class="moduledesc" valign="bottom"></td>
+          </tr>
+          <tr>
+            <td class="moduledef" valign="top">
+              <div class="module-name"><a name="Py2Exe"></a><a href="Ft.Lib.DistExt.Py2Exe.html">Py2Exe</a></div>
+            </td>
+            <td class="moduledesc" valign="bottom"></td>
+          </tr>
+          <tr>
+            <td class="moduledef" valign="top">
+              <div class="module-name"><a name="SDist"></a><a href="Ft.Lib.DistExt.SDist.html">SDist</a></div>
+            </td>
+            <td class="moduledesc" valign="bottom"></td>
+          </tr>
+          <tr>
+            <td class="moduledef" valign="top">
+              <div class="module-name"><a name="Structures"></a><a href="Ft.Lib.DistExt.Structures.html">Structures</a></div>
+            </td>
+            <td class="moduledesc" valign="bottom">
+              <div class="abstract">Data structures that are to be used in a pkg file.</div>
+            </td>
+          </tr>
+          <tr>
+            <td class="moduledef" valign="top">
+              <div class="module-name"><a name="Uninstall"></a><a href="Ft.Lib.DistExt.Uninstall.html">Uninstall</a></div>
+            </td>
+            <td class="moduledesc" valign="bottom"></td>
+          </tr>
+          <tr>
+            <td class="moduledef" valign="top">
+              <div class="module-name"><a name="Util"></a><a href="Ft.Lib.DistExt.Util.html">Util</a></div>
+            </td>
+            <td class="moduledesc" valign="bottom"></td>
+          </tr>
+          <tr>
+            <td class="moduledef" valign="top">
+              <div class="module-name"><a name="Version"></a><a href="Ft.Lib.DistExt.Version.html">Version</a></div>
+            </td>
+            <td class="moduledesc" valign="bottom"></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="section">
+      <h2>Classes</h2>
+      <dl class="classes">
+        <dt class="classdef"><a name="Document"></a>class <span class="class-name">Document</span></dt>
+        <dd class="classdesc">
+          <div class="abstract">An XSLT rendered document. It creates both a XML, HTML and Text version
+of the document (if desired)</div>
+          <h3>Methods</h3>
+          <dl class="methods">
+            <dt class="methoddef"><a name="Document-__init__"><span class="method-name">__init__</span></a>(<span class="argument-name">self</span>, <span class="argument-name">source</span>, <span class="argument-name">stylesheet</span>, <span class="argument-name">params</span><span class="argument-default">=None</span>, <span class="argument-name">title</span><span class="argument-default">=None</span>, <span class="argument-name">category</span><span class="argument-default">=None</span>, <span class="argument-name">flags</span><span class="argument-default">=None</span>, <span class="argument-name">mtime</span><span class="argument-default">=None</span>, <span class="argument-name">outfile</span><span class="argument-default">=None</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dt class="methoddef"><a name="Document-__repr__"><span class="method-name">__repr__</span></a>(<span class="argument-name">self</span>)</dt>
+            <dd class="methoddesc"></dd>
+          </dl>
+        </dd>
+        <dt class="classdef"><a name="Executable"></a>class <span class="class-name">Executable</span></dt>
+        <dd class="classdesc">
+          <div class="abstract">Just a collection of attributes that describes an executable
+and everything needed to build it (hopefully in a portable way,
+but there are hooks that let you be as unportable as you need).</div>
+          <pre class="description">Instance attributes:
+  name : string
+    the full name of the extension, including any packages -- ie.
+    *not* a filename or pathname, but Python dotted name
+  sources : [string]
+    list of source filenames, relative to the distribution root
+    (where the setup script lives), in Unix form (slash-separated)
+    for portability.  Source files may be C, C++, SWIG (.i),
+    platform-specific resource files, or whatever else is recognized
+    by the "build_ext" command as source for a Python extension.
+  include_dirs : [string]
+    list of directories to search for C/C++ header files (in Unix
+    form for portability)
+  define_macros : [(name : string, value : string|None)]
+    list of macros to define; each macro is defined using a 2-tuple,
+    where 'value' is either the string to define it to or None to
+    define it without a particular value (equivalent of "#define
+    FOO" in source or -DFOO on Unix C compiler command line)
+  undef_macros : [string]
+    list of macros to undefine explicitly
+  library_dirs : [string]
+    list of directories to search for C/C++ libraries at link time
+  libraries : [string]
+    list of library names (not filenames or paths) to link against
+  runtime_library_dirs : [string]
+    list of directories to search for C/C++ libraries at run time
+    (for shared extensions, this is when the extension is loaded)
+  extra_objects : [string]
+    list of extra files to link with (eg. object files not implied
+    by 'sources', static library that must be explicitly specified,
+    binary resource files, etc.)
+  extra_compile_args : [string]
+    any extra platform- and compiler-specific information to use
+    when compiling the source files in 'sources'.  For platforms and
+    compilers where "command line" makes sense, this is typically a
+    list of command-line arguments, but for other platforms it could
+    be anything.
+  extra_link_args : [string]
+    any extra platform- and compiler-specific information to use
+    when linking object files together to create the extension (or
+    to create a new static Python interpreter).  Similar
+    interpretation as for 'extra_compile_args'.</pre>
+          <h3>Methods</h3>
+          <dl class="methods">
+            <dt class="methoddef"><a name="Executable-__init__"><span class="method-name">__init__</span></a>(<span class="argument-name">self</span>, <span class="argument-name">name</span>, <span class="argument-name">sources</span>, <span class="argument-name">include_dirs</span><span class="argument-default">=None</span>, <span class="argument-name">define_macros</span><span class="argument-default">=None</span>, <span class="argument-name">undef_macros</span><span class="argument-default">=None</span>, <span class="argument-name">library_dirs</span><span class="argument-default">=None</span>, <span class="argument-name">libraries</span><span class="argument-default">=None</span>, <span class="argument-name">runtime_library_dirs</span><span class="argument-default">=None</span>, <span class="argument-name">extra_objects</span><span class="argument-default">=None</span>, <span class="argument-name">extra_compile_args</span><span class="argument-default">=None</span>, <span class="argument-name">extra_link_args</span><span class="argument-default">=None</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dt class="methoddef"><a name="Executable-__repr__"><span class="method-name">__repr__</span></a>(<span class="argument-name">self</span>)</dt>
+            <dd class="methoddesc"></dd>
+          </dl>
+        </dd>
+        <dt class="classdef"><a name="Extension"></a>class <span class="class-name">Extension</span></dt>
+        <dd class="classdesc">
+          <div class="abstract">Just a collection of attributes that describes an extension
+module and everything needed to build it (hopefully in a portable
+way, but there are hooks that let you be as unportable as you need).</div>
+          <pre class="description">Instance attributes:
+  name : string
+    the full name of the extension, including any packages -- ie.
+    *not* a filename or pathname, but Python dotted name
+  sources : [string]
+    list of source filenames, relative to the distribution root
+    (where the setup script lives), in Unix form (slash-separated)
+    for portability.  Source files may be C, C++, SWIG (.i),
+    platform-specific resource files, or whatever else is recognized
+    by the "build_ext" command as source for a Python extension.
+  include_dirs : [string]
+    list of directories to search for C/C++ header files (in Unix
+    form for portability)
+  define_macros : [(name : string, value : string|None)]
+    list of macros to define; each macro is defined using a 2-tuple,
+    where 'value' is either the string to define it to or None to
+    define it without a particular value (equivalent of "#define
+    FOO" in source or -DFOO on Unix C compiler command line)
+  undef_macros : [string]
+    list of macros to undefine explicitly
+  library_dirs : [string]
+    list of directories to search for C/C++ libraries at link time
+  libraries : [string]
+    list of library names (not filenames or paths) to link against
+  runtime_library_dirs : [string]
+    list of directories to search for C/C++ libraries at run time
+    (for shared extensions, this is when the extension is loaded)
+  extra_objects : [string]
+    list of extra files to link with (eg. object files not implied
+    by 'sources', static library that must be explicitly specified,
+    binary resource files, etc.)
+  extra_compile_args : [string]
+    any extra platform- and compiler-specific information to use
+    when compiling the source files in 'sources'.  For platforms and
+    compilers where "command line" makes sense, this is typically a
+    list of command-line arguments, but for other platforms it could
+    be anything.
+  extra_link_args : [string]
+    any extra platform- and compiler-specific information to use
+    when linking object files together to create the extension (or
+    to create a new static Python interpreter).  Similar
+    interpretation as for 'extra_compile_args'.
+  export_symbols : [string]
+    list of symbols to be exported from a shared extension.  Not
+    used on all platforms, and not generally necessary for Python
+    extensions, which typically export exactly one symbol: "init" +
+    extension_name.
+  swig_opts : [string]
+    any extra options to pass to SWIG if a source file has the .i
+    extension.
+  depends : [string]
+    list of files that the extension depends on
+  language : string
+    extension language (i.e. "c", "c++", "objc"). Will be detected
+    from the source extensions if not provided.</pre>
+          <h3>Methods</h3>
+          <dl class="methods">
+            <dt class="methoddef"><a name="Extension-__init__"><span class="method-name">__init__</span></a>(<span class="argument-name">self</span>, <span class="argument-name">name</span>, <span class="argument-name">sources</span>, <span class="argument-name">include_dirs</span><span class="argument-default">=None</span>, <span class="argument-name">define_macros</span><span class="argument-default">=None</span>, <span class="argument-name">undef_macros</span><span class="argument-default">=None</span>, <span class="argument-name">library_dirs</span><span class="argument-default">=None</span>, <span class="argument-name">libraries</span><span class="argument-default">=None</span>, <span class="argument-name">runtime_library_dirs</span><span class="argument-default">=None</span>, <span class="argument-name">extra_objects</span><span class="argument-default">=None</span>, <span class="argument-name">extra_compile_args</span><span class="argument-default">=None</span>, <span class="argument-name">extra_link_args</span><span class="argument-default">=None</span>, <span class="argument-name">export_symbols</span><span class="argument-default">=None</span>, <span class="argument-name">swig_opts</span><span class="argument-default">=None</span>, <span class="argument-name">depends</span><span class="argument-default">=None</span>, <span class="argument-name">language</span><span class="argument-default">=None</span>, <span class="argument-name">**kw</span>)</dt>
+            <dd class="methoddesc"></dd>
+          </dl>
+        </dd>
+        <dt class="classdef"><a name="ExtensionsDocument"></a>class <span class="class-name">ExtensionsDocument</span><span class="bases">(<span class="class-name"><a href="Ft.Lib.DistExt.Structures.html#GeneratedDocument">Ft.Lib.DistExt.Structures.GeneratedDocument</a></span>)</span></dt>
+        <dd class="classdesc">
+          <div class="abstract">A collection of attributes that describes a set of Python modules that
+implement 4Suite's XPath/XSLT extension API. Instances of File are
+used as members of the doc_files argument to setup().</div>
+          <h3>Methods</h3>
+          <dl class="methods">
+            <dt class="methoddef"><a name="ExtensionsDocument-__init__"><span class="method-name">__init__</span></a>(<span class="argument-name">self</span>, <span class="argument-name">name</span>, <span class="argument-name">modules</span>, <span class="argument-name">title</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dt class="methoddef"><a name="ExtensionsDocument-__repr__"><span class="method-name">__repr__</span></a>(<span class="argument-name">self</span>)</dt>
+            <dd class="methoddesc"></dd>
+          </dl>
+          <h3>Methods inherited from class <a href="Ft.Lib.DistExt.Structures.html#GeneratedDocument">Ft.Lib.DistExt.Structures.GeneratedDocument</a></h3>
+          <div class="inherited"><span class="inherited-name"><a href="Ft.Lib.DistExt.Structures.html#GeneratedDocument-get_source_files">get_source_files</a></span></div>
+        </dd>
+        <dt class="classdef"><a name="File"></a>class <span class="class-name">File</span></dt>
+        <dd class="classdesc">
+          <div class="abstract">A collection of attributes that describes a file on the filesystem.
+Instances of File are used as members of the doc_files argument to
+setup().</div>
+          <h3>Methods</h3>
+          <dl class="methods">
+            <dt class="methoddef"><a name="File-__init__"><span class="method-name">__init__</span></a>(<span class="argument-name">self</span>, <span class="argument-name">source</span>, <span class="argument-name">outdir</span><span class="argument-default">=''</span>, <span class="argument-name">flags</span><span class="argument-default">=None</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dt class="methoddef"><a name="File-__repr__"><span class="method-name">__repr__</span></a>(<span class="argument-name">self</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dt class="methoddef"><a name="File-get_source_files"><span class="method-name">get_source_files</span></a>(<span class="argument-name">self</span>)</dt>
+            <dd class="methoddesc"></dd>
+          </dl>
+        </dd>
+        <dt class="classdef"><a name="FileList"></a>class <span class="class-name">FileList</span><span class="bases">(<span class="class-name"><span class="undocumented">distutils.filelist.FileList</span></span>)</span></dt>
+        <dd class="classdesc">
+          <div class="abstract">Defines a collection of files.</div>
+          <h3>Methods</h3>
+          <dl class="methods">
+            <dt class="methoddef"><a name="FileList-__init__"><span class="method-name">__init__</span></a>(<span class="argument-name">self</span>, <span class="argument-name">dest</span>, <span class="argument-name">sources</span>, <span class="argument-name">recursive</span><span class="argument-default">=False</span>, <span class="argument-name">excludes</span><span class="argument-default">=None</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dd class="overrides"><b>Overrides: </b><span class="inherited-name">__init__</span> from class <span class="class-name"><span class="undocumented">FileList</span></span></dd>
+          </dl>
+          <h3>Methods inherited from class <span class="undocumented">distutils.filelist.FileList</span></h3>
+          <div class="inherited"><span class="inherited-name">append</span>, <span class="inherited-name">debug_print</span>, <span class="inherited-name">exclude_pattern</span>, <span class="inherited-name">extend</span>, <span class="inherited-name">findall</span>, <span class="inherited-name">include_pattern</span>, <span class="inherited-name">process_template_line</span>, <span class="inherited-name">remove_duplicates</span>, <span class="inherited-name">set_allfiles</span>, <span class="inherited-name">sort</span></div>
+        </dd>
+        <dt class="classdef"><a name="Localization"></a>class <span class="class-name">Localization</span></dt>
+        <dd class="classdesc">
+          <div class="abstract">Defines a message catalog for a particular language</div>
+          <h3>Methods</h3>
+          <dl class="methods">
+            <dt class="methoddef"><a name="Localization-__init__"><span class="method-name">__init__</span></a>(<span class="argument-name">self</span>, <span class="argument-name">language</span>, <span class="argument-name">source</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dt class="methoddef"><a name="Localization-__repr__"><span class="method-name">__repr__</span></a>(<span class="argument-name">self</span>)</dt>
+            <dd class="methoddesc"></dd>
+          </dl>
+        </dd>
+        <dt class="classdef"><a name="ModulesDocument"></a>class <span class="class-name">ModulesDocument</span><span class="bases">(<span class="class-name"><a href="Ft.Lib.DistExt.Structures.html#GeneratedDocument">Ft.Lib.DistExt.Structures.GeneratedDocument</a></span>)</span></dt>
+        <dd class="classdesc">
+          <h3>Methods</h3>
+          <dl class="methods">
+            <dt class="methoddef"><a name="ModulesDocument-__init__"><span class="method-name">__init__</span></a>(<span class="argument-name">self</span>, <span class="argument-name">title</span>, <span class="argument-name">packages</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dt class="methoddef"><a name="ModulesDocument-__repr__"><span class="method-name">__repr__</span></a>(<span class="argument-name">self</span>)</dt>
+            <dd class="methoddesc"></dd>
+          </dl>
+          <h3>Methods inherited from class <a href="Ft.Lib.DistExt.Structures.html#GeneratedDocument">Ft.Lib.DistExt.Structures.GeneratedDocument</a></h3>
+          <div class="inherited"><span class="inherited-name"><a href="Ft.Lib.DistExt.Structures.html#GeneratedDocument-get_source_files">get_source_files</a></span></div>
+        </dd>
+        <dt class="classdef"><a name="Script"></a>class <span class="class-name">Script</span></dt>
+        <dd class="classdesc">
+          <h3>Methods</h3>
+          <dl class="methods">
+            <dt class="methoddef"><a name="Script-__init__"><span class="method-name">__init__</span></a>(<span class="argument-name">self</span>, <span class="argument-name">name</span>, <span class="argument-name">module</span>, <span class="argument-name">function</span><span class="argument-default">=None</span>, <span class="argument-name">application</span><span class="argument-default">=None</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dt class="methoddef"><a name="Script-__repr__"><span class="method-name">__repr__</span></a>(<span class="argument-name">self</span>)</dt>
+            <dd class="methoddesc"></dd>
+          </dl>
+        </dd>
+      </dl>
+    </div>
+    <div class="section">
+      <h2>Functions</h2>
+      <dl class="functions">
+        <dt class="functiondef"><a name="EnsureVersion"><span class="function-name">EnsureVersion</span></a>(<span class="argument-name">version</span>)</dt>
+        <dd class="functiondesc">
+          <div class="abstract">Checks Distutils version against specified version number</div>
+        </dd>
+        <dt class="functiondef"><a name="setup"><span class="function-name">setup</span></a>(<span class="argument-name">**attrs</span>)</dt>
+        <dd class="functiondesc">
+          <div class="abstract">The gateway to the Distutils: do everything your setup script needs
+to do, in a highly flexible and user-driven way.  Briefly: create a
+Distribution instance; find and parse config files; parse the command
+line; run each Distutils command found there, customized by the options
+supplied to 'setup()' (as keyword arguments), in config files, and on
+the command line.</div>
+          <pre class="description">The Distribution instance might be an instance of a class supplied via
+the 'distclass' keyword argument to 'setup'; if no such class is
+supplied, then the Distribution class (in dist.py) is instantiated.
+All other arguments to 'setup' (except for 'cmdclass') are used to set
+attributes of the Distribution instance.
+
+The 'cmdclass' argument, if supplied, is a dictionary mapping command
+names to command classes.  Each command encountered on the command line
+will be turned into a command class, which is in turn instantiated; any
+class found in 'cmdclass' is used in place of the default, which is
+(for command 'foo_bar') class 'foo_bar' in module
+'distutils.command.foo_bar'.  The command class must provide a
+'user_options' attribute which is a list of option specifiers for
+'distutils.fancy_getopt'.  Any command-line options between the current
+and the next command are used to set attributes of the current command
+object.
+
+When the entire command-line has been successfully parsed, calls the
+'run()' method on each command object in turn.  This method will be
+driven entirely by the Distribution object (which each command object
+has a reference to, thanks to its constructor), and the
+command-specific options that became attributes of each command
+object.</pre>
+        </dd>
+      </dl>
+    </div>
+    <div class="universal-footer">Last modified on 2006-11-25 16:34:23</div>
+  </body>
+</html>

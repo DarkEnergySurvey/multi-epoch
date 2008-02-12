@@ -1,0 +1,63 @@
+   <target name="Stage_movecat" description="Move usnob catalog to teragrid">
+    <property file="${mypath}/module_orchs/movecat.properties"/>
+
+    <esequence>
+
+        <publish>
+           <event ensembleid="${ensemble.id}"
+                 workflowid="Main"
+                 nodeid="Begin Stage_movecat"
+                 currentState="0">
+                  <property name="message" value="Begin Stage_movecat"/>
+           </event>
+        </publish>
+
+     <print line=" - Begin Stage_movecat"/>
+
+     <edeclare name="end" long="$E{ ${ccd.stop} + 1 }"/> 
+     <eloop counterName="i" initialValue="${ccd.start}">
+          <ecounter>
+               <expression infix="$R{i} &lt; $R{end}"/>
+          </ecounter>           
+
+          <!-- convert 1,...,9 to 01,...,09 -->
+
+          <econdblock type="else-if">
+            <econdtask>
+              <eeval>
+                <statement> 
+                  <ecompare long="$R{i}">
+                    <predicate long="10" comparator="LT"/>
+                  </ecompare> 
+                 </statement>
+              </eeval>
+                <edeclare globalName="in" string="0$R{i}"/>
+            </econdtask>
+                <edeclare globalName="in" long="$R{i}"/>
+          </econdblock>
+ 
+              <print line=" -- Running Stage_movecat - GridFTP usnob-catalog for CCD$R{in} ... "/>
+
+              <edeclare name="srcdir"  string="${job.id}/${local_catpath}/$R{in}/USNOB_$R{in}.fits"/>
+              <edeclare name="targetdir" string="${targetprot}://${tgrid_server}${tgrid_homepath}/$R{in}_${uid}/data/${nite}/log/"/>
+
+              <uricopy from="$R{srcdir}" to="$R{targetdir}">
+              </uricopy>    
+
+              <delete dir="${job.id}/${local_catpath}/$R{in}"/>
+     </eloop>
+
+     <print line=" - Stage_movecat done"/>
+     <print line="  "/>
+
+        <publish>
+           <event ensembleid="${ensemble.id}"
+                 workflowid="Main"
+                 nodeid="End Stage_movecat"
+                 currentState="0">
+                  <property name="message" value="End Stage_movecat"/>
+           </event>
+        </publish>
+
+    </esequence>
+   </target>

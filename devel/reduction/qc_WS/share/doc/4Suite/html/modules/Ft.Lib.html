@@ -1,0 +1,278 @@
+<html>
+  <head>
+    <meta content="text/html; charset=iso-8859-1" http-equiv="Content-Type">
+    <title>4Suite API Documentation: Ft.Lib</title>
+    <link href="modules.css" type="text/css" rel="stylesheet">
+  </head>
+  <body>
+    <div class="universal-header"><span class="universal-header-prefix">&nbsp;&nbsp;&nbsp;</span>&nbsp;<span class="universal-header-prefix">&nbsp;&nbsp;</span>&nbsp;<span class="universal-header-prefix">&nbsp;</span>&nbsp;<a href="../index.html">4Suite<sup>&trade;</sup> API Documentation</a></div>
+    <h1><span class="glyph-arrow">&#9658;</span> Module <span class="this-name"><a href="Ft.html" title="Ft">Ft</a>.Lib</span></h1>
+    <div class="abstract">Module providing common utilities for many 4Suite components,
+as well as for general use.</div>
+    <pre class="description">Copyright 2005 Fourthought, Inc. (USA).
+Detailed license and copyright information: http://4suite.org/COPYRIGHT
+Project home, documentation, distributions: http://4suite.org/</pre>
+    <div class="summary-section">
+      <table cellpadding="0" cellspacing="0">
+        <tbody>
+          <tr>
+            <td valign="top">
+              <div class="summary-header">Classes:</div>
+              <div class="summary-list"><span class="class-name"><a href="#UriException">UriException</a></span></div>
+            </td>
+            <td width="7" valign="middle"></td>
+            <td bgcolor="#C5C5C5" valign="middle" width="1"></td>
+            <td width="7" valign="middle"></td>
+            <td valign="top">
+              <div class="summary-header">Functions:</div>
+              <div class="summary-list"><span class="function-name"><a href="#CloseStream">CloseStream</a></span>, <span class="function-name"><a href="#Truncate">Truncate</a></span>, <span class="function-name"><a href="#Wrap">Wrap</a></span></div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="section">
+      <h2>Modules</h2>
+      <table class="modules">
+        <tbody>
+          <tr>
+            <td class="moduledef" valign="top">
+              <div class="module-name"><a name="CommandLine"></a><a href="Ft.Lib.CommandLine.html">CommandLine</a></div>
+            </td>
+            <td class="moduledesc" valign="bottom">
+              <div class="abstract">Things to set up before importing other Ft.Lib.CommandLine modules</div>
+            </td>
+          </tr>
+          <tr>
+            <td class="moduledef" valign="top">
+              <div class="module-name"><a name="DbUtil"></a><a href="Ft.Lib.DbUtil.html">DbUtil</a></div>
+            </td>
+            <td class="moduledesc" valign="bottom">
+              <div class="abstract">Utilities for database connections</div>
+            </td>
+          </tr>
+          <tr>
+            <td class="moduledef" valign="top">
+              <div class="module-name"><a name="DistExt"></a><a href="Ft.Lib.DistExt.html">DistExt</a></div>
+            </td>
+            <td class="moduledesc" valign="bottom">
+              <div class="abstract">Extensions to distutils to support building, installing, packaging 4Suite</div>
+            </td>
+          </tr>
+          <tr>
+            <td class="moduledef" valign="top">
+              <div class="module-name"><a name="EscapeQuotesc"></a><a href="Ft.Lib.EscapeQuotesc.html">EscapeQuotesc</a></div>
+            </td>
+            <td class="moduledesc" valign="bottom"></td>
+          </tr>
+          <tr>
+            <td class="moduledef" valign="top">
+              <div class="module-name"><a name="Gettext"></a><a href="Ft.Lib.Gettext.html">Gettext</a></div>
+            </td>
+            <td class="moduledesc" valign="bottom">
+              <div class="abstract">Internationalization and localization support.</div>
+            </td>
+          </tr>
+          <tr>
+            <td class="moduledef" valign="top">
+              <div class="module-name"><a name="ImportUtil"></a><a href="Ft.Lib.ImportUtil.html">ImportUtil</a></div>
+            </td>
+            <td class="moduledesc" valign="bottom">
+              <div class="abstract">Utilites for working with Python PEP 302 import hooks.</div>
+            </td>
+          </tr>
+          <tr>
+            <td class="moduledef" valign="top">
+              <div class="module-name"><a name="Iri"></a><a href="Ft.Lib.Iri.html">Iri</a></div>
+            </td>
+            <td class="moduledesc" valign="bottom">
+              <div class="abstract">Classes and functions related to IRI processing</div>
+            </td>
+          </tr>
+          <tr>
+            <td class="moduledef" valign="top">
+              <div class="module-name"><a name="MessageSource"></a><a href="Ft.Lib.MessageSource.html">MessageSource</a></div>
+            </td>
+            <td class="moduledesc" valign="bottom">
+              <div class="abstract">Messages for Ft.Lib</div>
+            </td>
+          </tr>
+          <tr>
+            <td class="moduledef" valign="top">
+              <div class="module-name"><a name="ObjectPrint"></a><a href="Ft.Lib.ObjectPrint.html">ObjectPrint</a></div>
+            </td>
+            <td class="moduledesc" valign="bottom">
+              <div class="abstract">Pretty-printing of objects</div>
+            </td>
+          </tr>
+          <tr>
+            <td class="moduledef" valign="top">
+              <div class="module-name"><a name="ProgressIndicator"></a><a href="Ft.Lib.ProgressIndicator.html">ProgressIndicator</a></div>
+            </td>
+            <td class="moduledesc" valign="bottom">
+              <div class="abstract">Progress indicator</div>
+            </td>
+          </tr>
+          <tr>
+            <td class="moduledef" valign="top">
+              <div class="module-name"><a name="Random"></a><a href="Ft.Lib.Random.html">Random</a></div>
+            </td>
+            <td class="moduledesc" valign="bottom">
+              <div class="abstract">Thread-safe random number generation</div>
+            </td>
+          </tr>
+          <tr>
+            <td class="moduledef" valign="top">
+              <div class="module-name"><a name="Regex"></a><a href="Ft.Lib.Regex.html">Regex</a></div>
+            </td>
+            <td class="moduledesc" valign="bottom">
+              <div class="abstract">Tools to manage the many different flavors of regex</div>
+            </td>
+          </tr>
+          <tr>
+            <td class="moduledef" valign="top">
+              <div class="module-name"><a name="Resolvers"></a><a href="Ft.Lib.Resolvers.html">Resolvers</a></div>
+            </td>
+            <td class="moduledesc" valign="bottom">
+              <div class="abstract">Specialized and useful URI resolvers</div>
+            </td>
+          </tr>
+          <tr>
+            <td class="moduledef" valign="top">
+              <div class="module-name"><a name="Set"></a><a href="Ft.Lib.Set.html">Set</a></div>
+            </td>
+            <td class="moduledesc" valign="bottom">
+              <div class="abstract">Operations on ordered sets</div>
+            </td>
+          </tr>
+          <tr>
+            <td class="moduledef" valign="top">
+              <div class="module-name"><a name="Terminal"></a><a href="Ft.Lib.Terminal.html">Terminal</a></div>
+            </td>
+            <td class="moduledesc" valign="bottom">
+              <div class="abstract">Provides some of the information from the terminfo database.</div>
+            </td>
+          </tr>
+          <tr>
+            <td class="moduledef" valign="top">
+              <div class="module-name"><a name="Terminfo"></a><a href="Ft.Lib.Terminfo.html">Terminfo</a></div>
+            </td>
+            <td class="moduledesc" valign="bottom">
+              <div class="abstract">Provides some of the information from the terminfo database.</div>
+            </td>
+          </tr>
+          <tr>
+            <td class="moduledef" valign="top">
+              <div class="module-name"><a name="TestSuite"></a><a href="Ft.Lib.TestSuite.html">TestSuite</a></div>
+            </td>
+            <td class="moduledesc" valign="bottom">
+              <div class="abstract">Package for testing utilities</div>
+            </td>
+          </tr>
+          <tr>
+            <td class="moduledef" valign="top">
+              <div class="module-name"><a name="Time"></a><a href="Ft.Lib.Time.html">Time</a></div>
+            </td>
+            <td class="moduledesc" valign="bottom">
+              <div class="abstract">Date and time related functionality for use within 4Suite only.</div>
+            </td>
+          </tr>
+          <tr>
+            <td class="moduledef" valign="top">
+              <div class="module-name"><a name="Uri"></a><a href="Ft.Lib.Uri.html">Uri</a></div>
+            </td>
+            <td class="moduledesc" valign="bottom">
+              <div class="abstract">Classes and functions related to URI validation and resolution</div>
+            </td>
+          </tr>
+          <tr>
+            <td class="moduledef" valign="top">
+              <div class="module-name"><a name="Uuid"></a><a href="Ft.Lib.Uuid.html">Uuid</a></div>
+            </td>
+            <td class="moduledesc" valign="bottom">
+              <div class="abstract">Functions for generating and comparing Universal Unique Identifiers
+(UUIDs), based on ideas from e2fsprogs.</div>
+            </td>
+          </tr>
+          <tr>
+            <td class="moduledef" valign="top">
+              <div class="module-name"><a name="boolean"></a><a href="Ft.Lib.boolean.html">boolean</a></div>
+            </td>
+            <td class="moduledesc" valign="bottom"></td>
+          </tr>
+          <tr>
+            <td class="moduledef" valign="top">
+              <div class="module-name"><a name="number"></a><a href="Ft.Lib.number.html">number</a></div>
+            </td>
+            <td class="moduledesc" valign="bottom"></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="section">
+      <h2>Classes</h2>
+      <dl class="classes">
+        <dt class="classdef"><a name="UriException"></a>class <span class="class-name">UriException</span><span class="bases">(<span class="class-name"><a href="Ft.html#FtException">Ft.FtException</a></span>)</span></dt>
+        <dd class="classdesc">
+          <div class="abstract">Exceptions used by the Uri module, and possibly others.</div>
+          <h3>Methods</h3>
+          <dl class="methods">
+            <dt class="methoddef"><a name="UriException-__init__"><span class="method-name">__init__</span></a>(<span class="argument-name">self</span>, <span class="argument-name">errorCode</span>, <span class="argument-name">*args</span>, <span class="argument-name">**kwargs</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dd class="overrides"><b>Overrides: </b><span class="inherited-name"><a href="Ft.html#FtException-__init__">__init__</a></span> from class <span class="class-name"><a href="Ft.html#FtException">FtException</a></span></dd>
+          </dl>
+          <h3>Methods inherited from class <a href="Ft.html#FtException">Ft.FtException</a></h3>
+          <div class="inherited"><span class="inherited-name"><a href="Ft.html#FtException-__getattr__">__getattr__</a></span>, <span class="inherited-name"><a href="Ft.html#FtException-__repr__">__repr__</a></span>, <span class="inherited-name"><a href="Ft.html#FtException-__str__">__str__</a></span></div>
+          <h3>Methods inherited from class <span class="undocumented">Exception</span></h3>
+          <div class="inherited"><span class="inherited-name">__getitem__</span></div>
+          <h3>Members</h3>
+          <dl class="members">
+            <dt class="memberdef"><a name="IDNA_UNSUPPORTED"><span class="member-name">IDNA_UNSUPPORTED</span></a> = 202</dt>
+            <dt class="memberdef"><a name="INVALID_BASE_URI"><span class="member-name">INVALID_BASE_URI</span></a> = 100</dt>
+            <dt class="memberdef"><a name="INVALID_PUBLIC_ID_URN"><span class="member-name">INVALID_PUBLIC_ID_URN</span></a> = 300</dt>
+            <dt class="memberdef"><a name="NON_FILE_URI"><span class="member-name">NON_FILE_URI</span></a> = 120</dt>
+            <dt class="memberdef"><a name="OPAQUE_BASE_URI"><span class="member-name">OPAQUE_BASE_URI</span></a> = 112</dt>
+            <dt class="memberdef"><a name="RELATIVE_BASE_URI"><span class="member-name">RELATIVE_BASE_URI</span></a> = 111</dt>
+            <dt class="memberdef"><a name="RESOURCE_ERROR"><span class="member-name">RESOURCE_ERROR</span></a> = 130</dt>
+            <dt class="memberdef"><a name="SCHEME_REQUIRED"><span class="member-name">SCHEME_REQUIRED</span></a> = 200</dt>
+            <dt class="memberdef"><a name="UNIX_REMOTE_HOST_FILE_URI"><span class="member-name">UNIX_REMOTE_HOST_FILE_URI</span></a> = 121</dt>
+            <dt class="memberdef"><a name="UNSUPPORTED_PLATFORM"><span class="member-name">UNSUPPORTED_PLATFORM</span></a> = 1000</dt>
+            <dt class="memberdef"><a name="UNSUPPORTED_SCHEME"><span class="member-name">UNSUPPORTED_SCHEME</span></a> = 201</dt>
+          </dl>
+        </dd>
+      </dl>
+    </div>
+    <div class="section">
+      <h2>Functions</h2>
+      <dl class="functions">
+        <dt class="functiondef"><a name="CloseStream"><span class="function-name">CloseStream</span></a>(<span class="argument-name">stream</span>, <span class="argument-name">quiet</span><span class="argument-default">=False</span>)</dt>
+        <dd class="functiondesc">
+          <div class="abstract">Closes a stream, ignoring errors if quiet=True. If the stream is a
+terminal (e.g. sys.stdin, stdout, stderr), does not attempt to close
+the stream.</div>
+          <pre class="description">Closing terminal streams could interfere with subsequent read or
+write attempts. For example, after calling sys.stdout.close(),
+subsequent writes to stdout will not raise an exception, but may
+also fail to actually write anything to stdout.
+
+The stream argument can be any Python file-like object with a
+close() method, such as a regular file object or an instance of
+Ft.Xml.InputSource.InputSource (or subclass thereof).</pre>
+        </dd>
+        <dt class="functiondef"><a name="Truncate"><span class="function-name">Truncate</span></a>(<span class="argument-name">text</span>, <span class="argument-name">length</span>)</dt>
+        <dd class="functiondesc">
+          <div class="abstract">Returns text truncated to length, with "..." appended if truncation
+was necessary.</div>
+        </dd>
+        <dt class="functiondef"><a name="Wrap"><span class="function-name">Wrap</span></a>(<span class="argument-name">text</span>, <span class="argument-name">width</span>)</dt>
+        <dd class="functiondesc">
+          <div class="abstract">A word-wrap function that preserves existing line breaks
+and most spaces in the text. Expects that existing line
+breaks are posix newlines (\n).</div>
+          <pre class="description">See also: Ft.Lib.CommandLine.CommandLineUtil.wrap_text()</pre>
+        </dd>
+      </dl>
+    </div>
+    <div class="universal-footer">Last modified on 2005-04-18 16:46:56</div>
+  </body>
+</html>

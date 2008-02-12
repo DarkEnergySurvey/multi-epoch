@@ -1,0 +1,143 @@
+#!/usr/bin/env perl
+########################################################################
+#  $Id$
+#
+#  $Rev::                                  $:  # Revision of last commit.
+#  $LastChangedBy::                        $:  # Author of last commit. 
+#  $LastChangedDate::                      $:  # Date of last commit.
+#
+#  Authors: 
+#         Michelle Gower (mgower@ncsa.uiuc.edu)
+#         Darren Adams (dadams@ncsa.uiuc.edu)
+#
+#  Developed at: 
+#  The National Center for Supercomputing Applications (NCSA).
+#
+#  Copyright (C) 2007 Board of Trustees of the University of Illinois. 
+#  All rights reserved.
+#
+#  DESCRIPTION:
+#
+#######################################################################
+
+use strict;
+use warnings;
+
+use FindBin;
+use lib "$FindBin::Bin/../lib";
+use DES::utils::dbutils;
+use DES::utils::misc;
+use DES::utils::email;
+use DES::utils::hist;
+use DES::desconfig;
+use DES::desDBI;
+
+if (scalar(@ARGV) != 2)
+{
+   print "Usage: desingestsrc configfile condorid\n";
+   exit $FAILURE;
+}
+
+my $ConfigFile = shift;
+my $CondorID = shift;
+
+# read sysinfo file
+my $Config = new DES::desconfig;
+$Config->readConfig($ConfigFile, 0, \*STDERR);
+
+# log condor jobid
+$CondorID = sprintf("%d", $CondorID);
+logEvent($Config, "ingestsrc", "j"," ","cid", $CondorID);
+
+# Get variables from configuration
+my %SearchDefs;
+$SearchDefs{"stage"} = "ingestsrc";
+my $Nite = $Config->getValueReq('nite');
+my $Verbose =  $Config->getValue("verbose", \%SearchDefs);
+my $RunArchiveLoc = $Config->getValueReq("run_archive_loc", \%SearchDefs);
+$SearchDefs{"archive"} = $RunArchiveLoc;
+my $ArchiveRoot=$Config->getValueReq("archive_root", \%SearchDefs);
+my $ArchiveSite = $Config->getValueReq("site_name", \%SearchDefs);
+$SearchDefs{"site"} = $ArchiveSite;
+my $Server = $Config->getValueReq("gridftp_host", \%SearchDefs);
+my $ServerPort = $Config->getValue("gridftp_port", \%SearchDefs);
+
+
+# Build uberftp command:
+my $NiteSrcDir = "$ArchiveRoot/raw/$Nite/src";
+my $Cmd = "uberftp";
+$Cmd = $Cmd." -P $ServerPort" if ($ServerPort);
+$Cmd = $Cmd." $Server \"cd $NiteSrcDir; ls \"";
+
+if (defined($Verbose)) {
+   print "cmd> $Cmd\n";
+}
+  
+# Get output from uberftp ls command:
+my @ImageNames;
+my $Out = `$Cmd 2>&1`;
+my $ExitVal = $?>>8;
+
+if (defined($Verbose)) {
+   print "$Out\n";
+}
+
+# Grab relavant file names (with extension striped) from listing:
+my @Out = split(/\n/,$Out);
+foreach my $Line (@Out) {
+  if (($Line =~ /(\S+)\.fits\.gz$/)
+     || ($Line =~ /(\S+)\.fits$/)) {
+#    print "$1\n";
+     my $Img=$1;
+     $Img=~s/^\s*//;
+     $Img=~s/\s*$//;
+     push (@ImageNames,$Img);
+  }
+}
+
+# Estabilsh database connection:
+my $desdb = new DES::desDBI;;
+
+
+# Bail if no images are found:
+if (scalar(@ImageNames) ==  0) {
+  print STDERR "Found 0 src files in $Server/$NiteSrcDir\n";
+
+  my ($Msg1, $Msg2);
+  $Msg1 = "Error when ingesting source files.  Found 0 src files.\n\n";
+  $Msg2 = "";
+  sendEmail($Config, $desdb, "analysis", $FAILURE, $Msg1, $Msg2);
+  exit $FAILURE;
+}
+
+
+# With the image list in hand...
+# Insert info into DB:
+my $Tuples = $desdb->ingestSrcFileInfo($Nite,\@ImageNames);
+
+## Prepare Insert command:
+#my $dbi = "INSERT into FILES (IMAGEID, IMAGETYPE, NITE, IMAGECLASS, IMAGENAME) VALUES ( files_seq.nextval,'src','$Nite','raw',?)";
+#
+#if (defined($Verbose)) {
+#   print "Using:\n$dbi\nFor ImageNames:\n";
+#   foreach(@ImageNames) {
+#      print "\t$_\n";
+#   }
+#}
+#
+#my $sth = $desdb->{dbh}->prepare($dbi);
+#
+## Execute insert for all image names:
+#my $Tuples = $sth->execute_array(
+#{ ArrayTupleStatus => \my @TupleStatus },
+#\@ImageNames
+#);
+#$desdb->{dbh}->commit();
+#$desdb->{dbh}->{AutoCommit} = 1;
+#$desdb->{dbh}->disconnect();
+
+if ($Tuples) {
+   print "Successfully inserted $Tuples records\n";
+}
+
+exit $SUCCESS;

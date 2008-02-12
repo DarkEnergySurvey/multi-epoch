@@ -1,0 +1,161 @@
+<html>
+  <head>
+    <meta content="text/html; charset=iso-8859-1" http-equiv="Content-Type">
+    <title>4Suite API Documentation: Ft.Xml.XLink.XLinkElements</title>
+    <link href="modules.css" type="text/css" rel="stylesheet">
+  </head>
+  <body>
+    <div class="universal-header"><span class="universal-header-prefix">&nbsp;&nbsp;&nbsp;</span>&nbsp;<span class="universal-header-prefix">&nbsp;&nbsp;</span>&nbsp;<span class="universal-header-prefix">&nbsp;</span>&nbsp;<a href="../index.html">4Suite<sup>&trade;</sup> API Documentation</a></div>
+    <h1><span class="glyph-arrow">&#9658;</span> Module <span class="this-name"><a href="Ft.html" title="Ft">Ft</a>.<a href="Ft.Xml.html" title="Ft.Xml">Xml</a>.<a href="Ft.Xml.XLink.html" title="Ft.Xml.XLink">XLink</a>.XLinkElements</span></h1>
+    <div class="abstract">Classes representing XLink elements</div>
+    <pre class="description">Copyright 2005 Fourthought, Inc. (USA).
+Detailed license and copyright information: http://4suite.org/COPYRIGHT
+Project home, documentation, distributions: http://4suite.org/</pre>
+    <div class="summary-section">
+      <table cellpadding="0" cellspacing="0">
+        <tbody>
+          <tr>
+            <td valign="top">
+              <div class="summary-header">Classes:</div>
+              <div class="summary-list"><span class="class-name"><a href="#Arc">Arc</a></span>, <span class="class-name"><a href="#Extended">Extended</a></span>, <span class="class-name"><a href="#Literal">Literal</a></span>, <span class="class-name"><a href="#Locator">Locator</a></span>, <span class="class-name"><a href="#Resource">Resource</a></span>, <span class="class-name"><a href="#Simple">Simple</a></span>, <span class="class-name"><a href="#Title">Title</a></span></div>
+            </td>
+            <td width="7" valign="middle"></td>
+            <td width="1" valign="middle" bgcolor="#C5C5C5"></td>
+            <td width="7" valign="middle"></td>
+            <td valign="top">
+              <div class="summary-header">Functions:</div>
+              <div class="summary-list"><span class="function-name"><a href="#Create">Create</a></span></div>
+            </td>
+            <td width="7" valign="middle"></td>
+            <td width="1" valign="middle" bgcolor="#C5C5C5"></td>
+            <td width="7" valign="middle"></td>
+            <td valign="top">
+              <div class="summary-header">Globals:</div>
+              <div class="summary-list"><span class="global-name"><a href="#TypeMap">TypeMap</a></span>, <span class="global-name"><a href="#XLINK_NAMESPACE">XLINK_NAMESPACE</a></span></div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="section">
+      <h2>Classes</h2>
+      <dl class="classes">
+        <dt class="classdef"><a name="Arc"></a>class <span class="class-name">Arc</span><span class="bases">(<span class="class-name"><a href="Ft.Xml.XLink.XLinkElements.html#Literal">Literal</a></span>)</span></dt>
+        <dd class="classdesc">
+          <h3>Methods inherited from class <a href="Ft.Xml.XLink.XLinkElements.html#Literal">Literal</a></h3>
+          <div class="inherited"><span class="inherited-name"><a href="Ft.Xml.XLink.XLinkElements.html#Literal-__init__">__init__</a></span>, <span class="inherited-name"><a href="Ft.Xml.XLink.XLinkElements.html#Literal-process">process</a></span></div>
+          <h3>Members</h3>
+          <dl class="members">
+            <dt class="memberdef"><a name="type"><span class="member-name">type</span></a> = 'arc'</dt>
+          </dl>
+        </dd>
+        <dt class="classdef"><a name="Extended"></a>class <span class="class-name">Extended</span><span class="bases">(<span class="class-name"><a href="Ft.Xml.XLink.XLinkElements.html#Literal">Literal</a></span>)</span></dt>
+        <dd class="classdesc">
+          <h3>Methods inherited from class <a href="Ft.Xml.XLink.XLinkElements.html#Literal">Literal</a></h3>
+          <div class="inherited"><span class="inherited-name"><a href="Ft.Xml.XLink.XLinkElements.html#Literal-__init__">__init__</a></span>, <span class="inherited-name"><a href="Ft.Xml.XLink.XLinkElements.html#Literal-process">process</a></span></div>
+          <h3>Members</h3>
+          <dl class="members">
+            <dt class="memberdef"><a name="type"><span class="member-name">type</span></a> = 'extended'</dt>
+          </dl>
+        </dd>
+        <dt class="classdef"><a name="Literal"></a>class <span class="class-name">Literal</span></dt>
+        <dd class="classdesc">
+          <div class="abstract">Base class for an XLink element.</div>
+          <h3>Methods</h3>
+          <dl class="methods">
+            <dt class="methoddef"><a name="Literal-__init__"><span class="method-name">__init__</span></a>(<span class="argument-name">self</span>, <span class="argument-name">node</span>, <span class="argument-name">iSrc</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dt class="methoddef"><a name="Literal-process"><span class="method-name">process</span></a>(<span class="argument-name">self</span>)</dt>
+            <dd class="methoddesc"></dd>
+          </dl>
+          <h3>Members</h3>
+          <dl class="members">
+            <dt class="memberdef"><a name="type"><span class="member-name">type</span></a> = None</dt>
+          </dl>
+        </dd>
+        <dt class="classdef"><a name="Locator"></a>class <span class="class-name">Locator</span><span class="bases">(<span class="class-name"><a href="Ft.Xml.XLink.XLinkElements.html#Literal">Literal</a></span>)</span></dt>
+        <dd class="classdesc">
+          <h3>Methods inherited from class <a href="Ft.Xml.XLink.XLinkElements.html#Literal">Literal</a></h3>
+          <div class="inherited"><span class="inherited-name"><a href="Ft.Xml.XLink.XLinkElements.html#Literal-__init__">__init__</a></span>, <span class="inherited-name"><a href="Ft.Xml.XLink.XLinkElements.html#Literal-process">process</a></span></div>
+          <h3>Members</h3>
+          <dl class="members">
+            <dt class="memberdef"><a name="type"><span class="member-name">type</span></a> = 'locator'</dt>
+          </dl>
+        </dd>
+        <dt class="classdef"><a name="Resource"></a>class <span class="class-name">Resource</span><span class="bases">(<span class="class-name"><a href="Ft.Xml.XLink.XLinkElements.html#Literal">Literal</a></span>)</span></dt>
+        <dd class="classdesc">
+          <h3>Methods inherited from class <a href="Ft.Xml.XLink.XLinkElements.html#Literal">Literal</a></h3>
+          <div class="inherited"><span class="inherited-name"><a href="Ft.Xml.XLink.XLinkElements.html#Literal-__init__">__init__</a></span>, <span class="inherited-name"><a href="Ft.Xml.XLink.XLinkElements.html#Literal-process">process</a></span></div>
+          <h3>Members</h3>
+          <dl class="members">
+            <dt class="memberdef"><a name="type"><span class="member-name">type</span></a> = 'resource'</dt>
+          </dl>
+        </dd>
+        <dt class="classdef"><a name="Simple"></a>class <span class="class-name">Simple</span><span class="bases">(<span class="class-name"><a href="Ft.Xml.XLink.XLinkElements.html#Literal">Literal</a></span>)</span></dt>
+        <dd class="classdesc">
+          <div class="abstract">A 'simple'-type XLink element.</div>
+          <h3>Methods</h3>
+          <dl class="methods">
+            <dt class="methoddef"><a name="Simple-__init__"><span class="method-name">__init__</span></a>(<span class="argument-name">self</span>, <span class="argument-name">node</span>, <span class="argument-name">iSrc</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dd class="overrides"><b>Overrides: </b><span class="inherited-name"><a href="Ft.Xml.XLink.XLinkElements.html#Literal-__init__">__init__</a></span> from class <span class="class-name"><a href="Ft.Xml.XLink.XLinkElements.html#Literal">Literal</a></span></dd>
+            <dt class="methoddef"><a name="Simple-process"><span class="method-name">process</span></a>(<span class="argument-name">self</span>)</dt>
+            <dd class="methoddesc">
+              <div class="abstract">Processes a simple XLink element according to the following
+guidelines:</div>
+              <pre class="description">If xlink:actuate='onLoad' and xlink:show='replace', then the remote
+resource's document element's content (not the document element itself)
+and the content of the XLink element (if any) will together replace the
+XLink element.
+
+If xlink:actuate='onLoad' and xlink:show='embed', then the remote
+resource's document element will replace the XLink element.
+
+Any other XLink attribute combinations are ignored.
+
+These behaviors constitute a reasonable approximation of the resource
+loading suggestions in XLink 1.0 sec. 5.6.1.</pre>
+            </dd>
+            <dd class="overrides"><b>Overrides: </b><span class="inherited-name"><a href="Ft.Xml.XLink.XLinkElements.html#Literal-process">process</a></span> from class <span class="class-name"><a href="Ft.Xml.XLink.XLinkElements.html#Literal">Literal</a></span></dd>
+          </dl>
+          <h3>Members</h3>
+          <dl class="members">
+            <dt class="memberdef"><a name="type"><span class="member-name">type</span></a> = 'simple'</dt>
+          </dl>
+        </dd>
+        <dt class="classdef"><a name="Title"></a>class <span class="class-name">Title</span><span class="bases">(<span class="class-name"><a href="Ft.Xml.XLink.XLinkElements.html#Literal">Literal</a></span>)</span></dt>
+        <dd class="classdesc">
+          <h3>Methods inherited from class <a href="Ft.Xml.XLink.XLinkElements.html#Literal">Literal</a></h3>
+          <div class="inherited"><span class="inherited-name"><a href="Ft.Xml.XLink.XLinkElements.html#Literal-__init__">__init__</a></span>, <span class="inherited-name"><a href="Ft.Xml.XLink.XLinkElements.html#Literal-process">process</a></span></div>
+          <h3>Members</h3>
+          <dl class="members">
+            <dt class="memberdef"><a name="type"><span class="member-name">type</span></a> = 'title'</dt>
+          </dl>
+        </dd>
+      </dl>
+    </div>
+    <div class="section">
+      <h2>Functions</h2>
+      <dl class="functions">
+        <dt class="functiondef"><a name="Create"><span class="function-name">Create</span></a>(<span class="argument-name">node</span>, <span class="argument-name">baseUri</span>)</dt>
+        <dd class="functiondesc">
+          <div class="abstract">Given an XLink element node, returns an object (one of the classes
+defined in this module) that contains the node, its principal XLink
+attribute values, and a 'process' method that can be invoked in order
+to process (follow or otherwise act upon) the element.</div>
+          <pre class="description">Used by the Ft.Xml.XLink.Processor.Processor.</pre>
+        </dd>
+      </dl>
+    </div>
+    <div class="section">
+      <h2>Globals</h2>
+      <dl class="globals">
+        <dt class="globaldef"><a name="TypeMap"><span class="global-name">TypeMap</span></a> = {'arc': &lt;class Ft.Xml.XLink.XLinkElements.Arc&gt;, 'extended': &lt;class Ft.Xml.XLink.XLinkElements.Extended&gt;, 'locator': &lt;class Ft.Xml.XLink.XLinkElements.Locator&gt;, 'resource': &lt;class Ft.Xml.XLink.XLinkElements.Resource&gt;, 'simple': &lt;class Ft.Xml.XLink.XLinkElements.Simple&gt;, 'title': &lt;class Ft.Xml.XLink.XLinkElements.Title&gt;}</dt>
+        <dd class="globaldesc"></dd>
+        <dt class="globaldef"><a name="XLINK_NAMESPACE"><span class="global-name">XLINK_NAMESPACE</span></a> = u'http://www.w3.org/1999/xlink'</dt>
+        <dd class="globaldesc"></dd>
+      </dl>
+    </div>
+    <div class="universal-footer">Last modified on 2006-04-28 13:54:49</div>
+  </body>
+</html>

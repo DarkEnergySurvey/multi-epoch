@@ -1,0 +1,7 @@
+<job>
+<fileset>
+	<file id="f1" type="float">5.3</file>
+	<file id="f2" type="float">5.3</file>
+	<file id="f3">teste3fits</file>
+</fileset>
+</job>

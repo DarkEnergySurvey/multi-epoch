@@ -1,0 +1,108 @@
+   <target name="Stage_scamplist" description="produce lists for runSCAMP">
+    <property file="${mypath}/module_scamp/scamplist.properties"/>
+
+    <esequence>
+
+        <publish>
+           <event ensembleid="${ensemble.id}"
+                 workflowid="Main"
+                 nodeid="Begin Stage_scamplist"
+                 currentState="0">
+                  <property name="message" value="Begin Stage_scamplist"/>
+           </event>
+        </publish>
+
+     <print line=" - Begin Stage_scamplist"/>
+     <print line=" -- Running Stage_scamplist  ... "/>
+ 
+     <edeclare name="appbase"      string="${user.dir}"/>
+ 
+     <!-- run scampmkcat for either TG or WS -->
+     <econdblock type="else-if">
+      <econdtask>
+         <eeval>
+            <statement>
+               <ecompare string="${platform}">
+                     <predicate string="TG" comparator="EQUALS"/>
+                 </ecompare>
+               </statement>
+         </eeval>
+           <esequence>
+       <!--      <edeclare globalname="scamplist.out" string="${mypath}/jobs/${uid_in}_${nite}_scamp"/> -->
+             <edeclare globalname="scamplist.out" string="$R{appbase}/jobs/${uid_in}_${nite}_scamp"/>
+           </esequence>
+      </econdtask>    
+          <esequence>   
+            <edeclare globalname="scamplist.out" string="${workplace}/${uid}/data/${nite}/log"/>
+          </esequence>
+     </econdblock>
+
+     <print line=" -- The lists can be found in $R{scamplist.out}"/>
+   
+     <rtexec inheritedEnv="false" execDir="." 
+          args="${scamplist.exec} ${scamplist.args}" quiet="false">
+     </rtexec>
+
+     <!-- gridFTP the list over to teragrid -->
+     <econdblock type="else-if">
+      <econdtask>
+         <eeval>
+            <statement>
+               <ecompare string="${platform}">
+                     <predicate string="TG" comparator="EQUALS"/>
+                 </ecompare>
+               </statement>
+         </eeval>
+           <esequence>
+
+             <edeclare name="end" long="$E{ ${scamplist.number} + 1 }"/>
+ 
+             <eloop counterName="i" initialValue="1">
+               <ecounter>
+                 <expression infix="$R{i} &lt; $R{end}"/>
+               </ecounter>
+
+               <!-- convert 1,...,9 to 01,...,09 -->
+
+               <econdblock type="else-if">
+                <econdtask>
+                 <eeval>
+                   <statement>
+                    <ecompare long="$R{i}">
+                       <predicate long="10" comparator="LT"/>
+                    </ecompare>
+                   </statement>
+                 </eeval>
+                  <edeclare globalName="in" string="0$R{i}"/>
+                </econdtask>
+                  <edeclare globalName="in" long="$R{i}"/>
+               </econdblock>
+
+               <edeclare name="srcfile"  string="$R{scamplist.out}/${uid}_scamp.list_$R{in}"/>
+               <edeclare name="targetdir" string="${targetprot}://${tgrid_server_${site}}${tgrid_homepath_${site}}/${uid}_scamp_$R{in}/data/${nite}/log"/>
+
+               <uricopy from="$R{srcfile}" to="$R{targetdir}">
+               </uricopy>
+
+               <print line=" -- ${uid}_scamp.list_$R{in} sent"/>
+
+             </eloop>
+
+           </esequence>
+      </econdtask>    
+     </econdblock>
+
+     <print line=" - Stage_scamplist done"/>
+     <print line="  "/>
+
+        <publish>
+           <event ensembleid="${ensemble.id}"
+                 workflowid="Main"
+                 nodeid="End Stage_scamplist"
+                 currentState="0">
+                  <property name="message" value="End Stage_scamplist"/>
+           </event>
+        </publish>
+
+    </esequence>
+   </target>

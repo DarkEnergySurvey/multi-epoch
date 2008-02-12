@@ -1,0 +1,198 @@
+<html>
+  <head>
+    <meta content="text/html; charset=iso-8859-1" http-equiv="Content-Type">
+    <title>4Suite API Documentation: Ft.Lib.CommandLine.Options</title>
+    <link href="modules.css" type="text/css" rel="stylesheet">
+  </head>
+  <body>
+    <div class="universal-header"><span class="universal-header-prefix">&nbsp;&nbsp;&nbsp;</span>&nbsp;<span class="universal-header-prefix">&nbsp;&nbsp;</span>&nbsp;<span class="universal-header-prefix">&nbsp;</span>&nbsp;<a href="../index.html">4Suite<sup>&trade;</sup> API Documentation</a></div>
+    <h1><span class="glyph-arrow">&#9658;</span> Module <span class="this-name"><a href="Ft.html" title="Ft">Ft</a>.<a href="Ft.Lib.html" title="Ft.Lib">Lib</a>.<a href="Ft.Lib.CommandLine.html" title="Ft.Lib.CommandLine">CommandLine</a>.Options</span></h1>
+    <div class="abstract">Classes that support advanced option processing for command-line scripts</div>
+    <pre class="description">Copyright 2004 Fourthought, Inc. (USA).
+Detailed license and copyright information: http://4suite.org/COPYRIGHT
+Project home, documentation, distributions: http://4suite.org/</pre>
+    <div class="summary-section">
+      <table cellpadding="0" cellspacing="0">
+        <tbody>
+          <tr>
+            <td valign="top">
+              <div class="summary-header">Classes:</div>
+              <div class="summary-list"><span class="class-name"><a href="#BaseOption">BaseOption</a></span>, <span class="class-name"><a href="#ExclusiveOptions">ExclusiveOptions</a></span>, <span class="class-name"><a href="#Option">Option</a></span>, <span class="class-name"><a href="#Options">Options</a></span>, <span class="class-name"><a href="#TypedOption">TypedOption</a></span></div>
+            </td>
+            <td width="7" valign="middle"></td>
+            <td width="1" valign="middle" bgcolor="#C5C5C5"></td>
+            <td width="7" valign="middle"></td>
+            <td valign="top">
+              <div class="summary-header">Globals:</div>
+              <div class="summary-list"><span class="global-name"><a href="#CONSOLE_WIDTH">CONSOLE_WIDTH</a></span></div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="section">
+      <h2>Classes</h2>
+      <dl class="classes">
+        <dt class="classdef"><a name="BaseOption"></a>class <span class="class-name">BaseOption</span></dt>
+        <dd class="classdesc">
+          <div class="abstract">An option that is available to be used in an invocation of a
+command-line script, plus related functions.</div>
+          <h3>Methods</h3>
+          <dl class="methods">
+            <dt class="methoddef"><a name="BaseOption-__repr__"><span class="method-name">__repr__</span></a> = <a href="#BaseOption-__str__">__str__</a>(<span class="argument-name">self</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dt class="methoddef"><a name="BaseOption-__str__"><span class="method-name">__str__</span></a>(<span class="argument-name">self</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dt class="methoddef"><a name="BaseOption-apply_options"><span class="method-name">apply_options</span></a>(<span class="argument-name">self</span>, <span class="argument-name">options</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dt class="methoddef"><a name="BaseOption-displayLength"><span class="method-name">displayLength</span></a>(<span class="argument-name">self</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dt class="methoddef"><a name="BaseOption-gen_command_line"><span class="method-name">gen_command_line</span></a>(<span class="argument-name">self</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dt class="methoddef"><a name="BaseOption-gen_description"><span class="method-name">gen_description</span></a>(<span class="argument-name">self</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dt class="methoddef"><a name="BaseOption-getForGetOpt"><span class="method-name">getForGetOpt</span></a>(<span class="argument-name">self</span>, <span class="argument-name">short2long</span>, <span class="argument-name">takes_arg</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dt class="methoddef"><a name="BaseOption-getName"><span class="method-name">getName</span></a>(<span class="argument-name">self</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dt class="methoddef"><a name="BaseOption-isApplied"><span class="method-name">isApplied</span></a>(<span class="argument-name">self</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dt class="methoddef"><a name="BaseOption-validate"><span class="method-name">validate</span></a>(<span class="argument-name">self</span>)</dt>
+            <dd class="methoddesc"></dd>
+          </dl>
+          <h3>Members</h3>
+          <dl class="members">
+            <dt class="memberdef"><a name="multiple"><span class="member-name">multiple</span></a> = False</dt>
+          </dl>
+        </dd>
+        <dt class="classdef"><a name="ExclusiveOptions"></a>class <span class="class-name">ExclusiveOptions</span><span class="bases">(<span class="class-name"><a href="Ft.Lib.CommandLine.Options.html#BaseOption">BaseOption</a></span>)</span></dt>
+        <dd class="classdesc">
+          <h3>Methods</h3>
+          <dl class="methods">
+            <dt class="methoddef"><a name="ExclusiveOptions-__init__"><span class="method-name">__init__</span></a>(<span class="argument-name">self</span>, <span class="argument-name">choices</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dt class="methoddef"><a name="ExclusiveOptions-apply_options"><span class="method-name">apply_options</span></a>(<span class="argument-name">self</span>, <span class="argument-name">options</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dd class="overrides"><b>Overrides: </b><span class="inherited-name"><a href="Ft.Lib.CommandLine.Options.html#BaseOption-apply_options">apply_options</a></span> from class <span class="class-name"><a href="Ft.Lib.CommandLine.Options.html#BaseOption">BaseOption</a></span></dd>
+            <dt class="methoddef"><a name="ExclusiveOptions-displayLength"><span class="method-name">displayLength</span></a>(<span class="argument-name">self</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dd class="overrides"><b>Overrides: </b><span class="inherited-name"><a href="Ft.Lib.CommandLine.Options.html#BaseOption-displayLength">displayLength</a></span> from class <span class="class-name"><a href="Ft.Lib.CommandLine.Options.html#BaseOption">BaseOption</a></span></dd>
+            <dt class="methoddef"><a name="ExclusiveOptions-gen_command_line"><span class="method-name">gen_command_line</span></a>(<span class="argument-name">self</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dd class="overrides"><b>Overrides: </b><span class="inherited-name"><a href="Ft.Lib.CommandLine.Options.html#BaseOption-gen_command_line">gen_command_line</a></span> from class <span class="class-name"><a href="Ft.Lib.CommandLine.Options.html#BaseOption">BaseOption</a></span></dd>
+            <dt class="methoddef"><a name="ExclusiveOptions-getForGetOpt"><span class="method-name">getForGetOpt</span></a>(<span class="argument-name">self</span>, <span class="argument-name">short2long</span>, <span class="argument-name">takes_arg</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dd class="overrides"><b>Overrides: </b><span class="inherited-name"><a href="Ft.Lib.CommandLine.Options.html#BaseOption-getForGetOpt">getForGetOpt</a></span> from class <span class="class-name"><a href="Ft.Lib.CommandLine.Options.html#BaseOption">BaseOption</a></span></dd>
+            <dt class="methoddef"><a name="ExclusiveOptions-getName"><span class="method-name">getName</span></a>(<span class="argument-name">self</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dd class="overrides"><b>Overrides: </b><span class="inherited-name"><a href="Ft.Lib.CommandLine.Options.html#BaseOption-getName">getName</a></span> from class <span class="class-name"><a href="Ft.Lib.CommandLine.Options.html#BaseOption">BaseOption</a></span></dd>
+            <dt class="methoddef"><a name="ExclusiveOptions-isApplied"><span class="method-name">isApplied</span></a>(<span class="argument-name">self</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dd class="overrides"><b>Overrides: </b><span class="inherited-name"><a href="Ft.Lib.CommandLine.Options.html#BaseOption-isApplied">isApplied</a></span> from class <span class="class-name"><a href="Ft.Lib.CommandLine.Options.html#BaseOption">BaseOption</a></span></dd>
+            <dt class="methoddef"><a name="ExclusiveOptions-validate"><span class="method-name">validate</span></a>(<span class="argument-name">self</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dd class="overrides"><b>Overrides: </b><span class="inherited-name"><a href="Ft.Lib.CommandLine.Options.html#BaseOption-validate">validate</a></span> from class <span class="class-name"><a href="Ft.Lib.CommandLine.Options.html#BaseOption">BaseOption</a></span></dd>
+          </dl>
+          <h3>Methods inherited from class <a href="Ft.Lib.CommandLine.Options.html#BaseOption">BaseOption</a></h3>
+          <div class="inherited"><span class="inherited-name"><a href="Ft.Lib.CommandLine.Options.html#BaseOption-__repr__">__repr__</a></span>, <span class="inherited-name"><a href="Ft.Lib.CommandLine.Options.html#BaseOption-__str__">__str__</a></span>, <span class="inherited-name"><a href="Ft.Lib.CommandLine.Options.html#BaseOption-gen_description">gen_description</a></span></div>
+          <h3>Members inherited from class <a href="Ft.Lib.CommandLine.Options.html#BaseOption">BaseOption</a></h3>
+          <div class="inherited"><span class="inherited-name"><a href="Ft.Lib.CommandLine.Options.html#BaseOption-multiple">multiple</a></span></div>
+        </dd>
+        <dt class="classdef"><a name="Option"></a>class <span class="class-name">Option</span><span class="bases">(<span class="class-name"><a href="Ft.Lib.CommandLine.Options.html#BaseOption">BaseOption</a></span>)</span></dt>
+        <dd class="classdesc">
+          <h3>Methods</h3>
+          <dl class="methods">
+            <dt class="methoddef"><a name="Option-__init__"><span class="method-name">__init__</span></a>(<span class="argument-name">self</span>, <span class="argument-name">shortName</span>, <span class="argument-name">longName</span>, <span class="argument-name">description</span>, <span class="argument-name">subOptions</span><span class="argument-default">=None</span>, <span class="argument-name">multiple</span><span class="argument-default">=False</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dt class="methoddef"><a name="Option-apply_options"><span class="method-name">apply_options</span></a>(<span class="argument-name">self</span>, <span class="argument-name">options</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dd class="overrides"><b>Overrides: </b><span class="inherited-name"><a href="Ft.Lib.CommandLine.Options.html#BaseOption-apply_options">apply_options</a></span> from class <span class="class-name"><a href="Ft.Lib.CommandLine.Options.html#BaseOption">BaseOption</a></span></dd>
+            <dt class="methoddef"><a name="Option-displayLength"><span class="method-name">displayLength</span></a>(<span class="argument-name">self</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dd class="overrides"><b>Overrides: </b><span class="inherited-name"><a href="Ft.Lib.CommandLine.Options.html#BaseOption-displayLength">displayLength</a></span> from class <span class="class-name"><a href="Ft.Lib.CommandLine.Options.html#BaseOption">BaseOption</a></span></dd>
+            <dt class="methoddef"><a name="Option-gen_command_line"><span class="method-name">gen_command_line</span></a>(<span class="argument-name">self</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dd class="overrides"><b>Overrides: </b><span class="inherited-name"><a href="Ft.Lib.CommandLine.Options.html#BaseOption-gen_command_line">gen_command_line</a></span> from class <span class="class-name"><a href="Ft.Lib.CommandLine.Options.html#BaseOption">BaseOption</a></span></dd>
+            <dt class="methoddef"><a name="Option-getForGetOpt"><span class="method-name">getForGetOpt</span></a>(<span class="argument-name">self</span>, <span class="argument-name">short2long</span>, <span class="argument-name">takes_arg</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dd class="overrides"><b>Overrides: </b><span class="inherited-name"><a href="Ft.Lib.CommandLine.Options.html#BaseOption-getForGetOpt">getForGetOpt</a></span> from class <span class="class-name"><a href="Ft.Lib.CommandLine.Options.html#BaseOption">BaseOption</a></span></dd>
+            <dt class="methoddef"><a name="Option-getName"><span class="method-name">getName</span></a>(<span class="argument-name">self</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dd class="overrides"><b>Overrides: </b><span class="inherited-name"><a href="Ft.Lib.CommandLine.Options.html#BaseOption-getName">getName</a></span> from class <span class="class-name"><a href="Ft.Lib.CommandLine.Options.html#BaseOption">BaseOption</a></span></dd>
+            <dt class="methoddef"><a name="Option-isApplied"><span class="method-name">isApplied</span></a>(<span class="argument-name">self</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dd class="overrides"><b>Overrides: </b><span class="inherited-name"><a href="Ft.Lib.CommandLine.Options.html#BaseOption-isApplied">isApplied</a></span> from class <span class="class-name"><a href="Ft.Lib.CommandLine.Options.html#BaseOption">BaseOption</a></span></dd>
+            <dt class="methoddef"><a name="Option-validate"><span class="method-name">validate</span></a>(<span class="argument-name">self</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dd class="overrides"><b>Overrides: </b><span class="inherited-name"><a href="Ft.Lib.CommandLine.Options.html#BaseOption-validate">validate</a></span> from class <span class="class-name"><a href="Ft.Lib.CommandLine.Options.html#BaseOption">BaseOption</a></span></dd>
+          </dl>
+          <h3>Methods inherited from class <a href="Ft.Lib.CommandLine.Options.html#BaseOption">BaseOption</a></h3>
+          <div class="inherited"><span class="inherited-name"><a href="Ft.Lib.CommandLine.Options.html#BaseOption-__repr__">__repr__</a></span>, <span class="inherited-name"><a href="Ft.Lib.CommandLine.Options.html#BaseOption-__str__">__str__</a></span>, <span class="inherited-name"><a href="Ft.Lib.CommandLine.Options.html#BaseOption-gen_description">gen_description</a></span></div>
+          <h3>Members inherited from class <a href="Ft.Lib.CommandLine.Options.html#BaseOption">BaseOption</a></h3>
+          <div class="inherited"><span class="inherited-name"><a href="Ft.Lib.CommandLine.Options.html#BaseOption-multiple">multiple</a></span></div>
+        </dd>
+        <dt class="classdef"><a name="Options"></a>class <span class="class-name">Options</span><span class="bases">(<span class="class-name"><span class="undocumented">list</span></span>)</span></dt>
+        <dd class="classdesc">
+          <div class="abstract">A set of options that are available to be used in an invocation of a
+command-line script, plus related functions.</div>
+          <h3>Methods</h3>
+          <dl class="methods">
+            <dt class="methoddef"><a name="Options-__init__"><span class="method-name">__init__</span></a>(<span class="argument-name">self</span>, <span class="argument-name">options</span><span class="argument-default">=None</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dd class="overrides"><b>Overrides: </b><span class="inherited-name">__init__</span> from class <span class="class-name"><span class="undocumented">list</span></span></dd>
+            <dt class="methoddef"><a name="Options-findMaxOption"><span class="method-name">findMaxOption</span></a>(<span class="argument-name">self</span>, <span class="argument-name">level</span><span class="argument-default">=0</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dt class="methoddef"><a name="Options-generate_help"><span class="method-name">generate_help</span></a>(<span class="argument-name">self</span>, <span class="argument-name">level</span><span class="argument-default">=1</span>, <span class="argument-name">max_opt</span><span class="argument-default">=0</span>)</dt>
+            <dd class="methoddesc">
+              <div class="abstract">Generate help text (a list of strings, one per suggested line of
+output) from the option table for this FancyGetopt object.</div>
+            </dd>
+          </dl>
+          <h3>Methods inherited from class <span class="undocumented">list</span></h3>
+          <div class="inherited"><span class="inherited-name">__add__</span>, <span class="inherited-name">__contains__</span>, <span class="inherited-name">__delitem__</span>, <span class="inherited-name">__delslice__</span>, <span class="inherited-name">__eq__</span>, <span class="inherited-name">__ge__</span>, <span class="inherited-name">__getattribute__</span>, <span class="inherited-name">__getitem__</span>, <span class="inherited-name">__getslice__</span>, <span class="inherited-name">__gt__</span>, <span class="inherited-name">__hash__</span>, <span class="inherited-name">__iadd__</span>, <span class="inherited-name">__imul__</span>, <span class="inherited-name">__iter__</span>, <span class="inherited-name">__le__</span>, <span class="inherited-name">__len__</span>, <span class="inherited-name">__lt__</span>, <span class="inherited-name">__mul__</span>, <span class="inherited-name">__ne__</span>, <span class="inherited-name">__new__</span>, <span class="inherited-name">__repr__</span>, <span class="inherited-name">__reversed__</span>, <span class="inherited-name">__rmul__</span>, <span class="inherited-name">__setitem__</span>, <span class="inherited-name">__setslice__</span>, <span class="inherited-name">append</span>, <span class="inherited-name">count</span>, <span class="inherited-name">extend</span>, <span class="inherited-name">index</span>, <span class="inherited-name">insert</span>, <span class="inherited-name">pop</span>, <span class="inherited-name">remove</span>, <span class="inherited-name">reverse</span>, <span class="inherited-name">sort</span></div>
+          <h3>Methods inherited from class <span class="undocumented">object</span></h3>
+          <div class="inherited"><span class="inherited-name">__delattr__</span>, <span class="inherited-name">__reduce__</span>, <span class="inherited-name">__reduce_ex__</span>, <span class="inherited-name">__setattr__</span>, <span class="inherited-name">__str__</span></div>
+          <h3>Members</h3>
+          <dl class="members">
+            <dt class="memberdef"><a name="__dict__"><span class="member-name">__dict__</span></a> = &lt;attribute '__dict__' of 'Options' objects&gt;</dt>
+            <dt class="memberdef"><a name="__weakref__"><span class="member-name">__weakref__</span></a> = &lt;attribute '__weakref__' of 'Options' objects&gt;</dt>
+          </dl>
+          <h3>Members inherited from class <span class="undocumented">object</span></h3>
+          <div class="inherited"><span class="inherited-name">__class__</span></div>
+        </dd>
+        <dt class="classdef"><a name="TypedOption"></a>class <span class="class-name">TypedOption</span><span class="bases">(<span class="class-name"><a href="Ft.Lib.CommandLine.Options.html#Option">Option</a></span>)</span></dt>
+        <dd class="classdesc">
+          <h3>Methods</h3>
+          <dl class="methods">
+            <dt class="methoddef"><a name="TypedOption-__init__"><span class="method-name">__init__</span></a>(<span class="argument-name">self</span>, <span class="argument-name">shortName</span>, <span class="argument-name">longName</span>, <span class="argument-name">description</span>, <span class="argument-name">allowed</span>, <span class="argument-name">subOptions</span><span class="argument-default">=None</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dd class="overrides"><b>Overrides: </b><span class="inherited-name"><a href="Ft.Lib.CommandLine.Options.html#Option-__init__">__init__</a></span> from class <span class="class-name"><a href="Ft.Lib.CommandLine.Options.html#Option">Option</a></span></dd>
+            <dt class="methoddef"><a name="TypedOption-apply_options"><span class="method-name">apply_options</span></a>(<span class="argument-name">self</span>, <span class="argument-name">options</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dd class="overrides"><b>Overrides: </b><span class="inherited-name"><a href="Ft.Lib.CommandLine.Options.html#Option-apply_options">apply_options</a></span> from class <span class="class-name"><a href="Ft.Lib.CommandLine.Options.html#Option">Option</a></span></dd>
+            <dt class="methoddef"><a name="TypedOption-gen_command_line"><span class="method-name">gen_command_line</span></a>(<span class="argument-name">self</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dd class="overrides"><b>Overrides: </b><span class="inherited-name"><a href="Ft.Lib.CommandLine.Options.html#Option-gen_command_line">gen_command_line</a></span> from class <span class="class-name"><a href="Ft.Lib.CommandLine.Options.html#Option">Option</a></span></dd>
+            <dt class="methoddef"><a name="TypedOption-validate"><span class="method-name">validate</span></a>(<span class="argument-name">self</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dd class="overrides"><b>Overrides: </b><span class="inherited-name"><a href="Ft.Lib.CommandLine.Options.html#Option-validate">validate</a></span> from class <span class="class-name"><a href="Ft.Lib.CommandLine.Options.html#Option">Option</a></span></dd>
+          </dl>
+          <h3>Methods inherited from class <a href="Ft.Lib.CommandLine.Options.html#Option">Option</a></h3>
+          <div class="inherited"><span class="inherited-name"><a href="Ft.Lib.CommandLine.Options.html#Option-displayLength">displayLength</a></span>, <span class="inherited-name"><a href="Ft.Lib.CommandLine.Options.html#Option-getForGetOpt">getForGetOpt</a></span>, <span class="inherited-name"><a href="Ft.Lib.CommandLine.Options.html#Option-getName">getName</a></span>, <span class="inherited-name"><a href="Ft.Lib.CommandLine.Options.html#Option-isApplied">isApplied</a></span></div>
+          <h3>Methods inherited from class <a href="Ft.Lib.CommandLine.Options.html#BaseOption">BaseOption</a></h3>
+          <div class="inherited"><span class="inherited-name"><a href="Ft.Lib.CommandLine.Options.html#BaseOption-__repr__">__repr__</a></span>, <span class="inherited-name"><a href="Ft.Lib.CommandLine.Options.html#BaseOption-__str__">__str__</a></span>, <span class="inherited-name"><a href="Ft.Lib.CommandLine.Options.html#BaseOption-gen_description">gen_description</a></span></div>
+          <h3>Members inherited from class <a href="Ft.Lib.CommandLine.Options.html#BaseOption">BaseOption</a></h3>
+          <div class="inherited"><span class="inherited-name"><a href="Ft.Lib.CommandLine.Options.html#BaseOption-multiple">multiple</a></span></div>
+        </dd>
+      </dl>
+    </div>
+    <div class="section">
+      <h2>Globals</h2>
+      <dl class="globals">
+        <dt class="globaldef"><a name="CONSOLE_WIDTH"><span class="global-name">CONSOLE_WIDTH</span></a> = 206</dt>
+        <dd class="globaldesc"></dd>
+      </dl>
+    </div>
+    <div class="universal-footer">Last modified on 2005-04-18 16:46:56</div>
+  </body>
+</html>

@@ -1,0 +1,9 @@
+make -f runCatMakefile
+
+echo RUN g++...
+
+g++ -g3 -o runCatalog_ingesttest -L/oracle/10.2.0/client_1/lib -Wl,-rpath,/oracle/10.2.0/client_1/lib runCatalog_ingest.o desw_rel.o htm_aux.o imarithsubs.o catsubs.o archivesubs.o -lclntsh -lm -lmcheck /home/pduda/des/trunk/development/lib/libcfitsio.a /home/pduda/des/trunk/development/lib/press2ndkr.a
+
+echo DONE...
+
+./mkinst

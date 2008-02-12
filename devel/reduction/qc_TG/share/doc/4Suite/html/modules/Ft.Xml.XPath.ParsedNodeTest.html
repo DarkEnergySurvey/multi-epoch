@@ -1,0 +1,250 @@
+<html>
+  <head>
+    <meta content="text/html; charset=iso-8859-1" http-equiv="Content-Type">
+    <title>4Suite API Documentation: Ft.Xml.XPath.ParsedNodeTest</title>
+    <link href="modules.css" type="text/css" rel="stylesheet">
+  </head>
+  <body>
+    <div class="universal-header"><span class="universal-header-prefix">&nbsp;&nbsp;&nbsp;</span>&nbsp;<span class="universal-header-prefix">&nbsp;&nbsp;</span>&nbsp;<span class="universal-header-prefix">&nbsp;</span>&nbsp;<a href="../index.html">4Suite<sup>&trade;</sup> API Documentation</a></div>
+    <h1><span class="glyph-arrow">&#9658;</span> Module <span class="this-name"><a href="Ft.html" title="Ft">Ft</a>.<a href="Ft.Xml.html" title="Ft.Xml">Xml</a>.<a href="Ft.Xml.XPath.html" title="Ft.Xml.XPath">XPath</a>.ParsedNodeTest</span></h1>
+    <div class="abstract">A parsed token that represents a node test.</div>
+    <pre class="description">Copyright 2004 Fourthought, Inc. (USA).
+Detailed license and copyright information: http://4suite.org/COPYRIGHT
+Project home, documentation, distributions: http://4suite.org/</pre>
+    <div class="summary-section">
+      <table cellpadding="0" cellspacing="0">
+        <tbody>
+          <tr>
+            <td valign="top">
+              <div class="summary-header">Classes:</div>
+              <div class="summary-list"><span class="class-name"><a href="#CommentNodeTest">CommentNodeTest</a></span>, <span class="class-name"><a href="#LocalNameTest">LocalNameTest</a></span>, <span class="class-name"><a href="#NamespaceTest">NamespaceTest</a></span>, <span class="class-name"><a href="#NodeTest">NodeTest</a></span>, <span class="class-name"><a href="#NodeTestBase">NodeTestBase</a></span>, <span class="class-name"><a href="#PrincipalTypeTest">PrincipalTypeTest</a></span>, <span class="class-name"><a href="#ProcessingInstructionNodeTest">ProcessingInstructionNodeTest</a></span>, <span class="class-name"><a href="#QualifiedNameTest">QualifiedNameTest</a></span>, <span class="class-name"><a href="#TextNodeTest">TextNodeTest</a></span></div>
+            </td>
+            <td width="7" valign="middle"></td>
+            <td width="1" valign="middle" bgcolor="#C5C5C5"></td>
+            <td width="7" valign="middle"></td>
+            <td valign="top">
+              <div class="summary-header">Functions:</div>
+              <div class="summary-list"><span class="function-name"><a href="#ParsedNameTest">ParsedNameTest</a></span>, <span class="function-name"><a href="#ParsedNodeTest">ParsedNodeTest</a></span></div>
+            </td>
+            <td width="7" valign="middle"></td>
+            <td width="1" valign="middle" bgcolor="#C5C5C5"></td>
+            <td width="7" valign="middle"></td>
+            <td valign="top">
+              <div class="summary-header">Globals:</div>
+              <div class="summary-list"><span class="global-name"><a href="#g_classMap">g_classMap</a></span>, <span class="global-name"><a href="#g_xpathRecognizedNodes">g_xpathRecognizedNodes</a></span></div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="section">
+      <h2>Classes</h2>
+      <dl class="classes">
+        <dt class="classdef"><a name="CommentNodeTest"></a>class <span class="class-name">CommentNodeTest</span><span class="bases">(<span class="class-name"><a href="Ft.Xml.XPath.ParsedNodeTest.html#NodeTestBase">NodeTestBase</a></span>)</span></dt>
+        <dd class="classdesc">
+          <h3>Methods</h3>
+          <dl class="methods">
+            <dt class="methoddef"><a name="CommentNodeTest-__repr__"><span class="method-name">__repr__</span></a>(<span class="argument-name">self</span>)</dt>
+            <dd class="methoddesc"></dd>
+          </dl>
+          <h3>Methods inherited from class <a href="Ft.Xml.XPath.ParsedNodeTest.html#NodeTestBase">NodeTestBase</a></h3>
+          <div class="inherited"><span class="inherited-name"><a href="Ft.Xml.XPath.ParsedNodeTest.html#NodeTestBase-__str__">__str__</a></span>, <span class="inherited-name"><a href="Ft.Xml.XPath.ParsedNodeTest.html#NodeTestBase-getQuickKey">getQuickKey</a></span>, <span class="inherited-name"><a href="Ft.Xml.XPath.ParsedNodeTest.html#NodeTestBase-match">match</a></span>, <span class="inherited-name"><a href="Ft.Xml.XPath.ParsedNodeTest.html#NodeTestBase-pprint">pprint</a></span></div>
+          <h3>Members</h3>
+          <dl class="members">
+            <dt class="memberdef"><a name="nodeType"><span class="member-name">nodeType</span></a> = 8</dt>
+          </dl>
+          <h3>Members inherited from class <a href="Ft.Xml.XPath.ParsedNodeTest.html#NodeTestBase">NodeTestBase</a></h3>
+          <div class="inherited"><span class="inherited-name"><a href="Ft.Xml.XPath.ParsedNodeTest.html#NodeTestBase-priority">priority</a></span></div>
+        </dd>
+        <dt class="classdef"><a name="LocalNameTest"></a>class <span class="class-name">LocalNameTest</span><span class="bases">(<span class="class-name"><a href="Ft.Xml.XPath.ParsedNodeTest.html#NodeTestBase">NodeTestBase</a></span>)</span></dt>
+        <dd class="classdesc">
+          <h3>Methods</h3>
+          <dl class="methods">
+            <dt class="methoddef"><a name="LocalNameTest-__init__"><span class="method-name">__init__</span></a>(<span class="argument-name">self</span>, <span class="argument-name">name</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dt class="methoddef"><a name="LocalNameTest-__repr__"><span class="method-name">__repr__</span></a>(<span class="argument-name">self</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dt class="methoddef"><a name="LocalNameTest-getQuickKey"><span class="method-name">getQuickKey</span></a>(<span class="argument-name">self</span>, <span class="argument-name">namespaces</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dd class="overrides"><b>Overrides: </b><span class="inherited-name"><a href="Ft.Xml.XPath.ParsedNodeTest.html#NodeTestBase-getQuickKey">getQuickKey</a></span> from class <span class="class-name"><a href="Ft.Xml.XPath.ParsedNodeTest.html#NodeTestBase">NodeTestBase</a></span></dd>
+            <dt class="methoddef"><a name="LocalNameTest-match"><span class="method-name">match</span></a>(<span class="argument-name">self</span>, <span class="argument-name">context</span>, <span class="argument-name">node</span>, <span class="argument-name">principalType</span><span class="argument-default">=1</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dd class="overrides"><b>Overrides: </b><span class="inherited-name"><a href="Ft.Xml.XPath.ParsedNodeTest.html#NodeTestBase-match">match</a></span> from class <span class="class-name"><a href="Ft.Xml.XPath.ParsedNodeTest.html#NodeTestBase">NodeTestBase</a></span></dd>
+          </dl>
+          <h3>Methods inherited from class <a href="Ft.Xml.XPath.ParsedNodeTest.html#NodeTestBase">NodeTestBase</a></h3>
+          <div class="inherited"><span class="inherited-name"><a href="Ft.Xml.XPath.ParsedNodeTest.html#NodeTestBase-__str__">__str__</a></span>, <span class="inherited-name"><a href="Ft.Xml.XPath.ParsedNodeTest.html#NodeTestBase-pprint">pprint</a></span></div>
+          <h3>Members</h3>
+          <dl class="members">
+            <dt class="memberdef"><a name="nodeType"><span class="member-name">nodeType</span></a> = 1</dt>
+          </dl>
+          <h3>Members inherited from class <a href="Ft.Xml.XPath.ParsedNodeTest.html#NodeTestBase">NodeTestBase</a></h3>
+          <div class="inherited"><span class="inherited-name"><a href="Ft.Xml.XPath.ParsedNodeTest.html#NodeTestBase-priority">priority</a></span></div>
+        </dd>
+        <dt class="classdef"><a name="NamespaceTest"></a>class <span class="class-name">NamespaceTest</span><span class="bases">(<span class="class-name"><a href="Ft.Xml.XPath.ParsedNodeTest.html#NodeTestBase">NodeTestBase</a></span>)</span></dt>
+        <dd class="classdesc">
+          <h3>Methods</h3>
+          <dl class="methods">
+            <dt class="methoddef"><a name="NamespaceTest-__init__"><span class="method-name">__init__</span></a>(<span class="argument-name">self</span>, <span class="argument-name">prefix</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dt class="methoddef"><a name="NamespaceTest-__repr__"><span class="method-name">__repr__</span></a>(<span class="argument-name">self</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dt class="methoddef"><a name="NamespaceTest-getQuickKey"><span class="method-name">getQuickKey</span></a>(<span class="argument-name">self</span>, <span class="argument-name">namespaces</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dd class="overrides"><b>Overrides: </b><span class="inherited-name"><a href="Ft.Xml.XPath.ParsedNodeTest.html#NodeTestBase-getQuickKey">getQuickKey</a></span> from class <span class="class-name"><a href="Ft.Xml.XPath.ParsedNodeTest.html#NodeTestBase">NodeTestBase</a></span></dd>
+            <dt class="methoddef"><a name="NamespaceTest-match"><span class="method-name">match</span></a>(<span class="argument-name">self</span>, <span class="argument-name">context</span>, <span class="argument-name">node</span>, <span class="argument-name">principalType</span><span class="argument-default">=1</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dd class="overrides"><b>Overrides: </b><span class="inherited-name"><a href="Ft.Xml.XPath.ParsedNodeTest.html#NodeTestBase-match">match</a></span> from class <span class="class-name"><a href="Ft.Xml.XPath.ParsedNodeTest.html#NodeTestBase">NodeTestBase</a></span></dd>
+          </dl>
+          <h3>Methods inherited from class <a href="Ft.Xml.XPath.ParsedNodeTest.html#NodeTestBase">NodeTestBase</a></h3>
+          <div class="inherited"><span class="inherited-name"><a href="Ft.Xml.XPath.ParsedNodeTest.html#NodeTestBase-__str__">__str__</a></span>, <span class="inherited-name"><a href="Ft.Xml.XPath.ParsedNodeTest.html#NodeTestBase-pprint">pprint</a></span></div>
+          <h3>Members</h3>
+          <dl class="members">
+            <dt class="memberdef"><a name="nodeType"><span class="member-name">nodeType</span></a> = 1</dt>
+          </dl>
+          <h3>Members inherited from class <a href="Ft.Xml.XPath.ParsedNodeTest.html#NodeTestBase">NodeTestBase</a></h3>
+          <div class="inherited"><span class="inherited-name"><a href="Ft.Xml.XPath.ParsedNodeTest.html#NodeTestBase-priority">priority</a></span></div>
+        </dd>
+        <dt class="classdef"><a name="NodeTest"></a>class <span class="class-name">NodeTest</span><span class="bases">(<span class="class-name"><a href="Ft.Xml.XPath.ParsedNodeTest.html#NodeTestBase">NodeTestBase</a></span>)</span></dt>
+        <dd class="classdesc">
+          <h3>Methods</h3>
+          <dl class="methods">
+            <dt class="methoddef"><a name="NodeTest-__repr__"><span class="method-name">__repr__</span></a>(<span class="argument-name">self</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dt class="methoddef"><a name="NodeTest-match"><span class="method-name">match</span></a>(<span class="argument-name">self</span>, <span class="argument-name">context</span>, <span class="argument-name">node</span>, <span class="argument-name">principalType</span><span class="argument-default">=1</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dd class="overrides"><b>Overrides: </b><span class="inherited-name"><a href="Ft.Xml.XPath.ParsedNodeTest.html#NodeTestBase-match">match</a></span> from class <span class="class-name"><a href="Ft.Xml.XPath.ParsedNodeTest.html#NodeTestBase">NodeTestBase</a></span></dd>
+          </dl>
+          <h3>Methods inherited from class <a href="Ft.Xml.XPath.ParsedNodeTest.html#NodeTestBase">NodeTestBase</a></h3>
+          <div class="inherited"><span class="inherited-name"><a href="Ft.Xml.XPath.ParsedNodeTest.html#NodeTestBase-__str__">__str__</a></span>, <span class="inherited-name"><a href="Ft.Xml.XPath.ParsedNodeTest.html#NodeTestBase-getQuickKey">getQuickKey</a></span>, <span class="inherited-name"><a href="Ft.Xml.XPath.ParsedNodeTest.html#NodeTestBase-pprint">pprint</a></span></div>
+          <h3>Members inherited from class <a href="Ft.Xml.XPath.ParsedNodeTest.html#NodeTestBase">NodeTestBase</a></h3>
+          <div class="inherited"><span class="inherited-name"><a href="Ft.Xml.XPath.ParsedNodeTest.html#NodeTestBase-nodeType">nodeType</a></span>, <span class="inherited-name"><a href="Ft.Xml.XPath.ParsedNodeTest.html#NodeTestBase-priority">priority</a></span></div>
+        </dd>
+        <dt class="classdef"><a name="NodeTestBase"></a>class <span class="class-name">NodeTestBase</span></dt>
+        <dd class="classdesc">
+          <h3>Methods</h3>
+          <dl class="methods">
+            <dt class="methoddef"><a name="NodeTestBase-__str__"><span class="method-name">__str__</span></a>(<span class="argument-name">self</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dt class="methoddef"><a name="NodeTestBase-getQuickKey"><span class="method-name">getQuickKey</span></a>(<span class="argument-name">self</span>, <span class="argument-name">namespaces</span>)</dt>
+            <dd class="methoddesc">
+              <div class="abstract">Returns a tuple that indicates the expected node type and, if
+applicable, the expected name.</div>
+            </dd>
+            <dt class="methoddef"><a name="NodeTestBase-match"><span class="method-name">match</span></a>(<span class="argument-name">self</span>, <span class="argument-name">context</span>, <span class="argument-name">node</span>, <span class="argument-name">principalType</span><span class="argument-default">=1</span>)</dt>
+            <dd class="methoddesc">
+              <div class="abstract">The principalType is discussed in section [2.3 Node Tests]
+of the XPath 1.0 spec.  Only attribute and namespace axes
+differ from the default of elements.</div>
+            </dd>
+            <dt class="methoddef"><a name="NodeTestBase-pprint"><span class="method-name">pprint</span></a>(<span class="argument-name">self</span>, <span class="argument-name">indent</span>)</dt>
+            <dd class="methoddesc"></dd>
+          </dl>
+          <h3>Members</h3>
+          <dl class="members">
+            <dt class="memberdef"><a name="nodeType"><span class="member-name">nodeType</span></a> = None</dt>
+            <dt class="memberdef"><a name="priority"><span class="member-name">priority</span></a> = -0.5</dt>
+          </dl>
+        </dd>
+        <dt class="classdef"><a name="PrincipalTypeTest"></a>class <span class="class-name">PrincipalTypeTest</span><span class="bases">(<span class="class-name"><a href="Ft.Xml.XPath.ParsedNodeTest.html#NodeTestBase">NodeTestBase</a></span>)</span></dt>
+        <dd class="classdesc">
+          <h3>Methods</h3>
+          <dl class="methods">
+            <dt class="methoddef"><a name="PrincipalTypeTest-__repr__"><span class="method-name">__repr__</span></a>(<span class="argument-name">self</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dt class="methoddef"><a name="PrincipalTypeTest-match"><span class="method-name">match</span></a>(<span class="argument-name">self</span>, <span class="argument-name">context</span>, <span class="argument-name">node</span>, <span class="argument-name">principalType</span><span class="argument-default">=1</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dd class="overrides"><b>Overrides: </b><span class="inherited-name"><a href="Ft.Xml.XPath.ParsedNodeTest.html#NodeTestBase-match">match</a></span> from class <span class="class-name"><a href="Ft.Xml.XPath.ParsedNodeTest.html#NodeTestBase">NodeTestBase</a></span></dd>
+          </dl>
+          <h3>Methods inherited from class <a href="Ft.Xml.XPath.ParsedNodeTest.html#NodeTestBase">NodeTestBase</a></h3>
+          <div class="inherited"><span class="inherited-name"><a href="Ft.Xml.XPath.ParsedNodeTest.html#NodeTestBase-__str__">__str__</a></span>, <span class="inherited-name"><a href="Ft.Xml.XPath.ParsedNodeTest.html#NodeTestBase-getQuickKey">getQuickKey</a></span>, <span class="inherited-name"><a href="Ft.Xml.XPath.ParsedNodeTest.html#NodeTestBase-pprint">pprint</a></span></div>
+          <h3>Members</h3>
+          <dl class="members">
+            <dt class="memberdef"><a name="nodeType"><span class="member-name">nodeType</span></a> = 1</dt>
+          </dl>
+          <h3>Members inherited from class <a href="Ft.Xml.XPath.ParsedNodeTest.html#NodeTestBase">NodeTestBase</a></h3>
+          <div class="inherited"><span class="inherited-name"><a href="Ft.Xml.XPath.ParsedNodeTest.html#NodeTestBase-priority">priority</a></span></div>
+        </dd>
+        <dt class="classdef"><a name="ProcessingInstructionNodeTest"></a>class <span class="class-name">ProcessingInstructionNodeTest</span><span class="bases">(<span class="class-name"><a href="Ft.Xml.XPath.ParsedNodeTest.html#NodeTestBase">NodeTestBase</a></span>)</span></dt>
+        <dd class="classdesc">
+          <h3>Methods</h3>
+          <dl class="methods">
+            <dt class="methoddef"><a name="ProcessingInstructionNodeTest-__init__"><span class="method-name">__init__</span></a>(<span class="argument-name">self</span>, <span class="argument-name">target</span><span class="argument-default">=None</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dt class="methoddef"><a name="ProcessingInstructionNodeTest-__repr__"><span class="method-name">__repr__</span></a>(<span class="argument-name">self</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dt class="methoddef"><a name="ProcessingInstructionNodeTest-match"><span class="method-name">match</span></a>(<span class="argument-name">self</span>, <span class="argument-name">context</span>, <span class="argument-name">node</span>, <span class="argument-name">principalType</span><span class="argument-default">=1</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dd class="overrides"><b>Overrides: </b><span class="inherited-name"><a href="Ft.Xml.XPath.ParsedNodeTest.html#NodeTestBase-match">match</a></span> from class <span class="class-name"><a href="Ft.Xml.XPath.ParsedNodeTest.html#NodeTestBase">NodeTestBase</a></span></dd>
+          </dl>
+          <h3>Methods inherited from class <a href="Ft.Xml.XPath.ParsedNodeTest.html#NodeTestBase">NodeTestBase</a></h3>
+          <div class="inherited"><span class="inherited-name"><a href="Ft.Xml.XPath.ParsedNodeTest.html#NodeTestBase-__str__">__str__</a></span>, <span class="inherited-name"><a href="Ft.Xml.XPath.ParsedNodeTest.html#NodeTestBase-getQuickKey">getQuickKey</a></span>, <span class="inherited-name"><a href="Ft.Xml.XPath.ParsedNodeTest.html#NodeTestBase-pprint">pprint</a></span></div>
+          <h3>Members</h3>
+          <dl class="members">
+            <dt class="memberdef"><a name="nodeType"><span class="member-name">nodeType</span></a> = 7</dt>
+          </dl>
+          <h3>Members inherited from class <a href="Ft.Xml.XPath.ParsedNodeTest.html#NodeTestBase">NodeTestBase</a></h3>
+          <div class="inherited"><span class="inherited-name"><a href="Ft.Xml.XPath.ParsedNodeTest.html#NodeTestBase-priority">priority</a></span></div>
+        </dd>
+        <dt class="classdef"><a name="QualifiedNameTest"></a>class <span class="class-name">QualifiedNameTest</span><span class="bases">(<span class="class-name"><a href="Ft.Xml.XPath.ParsedNodeTest.html#NodeTestBase">NodeTestBase</a></span>)</span></dt>
+        <dd class="classdesc">
+          <h3>Methods</h3>
+          <dl class="methods">
+            <dt class="methoddef"><a name="QualifiedNameTest-__init__"><span class="method-name">__init__</span></a>(<span class="argument-name">self</span>, <span class="argument-name">prefix</span>, <span class="argument-name">localName</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dt class="methoddef"><a name="QualifiedNameTest-__repr__"><span class="method-name">__repr__</span></a>(<span class="argument-name">self</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dt class="methoddef"><a name="QualifiedNameTest-getQuickKey"><span class="method-name">getQuickKey</span></a>(<span class="argument-name">self</span>, <span class="argument-name">namespaces</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dd class="overrides"><b>Overrides: </b><span class="inherited-name"><a href="Ft.Xml.XPath.ParsedNodeTest.html#NodeTestBase-getQuickKey">getQuickKey</a></span> from class <span class="class-name"><a href="Ft.Xml.XPath.ParsedNodeTest.html#NodeTestBase">NodeTestBase</a></span></dd>
+            <dt class="methoddef"><a name="QualifiedNameTest-match"><span class="method-name">match</span></a>(<span class="argument-name">self</span>, <span class="argument-name">context</span>, <span class="argument-name">node</span>, <span class="argument-name">principalType</span><span class="argument-default">=1</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dd class="overrides"><b>Overrides: </b><span class="inherited-name"><a href="Ft.Xml.XPath.ParsedNodeTest.html#NodeTestBase-match">match</a></span> from class <span class="class-name"><a href="Ft.Xml.XPath.ParsedNodeTest.html#NodeTestBase">NodeTestBase</a></span></dd>
+          </dl>
+          <h3>Methods inherited from class <a href="Ft.Xml.XPath.ParsedNodeTest.html#NodeTestBase">NodeTestBase</a></h3>
+          <div class="inherited"><span class="inherited-name"><a href="Ft.Xml.XPath.ParsedNodeTest.html#NodeTestBase-__str__">__str__</a></span>, <span class="inherited-name"><a href="Ft.Xml.XPath.ParsedNodeTest.html#NodeTestBase-pprint">pprint</a></span></div>
+          <h3>Members</h3>
+          <dl class="members">
+            <dt class="memberdef"><a name="nodeType"><span class="member-name">nodeType</span></a> = 1</dt>
+          </dl>
+          <h3>Members inherited from class <a href="Ft.Xml.XPath.ParsedNodeTest.html#NodeTestBase">NodeTestBase</a></h3>
+          <div class="inherited"><span class="inherited-name"><a href="Ft.Xml.XPath.ParsedNodeTest.html#NodeTestBase-priority">priority</a></span></div>
+        </dd>
+        <dt class="classdef"><a name="TextNodeTest"></a>class <span class="class-name">TextNodeTest</span><span class="bases">(<span class="class-name"><a href="Ft.Xml.XPath.ParsedNodeTest.html#NodeTestBase">NodeTestBase</a></span>)</span></dt>
+        <dd class="classdesc">
+          <h3>Methods</h3>
+          <dl class="methods">
+            <dt class="methoddef"><a name="TextNodeTest-__repr__"><span class="method-name">__repr__</span></a>(<span class="argument-name">self</span>)</dt>
+            <dd class="methoddesc"></dd>
+          </dl>
+          <h3>Methods inherited from class <a href="Ft.Xml.XPath.ParsedNodeTest.html#NodeTestBase">NodeTestBase</a></h3>
+          <div class="inherited"><span class="inherited-name"><a href="Ft.Xml.XPath.ParsedNodeTest.html#NodeTestBase-__str__">__str__</a></span>, <span class="inherited-name"><a href="Ft.Xml.XPath.ParsedNodeTest.html#NodeTestBase-getQuickKey">getQuickKey</a></span>, <span class="inherited-name"><a href="Ft.Xml.XPath.ParsedNodeTest.html#NodeTestBase-match">match</a></span>, <span class="inherited-name"><a href="Ft.Xml.XPath.ParsedNodeTest.html#NodeTestBase-pprint">pprint</a></span></div>
+          <h3>Members</h3>
+          <dl class="members">
+            <dt class="memberdef"><a name="nodeType"><span class="member-name">nodeType</span></a> = 3</dt>
+          </dl>
+          <h3>Members inherited from class <a href="Ft.Xml.XPath.ParsedNodeTest.html#NodeTestBase">NodeTestBase</a></h3>
+          <div class="inherited"><span class="inherited-name"><a href="Ft.Xml.XPath.ParsedNodeTest.html#NodeTestBase-priority">priority</a></span></div>
+        </dd>
+      </dl>
+    </div>
+    <div class="section">
+      <h2>Functions</h2>
+      <dl class="functions">
+        <dt class="functiondef"><a name="ParsedNameTest"><span class="function-name">ParsedNameTest</span></a>(<span class="argument-name">name</span>)</dt>
+        <dd class="functiondesc"></dd>
+        <dt class="functiondef"><a name="ParsedNodeTest"><span class="function-name">ParsedNodeTest</span></a>(<span class="argument-name">test</span>, <span class="argument-name">literal</span><span class="argument-default">=None</span>)</dt>
+        <dd class="functiondesc"></dd>
+      </dl>
+    </div>
+    <div class="section">
+      <h2>Globals</h2>
+      <dl class="globals">
+        <dt class="globaldef"><a name="g_classMap"><span class="global-name">g_classMap</span></a> = {'comment': &lt;class Ft.Xml.XPath.ParsedNodeTest.CommentNodeTest&gt;, 'node': &lt;class Ft.Xml.XPath.ParsedNodeTest.NodeTest&gt;, 'processing-instruction': &lt;class Ft.Xml.XPath.ParsedNodeTest.ProcessingInstructionNodeTest&gt;, 'text': &lt;class Ft.Xml.XPath.ParsedNodeTest.TextNodeTest&gt;}</dt>
+        <dd class="globaldesc"></dd>
+        <dt class="globaldef"><a name="g_xpathRecognizedNodes"><span class="global-name">g_xpathRecognizedNodes</span></a> = {1: True, 2: True, 3: True, 7: True, 8: True, 9: True, 13: True}</dt>
+        <dd class="globaldesc"></dd>
+      </dl>
+    </div>
+    <div class="universal-footer">Last modified on 2005-08-30 18:52:10</div>
+  </body>
+</html>

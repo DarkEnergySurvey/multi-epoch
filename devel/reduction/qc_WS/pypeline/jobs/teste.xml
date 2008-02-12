@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<job>
+  <config>
+    <rootDir>/home/martelli/base</rootDir>
+    <dataRepository>/home/martelli/data/</dataRepository>
+  </config>
+
+  <components>
+
+    <component id="origin">
+      <data>
+        <file value="BCS2327-5453Ar.051119_0142.065_01.BCS2323-5529.fits" type="fits_image" id="test"/>
+        <file value="BCS2327-5453Ar.051119_0142.065_01.BCS2323-5529_cat.fits" type="fits_image" id="test_out"/>
+        <file value="USNOB1.fits" type="fits_catalog" id="ref_file"/>
+
+      </data>
+    </component>
+
+    <component id="fits2jpeg1">
+      <module>fits2jpeg</module>
+      <input>
+      	<file source="origin" type="fits_image" id="test"/>
+      </input>	
+      <config>
+        <scalar id="min_image_value" type="float" value="-109" />
+        <scalar id="max_image_value" type="float" value="367" />
+      </config>
+    </component>
+
+    <component id="addflags1">
+      <module>addflags</module>
+      <input>
+        <file source="origin" type="fits_image" id="test"/>
+      	<file source="origin" type="fits_catalog" id="test_out"/>
+      </input>	
+      <config>
+        <scalar id="mag_lim" type="float" value="14.0" />
+        <scalar id="cs_lim" type="float" value="0.9" />
+        <scalar id="trimmed" type="bool" value="True" />
+      </config>
+    </component>
+
+    <component id="classification1">
+      <module>classification</module>
+      <input>
+      	<file source="addflags1" type="fits_catalog" id="test_out"/>
+      </input>	
+      <config>
+        <scalar id="sigma_cut" type="float" value="5.0" />
+        <scalar id="band" type="string" value="B" />
+      </config>
+    </component>
+
+    <component id="spatial1">
+      <module>spatial</module>
+      <input>
+      	<file source="addflags1" type="fits_catalog" id="test_out"/>
+      </input>	
+      <config>
+        <scalar id="sigma_cut" type="float" value="5.0" />
+      </config>
+    </component>
+
+    <component id="psf1">
+      <module>psf</module>
+      <input>
+      	<file source="addflags1" type="fits_catalog" id="test_out"/>
+      </input>	
+      <config>
+        <scalar id="sigma_cut" type="float" value="5.0" />
+      </config>
+    </component>
+
+<!--    <component id="astrometry1">
+      <module>astrometry</module>
+      <input>
+      	<file source="addflags1" type="fits_catalog" id="test_out"/>
+      	<file source="origin" type="fits_catalog" id="ref_file"/>
+      </input>	
+      <config>
+        <scalar id="ang_sep" type="float" value="1.0" />
+        <scalar id="sigma_cut" type="float" value="5.0" />
+      </config>
+    </component>
+
+    <component id="photometry1">
+      <module>photometry</module>
+      <input>
+      	<file source="addflags1" type="fits_catalog" id="test_out"/>
+      	<file source="origin" type="fits_catalog" id="ref_file"/>
+      </input>	
+      <config>
+        <scalar id="ang_sep" type="float" value="1.0" />
+        <scalar id="band" type="string" value="B" />
+        <scalar id="sigma_cut" type="float" value="5.0" />
+      </config>
+    </component>
+-->
+    <component id="counts1">
+      <module>counts</module>
+      <input>
+      	<file source="addflags1" type="fits_catalog" id="test_out"/>
+      </input>	
+      <config>
+        <scalar id="sigma_cut" type="float" value="5.0" />
+      </config>
+    </component>
+
+  </components>
+</job>

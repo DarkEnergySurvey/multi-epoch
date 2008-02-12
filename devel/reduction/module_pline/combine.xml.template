@@ -1,0 +1,3904 @@
+
+   <!-- Running astrometry.c -->
+   <target name="Stage_astrometry" description="run astrometry">
+       <esequence>
+
+         <edeclare name="content_begin"  string="test begin"/>
+         <edeclare name="content_end"    string="test end"/>
+         <econdblock type="else-if">
+          <econdtask>
+            <eeval>
+             <statement>
+                <ecompare string="${platform}">
+                   <predicate string="TG" comparator="EQUALS"/>
+                </ecompare>
+             </statement>
+            </eeval>
+              <esequence>
+                <eassign name="content_begin"  string="Begin Stage_astrometry for ccd ${ccd.num} data on $G{host} for nite ${nite}"/>
+                <eassign name="content_end"    string="End Stage_astrometry for ccd ${ccd.num} data on $G{host} for nite ${nite}"/>
+              </esequence>
+          </econdtask>
+              <esequence>
+                <eassign name="content_begin"  string="Begin Stage_astrometry for ccd ${ccd.num} for nite ${nite}"/>
+                <eassign name="content_end"    string="End Stage_astrometry for ccd ${ccd.num} for nite ${nite}"/>
+              </esequence>
+        </econdblock>
+
+            <publish>
+              <event ensembleid="${ensemble.id}" workflowid="${jid}"
+                   nodeid="$R{content_begin}" currentState="1">
+                   <property name="message" value="$R{content_begin}"/>
+              </event>
+            </publish>
+
+             <rtexec inheritedEnv="false" execDir="${nite.dir}" 
+                     args="${ast.exec} ${ast.command_g}" quiet="true">
+                     <outMonitor file="${local.out}/${ast.log}"/>
+                     <errMonitor file="${local.out}/${ast.log}"/>
+             </rtexec>
+
+             <rtexec inheritedEnv="false" execDir="${nite.dir}" 
+                     args="${ast.exec} ${ast.command_r}" quiet="true">
+                     <outMonitor file="${local.out}/${ast.log}"/>
+                     <errMonitor file="${local.out}/${ast.log}"/>
+             </rtexec>
+
+             <rtexec inheritedEnv="false" execDir="${nite.dir}" 
+                     args="${ast.exec} ${ast.command_i}" quiet="true">
+                     <outMonitor file="${local.out}/${ast.log}"/>
+                     <errMonitor file="${local.out}/${ast.log}"/>
+             </rtexec>
+
+             <rtexec inheritedEnv="false" execDir="${nite.dir}" 
+                     args="${ast.exec} ${ast.command_z}" quiet="true">
+                     <outMonitor file="${local.out}/${ast.log}"/>
+                     <errMonitor file="${local.out}/${ast.log}"/>
+             </rtexec>
+
+             <rtexec inheritedEnv="false" execDir="${nite.dir}" 
+                     args="${qa_ast.exec} ${qa_ast.command}" quiet="true">
+                     <outMonitor file="${local.out}/${qa_ast.log}"/>
+                     <errMonitor file="${local.out}/${qa_ast.log}"/>
+             </rtexec>
+
+ 	    <print line=" - Stage_astrometry done"/>	
+
+         <write path="${local.out}/${ast.log}" text="true" 
+                         errorProperty="failed" rethrow="false" append="true"> 
+	                 <segment string=" -- astrometry done" lineBreaks="1"/>
+         </write>
+
+         <publish>
+            <event ensembleid="${ensemble.id}" workflowid="${jid}"
+                   nodeid="$R{content_end}" currentState="1">
+                  <property name="message" value="$R{content_end}"/>
+            </event>
+         </publish>   
+
+       </esequence>
+   </target>
+
+   <target name="Stage_copycal" depends="Stage_copybpm, Stage_copypupil" description="transfer cals">
+   </target>
+
+   <!-- Copy the cal data (bpm images) into place -->
+   <target name="Stage_copybpm" description="transfer cal images">
+       <esequence>
+
+        <edeclare name="content_begin"  string="test begin"/>
+        <edeclare name="content_end"    string="test end"/>
+        <econdblock type="else-if">
+          <econdtask>
+            <eeval>
+             <statement>
+                <ecompare string="${platform}">
+                   <predicate string="TG" comparator="EQUALS"/>
+                </ecompare>
+             </statement>
+            </eeval>
+              <esequence>
+                <eassign name="content_begin"  string="Begin Stage_copybpm for ccd ${ccd.num} data on $G{host} for nite ${nite}"/>
+                <eassign name="content_end"    string="End Stage_copybpm for ccd ${ccd.num} data on $G{host} for nite ${nite}"/>
+              </esequence>
+          </econdtask>
+              <esequence>
+                <eassign name="content_begin"  string="Begin Stage_copybpm for ccd ${ccd.num} for nite ${nite}"/>
+                <eassign name="content_end"    string="End Stage_copybpm for ccd ${ccd.num} for nite ${nite}"/>
+              </esequence>
+        </econdblock>
+
+            <publish>
+              <event ensembleid="${ensemble.id}" workflowid="${jid}"
+                   nodeid="$R{content_begin}" currentState="1">
+                   <property name="message" value="$R{content_begin}"/>
+              </event>
+            </publish>
+
+
+	    <edeclare name="target" string="${bpm.dir}/${bpm.name}"/>
+            <edeclare name="destination" string="${data.protocol}://${bpm.fits.name}"/> 
+ 
+            <uricopy from="$R{target}" to="$R{destination}"/>   
+
+            <write path="${local.out}/${log.name}" text="true" 
+                    errorProperty="failed" rethrow="false" append="true"> 
+	      <segment string=" -- copied BPM image" lineBreaks="1"/>
+            </write>
+
+
+	    <edeclare name="ptarget" string="${pupil.dir}/${pupil.name}"/>
+            <edeclare name="pdestination" string="${data.protocol}://${pupil.fits.name}"/> 
+ 
+            <!--uricopy from="$R{ptarget}" to="$R{pdestination}"/-->   
+
+            <write path="${local.out}/${log.name}" text="true" 
+                    errorProperty="failed" rethrow="false" append="true"> 
+	      <segment string=" -- copied PUPIL image" lineBreaks="1"/>
+            </write>
+
+
+
+	    <print line=" - Stage_copybpm done"/>	
+
+            <publish>
+              <event ensembleid="${ensemble.id}" workflowid="${jid}"
+                   nodeid="$R{content_end}" currentState="1">
+                   <property name="message" value="$R{content_end}"/>
+              </event>
+            </publish>
+	</esequence>
+   </target>
+
+   <!-- Copy the cal data (pupil images) into place -->
+   <target name="Stage_copypupil" description="transfer cal images">
+       <esequence>
+
+        <edeclare name="content_begin"  string="test begin"/>
+        <edeclare name="content_end"    string="test end"/>
+        <econdblock type="else-if">
+          <econdtask>
+            <eeval>
+             <statement>
+                <ecompare string="${platform}">
+                   <predicate string="TG" comparator="EQUALS"/>
+                </ecompare>
+             </statement>
+            </eeval>
+              <esequence>
+                <eassign name="content_begin"  string="Begin Stage_copypupil for ccd ${ccd.num} data on $G{host} for nite ${nite}"/>
+                <eassign name="content_end"    string="End Stage_copypupil for ccd ${ccd.num} data on $G{host} for nite ${nite}"/>
+              </esequence>
+          </econdtask>
+              <esequence>
+                <eassign name="content_begin"  string="Begin Stage_copypupil for ccd ${ccd.num} for nite ${nite}"/>
+                <eassign name="content_end"    string="End Stage_copypupil for ccd ${ccd.num} for nite ${nite}"/>
+              </esequence>
+        </econdblock>
+
+            <publish>
+              <event ensembleid="${ensemble.id}" workflowid="${jid}"
+                   nodeid="$R{content_begin}" currentState="1">
+                   <property name="message" value="$R{content_begin}"/>
+              </event>
+            </publish>
+
+
+	    <edeclare name="ptarget" string="${pupil.dir}/${pupil.name}"/>
+            <edeclare name="pdestination" string="${data.protocol}://${pupil.fits.name}"/> 
+ 
+            <uricopy from="$R{ptarget}" to="$R{pdestination}"/>   
+
+            <write path="${local.out}/${log.name}" text="true" 
+                    errorProperty="failed" rethrow="false" append="true"> 
+	      <segment string=" -- copied PUPIL image" lineBreaks="1"/>
+            </write>
+
+
+	    <print line=" - Stage_copypupil done"/>	
+
+            <publish>
+              <event ensembleid="${ensemble.id}" workflowid="${jid}"
+                   nodeid="$R{content_end}" currentState="1">
+                   <property name="message" value="$R{content_end}"/>
+              </event>
+            </publish>
+	</esequence>
+   </target>
+
+   <target name="Stage_done" description="done message">
+     <esequence>
+
+        <edeclare name="content_begin"  string="test begin"/>
+        <edeclare name="content_end"    string="test end"/>
+        <econdblock type="else-if">
+          <econdtask>
+            <eeval>
+             <statement>
+                <ecompare string="${platform}">
+                   <predicate string="TG" comparator="EQUALS"/>
+                </ecompare>
+             </statement>
+            </eeval>
+              <esequence>
+                <eassign name="content_begin"  string="Begin Stage_done for ccd ${ccd.num} data on $G{host} for nite ${nite}"/>
+                <eassign name="content_end"    string="End Stage_done for ccd ${ccd.num} data on $G{host} for nite ${nite}"/>
+              </esequence>
+          </econdtask>
+              <esequence>
+                <eassign name="content_begin"  string="Begin Stage_done for ccd ${ccd.num} for nite ${nite}"/>
+                <eassign name="content_end"    string="End Stage_done for ccd ${ccd.num} for nite ${nite}"/>
+              </esequence>
+        </econdblock>
+
+            <publish>
+              <event ensembleid="${ensemble.id}" workflowid="${jid}"
+                   nodeid="$R{content_begin}" currentState="1">
+                   <property name="message" value="$R{content_begin}"/>
+              </event>
+            </publish>
+
+	<!-- Remove the data/nite/raw link -->
+        <econdblock type="else-if">
+          <econdtask>
+            <eeval>
+             <statement>
+                <ecompare string="${platform}">
+                   <predicate string="TG" comparator="EQUALS"/>
+                </ecompare>
+             </statement>
+            </eeval>
+              <esequence>
+ 	          <rtexec inheritedEnv="false" execDir="." args="/bin/rm ${nite.dir}/raw" quiet="true">
+                     <outMonitor file="${local.out}/${done.log}" append="true"/>
+                     <errMonitor file="${local.out}/${done.log}" append="true"/>
+                  </rtexec>
+              </esequence>
+          </econdtask>
+              <esequence>
+
+                <econdblock type="else-if">
+                  <econdtask>
+                   <eeval>
+                     <statement>
+                         <ecompare string="${ccd.num}">
+                           <predicate string="01" comparator="EQUALS"/>
+                         </ecompare>
+                     </statement>
+                   </eeval>
+                      <esequence>
+ 	                 <rtexec inheritedEnv="false" execDir="." args="/bin/rm ${nite.dir}/raw" quiet="true">
+                           <outMonitor file="${local.out}/${done.log}" append="true"/>
+                           <errMonitor file="${local.out}/${done.log}" append="true"/>
+                         </rtexec>
+                      </esequence>
+                  </econdtask>
+                </econdblock>
+
+              </esequence>
+        </econdblock>
+
+        <write path="${local.out}/${done.log}" text="true" 
+                         errorProperty="failed" rethrow="false" append="true"> 
+	                 <segment string=" -- Reduction/process for CCD ${ccd.num} at ${nite} done" lineBreaks="1"/>
+        </write>
+
+         <publish>
+            <event ensembleid="${ensemble.id}" workflowid="${jid}"
+                   nodeid="$R{content_end}" currentState="1">
+                  <property name="message" value="$R{content_end}"/>
+            </event>
+         </publish>
+
+     </esequence>
+   </target>
+
+   <!-- Create flat.fits with flatcombine -->
+   <target name="Stage_flatcombine_g" description="create g band flat correction">
+
+   <esequence>
+        <edeclare name="content_begin"  string="test begin"/>
+        <econdblock type="else-if">
+          <econdtask>
+            <eeval>
+             <statement>
+                <ecompare string="${platform}">
+                   <predicate string="TG" comparator="EQUALS"/>
+                </ecompare>
+             </statement>
+            </eeval>
+              <esequence>
+                <eassign name="content_begin"  string="Begin Stage_flatcombine for ccd ${ccd.num} data on $G{host} for nite ${nite}"/>
+              </esequence>
+          </econdtask>
+              <esequence>
+                <eassign name="content_begin"  string="Begin Stage_flatcombine for ccd ${ccd.num} for nite ${nite}"/>
+              </esequence>
+        </econdblock>
+
+            <publish>
+              <event ensembleid="${ensemble.id}" workflowid="${jid}"
+                   nodeid="$R{content_begin}" currentState="1">
+                   <property name="message" value="$R{content_begin}"/>
+              </event>
+            </publish>
+
+             <write path="${local.out}/${flatcombine.log}" text="true" 
+                   errorProperty="failed" rethrow="false" append="true">
+                   <segment string=" -- flatcombine results for ${flatg.list}" lineBreaks="1"/>
+             </write>
+
+               <edeclare name="abpm"  string="${bpm.fits.name}"/>
+               <edeclare name="apupil"  string="${pupil.fits.name}"/>
+               <edeclare name="abias" string="${bias.fits.path}/${bias.fits.name}"/>
+               <edeclare name="alist" string="${flatg.list}"/>
+               <edeclare name="afile" string="${flatg.fits.path}/${flatg.fits.name}"/>
+
+               <rtexec inheritedEnv="false" execDir="${nite.dir}"  
+                   args="${flatcombine.exec} ${flatcombine.args}" quiet="true">
+                   <errMonitor file="${local.out}/${flatcombine.log}"/>
+                   <outMonitor file="${local.out}/${flatcombine.log}"/>
+               </rtexec>
+
+             <write path="${local.out}/${flatcombine.log}" text="true" 
+                   errorProperty="failed" rethrow="false" append="true">
+                   <segment string=" -- flatcombine complete " lineBreaks="2"/>
+             </write>
+
+        </esequence>
+
+   </target>
+
+   <target name="Stage_flatcombine_r" description="create r band flat correction">
+        <esequence>
+
+             <write path="${local.out}/${flatcombine.log}" text="true" 
+                   errorProperty="failed" rethrow="false" append="true">
+                   <segment string=" -- flatcombine results for ${flatr.list}" lineBreaks="1"/>
+             </write>
+
+               <edeclare name="abpm"  string="${bpm.fits.name}"/>
+               <edeclare name="apupil"  string="${pupil.fits.name}"/>
+               <edeclare name="abias" string="${bias.fits.path}/${bias.fits.name}"/>
+               <edeclare name="alist" string="${flatr.list}"/>
+               <edeclare name="afile" string="${flatr.fits.path}/${flatr.fits.name}"/>
+
+
+	    <rtexec inheritedEnv="false" execDir="${nite.dir}"
+               args="${flatcombine.exec} ${flatcombine.args}" quiet="true">
+               <errMonitor file="${local.out}/${flatcombine.log}"/>
+	       <outMonitor file="${local.out}/${flatcombine.log}"/>
+            </rtexec>
+
+             <write path="${local.out}/${flatcombine.log}" text="true" 
+                   errorProperty="failed" rethrow="false" append="true">
+                   <segment string=" -- flatcombine complete " lineBreaks="2"/>
+             </write>
+
+        </esequence>
+   </target>
+
+   <target name="Stage_flatcombine_i" description="create i band flat correction">
+        <esequence>
+
+             <write path="${local.out}/${flatcombine.log}" text="true" 
+                   errorProperty="failed" rethrow="false" append="true">
+                   <segment string=" -- flatcombine results for ${flati.list}" lineBreaks="1"/>
+             </write>
+
+               <edeclare name="abpm"  string="${bpm.fits.name}"/>
+               <edeclare name="apupil"  string="${pupil.fits.name}"/>
+               <edeclare name="abias" string="${bias.fits.path}/${bias.fits.name}"/>
+               <edeclare name="alist" string="${flati.list}"/>
+               <edeclare name="afile" string="${flati.fits.path}/${flati.fits.name}"/>
+           
+	<rtexec inheritedEnv="false" execDir="${nite.dir}"
+           args="${flatcombine.exec} ${flatcombine.args}" quiet="true">
+           <errMonitor file="${local.out}/${flatcombine.log}"/>
+	   <outMonitor file="${local.out}/${flatcombine.log}"/>
+        </rtexec>
+
+             <write path="${local.out}/${flatcombine.log}" text="true" 
+                   errorProperty="failed" rethrow="false" append="true">
+                   <segment string=" -- flatcombine complete " lineBreaks="2"/>
+             </write>
+
+        </esequence>
+   </target>
+
+   <target name="Stage_flatcombine_z" description="create z band flat correction">
+        <esequence>
+           
+             <write path="${local.out}/${flatcombine.log}" text="true" 
+                   errorProperty="failed" rethrow="false" append="true">
+                   <segment string=" -- flatcombine results for ${flatz.list}" lineBreaks="1"/>
+             </write>
+
+               <edeclare name="abpm"  string="${bpm.fits.name}"/>
+               <edeclare name="apupil"  string="${pupil.fits.name}"/>
+               <edeclare name="abias" string="${bias.fits.path}/${bias.fits.name}"/>
+               <edeclare name="alist" string="${flatz.list}"/>
+               <edeclare name="afile" string="${flatz.fits.path}/${flatz.fits.name}"/>
+
+	               <rtexec inheritedEnv="false" execDir="${nite.dir}"  
+                          args="${flatcombine.exec} ${flatcombine.args}" quiet="true">
+                          <errMonitor file="${local.out}/${flatcombine.log}"/>
+		          <outMonitor file="${local.out}/${flatcombine.log}"/>
+                       </rtexec>
+
+             <write path="${local.out}/${flatcombine.log}" text="true" 
+                   errorProperty="failed" rethrow="false" append="true">
+                   <segment string=" -- flatcombine complete " lineBreaks="2"/>
+             </write>
+
+        <edeclare name="content_end"  string="test end"/>
+        <econdblock type="else-if">
+          <econdtask>
+            <eeval>
+             <statement>
+                <ecompare string="${platform}">
+                   <predicate string="TG" comparator="EQUALS"/>
+                </ecompare>
+             </statement>
+            </eeval>
+              <esequence>
+                <eassign name="content_end"    string="End Stage_flatcombine for ccd ${ccd.num} data on $G{host} for nite ${nite}"/>
+              </esequence>
+          </econdtask>
+              <esequence>
+                <eassign name="content_end"    string="End Stage_flatcombine for ccd ${ccd.num} for nite ${nite}"/>
+              </esequence>
+        </econdblock>
+
+            <publish>
+              <event ensembleid="${ensemble.id}" workflowid="${jid}"
+                   nodeid="$R{content_end}" currentState="1">
+                   <property name="message" value="$R{content_end}"/>
+              </event>
+            </publish>
+
+
+	</esequence>
+
+   </target>
+
+   <target name="Stage_flatcombine" depends="Stage_flatcombine_g, Stage_flatcombine_r, Stage_flatcombine_i, Stage_flatcombine_z" description="create flat correction">
+        <esequence>
+
+         <write path="${local.out}/${flatcombine.log}" text="true" 
+                         errorProperty="failed" rethrow="false" append="true"> 
+	                 <segment string=" -- flatcombine done" lineBreaks="1"/>
+         </write>
+
+         <print line=" - Stage_flatcombine done"/>
+
+
+        </esequence>
+   </target>
+
+   <!-- Create illumination and fringe corrections -->
+   <target name="Stage_mkillum_g" description="create g band illumination correction">
+
+   <esequence>
+        <edeclare name="content_begin"  string="test begin"/>
+        <econdblock type="else-if">
+          <econdtask>
+            <eeval>
+             <statement>
+                <ecompare string="${platform}">
+                   <predicate string="TG" comparator="EQUALS"/>
+                </ecompare>
+             </statement>
+            </eeval>
+              <esequence>
+                <eassign name="content_begin"  string="Begin Stage_mkillum for ccd ${ccd.num} data on $G{host} for nite ${nite}"/>
+              </esequence>
+          </econdtask>
+              <esequence>
+                <eassign name="content_begin"  string="Begin Stage_mkillum for ccd ${ccd.num} for nite ${nite}"/>
+              </esequence>
+        </econdblock>
+
+            <publish>
+              <event ensembleid="${ensemble.id}" workflowid="${jid}"
+                   nodeid="$R{content_begin}" currentState="1">
+                   <property name="message" value="$R{content_begin}"/>
+              </event>
+            </publish>
+
+             <write path="${local.out}/${mkillum.log}" text="true" 
+                   errorProperty="failed" rethrow="false" append="true">
+                   <segment string=" -- mkillum results for ${scienceoutg.list}" lineBreaks="1"/>
+             </write>
+
+               <rtexec inheritedEnv="false" execDir="${nite.dir}"  
+                   args="${mkillum.exe1} ${mkillum.args1_g}" quiet="true">
+                   <errMonitor file="${local.out}/${mkillum.log}"/>
+                   <outMonitor file="${local.out}/${mkillum.log}"/>
+               </rtexec>
+
+             <write path="${local.out}/${mkillum.log}" text="true" 
+                   errorProperty="failed" rethrow="false" append="true">
+                   <segment string=" -- science combine complete " lineBreaks="2"/>
+             </write>
+               <rtexec inheritedEnv="false" execDir="${nite.dir}"  
+                   args="${mkillum.exe2} ${mkillum.args2_g}" quiet="true">
+                   <errMonitor file="${local.out}/${mkillum.log}"/>
+                   <outMonitor file="${local.out}/${mkillum.log}"/>
+               </rtexec>
+
+             <write path="${local.out}/${mkillum.log}" text="true" 
+                   errorProperty="failed" rethrow="false" append="true">
+                   <segment string=" -- mkillum complete " lineBreaks="2"/>
+             </write>
+
+        </esequence>
+
+   </target>
+
+   <!-- Create illumination and fringe corrections -->
+   <target name="Stage_mkillum_r" description="create r band illumination correction">
+
+   <esequence>
+        <edeclare name="content_begin"  string="test begin"/>
+        <econdblock type="else-if">
+          <econdtask>
+            <eeval>
+             <statement>
+                <ecompare string="${platform}">
+                   <predicate string="TG" comparator="EQUALS"/>
+                </ecompare>
+             </statement>
+            </eeval>
+              <esequence>
+                <eassign name="content_begin"  string="Begin Stage_mkillum for ccd ${ccd.num} data on $G{host} for nite ${nite}"/>
+              </esequence>
+          </econdtask>
+              <esequence>
+                <eassign name="content_begin"  string="Begin Stage_mkillum for ccd ${ccd.num} for nite ${nite}"/>
+              </esequence>
+        </econdblock>
+
+            <publish>
+              <event ensembleid="${ensemble.id}" workflowid="${jid}"
+                   nodeid="$R{content_begin}" currentState="1">
+                   <property name="message" value="$R{content_begin}"/>
+              </event>
+            </publish>
+
+             <write path="${local.out}/${mkillum.log}" text="true" 
+                   errorProperty="failed" rethrow="false" append="true">
+                   <segment string=" -- mkillum results for ${scienceoutr.list}" lineBreaks="1"/>
+             </write>
+
+               <rtexec inheritedEnv="false" execDir="${nite.dir}"  
+                   args="${mkillum.exe1} ${mkillum.args1_r}" quiet="true">
+                   <errMonitor file="${local.out}/${mkillum.log}"/>
+                   <outMonitor file="${local.out}/${mkillum.log}"/>
+               </rtexec>
+
+             <write path="${local.out}/${mkillum.log}" text="true" 
+                   errorProperty="failed" rethrow="false" append="true">
+                   <segment string=" -- science combine complete " lineBreaks="2"/>
+             </write>
+               <rtexec inheritedEnv="false" execDir="${nite.dir}"  
+                   args="${mkillum.exe2} ${mkillum.args2_r}" quiet="true">
+                   <errMonitor file="${local.out}/${mkillum.log}"/>
+                   <outMonitor file="${local.out}/${mkillum.log}"/>
+               </rtexec>
+
+             <write path="${local.out}/${mkillum.log}" text="true" 
+                   errorProperty="failed" rethrow="false" append="true">
+                   <segment string=" -- mkillum complete " lineBreaks="2"/>
+             </write>
+
+        </esequence>
+
+   </target>
+
+   <!-- Create illumination and fringe corrections -->
+   <target name="Stage_mkillum_i" description="create i band illumination correction">
+
+   <esequence>
+        <edeclare name="content_begin"  string="test begin"/>
+        <econdblock type="else-if">
+          <econdtask>
+            <eeval>
+             <statement>
+                <ecompare string="${platform}">
+                   <predicate string="TG" comparator="EQUALS"/>
+                </ecompare>
+             </statement>
+            </eeval>
+              <esequence>
+                <eassign name="content_begin"  string="Begin Stage_mkillum for ccd ${ccd.num} data on $G{host} for nite ${nite}"/>
+              </esequence>
+          </econdtask>
+              <esequence>
+                <eassign name="content_begin"  string="Begin Stage_mkillum for ccd ${ccd.num} for nite ${nite}"/>
+              </esequence>
+        </econdblock>
+
+            <publish>
+              <event ensembleid="${ensemble.id}" workflowid="${jid}"
+                   nodeid="$R{content_begin}" currentState="1">
+                   <property name="message" value="$R{content_begin}"/>
+              </event>
+            </publish>
+
+             <write path="${local.out}/${mkillum.log}" text="true" 
+                   errorProperty="failed" rethrow="false" append="true">
+                   <segment string=" -- mkillum results for ${scienceouti.list}" lineBreaks="1"/>
+             </write>
+
+               <rtexec inheritedEnv="false" execDir="${nite.dir}"  
+                   args="${mkillum.exe1} ${mkillum.args1_i}" quiet="true">
+                   <errMonitor file="${local.out}/${mkillum.log}"/>
+                   <outMonitor file="${local.out}/${mkillum.log}"/>
+               </rtexec>
+
+             <write path="${local.out}/${mkillum.log}" text="true" 
+                   errorProperty="failed" rethrow="false" append="true">
+                   <segment string=" -- science combine complete " lineBreaks="2"/>
+             </write>
+               <rtexec inheritedEnv="false" execDir="${nite.dir}"  
+                   args="${mkillum.exe2} ${mkillum.args2_i}" quiet="true">
+                   <errMonitor file="${local.out}/${mkillum.log}"/>
+                   <outMonitor file="${local.out}/${mkillum.log}"/>
+               </rtexec>
+
+             <write path="${local.out}/${mkillum.log}" text="true" 
+                   errorProperty="failed" rethrow="false" append="true">
+                   <segment string=" -- mkillum complete " lineBreaks="2"/>
+             </write>
+
+        </esequence>
+
+   </target>
+
+   <!-- Create illumination and fringe corrections -->
+   <target name="Stage_mkillum_z" description="create z band illumination correction">
+
+   <esequence>
+        <edeclare name="content_begin"  string="test begin"/>
+        <econdblock type="else-if">
+          <econdtask>
+            <eeval>
+             <statement>
+                <ecompare string="${platform}">
+                   <predicate string="TG" comparator="EQUALS"/>
+                </ecompare>
+             </statement>
+            </eeval>
+              <esequence>
+                <eassign name="content_begin"  string="Begin Stage_mkillum for ccd ${ccd.num} data on $G{host} for nite ${nite}"/>
+              </esequence>
+          </econdtask>
+              <esequence>
+                <eassign name="content_begin"  string="Begin Stage_mkillum for ccd ${ccd.num} for nite ${nite}"/>
+              </esequence>
+        </econdblock>
+
+            <publish>
+              <event ensembleid="${ensemble.id}" workflowid="${jid}"
+                   nodeid="$R{content_begin}" currentState="1">
+                   <property name="message" value="$R{content_begin}"/>
+              </event>
+            </publish>
+
+             <write path="${local.out}/${mkillum.log}" text="true" 
+                   errorProperty="failed" rethrow="false" append="true">
+                   <segment string=" -- mkillum results for ${scienceoutz.list}" lineBreaks="1"/>
+             </write>
+
+               <rtexec inheritedEnv="false" execDir="${nite.dir}"  
+                   args="${mkillum.exe1} ${mkillum.args1_z}" quiet="true">
+                   <errMonitor file="${local.out}/${mkillum.log}"/>
+                   <outMonitor file="${local.out}/${mkillum.log}"/>
+               </rtexec>
+
+             <write path="${local.out}/${mkillum.log}" text="true" 
+                   errorProperty="failed" rethrow="false" append="true">
+                   <segment string=" -- science combine complete " lineBreaks="2"/>
+             </write>
+               <rtexec inheritedEnv="false" execDir="${nite.dir}"  
+                   args="${mkillum.exe2} ${mkillum.args2_z}" quiet="true">
+                   <errMonitor file="${local.out}/${mkillum.log}"/>
+                   <outMonitor file="${local.out}/${mkillum.log}"/>
+               </rtexec>
+
+             <write path="${local.out}/${mkillum.log}" text="true" 
+                   errorProperty="failed" rethrow="false" append="true">
+                   <segment string=" -- mkillum complete " lineBreaks="2"/>
+             </write>
+
+        </esequence>
+
+   </target>
+
+   <target name="Stage_mkillum" depends="Stage_mkillum_g, Stage_mkillum_r, Stage_mkillum_i, Stage_mkillum_z" description="create illumination correction">
+        <esequence>
+
+         <write path="${local.out}/${mkillum.log}" text="true" 
+                         errorProperty="failed" rethrow="false" append="true"> 
+	                 <segment string=" -- mkillum done" lineBreaks="1"/>
+         </write>
+
+         <print line=" - Stage_mkillum done"/>
+
+
+        </esequence>
+   </target>
+
+   <target name="Stage_imcorrect" description="Correct science images (overscan, bias subtract and flatten)">
+        <esequence>
+
+        <edeclare name="content_begin"  string="test begin"/>
+        <edeclare name="content_end"    string="test end"/>
+        <econdblock type="else-if">
+          <econdtask>
+            <eeval>
+             <statement>
+                <ecompare string="${platform}">
+                   <predicate string="TG" comparator="EQUALS"/>
+                </ecompare>
+             </statement>
+            </eeval>
+              <esequence>
+                <eassign name="content_begin"  string="Begin Stage_imcorrect for ccd ${ccd.num} data on $G{host} for nite ${nite}"/>
+                <eassign name="content_end"    string="End Stage_imcorrect for ccd ${ccd.num} data on $G{host} for nite ${nite}"/>
+              </esequence>
+          </econdtask>
+              <esequence>
+                <eassign name="content_begin"  string="Begin Stage_imcorrect for ccd ${ccd.num} for nite ${nite}"/>
+                <eassign name="content_end"    string="End Stage_imcorrect for ccd ${ccd.num} for nite ${nite}"/>
+              </esequence>
+        </econdblock>
+
+            <publish>
+              <event ensembleid="${ensemble.id}" workflowid="${jid}"
+                   nodeid="$R{content_begin}" currentState="1">
+                   <property name="message" value="$R{content_begin}"/>
+              </event>
+            </publish>
+
+	     <esequence>
+        	       <write path="${local.out}/${imcorr.log}" text="true"
+                         errorProperty="failed" rethrow="false" append="true"> 
+	                <segment string=" -- imcorrect results for ${scig.list}" lineBreaks="1"/>
+                       </write>
+
+	               <rtexec inheritedEnv="false" execDir="${nite.dir}" 
+                          args="${imcorr.exec} ${imcorr.scig}" quiet="true">
+		          <outMonitor file="${local.out}/${imcorr.log}"/>
+		          <errMonitor file="${local.out}/${imcorr.log}"/>
+                       </rtexec>
+
+        	       <write path="${local.out}/${imcorr.log}" text="true"
+                         errorProperty="failed" rethrow="false" append="true"> 
+	                <segment string=" -- imcorrect results for ${scir.list}" lineBreaks="1"/>
+                       </write>
+
+	               <rtexec inheritedEnv="false" execDir="${nite.dir}" 
+                          args="${imcorr.exec} ${imcorr.scir}" quiet="true">
+		          <outMonitor file="${local.out}/${imcorr.log}"/>
+		          <errMonitor file="${local.out}/${imcorr.log}"/>
+                       </rtexec>
+
+        	       <write path="${local.out}/${imcorr.log}" text="true"
+                         errorProperty="failed" rethrow="false" append="true"> 
+	                <segment string=" -- imcorrect results for ${scii.list}" lineBreaks="1"/>
+                       </write>
+
+	               <rtexec inheritedEnv="false" execDir="${nite.dir}"
+                          args="${imcorr.exec} ${imcorr.scii}" quiet="true">
+		          <outMonitor file="${local.out}/${imcorr.log}"/>
+		          <errMonitor file="${local.out}/${imcorr.log}"/>
+                       </rtexec>
+
+        	       <write path="${local.out}/${imcorr.log}" text="true"
+                         errorProperty="failed" rethrow="false" append="true"> 
+	                <segment string=" -- imcorrect results for ${sciz.list}" lineBreaks="1"/>
+                       </write>
+
+	               <rtexec inheritedEnv="false" execDir="${nite.dir}"
+                          args="${imcorr.exec} ${imcorr.sciz}" quiet="true">
+		          <outMonitor file="${local.out}/${imcorr.log}"/>
+		          <errMonitor file="${local.out}/${imcorr.log}"/>
+                       </rtexec>
+
+             </esequence>
+
+	    <print line=" - Stage_imcorrect done"/>	
+
+         <write path="${local.out}/${imcorr.log}" text="true" 
+                         errorProperty="failed" rethrow="false" append="true"> 
+	                 <segment string=" -- imcorrect done" lineBreaks="1"/>
+         </write>
+
+         <publish>
+            <event ensembleid="${ensemble.id}" workflowid="${jid}"
+                   nodeid="$R{content_end}" currentState="1">
+                  <property name="message" value="$R{content_end}"/>
+            </event>
+         </publish>
+
+       </esequence>
+   </target>
+
+   <target name="Stage_imcorrect_withcorr" description="Correct science images further (illum/fringe correction)">
+        <esequence>
+
+        <edeclare name="content_begin"  string="test begin"/>
+        <edeclare name="content_end"    string="test end"/>
+        <econdblock type="else-if">
+          <econdtask>
+            <eeval>
+             <statement>
+                <ecompare string="${platform}">
+                   <predicate string="TG" comparator="EQUALS"/>
+                </ecompare>
+             </statement>
+            </eeval>
+              <esequence>
+                <eassign name="content_begin"  string="Begin Stage_imcorrect_withcorr for ccd ${ccd.num} data on $G{host} for nite ${nite}"/>
+                <eassign name="content_end"    string="End Stage_imcorrect_withcorr for ccd ${ccd.num} data on $G{host} for nite ${nite}"/>
+              </esequence>
+          </econdtask>
+              <esequence>
+                <eassign name="content_begin"  string="Begin Stage_imcorrect_withcorr for ccd ${ccd.num} for nite ${nite}"/>
+                <eassign name="content_end"    string="End Stage_imcorrect_withcorr for ccd ${ccd.num} for nite ${nite}"/>
+              </esequence>
+        </econdblock>
+
+            <publish>
+              <event ensembleid="${ensemble.id}" workflowid="${jid}"
+                   nodeid="$R{content_begin}" currentState="1">
+                   <property name="message" value="$R{content_begin}"/>
+              </event>
+            </publish>
+
+	     <esequence>
+        	       <write path="${local.out}/${imcorr_withcorr.log}" text="true"
+                         errorProperty="failed" rethrow="false" append="true"> 
+	                <segment string=" -- imcorrect_withcorr results for ${scigout.list}" lineBreaks="1"/>
+                       </write>
+
+	               <rtexec inheritedEnv="false" execDir="${nite.dir}" 
+                          args="${imcorr_withcorr.exec} ${imcorr_withcorr.scig}" quiet="true">
+		          <outMonitor file="${local.out}/${imcorr_withcorr.log}"/>
+		          <errMonitor file="${local.out}/${imcorr_withcorr.log}"/>
+                       </rtexec>
+
+        	       <write path="${local.out}/${imcorr_withcorr.log}" text="true"
+                         errorProperty="failed" rethrow="false" append="true"> 
+	                <segment string=" -- imcorrect_withcorr results for ${scirout.list}" lineBreaks="1"/>
+                       </write>
+
+	               <rtexec inheritedEnv="false" execDir="${nite.dir}" 
+                          args="${imcorr_withcorr.exec} ${imcorr_withcorr.scir}" quiet="true">
+		          <outMonitor file="${local.out}/${imcorr_withcorr.log}"/>
+		          <errMonitor file="${local.out}/${imcorr_withcorr.log}"/>
+                       </rtexec>
+
+        	       <write path="${local.out}/${imcorr_withcorr.log}" text="true"
+                         errorProperty="failed" rethrow="false" append="true"> 
+	                <segment string=" -- imcorrect_withcorr results for ${sciiout.list}" lineBreaks="1"/>
+                       </write>
+
+	               <rtexec inheritedEnv="false" execDir="${nite.dir}"
+                          args="${imcorr.exec} ${imcorr_withcorr.scii}" quiet="true">
+		          <outMonitor file="${local.out}/${imcorr_withcorr.log}"/>
+		          <errMonitor file="${local.out}/${imcorr_withcorr.log}"/>
+                       </rtexec>
+
+        	       <write path="${local.out}/${imcorr_withcorr.log}" text="true"
+                         errorProperty="failed" rethrow="false" append="true"> 
+	                <segment string=" -- imcorrect_withcorr results for ${scizout.list}" lineBreaks="1"/>
+                       </write>
+
+	               <rtexec inheritedEnv="false" execDir="${nite.dir}"
+                          args="${imcorr.exec} ${imcorr_withcorr.sciz}" quiet="true">
+		          <outMonitor file="${local.out}/${imcorr_withcorr.log}"/>
+		          <errMonitor file="${local.out}/${imcorr_withcorr.log}"/>
+                       </rtexec>
+
+             </esequence>
+
+	    <print line=" - Stage_imcorrect_withcorr done"/>	
+
+         <write path="${local.out}/${imcorr_withcorr.log}" text="true" 
+                         errorProperty="failed" rethrow="false" append="true"> 
+	                 <segment string=" -- imcorrect_withcorr done" lineBreaks="1"/>
+         </write>
+
+         <publish>
+            <event ensembleid="${ensemble.id}" workflowid="${jid}"
+                   nodeid="$R{content_end}" currentState="1">
+                  <property name="message" value="$R{content_end}"/>
+            </event>
+         </publish>
+
+       </esequence>
+   </target>
+
+
+  <target name="Stage_ingest" description="ingest to the database">
+    <esequence>
+
+        <edeclare name="content_begin"  string="test begin"/>
+        <edeclare name="content_end"    string="test end"/>
+
+        <econdblock type="else-if">
+          <econdtask>
+            <eeval>
+             <statement>
+                <ecompare string="${platform}">
+                   <predicate string="TG" comparator="EQUALS"/>
+                </ecompare>
+             </statement>
+            </eeval>
+              <esequence>
+                <eassign name="content_begin"  string="Begin Stage_ingest for ccd ${ccd.num} data on $G{host} for nite ${nite}"/>
+                <eassign name="content_end"    string="End Stage_ingest for ccd ${ccd.num} data on $G{host} for nite ${nite}"/>
+              </esequence>
+          </econdtask>
+              <esequence>
+                <eassign name="content_begin"  string="Begin Stage_ingest for ccd ${ccd.num} for nite ${nite}"/>
+                <eassign name="content_end"    string="End Stage_ingest for ccd ${ccd.num} for nite ${nite}"/>
+              </esequence>
+        </econdblock>
+
+            <publish>
+              <event ensembleid="${ensemble.id}" workflowid="${jid}"
+                   nodeid="$R{content_begin}" currentState="1">
+                   <property name="message" value="$R{content_begin}"/>
+              </event>
+            </publish>
+
+      <print line=" -- Begin image_ingest for CCD ${ccd.num}"/>
+
+      <write path="maximageid.sql" text="true" 
+           errorProperty="failed" rethrow="false"> 
+	 <segment string="SET ECHO OFF NEWP 0 SPA 1 PAGES 0 FEED OFF HEAD OFF TRIMS ON;" lineBreaks="1" />
+         <segment string="SPOOL maximageid.txt;" lineBreaks="1" />
+         <segment string="select max(imageid) from ${files.table};" lineBreaks="1" />
+         <segment string="SPOOL off;" lineBreaks="1" />
+         <segment string="exit" lineBreaks="1" />
+      </write>  
+
+      <edeclare name="sql.script" string="maximageid.sql"/>
+      
+      <rtexec inheritedEnv="true" execDir="${user.dir}"
+               args="${sql.exec} ${sql.command}" quiet="true">
+      </rtexec>
+
+      <edeclare globalname="maxID"/>
+      <read path="maximageid.txt" lines="true"/>
+      <ereturn name="maxID" get="string"/>
+
+      <print line=" -- maximum imageID for ${files.table} table before ingestion is $G{maxID}"/>      
+      <print line="   "/>
+
+      <delete file="${user.dir}/maximageid.sql"/>
+      <delete file="${user.dir}/maximageid.txt"/>
+    </esequence>
+
+    <esequence>
+   
+      <edeclare name="list.dir" string="${local.out}"/>    
+      <property name="source" value="file://${job.id}"/>
+
+      <delete file="${input.list}" quiet="true"/>
+      <delete file="${inputcat.list}" quiet="true"/>
+      <delete file="${output.dat}" quiet="true"/>
+      <delete file="${output.cat}" quiet="true"/>
+  
+      <edeclare globalname="imageid" string="$G{maxID}"/> 
+      
+      <eloop counterName="i">
+          <ecounter>
+               <expression infix="$R{i} &lt; 4"/>
+          </ecounter>
+
+        <econdblock type="else-if">
+          <econdtask>
+            <eeval>
+               <statement>
+                 <ecompare long="0">
+                       <predicate long="$R{i}" comparator="EQUALS"/>
+                   </ecompare>
+                 </statement>
+            </eeval>
+                <edeclare globalname="band" string="g"/>
+          </econdtask>
+        </econdblock>
+
+        <econdblock type="else-if">
+          <econdtask>
+            <eeval>
+               <statement>
+                 <ecompare long="1">
+                       <predicate long="$R{i}" comparator="EQUALS"/>
+                   </ecompare>
+                 </statement>
+            </eeval>
+                <edeclare globalname="band" string="r"/>
+          </econdtask>
+        </econdblock>
+
+        <econdblock type="else-if">
+          <econdtask>
+            <eeval>
+               <statement>
+                 <ecompare long="2">
+                       <predicate long="$R{i}" comparator="EQUALS"/>
+                   </ecompare>
+                 </statement>
+            </eeval>
+                <edeclare globalname="band" string="i"/>
+          </econdtask>
+        </econdblock>
+
+        <econdblock type="else-if">
+          <econdtask>
+            <eeval>
+               <statement>
+                 <ecompare long="3">
+                       <predicate long="$R{i}" comparator="EQUALS"/>
+                   </ecompare>
+                 </statement>
+            </eeval>
+                <edeclare globalname="band" string="z"/>
+          </econdtask>
+        </econdblock>
+
+        <print line=" -- doing $G{band}-band ..."/>
+
+        <edeclare name="source1" string="data/${nite}/$G{band}/"/>   
+        
+
+        <edeclare globalName="sourcePattern2"> 
+          <uripattern baseUri="${source}/$R{source1}">
+              <nestedelement include="*"/>
+          </uripattern>
+        </edeclare>
+        <edeclare name="dirlist" null="true"/>
+        <urilist fullScan="true">
+           <nestedelement pattern="$G{sourcePattern2}"/>
+             <configuration>        
+                 <attribute name="retainFiles"       value="false"/>
+                 <attribute name="retainDirectories" value="true"/>
+                 <attribute name="getNames" value="true"/>
+             </configuration>
+        </urilist>
+        <ereturn name="dirlist" get="simpleResult"/> 
+
+        <eloop counterName="w">
+          <ecounter>
+               <expression infix="$R{w} &lt; $R{dirlist$I{L}}"/>
+          </ecounter>
+
+           <edeclare globalName="sourcePattern1"> 
+             <uripattern baseUri="${source}/$R{source1}/$R{dirlist$I{$R{w}}}">
+               <nestedelement include="${imgpattern}"/>
+             </uripattern>
+           </edeclare>
+           <edeclare name="filelist" null="true"/>
+           <urilist fullScan="true">
+             <nestedelement pattern="$G{sourcePattern1}"/>
+               <configuration>        
+                 <attribute name="retainFiles"       value="true"/>
+                 <attribute name="retainDirectories" value="false"/>
+                 <attribute name="getNames" value="true"/>
+               </configuration>
+           </urilist>
+           <ereturn name="filelist" get="simpleResult"/> 
+
+           <edeclare globalName="sourcePattern3"> 
+             <uripattern baseUri="${source}/$R{source1}/$R{dirlist$I{$R{w}}}">
+               <nestedelement include="${catpattern}"/>
+             </uripattern>
+           </edeclare>
+           <edeclare name="catlist" null="true"/>
+           <urilist fullScan="true">
+             <nestedelement pattern="$G{sourcePattern3}"/>
+               <configuration>        
+                 <attribute name="retainFiles"       value="true"/>
+                 <attribute name="retainDirectories" value="false"/>
+                 <attribute name="getNames" value="true"/>
+               </configuration>
+           </urilist>
+           <ereturn name="catlist" get="simpleResult"/> 
+          
+           <econdblock type="else-if">
+             <econdtask>
+              <eeval>
+               <statement>
+                 <ecompare long="0">
+                       <predicate long="$R{filelist$I{L}}" comparator="LT"/>
+                   </ecompare>
+                 </statement>
+              </eeval>
+                <esequence>
+                   <eloop counterName="v">
+                     <ecounter>
+                       <expression infix="$R{v} &lt; $R{filelist$I{L}}"/>
+                     </ecounter>
+             
+                     <edeclare name="imageid1" long="$E{ $G{imageid} + 1 }"/>
+
+                     <print line=" * Found $R{source1}$R{dirlist$I{$R{w}}}/$R{filelist$I{$R{v}}}"/>
+
+                     <write path="${input.list}" text="true"
+                        errorProperty="failed" rethrow="false" append="true">
+                       <segment string="red/${jid}/$R{source1}$R{dirlist$I{$R{w}}}/$R{filelist$I{$R{v}}}" lineBreaks="1" />
+                     </write>
+
+                     <write path="${inputcat.list}" text="true"
+                        errorProperty="failed" rethrow="false" append="true">
+                       <segment string="red/${jid}/$R{source1}$R{dirlist$I{$R{w}}}/$R{catlist$I{$R{v}}}" lineBreaks="1" />
+                     </write>
+
+                     <rtexec inheritedEnv="false" execDir="${base.dir}"
+                         args="${ingestformat.exec} ${ingestformat.args}" quiet="true">
+                       <outMonitor file="${output.cat}"/>
+                     </rtexec>                    
+
+                     <print line=" * Ingesting ${output.cat} into ${object.table} table."/> 
+                     <edeclare name="ingest.dat" string="${output.cat}"/>
+                     <edeclare name="control.file" string="${objs.control.file}"/>
+                     <edeclare name="sqlldr.log" string="${objs.sqlldr.log}"/>
+                     <edeclare name="sqlldr.bad" string="${objs.sqlldr.bad}"/>
+
+                     <rtexec inheritedEnv="false" execDir="${user.dir}"
+                         args="${sqlldr.exec} ${sqlldr.command}" quiet="true">
+                     </rtexec>
+   
+                     <delete file="$R{ingest.dat}" quiet="true"/>
+
+                     <edeclare globalname="imageid" long="$E{ $R{imageid1}  }"/>
+                   </eloop>
+                </esequence>
+             </econdtask>
+           </econdblock>
+
+        </eloop>
+       </eloop>   
+      </esequence>
+ 
+      <esequence>
+      <print line=" "/>
+      <print line=" -- ingesting ${output.dat} into ${files.table} table."/> 
+
+      <rtexec inheritedEnv="false" execDir="${base.dir}"
+                args="${imageingest.exec} ${imageingest.args}" quiet="true">
+            <outMonitor file="${imageingest.log}"/>
+      </rtexec>
+
+      <edeclare name="ingest.dat" string="${output.dat}"/>
+      <edeclare name="control.file" string="${file.control.file}"/>
+      <edeclare name="sqlldr.log" string="${file.sqlldr.log}"/>
+      <edeclare name="sqlldr.bad" string="${file.sqlldr.bad}"/>
+
+
+       <rtexec inheritedEnv="false" execDir="${user.dir}"
+                args="${sqlldr.exec} ${sqlldr.command}" quiet="true">
+       </rtexec>
+
+       <print line=" -- Stage_ingest done"/>
+
+         <publish>
+            <event ensembleid="${ensemble.id}" workflowid="${jid}"
+                   nodeid="$R{content_end}" currentState="1">
+                  <property name="message" value="$R{content_end}"/>
+            </event>
+         </publish>
+
+       </esequence> 
+  </target>
+
+   <!-- create subdirs in raw from list -->
+   <target name="Stage_makedirs" description="create subdirectories in science dirs">       
+     <esequence>
+
+        <edeclare name="content_begin"  string="test begin"/>
+        <edeclare name="content_end"    string="test end"/>
+        <econdblock type="else-if">
+          <econdtask>
+            <eeval>
+             <statement>
+                <ecompare string="${platform}">
+                   <predicate string="TG" comparator="EQUALS"/>
+                </ecompare>
+             </statement>
+            </eeval>
+              <esequence>
+                <eassign name="content_begin"  string="Begin Stage_makedirs for ccd ${ccd.num} data on $G{host} for nite ${nite}"/>
+                <eassign name="content_end"    string="End Stage_makedirs for ccd ${ccd.num} data on $G{host} for nite ${nite}"/>
+              </esequence>
+          </econdtask>
+              <esequence>
+                <eassign name="content_begin"  string="Begin Stage_makedirs for ccd ${ccd.num} for nite ${nite}"/>
+                <eassign name="content_end"    string="End Stage_makedirs for ccd ${ccd.num} for nite ${nite}"/>
+              </esequence>
+        </econdblock>
+
+        <publish>
+            <event ensembleid="${ensemble.id}" workflowid="${jid}"
+                  nodeid="$R{content_begin}" currentState="1">
+                  <property name="message" value="$R{content_begin}"/>
+            </event>
+        </publish>
+
+        <print line=" - ccd ${ccd.num} data for nite ${nite}"/>	
+
+         <write path="${local.out}/${makedirs.log}" text="true" 
+                    errorProperty="failed" rethrow="false" append="true"> 
+	     <segment string="For Stage_makedirs" lineBreaks="1"/>
+	     <segment string=" - Creating reduced science frame directories" lineBreaks="2"/>	
+         </write>
+
+	 <rtexec inheritedEnv="false" execDir="${nite.dir}" 
+                   args="${makedirs.exec} ${makedirs.outscig}" quiet="true">
+                     <outMonitor file="${local.out}/${makedirs.log}"/>
+		     <errMonitor file="${local.out}/${makedirs.log}"/> 
+         </rtexec>
+
+	 <rtexec inheritedEnv="false" execDir="${nite.dir}" 
+                   args="${makedirs.exec} ${makedirs.outscir}" quiet="true">
+                     <outMonitor file="${local.out}/${makedirs.log}"/>
+		     <errMonitor file="${local.out}/${makedirs.log}"/> 
+         </rtexec>
+
+	 <rtexec inheritedEnv="false" execDir="${nite.dir}" 
+                   args="${makedirs.exec} ${makedirs.outscii}" quiet="true">
+                     <outMonitor file="${local.out}/${makedirs.log}"/>
+		     <errMonitor file="${local.out}/${makedirs.log}"/> 
+         </rtexec>
+
+	 <rtexec inheritedEnv="false" execDir="${nite.dir}" 
+                   args="${makedirs.exec} ${makedirs.outsciz}" quiet="true">
+                     <outMonitor file="${local.out}/${makedirs.log}"/>
+		     <errMonitor file="${local.out}/${makedirs.log}"/> 
+         </rtexec>
+
+         <write path="$R{local.out}/${makedirs.log}" text="true" 
+                    errorProperty="failed" rethrow="false" append="true"> 
+	     <segment string=" - All directories have been created" lineBreaks="2"/>	
+         </write>
+
+         <publish>
+            <event ensembleid="${ensemble.id}" workflowid="${jid}"
+                 nodeid="$R{content_end}" currentState="1">
+                 <property name="message" value="$R{content_end}"/>
+            </event>
+         </publish>
+
+	 <print line=" - Stage_makedirs done"/>	
+     </esequence>
+   </target>
+
+   <!-- move raw data -->
+
+   <target name="Stage_movebiasraw" description="Stage move bias raw">
+     <esequence>
+
+        <edeclare name="content_begin"  string="test begin"/>
+        <edeclare name="content_end"    string="test end"/>
+
+        <econdblock type="else-if">
+          <econdtask>
+            <eeval>
+             <statement>
+                <ecompare string="${platform}">
+                   <predicate string="TG" comparator="EQUALS"/>
+                </ecompare>
+             </statement>
+            </eeval>
+              <esequence>
+                <eassign name="content_begin"  string="Begin Stage_moveraw for ccd ${ccd.num} data on $G{host} for nite ${nite}"/>
+                <eassign name="content_end"    string="End Stage_moveraw for ccd ${ccd.num} data on $G{host} for nite ${nite}"/>
+              </esequence>
+          </econdtask>
+              <esequence>
+                <eassign name="content_begin"  string="Begin Stage_moveraw for ccd ${ccd.num} for nite ${nite}"/>
+                <eassign name="content_end"    string="End Stage_moveraw for ccd ${ccd.num} for nite ${nite}"/>
+              </esequence>
+        </econdblock>
+	
+        <publish>
+              <event ensembleid="${ensemble.id}" workflowid="${jid}"
+                   nodeid="$R{content_begin}" currentState="1">
+                   <property name="message" value="$R{content_begin}"/>
+              </event>
+        </publish>
+             	     
+	 <edeclare name="listname" string="${bias.list}"/>
+	       
+         <rtexec inheritedEnv="false" execDir="${nite.dir}" 
+                   args="${moveraw.exec} ${moveraw.command1}" quiet="true">
+	   <outMonitor file="${nite.dir}/count.dat"/>
+         </rtexec>
+             
+     	 <edeclare name="count" />
+	    <read path="${nite.dir}/count.dat" lines="true"/>
+	 <ereturn name="count" get="string"/>
+
+	 <edeclare name="check_count" string="0"/>
+
+	 <econdblock type="else-if">
+	   <econdtask>
+	      <eeval>
+	        <statement>
+	          <ecompare string="$R{count}">
+	            <predicate string="$R{check_count}" comparator="EQUALS"/>
+	          </ecompare>
+	        </statement>
+	      </eeval>
+                  <esequence>
+                   <delete file="${nite.dir}/count.dat"/>
+                   <write path="${local.out}/${log.name}" text="true" 
+                             errorProperty="failed" rethrow="false" append="true"> 
+	              <segment string=" * no files found in $R{listname}" lineBreaks="1"/>
+                   </write>
+	         </esequence>
+           </econdtask>
+             <esequence>
+
+              <write path="${local.out}/${log.name}" text="true" 
+                    errorProperty="failed" rethrow="false" append="true"> 
+	         <segment string=" -- $R{listname} has $R{count} fits files" lineBreaks="1"/>
+              </write>
+
+              <eloop counterName="i">
+                <ecounter>
+                 <expression infix="$R{i} &lt; $R{count}"/>
+                </ecounter>	 
+	 
+	        <rtexec inheritedEnv="false" execDir="${nite.dir}" 
+                    args="${moveraw.exec} ${moveraw.command2}" quiet="true">
+                </rtexec>
+
+	        <edeclare name="rawname" />
+	          <read path="${nite.dir}/fitsname.in" lines="true"/>
+	        <ereturn name="rawname" get="string"/>
+	  
+	        <uricopy from="${archive.dir}/$R{rawname}" to="${data.protocol}://${nite.dir}/$R{rawname}"/>
+
+	        <write path="${local.out}/${log.name}" text="true" 
+                    errorProperty="failed" rethrow="false" append="true"> 
+	        <segment string=" * moving $R{rawname} success" lineBreaks="1"/>
+                </write>
+	 
+	        <delete file="${nite.dir}/fitsname.in"/>
+	      </eloop>
+	 
+	      <delete file="${nite.dir}/count.dat"/>
+             </esequence>
+        </econdblock>   
+
+     </esequence>
+   </target>
+
+   <target name="Stage_moveflatgraw" description="Stage move flatg raw">
+     <esequence>
+             	     
+	 <edeclare name="listname" string="${flatg.list}"/>
+	       
+         <rtexec inheritedEnv="false" execDir="${nite.dir}" 
+                   args="${moveraw.exec} ${moveraw.command1}" quiet="true">
+	   <outMonitor file="${nite.dir}/count.dat"/>
+         </rtexec>
+             
+     	 <edeclare name="count" />
+	    <read path="${nite.dir}/count.dat" lines="true"/>
+	 <ereturn name="count" get="string"/>
+
+	 <edeclare name="check_count" string="0"/>
+
+	 <econdblock type="else-if">
+	   <econdtask>
+	      <eeval>
+	        <statement>
+	          <ecompare string="$R{count}">
+	            <predicate string="$R{check_count}" comparator="EQUALS"/>
+	          </ecompare>
+	        </statement>
+	      </eeval>
+                  <esequence>
+                   <delete file="${nite.dir}/count.dat"/>
+                   <write path="${local.out}/${log.name}" text="true" 
+                             errorProperty="failed" rethrow="false" append="true"> 
+	              <segment string=" * no files found in $R{listname}" lineBreaks="1"/>
+                   </write>
+	         </esequence>
+           </econdtask>
+             <esequence>
+
+              <write path="${local.out}/${log.name}" text="true" 
+                    errorProperty="failed" rethrow="false" append="true"> 
+	         <segment string=" -- $R{listname} has $R{count} fits files" lineBreaks="1"/>
+              </write>
+
+              <eloop counterName="i">
+                <ecounter>
+                 <expression infix="$R{i} &lt; $R{count}"/>
+                </ecounter>	 
+	 
+	        <rtexec inheritedEnv="false" execDir="${nite.dir}" 
+                    args="${moveraw.exec} ${moveraw.command2}" quiet="true">
+                </rtexec>
+
+	        <edeclare name="rawname" />
+	          <read path="${nite.dir}/fitsname.in" lines="true"/>
+	        <ereturn name="rawname" get="string"/>
+	  
+	        <uricopy from="${archive.dir}/$R{rawname}" to="${data.protocol}://${nite.dir}/$R{rawname}"/>
+
+	        <write path="${local.out}/${log.name}" text="true" 
+                    errorProperty="failed" rethrow="false" append="true"> 
+	        <segment string=" * moving $R{rawname} success" lineBreaks="1"/>
+                </write>
+	 
+	        <delete file="${nite.dir}/fitsname.in"/>
+	      </eloop>
+	 
+	      <delete file="${nite.dir}/count.dat"/>
+             </esequence>
+        </econdblock>   
+
+     </esequence>
+   </target>
+
+   <target name="Stage_moveflatrraw" description="Stage move flatr raw">
+     <esequence>
+             	     
+	 <edeclare name="listname" string="${flatr.list}"/>
+	       
+         <rtexec inheritedEnv="false" execDir="${nite.dir}" 
+                   args="${moveraw.exec} ${moveraw.command1}" quiet="true">
+	   <outMonitor file="${nite.dir}/count.dat"/>
+         </rtexec>
+             
+     	 <edeclare name="count" />
+	    <read path="${nite.dir}/count.dat" lines="true"/>
+	 <ereturn name="count" get="string"/>
+
+	 <edeclare name="check_count" string="0"/>
+
+	 <econdblock type="else-if">
+	   <econdtask>
+	      <eeval>
+	        <statement>
+	          <ecompare string="$R{count}">
+	            <predicate string="$R{check_count}" comparator="EQUALS"/>
+	          </ecompare>
+	        </statement>
+	      </eeval>
+                  <esequence>
+                   <delete file="${nite.dir}/count.dat"/>
+                   <write path="${local.out}/${log.name}" text="true" 
+                             errorProperty="failed" rethrow="false" append="true"> 
+	              <segment string=" * no files found in $R{listname}" lineBreaks="1"/>
+                   </write>
+	         </esequence>
+           </econdtask>
+             <esequence>
+
+              <write path="${local.out}/${log.name}" text="true" 
+                    errorProperty="failed" rethrow="false" append="true"> 
+	         <segment string=" -- $R{listname} has $R{count} fits files" lineBreaks="1"/>
+              </write>
+
+              <eloop counterName="i">
+                <ecounter>
+                 <expression infix="$R{i} &lt; $R{count}"/>
+                </ecounter>	 
+	 
+	        <rtexec inheritedEnv="false" execDir="${nite.dir}" 
+                    args="${moveraw.exec} ${moveraw.command2}" quiet="true">
+                </rtexec>
+
+	        <edeclare name="rawname" />
+	          <read path="${nite.dir}/fitsname.in" lines="true"/>
+	        <ereturn name="rawname" get="string"/>
+	  
+	        <uricopy from="${archive.dir}/$R{rawname}" to="${data.protocol}://${nite.dir}/$R{rawname}"/>
+
+	        <write path="${local.out}/${log.name}" text="true" 
+                    errorProperty="failed" rethrow="false" append="true"> 
+	        <segment string=" * moving $R{rawname} success" lineBreaks="1"/>
+                </write>
+	 
+	        <delete file="${nite.dir}/fitsname.in"/>
+	      </eloop>
+	 
+	      <delete file="${nite.dir}/count.dat"/>
+             </esequence>
+        </econdblock>   
+
+     </esequence>
+   </target>
+
+   <target name="Stage_moveflatiraw" description="Stage move flati raw">
+     <esequence>
+             	     
+	 <edeclare name="listname" string="${flati.list}"/>
+	       
+         <rtexec inheritedEnv="false" execDir="${nite.dir}" 
+                   args="${moveraw.exec} ${moveraw.command1}" quiet="true">
+	   <outMonitor file="${nite.dir}/count.dat"/>
+         </rtexec>
+             
+     	 <edeclare name="count" />
+	    <read path="${nite.dir}/count.dat" lines="true"/>
+	 <ereturn name="count" get="string"/>
+
+	 <edeclare name="check_count" string="0"/>
+
+	 <econdblock type="else-if">
+	   <econdtask>
+	      <eeval>
+	        <statement>
+	          <ecompare string="$R{count}">
+	            <predicate string="$R{check_count}" comparator="EQUALS"/>
+	          </ecompare>
+	        </statement>
+	      </eeval>
+                  <esequence>
+                   <delete file="${nite.dir}/count.dat"/>
+                   <write path="${local.out}/${log.name}" text="true" 
+                             errorProperty="failed" rethrow="false" append="true"> 
+	              <segment string=" * no files found in $R{listname}" lineBreaks="1"/>
+                   </write>
+	         </esequence>
+           </econdtask>
+             <esequence>
+
+              <write path="${local.out}/${log.name}" text="true" 
+                    errorProperty="failed" rethrow="false" append="true"> 
+	         <segment string=" -- $R{listname} has $R{count} fits files" lineBreaks="1"/>
+              </write>
+
+              <eloop counterName="i">
+                <ecounter>
+                 <expression infix="$R{i} &lt; $R{count}"/>
+                </ecounter>	 
+	 
+	        <rtexec inheritedEnv="false" execDir="${nite.dir}" 
+                    args="${moveraw.exec} ${moveraw.command2}" quiet="true">
+                </rtexec>
+
+	        <edeclare name="rawname" />
+	          <read path="${nite.dir}/fitsname.in" lines="true"/>
+	        <ereturn name="rawname" get="string"/>
+	  
+	        <uricopy from="${archive.dir}/$R{rawname}" to="${data.protocol}://${nite.dir}/$R{rawname}"/>
+
+	        <write path="${local.out}/${log.name}" text="true" 
+                    errorProperty="failed" rethrow="false" append="true"> 
+	        <segment string=" * moving $R{rawname} success" lineBreaks="1"/>
+                </write>
+	 
+	        <delete file="${nite.dir}/fitsname.in"/>
+	      </eloop>
+	 
+	      <delete file="${nite.dir}/count.dat"/>
+             </esequence>
+        </econdblock>   
+
+     </esequence>
+   </target>
+
+   <target name="Stage_moveflatzraw" description="Stage move flatz raw">
+     <esequence>
+             	     
+	 <edeclare name="listname" string="${flatz.list}"/>
+	       
+         <rtexec inheritedEnv="false" execDir="${nite.dir}" 
+                   args="${moveraw.exec} ${moveraw.command1}" quiet="true">
+	   <outMonitor file="${nite.dir}/count.dat"/>
+         </rtexec>
+             
+     	 <edeclare name="count" />
+	    <read path="${nite.dir}/count.dat" lines="true"/>
+	 <ereturn name="count" get="string"/>
+
+	 <edeclare name="check_count" string="0"/>
+
+	 <econdblock type="else-if">
+	   <econdtask>
+	      <eeval>
+	        <statement>
+	          <ecompare string="$R{count}">
+	            <predicate string="$R{check_count}" comparator="EQUALS"/>
+	          </ecompare>
+	        </statement>
+	      </eeval>
+                  <esequence>
+                   <delete file="${nite.dir}/count.dat"/>
+                   <write path="${local.out}/${log.name}" text="true" 
+                             errorProperty="failed" rethrow="false" append="true"> 
+	              <segment string=" * no files found in $R{listname}" lineBreaks="1"/>
+                   </write>
+	         </esequence>
+           </econdtask>
+             <esequence>
+
+              <write path="${local.out}/${log.name}" text="true" 
+                    errorProperty="failed" rethrow="false" append="true"> 
+	         <segment string=" -- $R{listname} has $R{count} fits files" lineBreaks="1"/>
+              </write>
+
+              <eloop counterName="i">
+                <ecounter>
+                 <expression infix="$R{i} &lt; $R{count}"/>
+                </ecounter>	 
+	 
+	        <rtexec inheritedEnv="false" execDir="${nite.dir}" 
+                    args="${moveraw.exec} ${moveraw.command2}" quiet="true">
+                </rtexec>
+
+	        <edeclare name="rawname" />
+	          <read path="${nite.dir}/fitsname.in" lines="true"/>
+	        <ereturn name="rawname" get="string"/>
+	  
+	        <uricopy from="${archive.dir}/$R{rawname}" to="${data.protocol}://${nite.dir}/$R{rawname}"/>
+
+	        <write path="${local.out}/${log.name}" text="true" 
+                    errorProperty="failed" rethrow="false" append="true"> 
+	        <segment string=" * moving $R{rawname} success" lineBreaks="1"/>
+                </write>
+	 
+	        <delete file="${nite.dir}/fitsname.in"/>
+	      </eloop>
+	 
+	      <delete file="${nite.dir}/count.dat"/>
+             </esequence>
+        </econdblock>   
+
+     </esequence>
+   </target>
+
+   <target name="Stage_movescigraw" description="Stage move scig raw">
+     <esequence>
+             	     
+	 <edeclare name="listname" string="${scig.list}"/>
+	       
+         <rtexec inheritedEnv="false" execDir="${nite.dir}" 
+                   args="${moveraw.exec} ${moveraw.command1}" quiet="true">
+	   <outMonitor file="${nite.dir}/count.dat"/>
+         </rtexec>
+             
+     	 <edeclare name="count" />
+	    <read path="${nite.dir}/count.dat" lines="true"/>
+	 <ereturn name="count" get="string"/>
+
+	 <edeclare name="check_count" string="0"/>
+
+	 <econdblock type="else-if">
+	   <econdtask>
+	      <eeval>
+	        <statement>
+	          <ecompare string="$R{count}">
+	            <predicate string="$R{check_count}" comparator="EQUALS"/>
+	          </ecompare>
+	        </statement>
+	      </eeval>
+                  <esequence>
+                   <delete file="${nite.dir}/count.dat"/>
+                   <write path="${local.out}/${log.name}" text="true" 
+                             errorProperty="failed" rethrow="false" append="true"> 
+	              <segment string=" * no files found in $R{listname}" lineBreaks="1"/>
+                   </write>
+	         </esequence>
+           </econdtask>
+             <esequence>
+
+              <write path="${local.out}/${log.name}" text="true" 
+                    errorProperty="failed" rethrow="false" append="true"> 
+	         <segment string=" -- $R{listname} has $R{count} fits files" lineBreaks="1"/>
+              </write>
+
+              <eloop counterName="i">
+                <ecounter>
+                 <expression infix="$R{i} &lt; $R{count}"/>
+                </ecounter>	 
+	 
+	        <rtexec inheritedEnv="false" execDir="${nite.dir}" 
+                    args="${moveraw.exec} ${moveraw.command2}" quiet="true">
+                </rtexec>
+
+	        <edeclare name="rawname" />
+	          <read path="${nite.dir}/fitsname.in" lines="true"/>
+	        <ereturn name="rawname" get="string"/>
+	  
+	        <uricopy from="${archive.dir}/$R{rawname}" to="${data.protocol}://${nite.dir}/$R{rawname}"/>
+
+	        <write path="${local.out}/${log.name}" text="true" 
+                    errorProperty="failed" rethrow="false" append="true"> 
+	        <segment string=" * moving $R{rawname} success" lineBreaks="1"/>
+                </write>
+	 
+	        <delete file="${nite.dir}/fitsname.in"/>
+	      </eloop>
+	 
+	      <delete file="${nite.dir}/count.dat"/>
+             </esequence>
+        </econdblock>   
+
+     </esequence>
+   </target>
+
+   <target name="Stage_movescirraw" description="Stage move scir raw">
+     <esequence>
+             	     
+	 <edeclare name="listname" string="${scir.list}"/>
+	       
+         <rtexec inheritedEnv="false" execDir="${nite.dir}" 
+                   args="${moveraw.exec} ${moveraw.command1}" quiet="true">
+	   <outMonitor file="${nite.dir}/count.dat"/>
+         </rtexec>
+             
+     	 <edeclare name="count" />
+	    <read path="${nite.dir}/count.dat" lines="true"/>
+	 <ereturn name="count" get="string"/>
+
+	 <edeclare name="check_count" string="0"/>
+
+	 <econdblock type="else-if">
+	   <econdtask>
+	      <eeval>
+	        <statement>
+	          <ecompare string="$R{count}">
+	            <predicate string="$R{check_count}" comparator="EQUALS"/>
+	          </ecompare>
+	        </statement>
+	      </eeval>
+                  <esequence>
+                   <delete file="${nite.dir}/count.dat"/>
+                   <write path="${local.out}/${log.name}" text="true" 
+                             errorProperty="failed" rethrow="false" append="true"> 
+	              <segment string=" * no files found in $R{listname}" lineBreaks="1"/>
+                   </write>
+	         </esequence>
+           </econdtask>
+             <esequence>
+
+              <write path="${local.out}/${log.name}" text="true" 
+                    errorProperty="failed" rethrow="false" append="true"> 
+	         <segment string=" -- $R{listname} has $R{count} fits files" lineBreaks="1"/>
+              </write>
+
+              <eloop counterName="i">
+                <ecounter>
+                 <expression infix="$R{i} &lt; $R{count}"/>
+                </ecounter>	 
+	 
+	        <rtexec inheritedEnv="false" execDir="${nite.dir}" 
+                    args="${moveraw.exec} ${moveraw.command2}" quiet="true">
+                </rtexec>
+
+	        <edeclare name="rawname" />
+	          <read path="${nite.dir}/fitsname.in" lines="true"/>
+	        <ereturn name="rawname" get="string"/>
+	  
+	        <uricopy from="${archive.dir}/$R{rawname}" to="${data.protocol}://${nite.dir}/$R{rawname}"/>
+
+	        <write path="${local.out}/${log.name}" text="true" 
+                    errorProperty="failed" rethrow="false" append="true"> 
+	        <segment string=" * moving $R{rawname} success" lineBreaks="1"/>
+                </write>
+	 
+	        <delete file="${nite.dir}/fitsname.in"/>
+	      </eloop>
+	 
+	      <delete file="${nite.dir}/count.dat"/>
+             </esequence>
+        </econdblock>   
+
+     </esequence>
+   </target>
+
+   <target name="Stage_movesciiraw" description="Stage move scii raw">
+     <esequence>
+             	     
+	 <edeclare name="listname" string="${scii.list}"/>
+	       
+         <rtexec inheritedEnv="false" execDir="${nite.dir}" 
+                   args="${moveraw.exec} ${moveraw.command1}" quiet="true">
+	   <outMonitor file="${nite.dir}/count.dat"/>
+         </rtexec>
+             
+     	 <edeclare name="count" />
+	    <read path="${nite.dir}/count.dat" lines="true"/>
+	 <ereturn name="count" get="string"/>
+
+	 <edeclare name="check_count" string="0"/>
+
+	 <econdblock type="else-if">
+	   <econdtask>
+	      <eeval>
+	        <statement>
+	          <ecompare string="$R{count}">
+	            <predicate string="$R{check_count}" comparator="EQUALS"/>
+	          </ecompare>
+	        </statement>
+	      </eeval>
+                  <esequence>
+                   <delete file="${nite.dir}/count.dat"/>
+                   <write path="${local.out}/${log.name}" text="true" 
+                             errorProperty="failed" rethrow="false" append="true"> 
+	              <segment string=" * no files found in $R{listname}" lineBreaks="1"/>
+                   </write>
+	         </esequence>
+           </econdtask>
+             <esequence>
+
+              <write path="${local.out}/${log.name}" text="true" 
+                    errorProperty="failed" rethrow="false" append="true"> 
+	         <segment string=" -- $R{listname} has $R{count} fits files" lineBreaks="1"/>
+              </write>
+
+              <eloop counterName="i">
+                <ecounter>
+                 <expression infix="$R{i} &lt; $R{count}"/>
+                </ecounter>	 
+	 
+	        <rtexec inheritedEnv="false" execDir="${nite.dir}" 
+                    args="${moveraw.exec} ${moveraw.command2}" quiet="true">
+                </rtexec>
+
+	        <edeclare name="rawname" />
+	          <read path="${nite.dir}/fitsname.in" lines="true"/>
+	        <ereturn name="rawname" get="string"/>
+	  
+	        <uricopy from="${archive.dir}/$R{rawname}" to="${data.protocol}://${nite.dir}/$R{rawname}"/>
+
+	        <write path="${local.out}/${log.name}" text="true" 
+                    errorProperty="failed" rethrow="false" append="true"> 
+	        <segment string=" * moving $R{rawname} success" lineBreaks="1"/>
+                </write>
+	 
+	        <delete file="${nite.dir}/fitsname.in"/>
+	      </eloop>
+	 
+	      <delete file="${nite.dir}/count.dat"/>
+             </esequence>
+        </econdblock>   
+
+     </esequence>
+   </target>
+
+   <target name="Stage_movescizraw" description="Stage move sciz raw">
+     <esequence>
+             	     
+	 <edeclare name="listname" string="${sciz.list}"/>
+	       
+         <rtexec inheritedEnv="false" execDir="${nite.dir}" 
+                   args="${moveraw.exec} ${moveraw.command1}" quiet="true">
+	   <outMonitor file="${nite.dir}/count.dat"/>
+         </rtexec>
+             
+     	 <edeclare name="count" />
+	    <read path="${nite.dir}/count.dat" lines="true"/>
+	 <ereturn name="count" get="string"/>
+
+	 <edeclare name="check_count" string="0"/>
+
+	 <econdblock type="else-if">
+	   <econdtask>
+	      <eeval>
+	        <statement>
+	          <ecompare string="$R{count}">
+	            <predicate string="$R{check_count}" comparator="EQUALS"/>
+	          </ecompare>
+	        </statement>
+	      </eeval>
+                  <esequence>
+                   <delete file="${nite.dir}/count.dat"/>
+                   <write path="${local.out}/${log.name}" text="true" 
+                             errorProperty="failed" rethrow="false" append="true"> 
+	              <segment string=" * no files found in $R{listname}" lineBreaks="1"/>
+                   </write>
+	         </esequence>
+           </econdtask>
+             <esequence>
+
+              <write path="${local.out}/${log.name}" text="true" 
+                    errorProperty="failed" rethrow="false" append="true"> 
+	         <segment string=" -- $R{listname} has $R{count} fits files" lineBreaks="1"/>
+              </write>
+
+              <eloop counterName="i">
+                <ecounter>
+                 <expression infix="$R{i} &lt; $R{count}"/>
+                </ecounter>	 
+	 
+	        <rtexec inheritedEnv="false" execDir="${nite.dir}" 
+                    args="${moveraw.exec} ${moveraw.command2}" quiet="true">
+                </rtexec>
+
+	        <edeclare name="rawname" />
+	          <read path="${nite.dir}/fitsname.in" lines="true"/>
+	        <ereturn name="rawname" get="string"/>
+	  
+	        <uricopy from="${archive.dir}/$R{rawname}" to="${data.protocol}://${nite.dir}/$R{rawname}"/>
+
+	        <write path="${local.out}/${log.name}" text="true" 
+                    errorProperty="failed" rethrow="false" append="true"> 
+	        <segment string=" * moving $R{rawname} success" lineBreaks="1"/>
+                </write>
+	 
+	        <delete file="${nite.dir}/fitsname.in"/>
+	      </eloop>
+	 
+	      <delete file="${nite.dir}/count.dat"/>
+             </esequence>
+        </econdblock>   
+
+     </esequence>
+   </target>
+
+
+   <target name="Stage_moveraw" depends="Stage_movebiasraw, Stage_moveflatgraw, Stage_moveflatrraw, Stage_moveflatiraw, Stage_moveflatzraw, Stage_movescigraw, Stage_movescirraw, Stage_movesciiraw, Stage_movescizraw" description="move raw data">
+       <esequence>
+       <print line=" - Stage_moveraw done"/>
+	
+        <edeclare name="content_end"   string="test end"/>
+        <eassign name="content_end"    string="End Stage_moveraw for ccd ${ccd.num} data on $G{host} for nite ${nite}"/>
+
+        <publish>
+              <event ensembleid="${ensemble.id}" workflowid="${jid}"
+                   nodeid="$R{content_end}" currentState="1">
+                   <property name="message" value="$R{content_end}"/>
+              </event>
+        </publish>
+       </esequence>
+   </target>
+
+
+   <target name="Stage_linkraw" description="link to raw data">
+       <esequence>
+
+	  <rtexec inheritedEnv="false" execDir="." args="/bin/ln -s ${archive.dir}/raw ${nite.dir}" quiet="true">
+               <outMonitor file="${local.out}/${log.name}" append="true"/>
+               <errMonitor file="${local.out}/${log.name}" append="true"/>
+          </rtexec>
+
+       <print line=" - Stage_linkraw done"/>
+
+       </esequence>
+   </target>
+
+   <target name="Stage_pubentry" description="Publish an event upon Entry">
+    <esequence>
+
+     <edeclare name="content"  string="Begin test"/>
+     <econdblock type="else-if">
+        <econdtask>
+          <eeval>
+            <statement>
+              <ecompare string="${platform}">
+                  <predicate string="TG" comparator="EQUALS"/>
+              </ecompare>
+            </statement>
+          </eeval>
+              <esequence>
+               
+                <edeclare globalName="host" string="teragrid"/>
+                <rtexec inheritedEnv="false" execDir="." args="/bin/hostname -f" quiet="true">
+                  <outMonitor file="hostname.OUT" append="false"/>
+                  <errMonitor file="hostname.ERR" append="false"/>
+                </rtexec>
+
+                <esleep timeout="1000"/>
+
+                <read path="hostname.OUT" lines="true"/>
+                <ereturn name="host" get="string"/>
+
+                <delete file="hostname.OUT"/>
+                <delete file="hostname.ERR"/>
+
+                <print line=" - Stage_pubentry: The compute host is $G{host}"/>	
+                <print line=" - Begin Processing ccd ${ccd.num} data for nite ${nite}"/>
+	
+                <eassign name="content"  string="Begin Processing ccd ${ccd.num} data on $G{host} for nite ${nite}"/>
+               
+              </esequence>
+        </econdtask>
+              <esequence>
+                <eassign name="content"  string="Begin Processing ccd ${ccd.num} for nite ${nite}"/>
+              </esequence>
+     </econdblock>
+
+      <publish>
+         <event ensembleid="${ensemble.id}"
+              workflowid="${jid}"
+              nodeid="$R{content}"
+              currentState="0">
+             <property name="message" value="$R{content}"/>
+         </event>
+      </publish>
+
+     <print line=" - Stage_pubentry done"/>	
+
+    </esequence>
+   </target>
+
+
+   <target name="Stage_pubexit" description="Publish an event upon Exit">
+     <esequence>
+
+     <print line=" - Stage_pubexit The compute host is $G{host}"/>	
+
+        <edeclare name="content_end"  string="Begin test"/>
+        <econdblock type="else-if">
+          <econdtask>
+            <eeval>
+             <statement>
+                <ecompare string="${platform}">
+                   <predicate string="TG" comparator="EQUALS"/>
+                </ecompare>
+             </statement>
+            </eeval>
+              <esequence>
+                <eassign name="content_end"    string="End Processing ccd ${ccd.num} data on $G{host} for nite ${nite}"/>
+              </esequence>
+          </econdtask>
+              <esequence>
+                <eassign name="content_end"    string="End Processing ccd ${ccd.num} data for nite ${nite}"/>
+              </esequence>
+        </econdblock>
+
+
+         <publish>
+            <event ensembleid="${ensemble.id}" workflowid="${jid}"
+                   nodeid="$R{content_end}" currentState="1">
+                  <property name="message" value="$R{content_end}"/>
+            </event>
+         </publish>
+
+     </esequence>
+   </target>
+
+   <!-- Running remap with runSWarp_remap.c -->
+   <target name="Stage_remap" description="remap with SWarp">
+       <esequence>
+
+        <edeclare name="content_begin"  string="test begin"/>
+        <edeclare name="content_end"    string="test end"/>
+        <econdblock type="else-if">
+          <econdtask>
+            <eeval>
+             <statement>
+                <ecompare string="${platform}">
+                   <predicate string="TG" comparator="EQUALS"/>
+                </ecompare>
+             </statement>
+            </eeval>
+              <esequence>
+                <eassign name="content_begin"  string="Begin Stage_remap for ccd ${ccd.num} data on $G{host} for nite ${nite}"/>
+                <eassign name="content_end"    string="End Stage_remap for ccd ${ccd.num} data on $G{host} for nite ${nite}"/>
+              </esequence>
+          </econdtask>
+              <esequence>
+                <eassign name="content_begin"  string="Begin Stage_remap for ccd ${ccd.num} for nite ${nite}"/>
+                <eassign name="content_end"    string="End Stage_remap for ccd ${ccd.num} for nite ${nite}"/>
+              </esequence>
+        </econdblock>
+
+            <publish>
+              <event ensembleid="${ensemble.id}" workflowid="${jid}"
+                   nodeid="$R{content_begin}" currentState="1">
+                   <property name="message" value="$R{content_begin}"/>
+              </event>
+            </publish>
+
+             <edeclare name="band" string="g"/>
+             <edeclare name="input.list" string="${scigout.list}"/>
+             <edeclare name="output.list" string="${local.out}/remap_g_${ccd.num}.list"/>
+
+	     <write path="${local.out}/${remap.log}" text="true"
+                    errorProperty="failed" rethrow="false" append="true"> 
+	         <segment string=" -- remap results for ${scig.list}" lineBreaks="1"/>
+             </write>
+
+             <rtexec inheritedEnv="false" execDir="${nite.dir}" 
+                     args="${remap.exec} ${remap.args}" quiet="true">
+                     <outMonitor file="${local.out}/${remap.log}"/>
+                     <errMonitor file="${local.out}/${remap.log}"/>
+             </rtexec>
+
+       </esequence>
+
+       <esequence>
+
+             <edeclare name="band" string="r"/>
+             <edeclare name="input.list" string="${scirout.list}"/>
+             <edeclare name="output.list" string="${local.out}/remap_r_${ccd.num}.list"/>
+
+	     <write path="${local.out}/${remap.log}" text="true"
+                    errorProperty="failed" rethrow="false" append="true"> 
+	         <segment string=" -- remap results for ${scir.list}" lineBreaks="1"/>
+             </write>
+
+             <rtexec inheritedEnv="false" execDir="${nite.dir}" 
+                     args="${remap.exec} ${remap.args}" quiet="true">
+                     <outMonitor file="${local.out}/${remap.log}"/>
+                     <errMonitor file="${local.out}/${remap.log}"/>
+             </rtexec>
+
+       </esequence>
+
+       <esequence>
+
+             <edeclare name="band" string="i"/>
+             <edeclare name="input.list" string="${sciiout.list}"/>
+             <edeclare name="output.list" string="${local.out}/remap_i_${ccd.num}.list"/>
+
+	     <write path="${local.out}/${remap.log}" text="true"
+                    errorProperty="failed" rethrow="false" append="true"> 
+	         <segment string=" -- remap results for ${scii.list}" lineBreaks="1"/>
+             </write>
+
+             <rtexec inheritedEnv="false" execDir="${nite.dir}" 
+                     args="${remap.exec} ${remap.args}" quiet="true">
+                     <outMonitor file="${local.out}/${remap.log}"/>
+                     <errMonitor file="${local.out}/${remap.log}"/>
+             </rtexec>
+
+       </esequence>
+
+       <esequence>
+
+             <edeclare name="band" string="z"/>
+             <edeclare name="input.list" string="${scizout.list}"/>
+             <edeclare name="output.list" string="${local.out}/remap_z_${ccd.num}.list"/>
+
+	     <write path="${local.out}/${remap.log}" text="true"
+                    errorProperty="failed" rethrow="false" append="true"> 
+	         <segment string=" -- remap results for ${sciz.list}" lineBreaks="1"/>
+             </write>
+
+             <rtexec inheritedEnv="false" execDir="${nite.dir}" 
+                     args="${remap.exec} ${remap.args}" quiet="true">
+                     <outMonitor file="${local.out}/${remap.log}"/>
+                     <errMonitor file="${local.out}/${remap.log}"/>
+             </rtexec>
+
+       </esequence>
+      
+       <esequence>
+ 	    <print line=" - Stage_remap done"/>	
+
+            <write path="${local.out}/${remap.log}" text="true" 
+                         errorProperty="failed" rethrow="false" append="true"> 
+	                 <segment string=" -- remap done" lineBreaks="1"/>
+            </write>
+
+         <publish>
+            <event ensembleid="${ensemble.id}" workflowid="${jid}"
+                   nodeid="$R{content_end}" currentState="1">
+                  <property name="message" value="$R{content_end}"/>
+            </event>
+         </publish>
+
+       </esequence>
+   </target>
+
+   <target name="Stage_rmraw" description="rm the raw dir">
+     <esequence>
+
+        <edeclare name="content_begin"  string="test begin"/>
+        <edeclare name="content_end"    string="test end"/>
+        <econdblock type="else-if">
+          <econdtask>
+            <eeval>
+             <statement>
+                <ecompare string="${platform}">
+                   <predicate string="TG" comparator="EQUALS"/>
+                </ecompare>
+             </statement>
+            </eeval>
+              <esequence>
+                <eassign name="content_begin"  string="Begin Stage_rmraw for ccd ${ccd.num} data on $G{host} for nite ${nite}"/>
+                <eassign name="content_end"    string="End Stage_rmraw for ccd ${ccd.num} data on $G{host} for nite ${nite}"/>
+              </esequence>
+          </econdtask>
+              <esequence>
+                <eassign name="content_begin"  string="Begin Stage_rmraw for ccd ${ccd.num} for nite ${nite}"/>
+                <eassign name="content_end"    string="End Stage_rmraw for ccd ${ccd.num} for nite ${nite}"/>
+              </esequence>
+        </econdblock>
+
+            <publish>
+              <event ensembleid="${ensemble.id}" workflowid="${jid}"
+                   nodeid="$R{content_begin}" currentState="1">
+                   <property name="message" value="$R{content_begin}"/>
+              </event>
+            </publish>
+
+         <rtexec inheritedEnv="false" execDir="${nite.dir}" nowait="true"
+                     args="${cleanup.exec} ${cleanup.command}" quiet="true">                   
+         </rtexec>
+
+         <publish>
+            <event ensembleid="${ensemble.id}" workflowid="${jid}"
+                   nodeid="$R{content_end}" currentState="1">
+                  <property name="message" value="$R{content_end}"/>
+            </event>
+         </publish>
+  
+     </esequence>
+   </target>
+
+   <!-- Run the adaptive moment module -->
+   <target name="Stage_runadaptive" description="run adaptive moment">
+       <esequence>
+
+        <edeclare name="content_begin"  string="test begin"/>
+        <edeclare name="content_end"    string="test end"/>
+        <econdblock type="else-if">
+          <econdtask>
+            <eeval>
+             <statement>
+                <ecompare string="${platform}">
+                   <predicate string="TG" comparator="EQUALS"/>
+                </ecompare>
+             </statement>
+            </eeval>
+              <esequence>
+                <eassign name="content_begin"  string="Begin Stage_runadaptive for ccd ${ccd.num} data on $G{host} for nite ${nite}"/>
+                <eassign name="content_end"    string="End Stage_runadaptive for ccd ${ccd.num} data on $G{host} for nite ${nite}"/>
+              </esequence>
+          </econdtask>
+              <esequence>
+                <eassign name="content_begin"  string="Begin Stage_runadaptive for ccd ${ccd.num} for nite ${nite}"/>
+                <eassign name="content_end"    string="End Stage_runadaptive for ccd ${ccd.num} for nite ${nite}"/>
+              </esequence>
+        </econdblock>
+
+            <publish>
+              <event ensembleid="${ensemble.id}" workflowid="${jid}"
+                   nodeid="$R{content_begin}" currentState="1">
+                   <property name="message" value="$R{content_begin}"/>
+              </event>
+            </publish>
+
+
+	     <write path="${local.out}/${adap.log}" text="true"
+                    errorProperty="failed" rethrow="false" append="true"> 
+	         <segment string=" -- adaptive moment results for ${scig.list}" lineBreaks="1"/>
+             </write>
+
+             <rtexec inheritedEnv="false" execDir="${nite.dir}/${scig.dir}" nowait="true"
+                     args="${adaptive.exec} ${adaptive.command_g}" quiet="true">
+                     <outMonitor file="${local.out}/${adap.log}"/>
+	             <errMonitor file="${local.out}/${adap.log}"/>
+             </rtexec>
+
+	     <echo message="Waiting for output file"/>
+               <waitfor maxwait="90" maxwaitunit="second">
+                 <available file="${checkfile}"/>
+               </waitfor>
+             <echo message="Done waiting for output file"/>       
+
+	     <write path="${local.out}/${adap.log}" text="true"
+                    errorProperty="failed" rethrow="false" append="true"> 
+	         <segment string=" -- adaptive moment results for ${scir.list}" lineBreaks="1"/>
+             </write>
+ 
+             <rtexec inheritedEnv="false" execDir="${nite.dir}/${scir.dir}" nowait="true"
+                     args="${adaptive.exec} ${adaptive.command_r}" quiet="true">
+                     <outMonitor file="${local.out}/${adap.log}"/>
+	             <errMonitor file="${local.out}/${adap.log}"/>
+             </rtexec>
+
+	     <echo message="Waiting for output file"/>
+               <waitfor maxwait="90" maxwaitunit="second">
+                 <available file="${checkfile}"/>
+               </waitfor>
+             <echo message="Done waiting for output file"/>       
+
+	     <write path="${local.out}/${adap.log}" text="true"
+                    errorProperty="failed" rethrow="false" append="true"> 
+	         <segment string=" -- adaptive moment results for ${scii.list}" lineBreaks="1"/>
+             </write>
+
+             <rtexec inheritedEnv="false" execDir="${nite.dir}/${scii.dir}" nowait="true"
+                     args="${adaptive.exec} ${adaptive.command_i}" quiet="true">
+                     <outMonitor file="${local.out}/${adap.log}"/>
+	             <errMonitor file="${local.out}/${adap.log}"/>
+             </rtexec>
+
+	     <echo message="Waiting for output file"/>
+               <waitfor maxwait="90" maxwaitunit="second">
+                 <available file="${checkfile}"/>
+               </waitfor>
+             <echo message="Done waiting for output file"/>       
+
+	     <write path="${local.out}/${adap.log}" text="true"
+                    errorProperty="failed" rethrow="false" append="true"> 
+	         <segment string=" -- adaptive moment results for ${sciz.list}" lineBreaks="1"/>
+             </write>
+
+             <rtexec inheritedEnv="false" execDir="${nite.dir}/${sciz.dir}" nowait="true"
+                     args="${adaptive.exec} ${adaptive.command_z}" quiet="true">
+                     <outMonitor file="${local.out}/${adap.log}"/>
+	             <errMonitor file="${local.out}/${adap.log}"/>
+             </rtexec>
+
+	     <echo message="Waiting for output file"/>
+               <waitfor maxwait="90" maxwaitunit="second">
+                 <available file="${checkfile}"/>
+               </waitfor>
+             <echo message="Done waiting for output file"/>       
+
+ 	    <print line=" - Stage_runadaptive done"/>
+
+
+         <write path="${local.out}/${adap.log}" text="true" 
+                         errorProperty="failed" rethrow="false" append="true"> 
+	                 <segment string=" -- adaptive done" lineBreaks="1"/>
+         </write>
+
+         <publish>
+            <event ensembleid="${ensemble.id}" workflowid="${jid}"
+                   nodeid="$R{content_end}" currentState="1">
+                  <property name="message" value="$R{content_end}"/>
+            </event>
+         </publish>
+
+       </esequence>
+   </target>
+
+   <!-- Running SExtractor with runSExtractor.c -->
+   <target name="Stage_runcat" description="run SExtractor">
+       <esequence>
+           
+        <edeclare name="content_begin"  string="test begin"/>
+        <edeclare name="content_end"    string="test end"/>
+        <econdblock type="else-if">
+          <econdtask>
+            <eeval>
+             <statement>
+                <ecompare string="${platform}">
+                   <predicate string="TG" comparator="EQUALS"/>
+                </ecompare>
+             </statement>
+            </eeval>
+              <esequence>
+                <eassign name="content_begin"  string="Begin Stage_runcat for ccd ${ccd.num} data on $G{host} for nite ${nite}"/>
+                <eassign name="content_end"    string="End Stage_runcat for ccd ${ccd.num} data on $G{host} for nite ${nite}"/>
+              </esequence>
+          </econdtask>
+              <esequence>
+                <eassign name="content_begin"  string="Begin Stage_runcat for ccd ${ccd.num} for nite ${nite}"/>
+                <eassign name="content_end"    string="End Stage_runcat for ccd ${ccd.num} for nite ${nite}"/>
+              </esequence>
+        </econdblock>
+
+            <publish>
+              <event ensembleid="${ensemble.id}" workflowid="${jid}"
+                   nodeid="$R{content_begin}" currentState="1">
+                   <property name="message" value="$R{content_begin}"/>
+              </event>
+            </publish>
+
+             <rtexec inheritedEnv="false" execDir="${nite.dir}" 
+                     args="${cat.exec} ${cat.command_g}" quiet="true">
+                     <outMonitor file="${local.out}/${cat.log}"/>
+                     <errMonitor file="${local.out}/${cat.log}"/>
+             </rtexec>
+
+             <rtexec inheritedEnv="false" execDir="${nite.dir}" 
+                     args="${cat.exec} ${cat.command_r}" quiet="true">
+                     <outMonitor file="${local.out}/${cat.log}"/>
+                     <errMonitor file="${local.out}/${cat.log}"/>
+             </rtexec>
+
+             <rtexec inheritedEnv="false" execDir="${nite.dir}" 
+                     args="${cat.exec} ${cat.command_i}" quiet="true">
+                     <outMonitor file="${local.out}/${cat.log}"/>
+                     <errMonitor file="${local.out}/${cat.log}"/>
+             </rtexec>
+
+             <rtexec inheritedEnv="false" execDir="${nite.dir}" 
+                     args="${cat.exec} ${cat.command_z}" quiet="true">
+                     <outMonitor file="${local.out}/${cat.log}"/>
+                     <errMonitor file="${local.out}/${cat.log}"/>
+             </rtexec>
+
+ 	    <print line=" - Stage_runcat done"/>	
+
+         <write path="${local.out}/${cat.log}" text="true" 
+                         errorProperty="failed" rethrow="false" append="true"> 
+	                 <segment string=" -- runcat done" lineBreaks="1"/>
+         </write>
+
+         <publish>
+            <event ensembleid="${ensemble.id}" workflowid="${jid}"
+                   nodeid="$R{content_end}" currentState="1">
+                  <property name="message" value="$R{content_end}"/>
+            </event>
+         </publish>
+
+       </esequence>
+   </target>   
+
+   <!-- Running fitscombine with runFitscombine.c -->
+   <target name="Stage_runfitscombine" description="run SExtractor">
+       <esequence>
+
+
+        <edeclare name="content_begin"  string="test begin"/>
+        <edeclare name="content_end"    string="test end"/>
+        <econdblock type="else-if">
+          <econdtask>
+            <eeval>
+             <statement>
+                <ecompare string="${platform}">
+                   <predicate string="TG" comparator="EQUALS"/>
+                </ecompare>
+             </statement>
+            </eeval>
+              <esequence>
+                <eassign name="content_begin"  string="Begin Stage_runfitscombine for ccd ${ccd.num} data on $G{host} for nite ${nite}"/>
+                <eassign name="content_end"    string="End Stage_runfitscombine for ccd ${ccd.num} data on $G{host} for nite ${nite}"/>
+              </esequence>
+          </econdtask>
+              <esequence>
+                <eassign name="content_begin"  string="Begin Stage_runfitscombine for ccd ${ccd.num} for nite ${nite}"/>
+                <eassign name="content_end"    string="End Stage_runfitscombine for ccd ${ccd.num} for nite ${nite}"/>
+              </esequence>
+        </econdblock>
+
+            <publish>
+              <event ensembleid="${ensemble.id}" workflowid="${jid}"
+                   nodeid="$R{content_begin}" currentState="1">
+                   <property name="message" value="$R{content_begin}"/>
+              </event>
+            </publish>
+
+             <rtexec inheritedEnv="false" execDir="${nite.dir}" 
+                     args="${fits.exec} ${fits.command_g}" quiet="true">
+                     <outMonitor file="${local.out}/${fits.log}"/>
+                     <errMonitor file="${local.out}/${fits.log}"/>
+             </rtexec>
+
+             <rtexec inheritedEnv="false" execDir="${nite.dir}" 
+                     args="${fits.exec} ${fits.command_r}" quiet="true">
+                     <outMonitor file="${local.out}/${fits.log}"/>
+                     <errMonitor file="${local.out}/${fits.log}"/>
+             </rtexec>
+
+             <rtexec inheritedEnv="false" execDir="${nite.dir}" 
+                     args="${fits.exec} ${fits.command_i}" quiet="true">
+                     <outMonitor file="${local.out}/${fits.log}"/>
+                     <errMonitor file="${local.out}/${fits.log}"/>
+             </rtexec>
+
+             <rtexec inheritedEnv="false" execDir="${nite.dir}" 
+                     args="${fits.exec} ${fits.command_z}" quiet="true">
+                     <outMonitor file="${local.out}/${fits.log}"/>
+                     <errMonitor file="${local.out}/${fits.log}"/>
+             </rtexec>
+
+ 	    <print line=" - Stage_runfitscombine done"/>	
+
+         <write path="${local.out}/${fits.log}" text="true" 
+                         errorProperty="failed" rethrow="false" append="true"> 
+	                 <segment string=" -- runfitscombine done" lineBreaks="1"/>
+         </write>
+
+
+         <publish>
+            <event ensembleid="${ensemble.id}" workflowid="${jid}"
+                   nodeid="$R{content_end}" currentState="1">
+                  <property name="message" value="$R{content_end}"/>
+            </event>
+         </publish>
+
+       </esequence>
+   </target>
+
+
+   <!-- Create bias.fits with zerocombine -->
+   <target name="Stage_zerocombine" description="create zero correction image">
+        <esequence>
+
+        <edeclare name="content_begin"  string="test begin"/>
+        <edeclare name="content_end"    string="test end"/>
+        <econdblock type="else-if">
+          <econdtask>
+            <eeval>
+             <statement>
+                <ecompare string="${platform}">
+                   <predicate string="TG" comparator="EQUALS"/>
+                </ecompare>
+             </statement>
+            </eeval>
+              <esequence>
+                <eassign name="content_begin"  string="Begin Stage_zerocombine for ccd ${ccd.num} data on $G{host} for nite ${nite}"/>
+                <eassign name="content_end"    string="End Stage_zerocombine for ccd ${ccd.num} data on $G{host} for nite ${nite}"/>
+              </esequence>
+          </econdtask>
+              <esequence>
+                <eassign name="content_begin"  string="Begin Stage_zerocombine for ccd ${ccd.num} for nite ${nite}"/>
+                <eassign name="content_end"    string="End Stage_zerocombine for ccd ${ccd.num} for nite ${nite}"/>
+              </esequence>
+        </econdblock>
+
+            <publish>
+              <event ensembleid="${ensemble.id}" workflowid="${jid}"
+                   nodeid="$R{content_begin}" currentState="1">
+                   <property name="message" value="$R{content_begin}"/>
+              </event>
+            </publish>
+
+  
+         <write path="${local.out}/${zerocombine.log}" text="true" 
+                         errorProperty="failed" rethrow="false" append="true"> 
+	                 <segment string=" -- Beginning zerocombine " lineBreaks="1"/>
+         </write>
+
+	      <!-- Must make bias frame --> 
+
+	        <edeclare name="alist" string="${bias.list}"/>
+	        <edeclare name="afile" string="${bias.fits.path}/${bias.fits.name}"/>
+	        <rtexec inheritedEnv="false" execDir="${nite.dir}"  
+                  args="${zerocombine.exec} ${zerocombine.args}" quiet="true">
+                  <errMonitor file="${local.out}/${zerocombine.log}"/>
+		  <outMonitor file="${local.out}/${zerocombine.log}"/>
+                </rtexec>
+
+
+         <write path="${local.out}/${zerocombine.log}" text="true" 
+                         errorProperty="failed" rethrow="false" append="true"> 
+	                 <segment string=" -- zerocombine done" lineBreaks="1"/>
+         </write>
+
+	 <print line=" - Stage_zerocombine done"/>	    
+
+         <publish>
+            <event ensembleid="${ensemble.id}" workflowid="${jid}"
+                   nodeid="$R{content_end}" currentState="1">
+                  <property name="message" value="$R{content_end}"/>
+            </event>
+         </publish>
+
+        </esequence>
+   </target>
+
+  <target name="Stage_fileingest" description="ingest to the Files table">
+    <esequence>
+
+        <edeclare name="content_begin"  string="test begin"/>
+        <edeclare name="content_end"    string="test end"/>
+        <econdblock type="else-if">
+          <econdtask>
+            <eeval>
+             <statement>
+                <ecompare string="${platform}">
+                   <predicate string="TG" comparator="EQUALS"/>
+                </ecompare>
+             </statement>
+            </eeval>
+              <esequence>
+                <eassign name="content_begin"  string="Begin Stage_fileingest for ccd ${ccd.num} data on $G{host} for nite ${nite}"/>
+                <eassign name="content_end"    string="End Stage_fileingest for ccd ${ccd.num} data on $G{host} for nite ${nite}"/>
+              </esequence>
+          </econdtask>
+              <esequence>
+                <eassign name="content_begin"  string="Begin Stage_fileingest for ccd ${ccd.num} for nite ${nite}"/>
+                <eassign name="content_end"    string="End Stage_fileingest for ccd ${ccd.num} for nite ${nite}"/>
+              </esequence>
+        </econdblock>
+
+            <publish>
+              <event ensembleid="${ensemble.id}" workflowid="${jid}"
+                   nodeid="$R{content_begin}" currentState="1">
+                   <property name="message" value="$R{content_begin}"/>
+              </event>
+            </publish>
+
+     <print line=" -- Begin Stage_fileingest for CCD ${ccd.num}"/>
+   
+      <edeclare name="list.dir" string="${local.out}"/>    
+      <property name="source" value="file://${job.id}"/>
+
+      <delete file="${input.list}" quiet="true"/>
+      <delete file="${output.dat}" quiet="true"/>
+      
+      <eloop counterName="i">
+          <ecounter>
+               <expression infix="$R{i} &lt; 4"/>
+          </ecounter>
+
+        <econdblock type="else-if">
+          <econdtask>
+            <eeval>
+               <statement>
+                 <ecompare long="0">
+                       <predicate long="$R{i}" comparator="EQUALS"/>
+                   </ecompare>
+                 </statement>
+            </eeval>
+                <edeclare globalname="band" string="g"/>
+          </econdtask>
+        </econdblock>
+
+        <econdblock type="else-if">
+          <econdtask>
+            <eeval>
+               <statement>
+                 <ecompare long="1">
+                       <predicate long="$R{i}" comparator="EQUALS"/>
+                   </ecompare>
+                 </statement>
+            </eeval>
+                <edeclare globalname="band" string="r"/>
+          </econdtask>
+        </econdblock>
+
+        <econdblock type="else-if">
+          <econdtask>
+            <eeval>
+               <statement>
+                 <ecompare long="2">
+                       <predicate long="$R{i}" comparator="EQUALS"/>
+                   </ecompare>
+                 </statement>
+            </eeval>
+                <edeclare globalname="band" string="i"/>
+          </econdtask>
+        </econdblock>
+
+        <econdblock type="else-if">
+          <econdtask>
+            <eeval>
+               <statement>
+                 <ecompare long="3">
+                       <predicate long="$R{i}" comparator="EQUALS"/>
+                   </ecompare>
+                 </statement>
+            </eeval>
+                <edeclare globalname="band" string="z"/>
+          </econdtask>
+        </econdblock>
+
+        <print line=" -- doing $G{band}-band ..."/>
+
+        <edeclare name="source1" string="data/${nite}/$G{band}/"/>   
+        
+        <edeclare globalName="sourcePattern2"> 
+          <uripattern baseUri="${source}/$R{source1}">
+              <nestedelement include="*"/>
+          </uripattern>
+        </edeclare>
+        <edeclare name="dirlist" null="true"/>
+        <urilist fullScan="true">
+           <nestedelement pattern="$G{sourcePattern2}"/>
+             <configuration>        
+                 <attribute name="retainFiles"       value="false"/>
+                 <attribute name="retainDirectories" value="true"/>
+                 <attribute name="getNames" value="true"/>
+             </configuration>
+        </urilist>
+        <ereturn name="dirlist" get="simpleResult"/> 
+
+        <econdblock type="else-if">
+         <econdtask>
+          <eeval>
+            <statement>
+              <ecompare long="0">
+                   <predicate long="$R{dirlist$I{L}}" comparator="LT"/>
+              </ecompare>
+            </statement>
+          </eeval>
+
+           <esequence>
+
+            <eloop counterName="w">
+              <ecounter>
+                   <expression infix="$R{w} &lt; $R{dirlist$I{L}}"/>
+              </ecounter>
+
+               <edeclare globalName="sourcePattern1"> 
+                 <uripattern baseUri="${source}/$R{source1}/$R{dirlist$I{$R{w}}}">
+                   <nestedelement include="${fitspattern1}"/>
+                 </uripattern>
+               </edeclare>
+               <edeclare name="filelist" null="true"/>
+               <urilist fullScan="true">
+                 <nestedelement pattern="$G{sourcePattern1}"/>
+                   <configuration>        
+                     <attribute name="retainFiles"       value="true"/>
+                     <attribute name="retainDirectories" value="false"/>
+                     <attribute name="getNames" value="true"/>
+                   </configuration>
+               </urilist>
+               <ereturn name="filelist" get="simpleResult"/>         
+          
+               <econdblock type="else-if">
+                 <econdtask>
+                  <eeval>
+                   <statement>
+                     <ecompare long="0">
+                           <predicate long="$R{filelist$I{L}}" comparator="LT"/>
+                     </ecompare>
+                   </statement>
+                  </eeval>
+                    <esequence>
+                       <eloop counterName="v">
+                         <ecounter>
+                           <expression infix="$R{v} &lt; $R{filelist$I{L}}"/>
+                         </ecounter>
+             
+                         <print line=" * Found $R{source1}$R{dirlist$I{$R{w}}}/$R{filelist$I{$R{v}}}"/>
+
+                         <write path="${input.list}" text="true"
+                            errorProperty="failed" rethrow="false" append="true">
+                           <segment string="red/${jid}/$R{source1}$R{dirlist$I{$R{w}}}/$R{filelist$I{$R{v}}}" lineBreaks="1" />
+                         </write>
+                     
+                       </eloop>
+                    </esequence>
+                 </econdtask>
+               </econdblock>
+
+            </eloop>
+
+            <eloop counterName="w">
+              <ecounter>
+                   <expression infix="$R{w} &lt; $R{dirlist$I{L}}"/>
+              </ecounter>
+
+               <edeclare globalName="sourcePattern1"> 
+                 <uripattern baseUri="${source}/$R{source1}/$R{dirlist$I{$R{w}}}">
+                   <nestedelement include="${fitspattern0}"/>
+                 </uripattern>
+               </edeclare>
+               <edeclare name="filelist" null="true"/>
+               <urilist fullScan="true">
+                 <nestedelement pattern="$G{sourcePattern1}"/>
+                   <configuration>        
+                     <attribute name="retainFiles"       value="true"/>
+                     <attribute name="retainDirectories" value="false"/>
+                     <attribute name="getNames" value="true"/>
+                   </configuration>
+               </urilist>
+               <ereturn name="filelist" get="simpleResult"/>         
+          
+               <econdblock type="else-if">
+                 <econdtask>
+                  <eeval>
+                   <statement>
+                     <ecompare long="0">
+                           <predicate long="$R{filelist$I{L}}" comparator="LT"/>
+                     </ecompare>
+                   </statement>
+                  </eeval>
+                    <esequence>
+                       <eloop counterName="v">
+                         <ecounter>
+                           <expression infix="$R{v} &lt; $R{filelist$I{L}}"/>
+                         </ecounter>
+             
+                         <print line=" * Found $R{source1}$R{dirlist$I{$R{w}}}/$R{filelist$I{$R{v}}}"/>
+
+                         <write path="${input.list}" text="true"
+                            errorProperty="failed" rethrow="false" append="true">
+                           <segment string="red/${jid}/$R{source1}$R{dirlist$I{$R{w}}}/$R{filelist$I{$R{v}}}" lineBreaks="1" />
+                         </write>
+                     
+                       </eloop>
+                    </esequence>
+                 </econdtask>
+               </econdblock>
+
+            </eloop>
+
+           </esequence>
+
+         </econdtask>
+        </econdblock>
+
+       </eloop>   
+      </esequence>
+ 
+      <esequence>
+      <print line=" "/>
+      <print line=" -- ingesting ${output.dat} into ${files.table} table."/> 
+
+      <rtexec inheritedEnv="false" execDir="${base.dir}"
+                args="${imageingest.exec} ${imageingest.args}" quiet="true">
+            <outMonitor file="${imageingest.log}"/>
+      </rtexec>
+
+      <edeclare name="ingest.dat" string="${output.dat}"/>
+      <edeclare name="control.file" string="${file.control.file}"/>
+      <edeclare name="sqlldr.log" string="${file.sqlldr.log}"/>
+      <edeclare name="sqlldr.bad" string="${file.sqlldr.bad}"/>
+
+       <rtexec inheritedEnv="false" execDir="${user.dir}"
+                args="${sqlldr.exec} ${sqlldr.command}" quiet="true">
+       </rtexec>
+
+       <print line=" -- Stage_fileingest done"/>
+
+         <publish>
+            <event ensembleid="${ensemble.id}" workflowid="${jid}"
+                   nodeid="$R{content_end}" currentState="1">
+                  <property name="message" value="$R{content_end}"/>
+            </event>
+         </publish>
+
+       </esequence> 
+  </target>
+
+  <target name="Stage_objectingest" description="ingest to the database">
+    <esequence>
+
+        <edeclare name="content_begin"  string="test begin"/>
+        <edeclare name="content_end"    string="test end"/>
+        <econdblock type="else-if">
+          <econdtask>
+            <eeval>
+             <statement>
+                <ecompare string="${platform}">
+                   <predicate string="TG" comparator="EQUALS"/>
+                </ecompare>
+             </statement>
+            </eeval>
+              <esequence>
+                <eassign name="content_begin"  string="Begin Stage_objectingest for ccd ${ccd.num} data on $G{host} for nite ${nite}"/>
+                <eassign name="content_end"    string="End Stage_objectingest for ccd ${ccd.num} data on $G{host} for nite ${nite}"/>
+              </esequence>
+          </econdtask>
+              <esequence>
+                <eassign name="content_begin"  string="Begin Stage_objectingest for ccd ${ccd.num} for nite ${nite}"/>
+                <eassign name="content_end"    string="End Stage_objectingest for ccd ${ccd.num} for nite ${nite}"/>
+              </esequence>
+        </econdblock>
+
+            <publish>
+              <event ensembleid="${ensemble.id}" workflowid="${jid}"
+                   nodeid="$R{content_begin}" currentState="1">
+                   <property name="message" value="$R{content_begin}"/>
+              </event>
+            </publish>
+
+      <print line=" -- Begin catalog_ingest for CCD ${ccd.num}"/>
+      <edeclare name="control.file" string="${objs.control.file}"/>
+
+      <edeclare name="list.dir" string="${local.out}"/>    
+      <property name="source" value="file://${job.id}"/>
+
+      <delete file="${inputcat.list}" quiet="true"/>
+      
+      <eloop counterName="i">
+          <ecounter>
+               <expression infix="$R{i} &lt; 4"/>
+          </ecounter>
+
+        <econdblock type="else-if">
+          <econdtask>
+            <eeval>
+               <statement>
+                 <ecompare long="0">
+                       <predicate long="$R{i}" comparator="EQUALS"/>
+                   </ecompare>
+                 </statement>
+            </eeval>
+                <edeclare globalname="band" string="g"/>
+          </econdtask>
+        </econdblock>
+
+        <econdblock type="else-if">
+          <econdtask>
+            <eeval>
+               <statement>
+                 <ecompare long="1">
+                       <predicate long="$R{i}" comparator="EQUALS"/>
+                   </ecompare>
+                 </statement>
+            </eeval>
+                <edeclare globalname="band" string="r"/>
+          </econdtask>
+        </econdblock>
+
+        <econdblock type="else-if">
+          <econdtask>
+            <eeval>
+               <statement>
+                 <ecompare long="2">
+                       <predicate long="$R{i}" comparator="EQUALS"/>
+                   </ecompare>
+                 </statement>
+            </eeval>
+                <edeclare globalname="band" string="i"/>
+          </econdtask>
+        </econdblock>
+
+        <econdblock type="else-if">
+          <econdtask>
+            <eeval>
+               <statement>
+                 <ecompare long="3">
+                       <predicate long="$R{i}" comparator="EQUALS"/>
+                   </ecompare>
+                 </statement>
+            </eeval>
+                <edeclare globalname="band" string="z"/>
+          </econdtask>
+        </econdblock>
+
+        <print line=" -- doing $G{band}-band ..."/>
+
+        <edeclare name="source1" string="data/${nite}/$G{band}/"/>   
+        
+        <edeclare globalName="sourcePattern2"> 
+          <uripattern baseUri="${source}/$R{source1}">
+              <nestedelement include="*"/>
+          </uripattern>
+        </edeclare>
+        <edeclare name="dirlist" null="true"/>
+        <urilist fullScan="true">
+           <nestedelement pattern="$G{sourcePattern2}"/>
+             <configuration>        
+                 <attribute name="retainFiles"       value="false"/>
+                 <attribute name="retainDirectories" value="true"/>
+                 <attribute name="getNames" value="true"/>
+             </configuration>
+        </urilist>
+        <ereturn name="dirlist" get="simpleResult"/> 
+
+        <econdblock type="else-if">
+         <econdtask>
+          <eeval>
+            <statement>
+              <ecompare long="0">
+                   <predicate long="$R{dirlist$I{L}}" comparator="LT"/>
+              </ecompare>
+            </statement>
+          </eeval>
+
+           <esequence>
+
+            <eloop counterName="w">
+              <ecounter>
+                   <expression infix="$R{w} &lt; $R{dirlist$I{L}}"/>
+              </ecounter>
+
+               <edeclare globalName="sourcePattern1"> 
+                 <uripattern baseUri="${source}/$R{source1}/$R{dirlist$I{$R{w}}}">
+                   <nestedelement include="${catpattern1}"/>
+                 </uripattern>
+               </edeclare>
+               <edeclare name="filelist" null="true"/>
+               <urilist fullScan="true">
+                 <nestedelement pattern="$G{sourcePattern1}"/>
+                   <configuration>        
+                     <attribute name="retainFiles"       value="true"/>
+                     <attribute name="retainDirectories" value="false"/>
+                     <attribute name="getNames" value="true"/>
+                   </configuration>
+               </urilist>
+               <ereturn name="filelist" get="simpleResult"/>         
+          
+               <econdblock type="else-if">
+                 <econdtask>
+                  <eeval>
+                   <statement>
+                     <ecompare long="0">
+                           <predicate long="$R{filelist$I{L}}" comparator="LT"/>
+                       </ecompare>
+                     </statement>
+                  </eeval>
+                    <esequence>
+                       <eloop counterName="v">
+                         <ecounter>
+                           <expression infix="$R{v} &lt; $R{filelist$I{L}}"/>
+                         </ecounter>
+             
+                         <print line=" * Found $R{source1}$R{dirlist$I{$R{w}}}/$R{filelist$I{$R{v}}}"/>
+
+                         <write path="${inputcat.list}" text="true"
+                            errorProperty="failed" rethrow="false" append="true">
+                           <segment string="red/${jid}/$R{source1}$R{dirlist$I{$R{w}}}/$R{filelist$I{$R{v}}}" lineBreaks="1" />
+                         </write>
+                     
+                       </eloop>
+                    </esequence>
+                 </econdtask>
+               </econdblock>
+
+            </eloop>
+
+            <eloop counterName="w">
+              <ecounter>
+                   <expression infix="$R{w} &lt; $R{dirlist$I{L}}"/>
+              </ecounter>
+
+               <edeclare globalName="sourcePattern1"> 
+                 <uripattern baseUri="${source}/$R{source1}/$R{dirlist$I{$R{w}}}">
+                   <nestedelement include="${catpattern0}"/>
+                 </uripattern>
+               </edeclare>
+               <edeclare name="filelist" null="true"/>
+               <urilist fullScan="true">
+                 <nestedelement pattern="$G{sourcePattern1}"/>
+                   <configuration>        
+                     <attribute name="retainFiles"       value="true"/>
+                     <attribute name="retainDirectories" value="false"/>
+                     <attribute name="getNames" value="true"/>
+                   </configuration>
+               </urilist>
+               <ereturn name="filelist" get="simpleResult"/>         
+          
+               <econdblock type="else-if">
+                 <econdtask>
+                  <eeval>
+                     <statement>
+                       <ecompare long="0">
+                           <predicate long="$R{filelist$I{L}}" comparator="LT"/>
+                       </ecompare>
+                     </statement>
+                  </eeval>
+                    <esequence>
+                       <eloop counterName="v">
+                         <ecounter>
+                           <expression infix="$R{v} &lt; $R{filelist$I{L}}"/>
+                         </ecounter>
+             
+                         <print line=" * Found $R{source1}$R{dirlist$I{$R{w}}}/$R{filelist$I{$R{v}}}"/>
+
+                         <write path="${inputcat.list}" text="true"
+                            errorProperty="failed" rethrow="false" append="true">
+                           <segment string="red/${jid}/$R{source1}$R{dirlist$I{$R{w}}}/$R{filelist$I{$R{v}}}" lineBreaks="1" />
+                         </write>
+                     
+                       </eloop>
+                    </esequence>
+                 </econdtask>
+               </econdblock>
+
+            </eloop>
+
+           </esequence>
+
+         </econdtask>
+        </econdblock>
+
+       </eloop>   
+
+      <rtexec inheritedEnv="false" execDir="${base.dir}"
+                args="${catingest.exec} ${catingest.args}" quiet="true">
+            <outMonitor file="${catingest.log}"/>
+      </rtexec>
+
+      <print line=" -- Stage_objectingest done"/>
+
+         <publish>
+            <event ensembleid="${ensemble.id}" workflowid="${jid}"
+                   nodeid="$R{content_end}" currentState="1">
+                  <property name="message" value="$R{content_end}"/>
+            </event>
+         </publish>
+
+       </esequence> 
+  </target>
+
+   <!-- Running SExtractor with runSExtractor.c for scamp catalog-->
+   <target name="Stage_catforscamp" description="run SExtractor">
+       <esequence>
+           
+        <edeclare name="content_begin"  string="test begin"/>
+        <edeclare name="content_end"    string="test end"/>
+        <econdblock type="else-if">
+          <econdtask>
+            <eeval>
+             <statement>
+                <ecompare string="${platform}">
+                   <predicate string="TG" comparator="EQUALS"/>
+                </ecompare>
+             </statement>
+            </eeval>
+              <esequence>
+                <eassign name="content_begin"  string="Begin Stage_catforscamp for ccd ${ccd.num} data on $G{host} for nite ${nite}"/>
+                <eassign name="content_end"    string="End Stage_catforscamp for ccd ${ccd.num} data on $G{host} for nite ${nite}"/>
+              </esequence>
+          </econdtask>
+              <esequence>
+                <eassign name="content_begin"  string="Begin Stage_catforscamp for ccd ${ccd.num} for nite ${nite}"/>
+                <eassign name="content_end"    string="End Stage_catforscamp for ccd ${ccd.num} for nite ${nite}"/>
+              </esequence>
+        </econdblock>
+
+            <publish>
+              <event ensembleid="${ensemble.id}" workflowid="${jid}"
+                   nodeid="$R{content_begin}" currentState="1">
+                   <property name="message" value="$R{content_begin}"/>
+              </event>
+            </publish>
+
+             <rtexec inheritedEnv="false" execDir="${nite.dir}" 
+                     args="${catforscamp.exec} ${catforscamp.command_g}" quiet="true">
+                     <outMonitor file="${local.out}/${catforscamp.log}"/>
+                     <errMonitor file="${local.out}/${catforscamp.log}"/>
+             </rtexec>
+
+             <rtexec inheritedEnv="false" execDir="${nite.dir}" 
+                     args="${catforscamp.exec} ${catforscamp.command_r}" quiet="true">
+                     <outMonitor file="${local.out}/${catforscamp.log}"/>
+                     <errMonitor file="${local.out}/${catforscamp.log}"/>
+             </rtexec>
+
+             <rtexec inheritedEnv="false" execDir="${nite.dir}" 
+                     args="${catforscamp.exec} ${catforscamp.command_i}" quiet="true">
+                     <outMonitor file="${local.out}/${catforscamp.log}"/>
+                     <errMonitor file="${local.out}/${catforscamp.log}"/>
+             </rtexec>
+
+             <rtexec inheritedEnv="false" execDir="${nite.dir}" 
+                     args="${catforscamp.exec} ${catforscamp.command_z}" quiet="true">
+                     <outMonitor file="${local.out}/${catforscamp.log}"/>
+                     <errMonitor file="${local.out}/${catforscamp.log}"/>
+             </rtexec>
+
+ 	    <print line=" - Stage_catforscamp done"/>	
+
+         <write path="${local.out}/${catforscamp.log}" text="true" 
+                         errorProperty="failed" rethrow="false" append="true"> 
+	                 <segment string=" -- catforscamp done" lineBreaks="1"/>
+         </write>
+
+         <publish>
+            <event ensembleid="${ensemble.id}" workflowid="${jid}"
+                   nodeid="$R{content_end}" currentState="1">
+                  <property name="message" value="$R{content_end}"/>
+            </event>
+         </publish>
+
+       </esequence>
+   </target>   
+
+
+  <target name="Stage_fileingest_scamp" description="ingest to the Files table before scamp stage">
+    <esequence>
+
+        <edeclare name="content_begin"  string="test begin"/>
+        <edeclare name="content_end"    string="test end"/>
+        <econdblock type="else-if">
+          <econdtask>
+            <eeval>
+             <statement>
+                <ecompare string="${platform}">
+                   <predicate string="TG" comparator="EQUALS"/>
+                </ecompare>
+             </statement>
+            </eeval>
+              <esequence>
+                <eassign name="content_begin"  string="Begin Stage_fileingest_scamp for ccd ${ccd.num} data on $G{host} for nite ${nite}"/>
+                <eassign name="content_end"    string="End Stage_fileingest_scamp for ccd ${ccd.num} data on $G{host} for nite ${nite}"/>
+              </esequence>
+          </econdtask>
+              <esequence>
+                <eassign name="content_begin"  string="Begin Stage_fileingest_scamp for ccd ${ccd.num} for nite ${nite}"/>
+                <eassign name="content_end"    string="End Stage_fileingest_scamp for ccd ${ccd.num} for nite ${nite}"/>
+              </esequence>
+        </econdblock>
+
+            <publish>
+              <event ensembleid="${ensemble.id}" workflowid="${jid}"
+                   nodeid="$R{content_begin}" currentState="1">
+                   <property name="message" value="$R{content_begin}"/>
+              </event>
+            </publish>
+
+     <print line=" -- Begin Stage_fileingest_scamp for CCD ${ccd.num}"/>
+   
+      <edeclare name="list.dir" string="${local.out}"/>    
+      <property name="source" value="file://${job.id}"/>
+
+      <delete file="${inputscamp.list}" quiet="true"/>
+      <delete file="${outputscamp.dat}" quiet="true"/>
+      
+      <eloop counterName="i">
+          <ecounter>
+               <expression infix="$R{i} &lt; 4"/>
+          </ecounter>
+
+        <econdblock type="else-if">
+          <econdtask>
+            <eeval>
+               <statement>
+                 <ecompare long="0">
+                       <predicate long="$R{i}" comparator="EQUALS"/>
+                   </ecompare>
+                 </statement>
+            </eeval>
+                <edeclare globalname="band" string="g"/>
+          </econdtask>
+        </econdblock>
+
+        <econdblock type="else-if">
+          <econdtask>
+            <eeval>
+               <statement>
+                 <ecompare long="1">
+                       <predicate long="$R{i}" comparator="EQUALS"/>
+                   </ecompare>
+                 </statement>
+            </eeval>
+                <edeclare globalname="band" string="r"/>
+          </econdtask>
+        </econdblock>
+
+        <econdblock type="else-if">
+          <econdtask>
+            <eeval>
+               <statement>
+                 <ecompare long="2">
+                       <predicate long="$R{i}" comparator="EQUALS"/>
+                   </ecompare>
+                 </statement>
+            </eeval>
+                <edeclare globalname="band" string="i"/>
+          </econdtask>
+        </econdblock>
+
+        <econdblock type="else-if">
+          <econdtask>
+            <eeval>
+               <statement>
+                 <ecompare long="3">
+                       <predicate long="$R{i}" comparator="EQUALS"/>
+                   </ecompare>
+                 </statement>
+            </eeval>
+                <edeclare globalname="band" string="z"/>
+          </econdtask>
+        </econdblock>
+
+        <print line=" -- doing $G{band}-band ..."/>
+
+        <edeclare name="source1" string="data/${nite}/$G{band}/"/>   
+        
+        <edeclare globalName="sourcePattern2"> 
+          <uripattern baseUri="${source}/$R{source1}">
+              <nestedelement include="*"/>
+          </uripattern>
+        </edeclare>
+        <edeclare name="dirlist" null="true"/>
+        <urilist fullScan="true">
+           <nestedelement pattern="$G{sourcePattern2}"/>
+             <configuration>        
+                 <attribute name="retainFiles"       value="false"/>
+                 <attribute name="retainDirectories" value="true"/>
+                 <attribute name="getNames" value="true"/>
+             </configuration>
+        </urilist>
+        <ereturn name="dirlist" get="simpleResult"/> 
+
+
+        <econdblock type="else-if">
+         <econdtask>
+          <eeval>
+            <statement>
+              <ecompare long="0">
+                   <predicate long="$R{dirlist$I{L}}" comparator="LT"/>
+              </ecompare>
+            </statement>
+          </eeval>
+
+           <esequence>
+
+            <eloop counterName="w">
+              <ecounter>
+                   <expression infix="$R{w} &lt; $R{dirlist$I{L}}"/>
+              </ecounter>
+
+               <edeclare globalName="sourcePattern1"> 
+                 <uripattern baseUri="${source}/$R{source1}/$R{dirlist$I{$R{w}}}">
+                   <nestedelement include="${fitspattern_scamp}"/>
+                 </uripattern>
+               </edeclare>
+               <edeclare name="filelist" null="true"/>
+               <urilist fullScan="true">
+                 <nestedelement pattern="$G{sourcePattern1}"/>
+                   <configuration>        
+                     <attribute name="retainFiles"       value="true"/>
+                     <attribute name="retainDirectories" value="false"/>
+                     <attribute name="getNames" value="true"/>
+                   </configuration>
+               </urilist>
+               <ereturn name="filelist" get="simpleResult"/>         
+          
+               <econdblock type="else-if">
+                 <econdtask>
+                  <eeval>
+                   <statement>
+                     <ecompare long="0">
+                           <predicate long="$R{filelist$I{L}}" comparator="LT"/>
+                       </ecompare>
+                     </statement>
+                  </eeval>
+                    <esequence>
+                       <eloop counterName="v">
+                         <ecounter>
+                           <expression infix="$R{v} &lt; $R{filelist$I{L}}"/>
+                         </ecounter>
+             
+                         <print line=" * Found $R{source1}$R{dirlist$I{$R{w}}}/$R{filelist$I{$R{v}}}"/>
+
+                         <write path="${inputscamp.list}" text="true"
+                            errorProperty="failed" rethrow="false" append="true">
+                           <segment string="red/${jid}/$R{source1}$R{dirlist$I{$R{w}}}/$R{filelist$I{$R{v}}}" lineBreaks="1" />
+                         </write>
+                     
+                       </eloop>
+                    </esequence>
+                 </econdtask>
+               </econdblock>
+
+            </eloop>
+           </esequence>
+
+         </econdtask>
+        </econdblock>
+
+      </eloop>
+
+      </esequence>
+ 
+      <esequence>
+      <print line=" "/>
+      <print line=" -- ingesting ${outputscamp.dat} into ${files.table} table."/> 
+
+      <rtexec inheritedEnv="false" execDir="${base.dir}"
+                args="${imageingest.exec} ${imageingest_scamp.args}" quiet="true">
+            <outMonitor file="${imageingest_scamp.log}"/>
+      </rtexec>
+
+      <edeclare name="ingest.dat" string="${outputscamp.dat}"/>
+      <edeclare name="control.file" string="${file.control.file}"/>
+      <edeclare name="sqlldr.log" string="${file.sqlldr.log}"/>
+      <edeclare name="sqlldr.bad" string="${file.sqlldr.bad}"/>
+
+       <rtexec inheritedEnv="false" execDir="${user.dir}"
+                args="${sqlldr.exec} ${sqlldr.command}" quiet="true">
+       </rtexec>
+
+       <print line=" -- Stage_fileingest_scamp done"/>
+
+         <publish>
+            <event ensembleid="${ensemble.id}" workflowid="${jid}"
+                   nodeid="$R{content_end}" currentState="1">
+                  <property name="message" value="$R{content_end}"/>
+            </event>
+         </publish>
+
+       </esequence> 
+  </target>
+
+
+   <!-- Running Erin's shapelet code -->
+   <target name="Stage_shapelet_measure_stars" description="run shapelet">
+     <esequence>
+
+        <edeclare name="content_begin"  string="test begin"/>
+        <edeclare name="content_end"    string="test end"/>
+
+        <econdblock type="else-if">
+          <econdtask>
+            <eeval>
+             <statement>
+                <ecompare string="${platform}">
+                   <predicate string="TG" comparator="EQUALS"/>
+                </ecompare>
+             </statement>
+            </eeval>
+              <esequence>
+                <eassign name="content_begin"  string="Begin Stage_shapelet_measure_stars for ccd ${ccd.num} data on $G{host} for nite ${nite}"/>
+                <eassign name="content_end"    string="End Stage_shapelet_measure_stars for ccd ${ccd.num} data on $G{host} for nite ${nite}"/>
+              </esequence>
+          </econdtask>
+              <esequence>
+                <eassign name="content_begin"  string="Begin Stage_shapelet_measure_stars for ccd ${ccd.num} for nite ${nite}"/>
+                <eassign name="content_end"    string="End Stage_shapepet_measure_stars for ccd ${ccd.num} for nite ${nite}"/>
+              </esequence>
+        </econdblock>
+
+            <publish>
+              <event ensembleid="${ensemble.id}" workflowid="${jid}"
+                   nodeid="$R{content_begin}" currentState="1">
+                   <property name="message" value="$R{content_begin}"/>
+              </event>
+            </publish>
+
+      <print line=" -- Begin shapelet_measure_stars for CCD ${ccd.num}"/>
+
+
+      <property name="source" value="file://${job.id}"/>
+
+      <eloop counterName="i">
+          <ecounter>
+               <expression infix="$R{i} &lt; 4"/>
+          </ecounter>
+
+        <econdblock type="else-if">
+          <econdtask>
+            <eeval>
+               <statement>
+                 <ecompare long="0">
+                       <predicate long="$R{i}" comparator="EQUALS"/>
+                   </ecompare>
+                 </statement>
+            </eeval>
+                <edeclare globalname="band" string="g"/>
+          </econdtask>
+        </econdblock>
+
+        <econdblock type="else-if">
+          <econdtask>
+            <eeval>
+               <statement>
+                 <ecompare long="1">
+                       <predicate long="$R{i}" comparator="EQUALS"/>
+                   </ecompare>
+                 </statement>
+            </eeval>
+                <edeclare globalname="band" string="r"/>
+          </econdtask>
+        </econdblock>
+
+        <econdblock type="else-if">
+          <econdtask>
+            <eeval>
+               <statement>
+                 <ecompare long="2">
+                       <predicate long="$R{i}" comparator="EQUALS"/>
+                   </ecompare>
+                 </statement>
+            </eeval>
+                <edeclare globalname="band" string="i"/>
+          </econdtask>
+        </econdblock>
+
+        <econdblock type="else-if">
+          <econdtask>
+            <eeval>
+               <statement>
+                 <ecompare long="3">
+                       <predicate long="$R{i}" comparator="EQUALS"/>
+                   </ecompare>
+                 </statement>
+            </eeval>
+                <edeclare globalname="band" string="z"/>
+          </econdtask>
+        </econdblock>
+
+         <print line=" -- doing $G{band}-band ..."/>
+      
+         <edeclare name="source1" string="data/${nite}/$G{band}/"/>   
+
+         <edeclare globalName="sourcePattern2"> 
+            <uripattern baseUri="${source}/$R{source1}">
+                <nestedelement include="*"/>
+            </uripattern>
+         </edeclare>
+         <edeclare name="dirlist" null="true"/>
+         <urilist fullScan="true">
+           <nestedelement pattern="$G{sourcePattern2}"/>
+              <configuration>        
+                  <attribute name="retainFiles"       value="false"/>
+                  <attribute name="retainDirectories" value="true"/>
+                  <attribute name="getNames" value="true"/>
+              </configuration>
+         </urilist>
+         <ereturn name="dirlist" get="simpleResult"/> 
+
+         <eloop counterName="w">
+           <ecounter>
+                <expression infix="$R{w} &lt; $R{dirlist$I{L}}"/>
+           </ecounter>
+
+           <edeclare globalName="sourcePattern1"> 
+             <uripattern baseUri="${source}/$R{source1}/$R{dirlist$I{$R{w}}}">
+               <nestedelement include="${impattern}"/>
+             </uripattern>
+           </edeclare>
+           <edeclare name="imlist" null="true"/>
+           <urilist fullScan="true">
+              <nestedelement pattern="$G{sourcePattern1}"/>
+                <configuration>        
+                  <attribute name="retainFiles"       value="true"/>
+                  <attribute name="retainDirectories" value="false"/>
+                  <attribute name="getNames" value="true"/>
+                </configuration>
+           </urilist>
+           <ereturn name="imlist" get="simpleResult"/> 
+
+           <edeclare globalName="sourcePattern3"> 
+              <uripattern baseUri="${source}/$R{source1}/$R{dirlist$I{$R{w}}}">
+                <nestedelement include="${scamppattern}"/>
+              </uripattern>
+           </edeclare>
+           <edeclare name="scamplist" null="true"/>
+           <urilist fullScan="true">
+             <nestedelement pattern="$G{sourcePattern3}"/>
+               <configuration>        
+                 <attribute name="retainFiles"       value="true"/>
+                 <attribute name="retainDirectories" value="false"/>
+                 <attribute name="getNames" value="true"/>
+               </configuration>
+           </urilist>
+           <ereturn name="scamplist" get="simpleResult"/> 
+          
+           <econdblock type="else-if">
+             <econdtask>
+              <eeval>
+               <statement>
+                 <ecompare long="0">
+                       <predicate long="$R{imlist$I{L}}" comparator="LT"/>
+                 </ecompare>
+               </statement>
+              </eeval>
+              <esequence>
+                <eloop counterName="v">
+                  <ecounter>
+                     <expression infix="$R{v} &lt; $R{imlist$I{L}}"/>
+                  </ecounter>     
+
+                  <print line=" * Found $R{source1}$R{dirlist$I{$R{w}}}/$R{imlist$I{$R{v}}}"/>
+                  <print line=" * Found $R{source1}$R{dirlist$I{$R{w}}}/$R{scamplist$I{$R{v}}}"/>
+
+                  <edeclare name="image_in" string="$R{source1}$R{dirlist$I{$R{w}}}/$R{imlist$I{$R{v}}}"/>   
+                  <edeclare name="scamp_in" string="$R{source1}$R{dirlist$I{$R{w}}}/$R{scamplist$I{$R{v}}}"/>   
+                  <!--edeclare name="allout" string="$R{source1}$R{dirlist$I{$R{w}}}/$R{dirlist$I{$R{w}}}_${ccd.num}_allout.csv"/-->
+                  <!--edeclare name="starout" string="$R{source1}$R{dirlist$I{$R{w}}}/$R{dirlist$I{$R{w}}}_${ccd.num}_starout.csv"/-->
+                  <edeclare name="slog" string="$R{source1}$R{dirlist$I{$R{w}}}/$R{dirlist$I{$R{w}}}_${ccd.num}_im-measure-stars-exit.log"/>
+                  <!--edeclare name="plot" string="$R{source1}$R{dirlist$I{$R{w}}}/$R{dirlist$I{$R{w}}}_${ccd.num}_sizemag.eps"/-->
+
+                  <rtexec inheritedEnv="false" execDir="${job.id}"
+                       args="${shapelet.exec} ${shapelet.args}" quiet="true">
+                    <outMonitor file="${shapelet.log}"/>
+                    <errMonitor file="${shapelet.log}"/>
+                  </rtexec>       
+
+                  <write path="$R{slog}" text="true"
+                        errorProperty="failed" rethrow="false" append="true">
+                       <segment string=" -- $R{image_in} done" lineBreaks="2"/>
+                  </write>
+
+                  <edeclare name="qalog" string=""/>
+                  <read path="${job.id}/$R{slog}" lines="true"/>
+                  <ereturn name="qalog" get="string"/>
+
+                  <publish>
+                    <event ensembleid="${ensemble.id}" workflowid="${jid}"
+                           channelid="QAEvent"
+                           originatorType="Stage_shapelet"
+                           currentState="1">
+                       <property name="message" value="$R{qalog}"/>
+                    </event>
+                  </publish>
+
+                 </eloop>
+              </esequence>
+             </econdtask>
+           </econdblock>
+
+         </eloop>
+       </eloop>
+
+       <write path="${shapelet.log}" text="true"
+              errorProperty="failed" rethrow="false" append="true">
+             <segment string="-- Stage_shapelet_measure_stars done" lineBreaks="1"/>
+       </write>
+
+       <print line=" -- Stage_shapelet_measure_stars done"/>
+
+         <publish>
+            <event ensembleid="${ensemble.id}" workflowid="${jid}"
+                   nodeid="$R{content_end}" currentState="1">
+                  <property name="message" value="$R{content_end}"/>
+            </event>
+         </publish>
+
+     </esequence>
+  </target>
+
+   <!-- Running SExtractor with runSExtractor.c for reduced images-->
+   <target name="Stage_cat4reduce" description="run SExtractor">
+       <esequence>
+           
+        <edeclare name="content_begin"  string="test begin"/>
+        <edeclare name="content_end"    string="test end"/>
+        <econdblock type="else-if">
+          <econdtask>
+            <eeval>
+             <statement>
+                <ecompare string="${platform}">
+                   <predicate string="TG" comparator="EQUALS"/>
+                </ecompare>
+             </statement>
+            </eeval>
+              <esequence>
+                <eassign name="content_begin"  string="Begin Stage_cat4reduce for ccd ${ccd.num} data on $G{host} for nite ${nite}"/>
+                <eassign name="content_end"    string="End Stage_cat4reduce for ccd ${ccd.num} data on $G{host} for nite ${nite}"/>
+              </esequence>
+          </econdtask>
+              <esequence>
+                <eassign name="content_begin"  string="Begin Stage_cat4reduce for ccd ${ccd.num} for nite ${nite}"/>
+                <eassign name="content_end"    string="End Stage_cat4reduce for ccd ${ccd.num} for nite ${nite}"/>
+              </esequence>
+        </econdblock>
+
+            <publish>
+              <event ensembleid="${ensemble.id}" workflowid="${jid}"
+                   nodeid="$R{content_begin}" currentState="1">
+                   <property name="message" value="$R{content_begin}"/>
+              </event>
+            </publish>
+
+             <rtexec inheritedEnv="false" execDir="${nite.dir}" 
+                     args="${cat4reduce.exec} ${cat4reduce.command_g}" quiet="true">
+                     <outMonitor file="${local.out}/${cat4reduce.log}"/>
+                     <errMonitor file="${local.out}/${cat4reduce.log}"/>
+             </rtexec>
+
+             <rtexec inheritedEnv="false" execDir="${nite.dir}" 
+                     args="${cat4reduce.exec} ${cat4reduce.command_r}" quiet="true">
+                     <outMonitor file="${local.out}/${cat4reduce.log}"/>
+                     <errMonitor file="${local.out}/${cat4reduce.log}"/>
+             </rtexec>
+
+             <rtexec inheritedEnv="false" execDir="${nite.dir}" 
+                     args="${cat4reduce.exec} ${cat4reduce.command_i}" quiet="true">
+                     <outMonitor file="${local.out}/${cat4reduce.log}"/>
+                     <errMonitor file="${local.out}/${cat4reduce.log}"/>
+             </rtexec>
+
+             <rtexec inheritedEnv="false" execDir="${nite.dir}" 
+                     args="${cat4reduce.exec} ${cat4reduce.command_z}" quiet="true">
+                     <outMonitor file="${local.out}/${cat4reduce.log}"/>
+                     <errMonitor file="${local.out}/${cat4reduce.log}"/>
+             </rtexec>
+
+ 	    <print line=" - Stage_cat4reduce done"/>	
+
+         <write path="${local.out}/${cat4reduce.log}" text="true" 
+                         errorProperty="failed" rethrow="false" append="true"> 
+	                 <segment string=" -- cat4reduce done" lineBreaks="1"/>
+         </write>
+
+         <publish>
+            <event ensembleid="${ensemble.id}" workflowid="${jid}"
+                   nodeid="$R{content_end}" currentState="1">
+                  <property name="message" value="$R{content_end}"/>
+            </event>
+         </publish>
+
+       </esequence>
+   </target>   
+
+   <!-- Create quality control outputs -->
+   <target name="Stage_qc" description="create quality control data">
+        <esequence>
+
+        <edeclare name="content_begin"  string="test begin"/>
+        <edeclare name="content_end"    string="test end"/>
+        <econdblock type="else-if">
+          <econdtask>
+            <eeval>
+             <statement>
+                <ecompare string="${platform}">
+                   <predicate string="TG" comparator="EQUALS"/>
+                </ecompare>
+             </statement>
+            </eeval>
+              <esequence>
+                <eassign name="content_begin"  string="Begin Stage_qc for ccd ${ccd.num} data on $G{host} for nite ${nite}"/>
+                <eassign name="content_end"    string="End Stage_qc for ccd ${ccd.num} data on $G{host} for nite ${nite}"/>
+              </esequence>
+          </econdtask>
+              <esequence>
+                <eassign name="content_begin"  string="Begin Stage_qc for ccd ${ccd.num} for nite ${nite}"/>
+                <eassign name="content_end"    string="End Stage_qc for ccd ${ccd.num} for nite ${nite}"/>
+              </esequence>
+        </econdblock>
+
+            <publish>
+              <event ensembleid="${ensemble.id}" workflowid="${jid}"
+                   nodeid="$R{content_begin}" currentState="1">
+                   <property name="message" value="$R{content_begin}"/>
+              </event>
+            </publish>
+
+  
+         <write path="${local.out}/${qc.log}" text="true" 
+                         errorProperty="failed" rethrow="false" append="true"> 
+	                 <segment string=" -- Beginning qc " lineBreaks="1"/>
+         </write>
+
+
+	        <edeclare name="alist" string="${bias.list}"/>
+	        <edeclare name="afile" string="${bias.fits.path}/${bias.fits.name}"/>
+	        <rtexec inheritedEnv="false" execDir="${nite.dir}"  
+                  args="${qc.exec} ${qc.args}" quiet="true">
+                  <errMonitor file="${local.out}/${qc.log}"/>
+		  <outMonitor file="${local.out}/${qc.log}"/>
+                </rtexec>
+
+         <write path="${local.out}/${qc.log}" text="true" 
+                         errorProperty="failed" rethrow="false" append="true"> 
+	                 <segment string=" -- qc done" lineBreaks="1"/>
+         </write>
+
+	 <print line=" - Stage_qc done"/>	    
+
+         <publish>
+            <event ensembleid="${ensemble.id}" workflowid="${jid}"
+                   nodeid="$R{content_end}" currentState="1">
+                  <property name="message" value="$R{content_end}"/>
+            </event>
+         </publish>
+
+        </esequence>
+   </target>
+
+
+   <!-- Running SExtractor+psfex with runSExtractor.c for reduced images -->
+   <target name="Stage_psfex_reduced" description="run SExtractor and psfex_reduced">
+       <esequence>
+           
+        <edeclare name="content_begin"  string="test begin"/>
+        <edeclare name="content_end"    string="test end"/>
+        <econdblock type="else-if">
+          <econdtask>
+            <eeval>
+             <statement>
+                <ecompare string="${platform}">
+                   <predicate string="TG" comparator="EQUALS"/>
+                </ecompare>
+             </statement>
+            </eeval>
+              <esequence>
+                <eassign name="content_begin"  string="Begin Stage_psfex_reduced for ccd ${ccd.num} data on $G{host} for nite ${nite}"/>
+                <eassign name="content_end"    string="End Stage_psfex_reduced for ccd ${ccd.num} data on $G{host} for nite ${nite}"/>
+              </esequence>
+          </econdtask>
+              <esequence>
+                <eassign name="content_begin"  string="Begin Stage_psfex_reduced for ccd ${ccd.num} for nite ${nite}"/>
+                <eassign name="content_end"    string="End Stage_psfex_reduced for ccd ${ccd.num} for nite ${nite}"/>
+              </esequence>
+        </econdblock>
+
+            <publish>
+              <event ensembleid="${ensemble.id}" workflowid="${jid}"
+                   nodeid="$R{content_begin}" currentState="1">
+                   <property name="message" value="$R{content_begin}"/>
+              </event>
+            </publish>
+
+             <rtexec inheritedEnv="false" execDir="${nite.dir}" 
+                     args="${psfex_reduced.exec} ${psfex_reduced.command_g}" quiet="true">
+                     <outMonitor file="${local.out}/${psfex_reduced.log}"/>
+                     <errMonitor file="${local.out}/${psfex_reduced.log}"/>
+             </rtexec>
+
+             <rtexec inheritedEnv="false" execDir="${nite.dir}" 
+                     args="${psfex_reduced.exec} ${psfex_reduced.command_r}" quiet="true">
+                     <outMonitor file="${local.out}/${psfex_reduced.log}"/>
+                     <errMonitor file="${local.out}/${psfex_reduced.log}"/>
+             </rtexec>
+
+             <rtexec inheritedEnv="false" execDir="${nite.dir}" 
+                     args="${psfex_reduced.exec} ${psfex_reduced.command_i}" quiet="true">
+                     <outMonitor file="${local.out}/${psfex_reduced.log}"/>
+                     <errMonitor file="${local.out}/${psfex_reduced.log}"/>
+             </rtexec>
+
+             <rtexec inheritedEnv="false" execDir="${nite.dir}" 
+                     args="${psfex_reduced.exec} ${psfex_reduced.command_z}" quiet="true">
+                     <outMonitor file="${local.out}/${psfex_reduced.log}"/>
+                     <errMonitor file="${local.out}/${psfex_reduced.log}"/>
+             </rtexec>
+
+ 	    <print line=" - Stage_psfex_reduced done"/>	
+
+         <write path="${local.out}/${psfex_reduced.log}" text="true" 
+                         errorProperty="failed" rethrow="false" append="true"> 
+	                 <segment string=" -- psfex_reduced done" lineBreaks="1"/>
+         </write>
+
+         <publish>
+            <event ensembleid="${ensemble.id}" workflowid="${jid}"
+                   nodeid="$R{content_end}" currentState="1">
+                  <property name="message" value="$R{content_end}"/>
+            </event>
+         </publish>
+
+       </esequence>
+   </target>   
+
+
+   <!-- Running SExtractor+psfex with runSExtractor.c for remap images -->
+   <target name="Stage_psfex_remap" description="run SExtractor and psfex_remap">
+       <esequence>
+           
+        <edeclare name="content_begin"  string="test begin"/>
+        <edeclare name="content_end"    string="test end"/>
+        <econdblock type="else-if">
+          <econdtask>
+            <eeval>
+             <statement>
+                <ecompare string="${platform}">
+                   <predicate string="TG" comparator="EQUALS"/>
+                </ecompare>
+             </statement>
+            </eeval>
+              <esequence>
+                <eassign name="content_begin"  string="Begin Stage_psfex_remap for ccd ${ccd.num} data on $G{host} for nite ${nite}"/>
+                <eassign name="content_end"    string="End Stage_psfex_remap for ccd ${ccd.num} data on $G{host} for nite ${nite}"/>
+              </esequence>
+          </econdtask>
+              <esequence>
+                <eassign name="content_begin"  string="Begin Stage_psfex_remap for ccd ${ccd.num} for nite ${nite}"/>
+                <eassign name="content_end"    string="End Stage_psfex_remap for ccd ${ccd.num} for nite ${nite}"/>
+              </esequence>
+        </econdblock>
+
+            <publish>
+              <event ensembleid="${ensemble.id}" workflowid="${jid}"
+                   nodeid="$R{content_begin}" currentState="1">
+                   <property name="message" value="$R{content_begin}"/>
+              </event>
+            </publish>
+
+             <rtexec inheritedEnv="false" execDir="${nite.dir}" 
+                     args="${psfex_remap.exec} ${psfex_remap.command_g}" quiet="true">
+                     <outMonitor file="${local.out}/${psfex_remap.log}"/>
+                     <errMonitor file="${local.out}/${psfex_remap.log}"/>
+             </rtexec>
+
+             <rtexec inheritedEnv="false" execDir="${nite.dir}" 
+                     args="${psfex_remap.exec} ${psfex_remap.command_r}" quiet="true">
+                     <outMonitor file="${local.out}/${psfex_remap.log}"/>
+                     <errMonitor file="${local.out}/${psfex_remap.log}"/>
+             </rtexec>
+
+             <rtexec inheritedEnv="false" execDir="${nite.dir}" 
+                     args="${psfex_remap.exec} ${psfex_remap.command_i}" quiet="true">
+                     <outMonitor file="${local.out}/${psfex_remap.log}"/>
+                     <errMonitor file="${local.out}/${psfex_remap.log}"/>
+             </rtexec>
+
+             <rtexec inheritedEnv="false" execDir="${nite.dir}" 
+                     args="${psfex_remap.exec} ${psfex_remap.command_z}" quiet="true">
+                     <outMonitor file="${local.out}/${psfex_remap.log}"/>
+                     <errMonitor file="${local.out}/${psfex_remap.log}"/>
+             </rtexec>
+
+ 	    <print line=" - Stage_psfex_remap done"/>	
+
+         <write path="${local.out}/${psfex_remap.log}" text="true" 
+                         errorProperty="failed" rethrow="false" append="true"> 
+	                 <segment string=" -- psfex_remap done" lineBreaks="1"/>
+         </write>
+
+         <publish>
+            <event ensembleid="${ensemble.id}" workflowid="${jid}"
+                   nodeid="$R{content_end}" currentState="1">
+                  <property name="message" value="$R{content_end}"/>
+            </event>
+         </publish>
+
+       </esequence>
+   </target>   
+

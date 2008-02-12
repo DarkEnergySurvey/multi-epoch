@@ -1,0 +1,168 @@
+#!/usr/bin/env perl
+########################################################################
+#  $Id$
+#
+#  $Rev::                                  $:  # Revision of last commit.
+#  $LastChangedBy::                        $:  # Author of last commit. 
+#  $LastChangedDate::                      $:  # Date of last commit.
+#
+#  Authors: 
+#         Michelle Gower (mgower@ncsa.uiuc.edu)
+#         Darren Adams (dadams@ncsa.uiuc.edu)
+#
+#  Developed at: 
+#  The National Center for Supercomputing Applications (NCSA).
+#
+#  Copyright (C) 2007 Board of Trustees of the University of Illinois. 
+#  All rights reserved.
+#
+#  DESCRIPTION:
+#
+#######################################################################
+
+use strict;
+use warnings;
+
+use File::Basename;
+use Fcntl;
+use Getopt::Long;
+use Cwd;
+use FindBin;
+use POSIX qw(ceil);
+use Switch;
+use strict;
+use warnings;
+
+use lib "$FindBin::Bin/../lib";
+use DES::utils::dbutils;
+use DES::utils::misc;
+use DES::utils::hist;
+use DES::utils::submitfunc;
+use DES::desconfig;
+use DES::desDBI;
+
+my ($stat);
+my ($help, $version);
+my ($configfile, $config);
+my ($debugfh);
+my ($desdb, @imagelist, $srcimage);
+
+my $dagfile = "convert_mngr.dag";
+
+#&Getopt::Long::Configure( 'noignorecase', 'no_autoabbrev');
+#Getopt::Long::GetOptions(
+#   'version|v' => \$version
+#);
+
+my $DES_HOME = getHome() or die "Error: Can't determine DES_HOME";
+
+open $debugfh, "> preconvertmngr.out";
+local *STDOUT = $debugfh;
+local *STDERR = $debugfh;
+if (scalar(@ARGV) == 1)
+{
+  $configfile = $ARGV[0];
+}
+else
+{
+  print "Usage: despreconvertmngr configfile\n";
+  close $debugfh;
+  exit $FAILURE;
+}
+
+# read sysinfo file
+$config = new DES::desconfig;
+$config->readConfig($configfile, 0, $debugfh);
+
+logEvent($config, "convert", "j", "mngr", "pretask");
+
+if (-r $dagfile)
+{
+   print "$dagfile already exists.   Skipping dag creation\n";
+   close $debugfh;
+   exit $SUCCESS;
+}
+
+my %SearchDefs;
+$SearchDefs{"stage"} = "convert"; 
+my $nite = $config->getValueReq("nite");
+my $uniqname = $config->getValueReq("uniqname");
+my $run_site = $config->getValueReq("run_site", \%SearchDefs);
+$SearchDefs{"site"} = $run_site; 
+my $grid_host = $config->getValueReq("grid_host", \%SearchDefs); 
+my $grid_port = $config->getValue("grid_port", \%SearchDefs); 
+my $globsched = "$grid_host:$grid_port/jobmanager-fork";
+
+my $run_archive_loc = $config->getValue("run_archive_loc", \%SearchDefs);
+$SearchDefs{"archive"} = $run_archive_loc; 
+my $archive_root = $config->getValueReq("archive_root", \%SearchDefs);
+my $remdir = "$archive_root/raw/$nite";
+my $run_software_loc = $config->getValue("run_software_loc", \%SearchDefs);
+$SearchDefs{"software"} = $run_software_loc; 
+my $pipeline_root = $config->getValueReq("pipeline_root", \%SearchDefs);
+
+# Kind of hardwired, could elevate these to config.
+my $remote_etcdir = join('/',$pipeline_root,'trunk','reduction','etc');
+my $remote_bindir = join('/',$pipeline_root,'trunk','development','bin');
+my $rawnitedir =  join('/',$archive_root,'raw',$nite);
+
+### get list of images from database
+$desdb = new DES::desDBI;
+$desdb->getNiteSrcImageList($nite, \@imagelist);
+
+### create script to create remote directories and copy bin and etc dirs
+my $fname = "setupdirs.exe";
+open(FH, "> $fname");
+print FH "#!/bin/sh\n";
+
+foreach my $dir (@imagelist) {
+  my $arg = join('/',$rawnitedir,'raw',$dir);
+  print FH "mkdir -p $arg\n";
+}
+
+print FH "mkdir -p $rawnitedir/log\n";
+
+# .svn directories don't have read permissions
+# so excluding .* files from copy
+print FH "mkdir -p $rawnitedir/etc\n";
+print FH "cp -r $remote_etcdir/* $rawnitedir/etc\n";
+print FH "mkdir -p $rawnitedir/bin\n";
+print FH "cp -r $remote_bindir/* $rawnitedir/bin\n";
+
+close FH;
+system("chmod a+x $fname");
+
+# create inner dag for convert stage
+open MNGR, "> $dagfile";
+print MNGR <<EOF;
+   JOB remsetup $DES_HOME/lib/DES/condor/remotesetup.condor
+   VARS remsetup globsched="$globsched" remdir="$remdir"
+   SCRIPT PRE remsetup $DES_HOME/libexec/despretask $uniqname.descfg convert j remsetup
+   SCRIPT POST remsetup $DES_HOME/libexec/desposttask $uniqname.descfg convert j remsetup \$RETURN
+
+   JOB ingestraw $DES_HOME/lib/DES/condor/ingestraw.condor
+VARS ingestraw deshome="$DES_HOME" descfg="$uniqname.descfg"
+SCRIPT PRE ingestraw $DES_HOME/libexec/despretask  $uniqname.descfg convert j ingestraw
+SCRIPT POST ingestraw $DES_HOME/libexec/desposttask $uniqname.descfg convert j ingestraw \$RETURN
+
+EOF
+
+foreach $srcimage (@imagelist) {
+print "Adding DAG entry for image '$srcimage'\n";
+   print MNGR <<EOF;
+JOB convert_${srcimage} convert.condor
+VARS convert_${srcimage} imgfile="$srcimage"
+SCRIPT PRE convert_${srcimage} $DES_HOME/libexec/despretask $uniqname.descfg convert j $srcimage
+SCRIPT POST convert_${srcimage} $DES_HOME/libexec/descheckconvert $uniqname.descfg $srcimage
+PARENT remsetup CHILD convert_${srcimage}
+PARENT convert_${srcimage} CHILD ingestraw
+
+EOF
+}
+close MNGR;
+
+addInfoToDag($config, "$dagfile", \*STDOUT);
+
+close $debugfh;
+
+exit $SUCCESS;

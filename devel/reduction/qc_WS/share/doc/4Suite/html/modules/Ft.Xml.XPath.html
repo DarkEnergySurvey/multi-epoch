@@ -1,0 +1,348 @@
+<html>
+  <head>
+    <meta content="text/html; charset=iso-8859-1" http-equiv="Content-Type">
+    <title>4Suite API Documentation: Ft.Xml.XPath</title>
+    <link href="modules.css" type="text/css" rel="stylesheet">
+  </head>
+  <body>
+    <div class="universal-header"><span class="universal-header-prefix">&nbsp;&nbsp;&nbsp;</span>&nbsp;<span class="universal-header-prefix">&nbsp;&nbsp;</span>&nbsp;<span class="universal-header-prefix">&nbsp;</span>&nbsp;<a href="../index.html">4Suite<sup>&trade;</sup> API Documentation</a></div>
+    <h1><span class="glyph-arrow">&#9658;</span> Module <span class="this-name"><a href="Ft.html" title="Ft">Ft</a>.<a href="Ft.Xml.html" title="Ft.Xml">Xml</a>.XPath</span></h1>
+    <div class="abstract">4XPath initialization and principal functions</div>
+    <pre class="description">Copyright 2005 Fourthought, Inc. (USA).
+Detailed license and copyright information: http://4suite.org/COPYRIGHT
+Project home, documentation, distributions: http://4suite.org/</pre>
+    <div class="summary-section">
+      <table cellpadding="0" cellspacing="0">
+        <tbody>
+          <tr>
+            <td valign="top">
+              <div class="summary-header">Classes:</div>
+              <div class="summary-list"><span class="class-name"><a href="#CompiletimeException">CompiletimeException</a></span>, <span class="class-name"><a href="#RuntimeException">RuntimeException</a></span>, <span class="class-name"><a href="#XPathException">XPathException</a></span></div>
+            </td>
+            <td width="7" valign="middle"></td>
+            <td bgcolor="#C5C5C5" valign="middle" width="1"></td>
+            <td width="7" valign="middle"></td>
+            <td valign="top">
+              <div class="summary-header">Functions:</div>
+              <div class="summary-list"><span class="function-name"><a href="#Compile">Compile</a></span>, <span class="function-name"><a href="#Evaluate">Evaluate</a></span>, <span class="function-name"><a href="#NormalizeNode">NormalizeNode</a></span>, <span class="function-name"><a href="#SimpleEvaluate">SimpleEvaluate</a></span></div>
+            </td>
+            <td width="7" valign="middle"></td>
+            <td bgcolor="#C5C5C5" valign="middle" width="1"></td>
+            <td width="7" valign="middle"></td>
+            <td valign="top">
+              <div class="summary-header">Globals:</div>
+              <div class="summary-list"><span class="global-name"><a href="#FT_EXT_NAMESPACE">FT_EXT_NAMESPACE</a></span>, <span class="global-name"><a href="#NAMESPACE_NODE">NAMESPACE_NODE</a></span>, <span class="global-name"><a href="#XPATH_NAMESPACE_NODE">XPATH_NAMESPACE_NODE</a></span></div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="section">
+      <h2>Modules</h2>
+      <table class="modules">
+        <tbody>
+          <tr>
+            <td class="moduledef" valign="top">
+              <div class="module-name"><a name="BuiltInExtFunctions"></a><a href="Ft.Xml.XPath.BuiltInExtFunctions.html">BuiltInExtFunctions</a></div>
+            </td>
+            <td class="moduledesc" valign="bottom">
+              <div class="abstract">4XPath-specific extension functions</div>
+            </td>
+          </tr>
+          <tr>
+            <td class="moduledef" valign="top">
+              <div class="module-name"><a name="Context"></a><a href="Ft.Xml.XPath.Context.html">Context</a></div>
+            </td>
+            <td class="moduledesc" valign="bottom">
+              <div class="abstract">The context of an XPath expression</div>
+            </td>
+          </tr>
+          <tr>
+            <td class="moduledef" valign="top">
+              <div class="module-name"><a name="Context"></a><a href="Ft.Xml.XPath.Context.html">Context</a></div>
+            </td>
+            <td class="moduledesc" valign="bottom">
+              <div class="abstract">The context of an XPath expression</div>
+            </td>
+          </tr>
+          <tr>
+            <td class="moduledef" valign="top">
+              <div class="module-name"><a name="Conversions"></a><a href="Ft.Xml.XPath.Conversions.html">Conversions</a></div>
+            </td>
+            <td class="moduledesc" valign="bottom">
+              <div class="abstract">The implementation of the XPath object type conversions.</div>
+            </td>
+          </tr>
+          <tr>
+            <td class="moduledef" valign="top">
+              <div class="module-name"><a name="CoreFunctions"></a><a href="Ft.Xml.XPath.CoreFunctions.html">CoreFunctions</a></div>
+            </td>
+            <td class="moduledesc" valign="bottom">
+              <div class="abstract">The implementation of the core functions from XPath 1.0.</div>
+            </td>
+          </tr>
+          <tr>
+            <td class="moduledef" valign="top">
+              <div class="module-name"><a name="MathFunctions"></a><a href="Ft.Xml.XPath.MathFunctions.html">MathFunctions</a></div>
+            </td>
+            <td class="moduledesc" valign="bottom">
+              <div class="abstract">4XPath-specific math extension functions</div>
+            </td>
+          </tr>
+          <tr>
+            <td class="moduledef" valign="top">
+              <div class="module-name"><a name="MessageSource"></a><a href="Ft.Xml.XPath.MessageSource.html">MessageSource</a></div>
+            </td>
+            <td class="moduledesc" valign="bottom">
+              <div class="abstract">XPath error codes and messages</div>
+            </td>
+          </tr>
+          <tr>
+            <td class="moduledef" valign="top">
+              <div class="module-name"><a name="ParsedAbbreviatedAbsoluteLocationPath"></a><a href="Ft.Xml.XPath.ParsedAbbreviatedAbsoluteLocationPath.html">ParsedAbbreviatedAbsoluteLocationPath</a></div>
+            </td>
+            <td class="moduledesc" valign="bottom">
+              <div class="abstract">A parsed token that represents an abbreviated absolute location path.</div>
+            </td>
+          </tr>
+          <tr>
+            <td class="moduledef" valign="top">
+              <div class="module-name"><a name="ParsedAbbreviatedRelativeLocationPath"></a><a href="Ft.Xml.XPath.ParsedAbbreviatedRelativeLocationPath.html">ParsedAbbreviatedRelativeLocationPath</a></div>
+            </td>
+            <td class="moduledesc" valign="bottom">
+              <div class="abstract">A parsed token that represents a abbreviated relative location path.</div>
+            </td>
+          </tr>
+          <tr>
+            <td class="moduledef" valign="top">
+              <div class="module-name"><a name="ParsedAbsoluteLocationPath"></a><a href="Ft.Xml.XPath.ParsedAbsoluteLocationPath.html">ParsedAbsoluteLocationPath</a></div>
+            </td>
+            <td class="moduledesc" valign="bottom">
+              <div class="abstract">A Parsed Token that represents a absolute location path in the parsed tree.
+WWW: http://4suite.org/XPATH        e-mail: support@4suite.org</div>
+            </td>
+          </tr>
+          <tr>
+            <td class="moduledef" valign="top">
+              <div class="module-name"><a name="ParsedAxisSpecifier"></a><a href="Ft.Xml.XPath.ParsedAxisSpecifier.html">ParsedAxisSpecifier</a></div>
+            </td>
+            <td class="moduledesc" valign="bottom">
+              <div class="abstract">A parsed token that represents an axis specifier.</div>
+            </td>
+          </tr>
+          <tr>
+            <td class="moduledef" valign="top">
+              <div class="module-name"><a name="ParsedExpr"></a><a href="Ft.Xml.XPath.ParsedExpr.html">ParsedExpr</a></div>
+            </td>
+            <td class="moduledesc" valign="bottom">
+              <div class="abstract">The implementation of parsed XPath expression tokens.</div>
+            </td>
+          </tr>
+          <tr>
+            <td class="moduledef" valign="top">
+              <div class="module-name"><a name="ParsedNodeTest"></a><a href="Ft.Xml.XPath.ParsedNodeTest.html">ParsedNodeTest</a></div>
+            </td>
+            <td class="moduledesc" valign="bottom">
+              <div class="abstract">A parsed token that represents a node test.</div>
+            </td>
+          </tr>
+          <tr>
+            <td class="moduledef" valign="top">
+              <div class="module-name"><a name="ParsedPredicateList"></a><a href="Ft.Xml.XPath.ParsedPredicateList.html">ParsedPredicateList</a></div>
+            </td>
+            <td class="moduledesc" valign="bottom">
+              <div class="abstract">A parsed token that represents a predicate list.</div>
+            </td>
+          </tr>
+          <tr>
+            <td class="moduledef" valign="top">
+              <div class="module-name"><a name="ParsedRelativeLocationPath"></a><a href="Ft.Xml.XPath.ParsedRelativeLocationPath.html">ParsedRelativeLocationPath</a></div>
+            </td>
+            <td class="moduledesc" valign="bottom">
+              <div class="abstract">A parsed token that represents a relative location path in the parsed result tree.
+    
+Copyright 2005 Fourthought, Inc. (USA).
+Detailed license and copyright information: http://4suite.org/COPYRIGHT
+Project home, documentation, distributions: http://4suite.org/</div>
+            </td>
+          </tr>
+          <tr>
+            <td class="moduledef" valign="top">
+              <div class="module-name"><a name="ParsedStep"></a><a href="Ft.Xml.XPath.ParsedStep.html">ParsedStep</a></div>
+            </td>
+            <td class="moduledesc" valign="bottom">
+              <div class="abstract">A parsed token that represents a step.</div>
+            </td>
+          </tr>
+          <tr>
+            <td class="moduledef" valign="top">
+              <div class="module-name"><a name="Util"></a><a href="Ft.Xml.XPath.Util.html">Util</a></div>
+            </td>
+            <td class="moduledesc" valign="bottom">
+              <div class="abstract">General utilities for XPath applications</div>
+            </td>
+          </tr>
+          <tr>
+            <td class="moduledef" valign="top">
+              <div class="module-name"><a name="XPathParserc"></a><a href="Ft.Xml.XPath.XPathParserc.html">XPathParserc</a></div>
+            </td>
+            <td class="moduledesc" valign="bottom"></td>
+          </tr>
+          <tr>
+            <td class="moduledef" valign="top">
+              <div class="module-name"><a name="XPathTypes"></a><a href="Ft.Xml.XPath.XPathTypes.html">XPathTypes</a></div>
+            </td>
+            <td class="moduledesc" valign="bottom">
+              <div class="abstract">Mappings between Python types and standard XPath object types</div>
+            </td>
+          </tr>
+          <tr>
+            <td class="moduledef" valign="top">
+              <div class="module-name"><a name="g_parser"></a><a href="Ft.Xml.XPath.XPathParserc.html">g_parser</a></div>
+            </td>
+            <td class="moduledesc" valign="bottom"></td>
+          </tr>
+          <tr>
+            <td class="moduledef" valign="top">
+              <div class="module-name"><a name="parser"></a><a href="Ft.Xml.XPath.XPathParserc.html">parser</a></div>
+            </td>
+            <td class="moduledesc" valign="bottom"></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="section">
+      <h2>Classes</h2>
+      <dl class="classes">
+        <dt class="classdef"><a name="CompiletimeException"></a>class <span class="class-name">CompiletimeException</span><span class="bases">(<span class="class-name"><a href="Ft.Xml.XPath.html#XPathException">XPathException</a></span>)</span></dt>
+        <dd class="classdesc">
+          <div class="abstract">The exception raised when an error is encountered during the
+parsing or compilation of an XPath expression.</div>
+          <h3>Methods</h3>
+          <dl class="methods">
+            <dt class="methoddef"><a name="CompiletimeException-__init__"><span class="method-name">__init__</span></a>(<span class="argument-name">self</span>, <span class="argument-name">errorCode</span>, <span class="argument-name">*args</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dd class="overrides"><b>Overrides: </b><span class="inherited-name"><a href="Ft.Xml.XPath.html#XPathException-__init__">__init__</a></span> from class <span class="class-name"><a href="Ft.Xml.XPath.html#XPathException">XPathException</a></span></dd>
+          </dl>
+          <h3>Methods inherited from class <a href="Ft.html#FtException">Ft.FtException</a></h3>
+          <div class="inherited"><span class="inherited-name"><a href="Ft.html#FtException-__getattr__">__getattr__</a></span>, <span class="inherited-name"><a href="Ft.html#FtException-__repr__">__repr__</a></span>, <span class="inherited-name"><a href="Ft.html#FtException-__str__">__str__</a></span></div>
+          <h3>Methods inherited from class <span class="undocumented">Exception</span></h3>
+          <div class="inherited"><span class="inherited-name">__getitem__</span></div>
+          <h3>Members</h3>
+          <dl class="members">
+            <dt class="memberdef"><a name="INTERNAL"><span class="member-name">INTERNAL</span></a> = 1</dt>
+            <dt class="memberdef"><a name="SYNTAX"><span class="member-name">SYNTAX</span></a> = 2</dt>
+          </dl>
+        </dd>
+        <dt class="classdef"><a name="RuntimeException"></a>class <span class="class-name">RuntimeException</span><span class="bases">(<span class="class-name"><a href="Ft.Xml.XPath.html#XPathException">XPathException</a></span>)</span></dt>
+        <dd class="classdesc">
+          <div class="abstract">The exception raised when an error is encountered during the
+parsing or evaluation of an XPath expression.</div>
+          <h3>Methods</h3>
+          <dl class="methods">
+            <dt class="methoddef"><a name="RuntimeException-__init__"><span class="method-name">__init__</span></a>(<span class="argument-name">self</span>, <span class="argument-name">errorCode</span>, <span class="argument-name">*args</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dd class="overrides"><b>Overrides: </b><span class="inherited-name"><a href="Ft.Xml.XPath.html#XPathException-__init__">__init__</a></span> from class <span class="class-name"><a href="Ft.Xml.XPath.html#XPathException">XPathException</a></span></dd>
+          </dl>
+          <h3>Methods inherited from class <a href="Ft.html#FtException">Ft.FtException</a></h3>
+          <div class="inherited"><span class="inherited-name"><a href="Ft.html#FtException-__getattr__">__getattr__</a></span>, <span class="inherited-name"><a href="Ft.html#FtException-__repr__">__repr__</a></span>, <span class="inherited-name"><a href="Ft.html#FtException-__str__">__str__</a></span></div>
+          <h3>Methods inherited from class <span class="undocumented">Exception</span></h3>
+          <div class="inherited"><span class="inherited-name">__getitem__</span></div>
+          <h3>Members</h3>
+          <dl class="members">
+            <dt class="memberdef"><a name="ARGCOUNT_ATLEAST"><span class="member-name">ARGCOUNT_ATLEAST</span></a> = 202</dt>
+            <dt class="memberdef"><a name="ARGCOUNT_ATMOST"><span class="member-name">ARGCOUNT_ATMOST</span></a> = 204</dt>
+            <dt class="memberdef"><a name="ARGCOUNT_EXACT"><span class="member-name">ARGCOUNT_EXACT</span></a> = 203</dt>
+            <dt class="memberdef"><a name="ARGCOUNT_NONE"><span class="member-name">ARGCOUNT_NONE</span></a> = 201</dt>
+            <dt class="memberdef"><a name="INTERNAL"><span class="member-name">INTERNAL</span></a> = 1</dt>
+            <dt class="memberdef"><a name="NO_CONTEXT"><span class="member-name">NO_CONTEXT</span></a> = 10</dt>
+            <dt class="memberdef"><a name="UNDEFINED_FUNCTION"><span class="member-name">UNDEFINED_FUNCTION</span></a> = 102</dt>
+            <dt class="memberdef"><a name="UNDEFINED_PREFIX"><span class="member-name">UNDEFINED_PREFIX</span></a> = 101</dt>
+            <dt class="memberdef"><a name="UNDEFINED_VARIABLE"><span class="member-name">UNDEFINED_VARIABLE</span></a> = 100</dt>
+            <dt class="memberdef"><a name="WRONG_ARGUMENTS"><span class="member-name">WRONG_ARGUMENTS</span></a> = 200</dt>
+          </dl>
+        </dd>
+        <dt class="classdef"><a name="XPathException"></a>class <span class="class-name">XPathException</span><span class="bases">(<span class="class-name"><a href="Ft.html#FtException">Ft.FtException</a></span>)</span></dt>
+        <dd class="classdesc">
+          <div class="abstract">Base class for exceptions specific to XPath processing</div>
+          <h3>Methods</h3>
+          <dl class="methods">
+            <dt class="methoddef"><a name="XPathException-__init__"><span class="method-name">__init__</span></a>(<span class="argument-name">self</span>, <span class="argument-name">errorCode</span>, <span class="argument-name">messages</span>, <span class="argument-name">args</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dd class="overrides"><b>Overrides: </b><span class="inherited-name"><a href="Ft.html#FtException-__init__">__init__</a></span> from class <span class="class-name"><a href="Ft.html#FtException">FtException</a></span></dd>
+          </dl>
+          <h3>Methods inherited from class <a href="Ft.html#FtException">Ft.FtException</a></h3>
+          <div class="inherited"><span class="inherited-name"><a href="Ft.html#FtException-__getattr__">__getattr__</a></span>, <span class="inherited-name"><a href="Ft.html#FtException-__repr__">__repr__</a></span>, <span class="inherited-name"><a href="Ft.html#FtException-__str__">__str__</a></span></div>
+          <h3>Methods inherited from class <span class="undocumented">Exception</span></h3>
+          <div class="inherited"><span class="inherited-name">__getitem__</span></div>
+        </dd>
+      </dl>
+    </div>
+    <div class="section">
+      <h2>Functions</h2>
+      <dl class="functions">
+        <dt class="functiondef"><a name="Compile"><span class="function-name">Compile</span></a>(<span class="argument-name">expr</span>)</dt>
+        <dd class="functiondesc">
+          <div class="abstract">Given an XPath expression as a string, returns an object that allows
+an evaluation engine to operate on the expression efficiently.
+This "compiled" expression object can be passed to the Evaluate
+function instead of a string, in order to shorten the amount of time
+needed to evaluate the expression.</div>
+        </dd>
+        <dt class="functiondef"><a name="Evaluate"><span class="function-name">Evaluate</span></a>(<span class="argument-name">expr</span>, <span class="argument-name">contextNode</span><span class="argument-default">=None</span>, <span class="argument-name">context</span><span class="argument-default">=None</span>)</dt>
+        <dd class="functiondesc">
+          <div class="abstract">Evaluates the given XPath expression.</div>
+          <pre class="description">Two arguments are required: the expression (as a string or compiled
+expression object), and a context. The context can be given as a
+Domlette node via the 'contextNode' named argument, or can be given as
+an Ft.Xml.XPath.Context.Context object via the 'context' named
+argument.
+
+If namespace bindings or variable bindings are needed, use a
+Context object. If extension functions are needed, either use a
+Context object, or set the EXTMODULES environment variable to be a
+':'-separated list of names of Python modules that implement
+extension functions.
+
+The return value will be one of the following:
+node-set: list of Domlette node objects (xml.dom.Node based);
+string: Unicode string type;
+number: float type;
+boolean: Ft.Lib.boolean C extension object;
+or a non-XPath object (i.e. as returned by an extension function).</pre>
+        </dd>
+        <dt class="functiondef"><a name="NormalizeNode"><span class="function-name">NormalizeNode</span></a>(<span class="argument-name">node</span>)</dt>
+        <dd class="functiondesc">
+          <div class="abstract">NormalizeNode is used to prepare a DOM for XPath evaluation.</div>
+          <pre class="description">1.  Convert CDATA Sections to Text Nodes.
+2.  Normalize all text nodes (adjacent nodes are merged into the first one).</pre>
+        </dd>
+        <dt class="functiondef"><a name="SimpleEvaluate"><span class="function-name">SimpleEvaluate</span></a>(<span class="argument-name">expr</span>, <span class="argument-name">node</span>, <span class="argument-name">explicitNss</span><span class="argument-default">=None</span>)</dt>
+        <dd class="functiondesc">
+          <div class="abstract">Designed to be the most simple/brain-dead interface to using XPath
+Usually invoked through Node objects using:
+  node.xpath(expr[, explicitNss])</div>
+          <pre class="description">expr - XPath expression in string or compiled form
+node - the node to be used as core of the context for evaluating the XPath
+explicitNss - (optional) any additional or overriding namespace mappings
+              in the form of a dictionary of prefix: namespace
+              the base namespace mappings are taken from in-scope
+              declarations on the given node.  This explicit dictionary
+              is suprimposed on the base mappings</pre>
+        </dd>
+      </dl>
+    </div>
+    <div class="section">
+      <h2>Globals</h2>
+      <dl class="globals">
+        <dt class="globaldef"><a name="FT_EXT_NAMESPACE"><span class="global-name">FT_EXT_NAMESPACE</span></a> = 'http://xmlns.4suite.org/ext'</dt>
+        <dd class="globaldesc"></dd>
+        <dt class="globaldef"><a name="NAMESPACE_NODE"><span class="global-name">NAMESPACE_NODE</span></a> = 13</dt>
+        <dd class="globaldesc"></dd>
+        <dt class="globaldef"><a name="XPATH_NAMESPACE_NODE"><span class="global-name">XPATH_NAMESPACE_NODE</span></a> = 13</dt>
+        <dd class="globaldesc"></dd>
+      </dl>
+    </div>
+    <div class="universal-footer">Last modified on 2005-04-18 16:47:00</div>
+  </body>
+</html>

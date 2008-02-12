@@ -1,0 +1,44 @@
+  <target name="Stage_checkpsm" description="Checking PSM">
+   <property file="${mypath}/module_psmft/checkpsm.properties"/>
+
+     <envtosysprops/>
+     <esequence>
+
+      <publish>
+            <event ensembleid="${ensemble.id}"
+                   workflowid="Main"
+                   nodeid="Begin Stage_checkpsm"
+                   currentState="0">
+               <property name="message" value="Begin Stage_checkpsm"/>
+            </event>
+      </publish>
+
+      <print line=" - Begin Stage_checkpsm"/>
+
+      <edeclare name="psmlog" string="${mypath}/jobs/${uid}_PSM/${uid_in}_${nite}.PSM.out"/>
+      <edeclare name="psmdir" string="${mypath}/jobs/${uid}_PSM"/>
+
+      <rtexec inheritedEnv="true" execDir="${mypath}"
+              args="${checkpsm.exec} ${checkpsm.args}" quiet="true">
+        <outMonitor file="$R{psmlog}"/>
+        <errMonitor file="$R{psmlog}"/>
+      </rtexec>
+
+      <rtexec inheritedEnv="true" execDir="${mypath}"
+             args="${mv.exec} ${mv.args}" quiet="true">
+      </rtexec>
+
+      <print line=" - Stage_checkpsm done"/>
+      <print line=" "/>
+
+      <publish>
+          <event ensembleid="${ensemble.id}"
+                 workflowid="Main"
+                 nodeid="End Stage_checkpsm"
+                 currentState="1">
+               <property name="message" value="End Stage_checkpsm"/>
+          </event>
+      </publish>
+
+     </esequence>
+  </target>

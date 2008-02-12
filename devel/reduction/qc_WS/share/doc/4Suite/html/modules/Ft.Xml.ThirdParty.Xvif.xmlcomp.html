@@ -1,0 +1,132 @@
+<html>
+  <head>
+    <meta content="text/html; charset=iso-8859-1" http-equiv="Content-Type">
+    <title>4Suite API Documentation: Ft.Xml.ThirdParty.Xvif.xmlcomp</title>
+    <link href="modules.css" type="text/css" rel="stylesheet">
+  </head>
+  <body>
+    <div class="universal-header"><span class="universal-header-prefix">&nbsp;&nbsp;&nbsp;</span>&nbsp;<span class="universal-header-prefix">&nbsp;&nbsp;</span>&nbsp;<span class="universal-header-prefix">&nbsp;</span>&nbsp;<a href="../index.html">4Suite<sup>&trade;</sup> API Documentation</a></div>
+    <h1><span class="glyph-arrow">&#9658;</span> Module <span class="this-name"><a href="Ft.html" title="Ft">Ft</a>.<a href="Ft.Xml.html" title="Ft.Xml">Xml</a>.<a href="Ft.Xml.ThirdParty.html" title="Ft.Xml.ThirdParty">ThirdParty</a>.<a href="Ft.Xml.ThirdParty.Xvif.html" title="Ft.Xml.ThirdParty.Xvif">Xvif</a>.xmlcomp</span></h1>
+    <div class="abstract"># $Header: /var/local/cvsroot/4Suite/Ft/Xml/ThirdParty/Xvif/xmlcomp.py,v 1.3 2004/10/12 22:59:14 uogbuji Exp $</div>
+    <div class="summary-section">
+      <table cellpadding="0" cellspacing="0">
+        <tbody>
+          <tr>
+            <td valign="top">
+              <div class="summary-header">Classes:</div>
+              <div class="summary-list"><span class="class-name"><a href="#XmlComp">XmlComp</a></span></div>
+            </td>
+            <td width="7" valign="middle"></td>
+            <td bgcolor="#C5C5C5" valign="middle" width="1"></td>
+            <td width="7" valign="middle"></td>
+            <td valign="top">
+              <div class="summary-header">Functions:</div>
+              <div class="summary-list"><span class="function-name"><a href="#normalize_space">normalize_space</a></span></div>
+            </td>
+            <td width="7" valign="middle"></td>
+            <td bgcolor="#C5C5C5" valign="middle" width="1"></td>
+            <td width="7" valign="middle"></td>
+            <td valign="top">
+              <div class="summary-header">Globals:</div>
+              <div class="summary-list"><span class="global-name"><a href="#XMLNS_NAMESPACE">XMLNS_NAMESPACE</a></span>, <span class="global-name"><a href="#ascii_letters">ascii_letters</a></span>, <span class="global-name"><a href="#ascii_lowercase">ascii_lowercase</a></span>, <span class="global-name"><a href="#ascii_uppercase">ascii_uppercase</a></span>, <span class="global-name"><a href="#digits">digits</a></span>, <span class="global-name"><a href="#hexdigits">hexdigits</a></span>, <span class="global-name"><a href="#letters">letters</a></span>, <span class="global-name"><a href="#lowercase">lowercase</a></span>, <span class="global-name"><a href="#octdigits">octdigits</a></span>, <span class="global-name"><a href="#printable">printable</a></span>, <span class="global-name"><a href="#punctuation">punctuation</a></span>, <span class="global-name"><a href="#uppercase">uppercase</a></span>, <span class="global-name"><a href="#whitespace">whitespace</a></span></div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="section">
+      <h2>Classes</h2>
+      <dl class="classes">
+        <dt class="classdef"><a name="XmlComp"></a>class <span class="class-name">XmlComp</span></dt>
+        <dd class="classdesc">
+          <div class="abstract">A "checkType" can be a DOM nodeType, ie "An integer representing the 
+node type. Symbolic constants for the types are on the Node object: 
+ELEMENT_NODE, ATTRIBUTE_NODE, TEXT_NODE, CDATA_SECTION_NODE(**), ENTITY_NODE(*), 
+PROCESSING_INSTRUCTION_NODE(*), COMMENT_NODE(*), DOCUMENT_NODE(*), 
+DOCUMENT_TYPE_NODE(*), NOTATION_NODE(*)" or the extra values: 
+"NAMESPACE_PREFIX,WHITESPACES, NAMESPACE_DECLARATION".</div>
+          <pre class="description">(*): not supported (yet)
+(**): use TEXT_NODE instead.</pre>
+          <h3>Methods</h3>
+          <dl class="methods">
+            <dt class="methoddef"><a name="XmlComp-__init__"><span class="method-name">__init__</span></a>(<span class="argument-name">self</span>, <span class="argument-name">d1</span><span class="argument-default">=None</span>, <span class="argument-name">d2</span><span class="argument-default">=None</span>, <span class="argument-name">checks</span><span class="argument-default">=[1, 2, 3, 1j, 2j, 3j]</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dt class="methoddef"><a name="XmlComp-addCheck"><span class="method-name">addCheck</span></a>(<span class="argument-name">self</span>, <span class="argument-name">check</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dt class="methoddef"><a name="XmlComp-compare"><span class="method-name">compare</span></a>(<span class="argument-name">self</span>, <span class="argument-name">d1</span><span class="argument-default">=None</span>, <span class="argument-name">d2</span><span class="argument-default">=None</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dt class="methoddef"><a name="XmlComp-compareAttributes"><span class="method-name">compareAttributes</span></a>(<span class="argument-name">self</span>, <span class="argument-name">n1</span>, <span class="argument-name">n2</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dt class="methoddef"><a name="XmlComp-compareElements"><span class="method-name">compareElements</span></a>(<span class="argument-name">self</span>, <span class="argument-name">n1</span>, <span class="argument-name">n2</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dt class="methoddef"><a name="XmlComp-compareNamedNodeMaps"><span class="method-name">compareNamedNodeMaps</span></a>(<span class="argument-name">self</span>, <span class="argument-name">nodes1</span>, <span class="argument-name">nodes2</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dt class="methoddef"><a name="XmlComp-compareNode"><span class="method-name">compareNode</span></a>(<span class="argument-name">self</span>, <span class="argument-name">n1</span>, <span class="argument-name">n2</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dt class="methoddef"><a name="XmlComp-compareNodes"><span class="method-name">compareNodes</span></a>(<span class="argument-name">self</span>, <span class="argument-name">nodes1</span>, <span class="argument-name">nodes2</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dt class="methoddef"><a name="XmlComp-compareText"><span class="method-name">compareText</span></a>(<span class="argument-name">self</span>, <span class="argument-name">n1</span>, <span class="argument-name">n2</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dt class="methoddef"><a name="XmlComp-removeCheck"><span class="method-name">removeCheck</span></a>(<span class="argument-name">self</span>, <span class="argument-name">check</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dt class="methoddef"><a name="XmlComp-removeJunk"><span class="method-name">removeJunk</span></a>(<span class="argument-name">self</span>, <span class="argument-name">nodes</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dt class="methoddef"><a name="XmlComp-removeJunkFromNamedNodeMap"><span class="method-name">removeJunkFromNamedNodeMap</span></a>(<span class="argument-name">self</span>, <span class="argument-name">nodes</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dt class="methoddef"><a name="XmlComp-setDocument1"><span class="method-name">setDocument1</span></a>(<span class="argument-name">self</span>, <span class="argument-name">d1</span>)</dt>
+            <dd class="methoddesc"></dd>
+            <dt class="methoddef"><a name="XmlComp-setDocument2"><span class="method-name">setDocument2</span></a>(<span class="argument-name">self</span>, <span class="argument-name">d2</span>)</dt>
+            <dd class="methoddesc"></dd>
+          </dl>
+          <h3>Members</h3>
+          <dl class="members">
+            <dt class="memberdef"><a name="EMPTY_TEXT"><span class="member-name">EMPTY_TEXT</span></a> = 4j</dt>
+            <dt class="memberdef"><a name="NAMESPACE_DECLARATION"><span class="member-name">NAMESPACE_DECLARATION</span></a> = 2j</dt>
+            <dt class="memberdef"><a name="NAMESPACE_PREFIX"><span class="member-name">NAMESPACE_PREFIX</span></a> = 1j</dt>
+            <dt class="memberdef"><a name="WHITESPACES"><span class="member-name">WHITESPACES</span></a> = 3j</dt>
+            <dt class="memberdef"><a name="compareFunctions"><span class="member-name">compareFunctions</span></a> = {1: &lt;function compareElements&gt;, 2: &lt;function compareAttributes&gt;, 3: &lt;function compareText&gt;}</dt>
+          </dl>
+        </dd>
+      </dl>
+    </div>
+    <div class="section">
+      <h2>Functions</h2>
+      <dl class="functions">
+        <dt class="functiondef"><a name="normalize_space"><span class="function-name">normalize_space</span></a>(<span class="argument-name">s</span>)</dt>
+        <dd class="functiondesc"></dd>
+      </dl>
+    </div>
+    <div class="section">
+      <h2>Globals</h2>
+      <dl class="globals">
+        <dt class="globaldef"><a name="XMLNS_NAMESPACE"><span class="global-name">XMLNS_NAMESPACE</span></a> = 'http://www.w3.org/2000/xmlns/'</dt>
+        <dd class="globaldesc"></dd>
+        <dt class="globaldef"><a name="ascii_letters"><span class="global-name">ascii_letters</span></a> = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ'</dt>
+        <dd class="globaldesc"></dd>
+        <dt class="globaldef"><a name="ascii_lowercase"><span class="global-name">ascii_lowercase</span></a> = 'abcdefghijklmnopqrstuvwxyz'</dt>
+        <dd class="globaldesc"></dd>
+        <dt class="globaldef"><a name="ascii_uppercase"><span class="global-name">ascii_uppercase</span></a> = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'</dt>
+        <dd class="globaldesc"></dd>
+        <dt class="globaldef"><a name="digits"><span class="global-name">digits</span></a> = '0123456789'</dt>
+        <dd class="globaldesc"></dd>
+        <dt class="globaldef"><a name="hexdigits"><span class="global-name">hexdigits</span></a> = '0123456789abcdefABCDEF'</dt>
+        <dd class="globaldesc"></dd>
+        <dt class="globaldef"><a name="letters"><span class="global-name">letters</span></a> = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz'</dt>
+        <dd class="globaldesc"></dd>
+        <dt class="globaldef"><a name="lowercase"><span class="global-name">lowercase</span></a> = 'abcdefghijklmnopqrstuvwxyz'</dt>
+        <dd class="globaldesc"></dd>
+        <dt class="globaldef"><a name="octdigits"><span class="global-name">octdigits</span></a> = '01234567'</dt>
+        <dd class="globaldesc"></dd>
+        <dt class="globaldef"><a name="printable"><span class="global-name">printable</span></a> = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!"#$%&amp;\'()*+,-./:;&lt;=&gt;?@[\\]^_`{|}~ \t\n\r\x0b\x0c'</dt>
+        <dd class="globaldesc"></dd>
+        <dt class="globaldef"><a name="punctuation"><span class="global-name">punctuation</span></a> = '!"#$%&amp;\'()*+,-./:;&lt;=&gt;?@[\\]^_`{|}~'</dt>
+        <dd class="globaldesc"></dd>
+        <dt class="globaldef"><a name="uppercase"><span class="global-name">uppercase</span></a> = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'</dt>
+        <dd class="globaldesc"></dd>
+        <dt class="globaldef"><a name="whitespace"><span class="global-name">whitespace</span></a> = '\t\n\x0b\x0c\r '</dt>
+        <dd class="globaldesc"></dd>
+      </dl>
+    </div>
+    <div class="universal-footer">Last modified on 2004-10-22 11:49:27</div>
+  </body>
+</html>

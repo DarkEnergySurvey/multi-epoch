@@ -1,0 +1,71 @@
+# Configuration file of SExtractor created by SExConfig.py at 17:04 - 09/06/07
+
+
+CATALOG_NAME        /home/martelli/pypeline/etc/sextractor/sex_default_files
+CATALOG_TYPE        FITS_1.0
+PARAMETERS_NAME     /home/martelli/pypeline/etc/sextractor/default.param
+DETECT_TYPE         CCD
+DETECT_MINAREA      5
+THRESH_TYPE         Relative
+DETECT_THRESH       2.5
+ANALYSIS_THRESH     2.5
+FILTER              Y
+FILTER_NAME         /home/martelli/pypeline/etc/sextractor/default.conv
+FILTER_THRESH       
+    
+DEBLEND_NTHRESH     32
+DEBLEND_MINCONT     0.005
+CLEAN               Y
+CLEAN_PARAM         1.0
+MASK_TYPE           Correct
+WEIGHT_TYPE         Map_weight
+#WEIGHT_IMAGE        trim.weight.fits
+WEIGHT_IMAGE        EIS.2005-06-07T20:32:52.697.weight.fits
+WEIGHT_GAIN         Y
+WEIGHT_THRESH       
+    
+FLAG_IMAGE          flag.fits
+FLAG_TYPE           OR
+PHOT_APERTURES      5
+PHOT_AUTOPARAMS     2.5, 3.5
+PHOT_PETROPARAMS    2.0, 3.5
+PHOT_AUTOAPERS      0.0, 0.0
+PHOT_FLUXFRAC       0.5
+SATUR_LEVEL         250.0
+MAG_ZEROPOINT       AUTOMATIC
+MAG_GAMMA           4.0
+GAIN                AUTOMATIC
+PIXEL_SCALE         AUTOMATIC
+SEEING_FWHM         1.5
+STARNNW_NAME        /home/martelli/pypeline/etc/sextractor/default.nnw
+BACK_TYPE           Auto
+BACK_VALUE          0.0
+BACK_SIZE           64
+BACK_FILTERSIZE     3
+BACKPHOTO_TYPE      Global
+BACKPHOTO_THICK     24
+BACK_FILTTHRESH     0.0
+CHECKIMAGE_TYPE     None
+CHECKIMAGE_NAME     check.fits
+MEMORY_OBJSTACK     3000
+MEMORY_PIXSTACK     300000
+MEMORY_BUFSIZE      1024
+ASSOC_NAME          sky.list
+ASSOC_DATA          2, 3, 4
+ASSOC_PARAMS        2, 3, 4
+ASSOC_RADIUS        2.0
+ASSOC_TYPE          Mag_sum
+ASSOCSELEC_TYPE     Matched
+VERBOSE_TYPE        quiet
+WRITE_XML           N
+XML_NAME            sex.xml
+XSL_URL             file:///usr/local/share/sextractor/sextractor.xsl
+NTHREADS            1
+FITS_UNSIGNED       N
+INTERP_MAXXLAG      16
+INTERP_MAXYLAG      16
+INTERP_TYPE         All
+PSF_NAME            default.psf
+PSF_NMAX            9
+PSFDISPLAY_TYPE     Split
+SOM_NAME            default.som
