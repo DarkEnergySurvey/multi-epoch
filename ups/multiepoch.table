@@ -1,0 +1,5 @@
+setupRequired(despyutils 0.1.8+1)
+
+envAppend(PYTHONPATH, ${PRODUCT_DIR}/python)
+envAppend(PATH, ${PRODUCT_DIR}/bin)
+
