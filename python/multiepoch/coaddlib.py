@@ -711,7 +711,7 @@ class DEScoadd:
         if not cmdfile:
             cmdfile  = os.path.join(self.TILEDIR,"call_SExDual_%s.cmd" % self.tilename)
         callfile = open(cmdfile, "w")
-        print "# Will write psf call to: %s" % cmdfile
+        print "# Will write SEx Dual call to: %s" % cmdfile
 
         # SEx configuration
         sex_conf = os.path.join(os.environ['MULTIEPOCH_DIR'],'etc','default.sex')
@@ -734,6 +734,7 @@ class DEScoadd:
         # Now update pars with kwargs
         pars = update_pars(pars,kwargs)
 
+        self.checkimage  = {}
         self.SExDual_cmd = {}
         self.cat = {}
 
