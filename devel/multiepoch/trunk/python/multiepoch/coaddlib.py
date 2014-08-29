@@ -737,7 +737,7 @@ class DEScoadd:
         self.SExDual_cmd = {}
         self.cat = {}
 
-        dBAND = self.dBAND
+        dBAND = self.detBAND
         for BAND in self.BANDS:
 
             self.cat[BAND]        = os.path.join(self.TILEDIR,"%s_%s_cat.fits" %  (self.tilename, BAND))
