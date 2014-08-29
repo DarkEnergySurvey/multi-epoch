@@ -11,7 +11,6 @@ The DESDM multiepoch image coadd pipeline
 from . import coaddlib
 from . import descoords
 from . import destiling
-from . import mutiepoch_utils
 
 # To make the classes visible outside, directly as:
 # multiepoch.DEStiling,  multiepoch.DEScoords, etc

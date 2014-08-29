@@ -22,7 +22,7 @@ class DEScoadd:
     Handles DES information gathering using DESDM DB to perform
     multi-epoch co-addition of DECam CCDs.
 
-    Felipe Menanteau, NCSA, May 2014
+    Felipe Menanteau, NCSA, Summer 2014
     """
 
     def __init__ (self,archive_name='desardata',verbose=False,outpath="."):
@@ -501,15 +501,16 @@ class DEScoadd:
 
     def colorTile(self):
 
+        """ Make a color tiff of the tile using stiff"""
 
+        # NEED TO CREATE a stiff configuration file 
+        
         self.color_tile =  os.path.join(self.TILEDIR,"%s.tif" % self.tilename)
         cmd = "stiff %s %s %s -OUTFILE_NAME %s" % (self.comb_sci['i'],
                                                    self.comb_sci['r'],
                                                    self.comb_sci['g'],
                                                    self.color_tile)
-                                                   
         return cmd
-
 
     def makeSWarpTileCall(self,cmdfile=None,**kwargs):
 
@@ -535,18 +536,14 @@ class DEScoadd:
         pars["IMAGE_SIZE"]      = "%s,%d" % (self.COADDTILE['NAXIS1'],self.COADDTILE['NAXIS2'])
         pars["CENTER"]          = "%s,%s" % (self.COADDTILE['RA'],self.COADDTILE['DEC'])
 
-        # Now override pars with kwargs
-        for key, value in kwargs.iteritems():
-            if key in pars.keys():
-                print "# Will overide %s=%s" % (key,value)
-            pars[key] = value
+        # Now update pars with kwargs
+        pars = update_pars(pars,kwargs)
             
         self.comb_sci = {}
         self.comb_wgt = {}
         self.swarp_cmd = {}
         for BAND in self.BANDS:
-            
-            self.comb_sci[BAND] = os.path.join(self.TILEDIR,"%s_%s.fits" %  (self.tilename, BAND))
+            self.comb_sci[BAND] = os.path.join(self.TILEDIR,"%s_%s_sci.fits" %  (self.tilename, BAND))
             self.comb_wgt[BAND] = os.path.join(self.TILEDIR,"%s_%s_wgt.fits" %  (self.tilename, BAND))
             # BAND speficit configurations
             pars["WEIGHT_IMAGE"]   = "@%s" % (self.swarp_wgtlist[BAND])
@@ -579,9 +576,12 @@ class DEScoadd:
         useBANDS = list( set(self.BANDS) & set(detecBANDS) )
         print "# Will use %s bands for detection" % useBANDS
 
-        # The BAND pseudo-name
+        # The BAND pseudo-name, we'll store with the 'real bands' as a list to access later
         BAND='det%s' % "".join(useBANDS)
-        self.comb_sci[BAND] = os.path.join(self.TILEDIR,"%s_%s.fits" %  (self.tilename, BAND))
+        self.detBAND = BAND
+        self.dBANDS = list(self.BANDS) + [self.detBAND]
+        
+        self.comb_sci[BAND] = os.path.join(self.TILEDIR,"%s_%s_sci.fits" %  (self.tilename, BAND))
         self.comb_wgt[BAND] = os.path.join(self.TILEDIR,"%s_%s_wgt.fits" %  (self.tilename, BAND))
         
         # The Science and Weight lists matching the bands used for detection
@@ -606,6 +606,8 @@ class DEScoadd:
         pars["WEIGHT_IMAGE"]    = "%s" % " ".join(wgtlist)
         pars["IMAGEOUT_NAME"]   = "%s" % self.comb_sci[BAND]
         pars["WEIGHTOUT_NAME"]  = "%s" % self.comb_wgt[BAND]
+        # Now update pars with kwargs
+        pars = update_pars(pars,kwargs)
 
         # Build the SWarp call
         self.swarp_cmd[BAND] = swarp_exe + " %s %s" % (" ".join(scilist),bkline)
@@ -617,6 +619,158 @@ class DEScoadd:
         return
 
 
+    def makeSExpsfCall(self,cmdfile=None,**kwargs):
+
+        """ Build/Execute the SExtractor call for psf on the detection image"""
+
+        bkline = "\\\n"
+        # The file where we'll write the commands
+        if not cmdfile:
+            cmdfile  = os.path.join(self.TILEDIR,"call_SExpsf_%s.cmd" % self.tilename)
+        callfile = open(cmdfile, "w")
+        print "# Will write SEx psf call to: %s" % cmdfile
+
+        # SEx configuration
+        sex_conf = os.path.join(os.environ['MULTIEPOCH_DIR'],'etc','default.sex')
+        sex_exe  = 'sex'
+        
+        pars = {}
+        pars['CATALOG_TYPE']    = "FITS_LDAC"
+        pars['WEIGHT_TYPE']     = 'MAP_WEIGHT'
+        pars['PARAMETERS_NAME'] = os.path.join(os.environ['MULTIEPOCH_DIR'],'etc','sex.param_psfex')
+        pars['FILTER_NAME']     = os.path.join(os.environ['MULTIEPOCH_DIR'],'etc','sex.conv')
+        pars['STARNNW_NAME']    = os.path.join(os.environ['MULTIEPOCH_DIR'],'etc','sex.nnw')
+        pars['SATUR_LEVEL']     = 65000
+        pars['VERBOSE_TYPE']    = 'NORMAL'
+        pars['DETECT_MINAREA']  = 3 # WHY??????????? son small!!!!
+
+        # Now update pars with kwargs
+        pars = update_pars(pars,kwargs)
+        
+        # Loop over all bands and Detection
+        self.psfcat = {}
+        self.psf    = {}
+        self.SExpsf_cmd = {}
+        for BAND in self.dBANDS:
+
+            self.psf[BAND]    = os.path.join(self.TILEDIR,"%s_%s_psfcat.psf"  %  (self.tilename, BAND))
+            self.psfcat[BAND] = os.path.join(self.TILEDIR,"%s_%s_psfcat.fits" %  (self.tilename, BAND))
+            pars['WEIGHT_IMAGE'] = self.comb_wgt[BAND]
+            pars['CATALOG_NAME'] = self.psfcat[BAND]
+            # Build the call
+            self.SExpsf_cmd[BAND] = sex_exe + " %s %s" % (self.comb_sci[BAND],bkline)
+            self.SExpsf_cmd[BAND] = self.SExpsf_cmd[BAND] + " -c %s %s" % (sex_conf,bkline)
+            for param,value in pars.items():
+                self.SExpsf_cmd[BAND] = self.SExpsf_cmd[BAND] + " -%s %s %s" % (param,value,bkline)
+            callfile.write("%s\n" % self.SExpsf_cmd[BAND])
+
+        callfile.close()
+        return
+
+    # Next run psfex on coadd images and detection
+    def makepsfexCall(self,cmdfile=None,**kwargs):
+
+        """ Build/Execute the psf call"""
+
+        bkline = "\\\n"
+        # The file where we'll write the commands
+        if not cmdfile:
+            cmdfile  = os.path.join(self.TILEDIR,"call_psfex_%s.cmd" % self.tilename)
+        callfile = open(cmdfile, "w")
+        print "# Will write psf call to: %s" % cmdfile
+
+        # SEx configuration
+        psfex_conf = os.path.join(os.environ['MULTIEPOCH_DIR'],'etc','default.psfex')
+        psfex_exe  = 'psfex'
+
+        pars = {}
+        pars['WRITE_XML'] = 'Y'
+        pars['NTHREADS']  = 8
+        pars = update_pars(pars,kwargs)
+
+        self.psfex_cmd = {}
+        for BAND in self.dBANDS:
+
+            pars['XML_NAME'] = os.path.join(self.TILEDIR,"%s_%s_psfex.xml" %  (self.tilename, BAND))
+            # Build the call
+            self.psfex_cmd[BAND] = psfex_exe + " %s -c %s %s" % (self.psfcat[BAND],psfex_conf,bkline)
+            for param,value in pars.items():
+                self.psfex_cmd[BAND] = self.psfex_cmd[BAND] + " -%s %s %s" % (param,value,bkline)
+            callfile.write("%s\n" % self.psfex_cmd[BAND])
+
+        callfile.close()
+        return
+
+
+    def makeSExDualCall(self,cmdfile=None,**kwargs):
+
+        """ Build/Execute the SEx dual-mode call """
+
+        bkline = "\\\n"
+        # The file where we'll write the commands
+        if not cmdfile:
+            cmdfile  = os.path.join(self.TILEDIR,"call_SExDual_%s.cmd" % self.tilename)
+        callfile = open(cmdfile, "w")
+        print "# Will write psf call to: %s" % cmdfile
+
+        # SEx configuration
+        sex_conf = os.path.join(os.environ['MULTIEPOCH_DIR'],'etc','default.sex')
+        sex_exe  = 'sex'
+
+        # General pars, BAND-independent
+        pars = {}
+        pars['CATALOG_TYPE']    = "FITS_LDAC"
+        pars['FILTER_NAME']     = os.path.join(os.environ['MULTIEPOCH_DIR'],'etc','sex.conv')
+        pars['STARNNW_NAME']    = os.path.join(os.environ['MULTIEPOCH_DIR'],'etc','sex.nnw')
+        pars['CATALOG_TYPE']    =   'FITS_1.0'
+        pars['WEIGHT_TYPE']     = 'MAP_WEIGHT'
+        pars['MEMORY_BUFSIZE']  = 2048
+        pars['CHECKIMAGE_TYPE'] = 'SEGMENTATION'
+        pars['DETECT_THRESH']   = 1.5
+        pars['DEBLEND_MINCONT'] = 0.001 
+        pars['PARAMETERS_NAME'] = os.path.join(os.environ['MULTIEPOCH_DIR'],'etc','sex.param')
+        pars['VERBOSE_TYPE']    = 'NORMAL'
+
+        # Now update pars with kwargs
+        pars = update_pars(pars,kwargs)
+
+        self.SExDual_cmd = {}
+        self.cat = {}
+
+        dBAND = self.dBAND
+        for BAND in self.BANDS:
+
+            self.cat[BAND]        = os.path.join(self.TILEDIR,"%s_%s_cat.fits" %  (self.tilename, BAND))
+            self.checkimage[BAND] = os.path.join(self.TILEDIR,"%s_%s_seg.fits" %  (self.tilename, BAND))
+            
+            pars['MAG_ZEROPOINT']   =  30.0000 
+            pars['CATALOG_NAME']    =  self.cat[BAND]           
+            pars['PSF_NAME']        =  self.psf[BAND]
+            pars['CHECKIMAGE_NAME'] =  self.checkimage[BAND]
+            pars['WEIGHT_IMAGE']    =  "%s,%s" % (self.comb_sci[dBAND],self.comb_sci[BAND])
+
+            self.SExDual_cmd[BAND] = sex_exe + " %s,%s %s" % (self.comb_sci[dBAND],self.comb_sci[BAND],bkline)
+            self.SExDual_cmd[BAND] = self.SExDual_cmd[BAND] + " -c %s %s" % (sex_conf,bkline)
+            
+            for param,value in pars.items():
+                self.SExDual_cmd[BAND] = self.SExDual_cmd[BAND] + " -%s %s %s" % (param,value,bkline)
+            callfile.write("%s\n" % self.SExDual_cmd[BAND])
+
+        callfile.close()
+        return
+
+# MOVE TO despyutils!!!
 def extract_from_keys(dictionary, keys):
     """ Returns a dictionary of a subset of keys """
     return dict((k, dictionary[k]) for k in keys if k in dictionary)
+
+def update_pars(pars,kwargs):
+    """ Simple function to update pars dictionary with kwargs in function"""
+    for key, value in kwargs.iteritems():
+        if key in pars.keys():
+            print "# -- updating %s=%s" % (key,value)
+        else:
+            print "# -- adding   %s=%s" % (key,value)
+        pars[key] = value
+    return pars
+    
