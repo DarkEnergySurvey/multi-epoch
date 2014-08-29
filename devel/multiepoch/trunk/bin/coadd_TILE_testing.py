@@ -35,3 +35,6 @@ if __name__ == "__main__":
     c.collectFILESforSWarp(archive_root='/home/felipe/work/NCSA_posters_images',prefix='imskTR_')
     c.makeSWarpTileCall(NTHREADS=8,COMBINE_TYPE="SUM",PIXEL_SCALE=0.500)
     c.makeSWarpDetecCall()
+    c.makeSExpsfCall(DETECT_MINAREA=10)
+    c.makepsfexCall(PSF_SIZE="30,30")
+    c.makeSExDualCall(MAG_ZEROPOINT=31)
