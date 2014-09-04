@@ -61,9 +61,9 @@ class DEScoadd:
         self.tilename = tilename
         
         # Simple query
-        query = "select * from %s where TILENAME='%s'" % (tablename,tilename)
+        query = "SELECT * from %s where TILENAME='%s'" % (tablename,tilename)
         
-        if self.verbose: print query
+        if self.verbose: print "# Getting TILENAME information for %s\n%s\n" %(tilename,query)
         cur = self.dbh.cursor()
         cur.execute(query)
         desc = [d[0] for d in cur.description] # cols description
@@ -184,9 +184,9 @@ class DEScoadd:
         ############################################
         # Re-format the constraints -- if defined
         if and_constraints:
-            and_constraints = "and (%s)" % and_constraints
+            and_constraints = "and %s" % and_constraints
         if select_constraints:
-            select_constraints = ",%s" % select_constraints
+            select_constraints = "%s," % select_constraints
         if from_constraints:
             from_constraints = ",%s" % from_constraints
 
@@ -195,18 +195,19 @@ class DEScoadd:
         # For now we need to merge with the IMAGECORNERS table, until
         # the new schema is merged into the IMAGE table
 
-        query = """
-        SELECT
+        query = """SELECT %s
+         filepath_desar.PATH,
          image.IMAGENAME, image.BAND, image.RUN, image.PROJECT, image.IMAGETYPE, image.ID,
-         c.RA, c.RAC1, c.RAC2, c.RAC3, c.RAC4, c.DEC, c.DECC1, c.DECC2, c.DECC3, c.DECC4 %s
-         from IMAGE, felipe.IMAGECORNERS c %s
-          where image.IMAGENAME=c.IMAGENAME
+         c.RA, c.RAC1, c.RAC2, c.RAC3, c.RAC4, c.DEC, c.DECC1, c.DECC2, c.DECC3, c.DECC4
+         from IMAGE, felipe.IMAGECORNERS c, FILEPATH_DESAR %s
+          where image.IMAGENAME=c.IMAGENAME and
+                filepath_desar.ID=IMAGE.ID
            %s
            and ((%s) or
                 (%s) or
                 (%s) or
                 (%s) ) """ % (select_constraints, from_constraints,and_constraints,checkC1,checkC2,checkC3,checkC4)
-        if self.verbose: print query
+        if self.verbose: print "# Getting images within the tile: %s\n %s" % (tilename,query)
         # Get the images that are part of the DESTILE
         self.ccdimages = despyutils.query2dict_of_columns(query,dbhandle=self.dbh)
 
@@ -356,7 +357,7 @@ class DEScoadd:
             os.makedirs(self.TILEDIR)
         return
 
-    def collectFILESforSWarp(self,archive_root=None,prefix=None):
+    def collectFILESforSWarp(self,**kwargs):
 
         """
         Collect the files and their absolute paths to start the SWarping process,
@@ -370,44 +371,81 @@ class DEScoadd:
 
         """
 
-        cur = self.dbh.cursor()
+        # Grab the KWARGS
+        # in case we want to tweak the default location
+        archive_root = kwargs.pop('archive_root',self.archive_root)
+        # in case we want a prefix modifier -- REMOVE IN THE FUTURE
+        prefix       = kwargs.pop('prefix',None)
 
         # in case we want to tweak the default location
         if not archive_root:
             archive_root = self.archive_root
 
+        ###################################################
+        # REMOVE LATER -- ONLY NEEDED for tweaked paths
         # Get the filename path for each file
         filepath = [] # list to store
         Nimages = len(self.ccdimages['IMAGENAME'])
         print "# Will find paths for images %s" % Nimages
         for k in range(Nimages):
-            query = """
-            select path from filepath_desar, image
-                   where filepath_desar.id='%s'""" % self.ccdimages['ID'][k]
-            cur.execute(query)
-            path, = cur.fetchone()
-
+            path = self.ccdimages['PATH'][k]
             # in case we want to tweak the default location
             if prefix : 
                 p1,p2 = os.path.split(path)
                 path = os.path.join(p1,"%s%s" % (prefix,p2))
-
+                
             location = os.path.join(archive_root,path)
             filepath.append(location)
 
-        cur.close()
-
         # Make it a numpy array the default paths
         self.ccdimages['FILEPATH'] = numpy.array(filepath)
+        #####################################################
 
-        # Now lets make the files per filter
-        self.swarp_inputs = {}  # Array with all filenames
+        ###########################################
+        # IN THE FUTURE IT WOULD BE ENOUGH TO DO:
+        #apath = [archive_root]*Nimages
+        #self.ccdimages['FILEPATH'] = numpy.core.defchararray.add(apath,self.ccdimages['PATH'])
+        # and for numpy >= 1.8
+        #self.ccdimages['FILEPATH'] = numpy.add(apath,self.ccdimages['PATH'])
+        ###########################################
+
+        return
+
+    def setSWarpNames(self,**kwargs):
+
+        """
+        This centralized place to define and keep track of the names
+        for the output products for SWArp.
+        """
+
+        print "# Setting names for SWarp calls"
+
+        # The band to consider for the detection image
+        detecBANDS = kwargs.pop('detecBANDS',['r','i','z'])
+        # The magbase for flxscale, FLXSCALE = 10**(0.4*(magbase-zp))
+        magbase      = kwargs.pop('magbase',30.0)
+    
+        # SWarp input per filter
+        self.swarp_inputs  = {} # Array with all filenames
         self.swarp_scilist = {} # File with list of science names fits[0]
         self.swarp_wgtlist = {} # File with list of weight  names fits[2]
-        for BAND in self.BANDS:
-            idx = numpy.where(self.ccdimages['BAND'] == BAND)[0]
-            self.swarp_inputs[BAND] = self.ccdimages['FILEPATH'][idx]
+        self.swarp_magzero = {} # Array with all fluxscales in BAND
+        self.swarp_flxlist = {} # File with list of fluxscales
+        # SWarp outputs per filer
+        self.comb_sci  = {} # SWarp coadded science image
+        self.comb_wgt  = {} # SWarp coadded weight image
+        self.swarp_cmd = {} # SWarp cmdline line to be executed
 
+        # Loop over filters
+        for BAND in self.BANDS:
+
+            # Relevant indices per band
+            idx = numpy.where(self.ccdimages['BAND'] == BAND)[0]
+
+            # 1. SWarp inputs
+            self.swarp_inputs[BAND]  = self.ccdimages['FILEPATH'][idx]
+            self.swarp_magzero[BAND] = self.ccdimages['MAG_ZERO'][idx]
+            
             ######################################
             # REMOVE LATER
             # Check that all the files actually exits
@@ -418,18 +456,81 @@ class DEScoadd:
                     idx_erase.append(k)
             tmp = numpy.delete(self.swarp_inputs[BAND],idx_erase)
             self.swarp_inputs[BAND] = tmp
+            # REMOVE LATER
             ####################################
 
             self.swarp_scilist[BAND] = os.path.join(self.TILEDIR,"%s_%s_sci.list" % (self.tilename,BAND))
             self.swarp_wgtlist[BAND] = os.path.join(self.TILEDIR,"%s_%s_wgt.list" % (self.tilename,BAND))
+            self.swarp_flxlist[BAND] = os.path.join(self.TILEDIR,"%s_%s_flx.list" % (self.tilename,BAND))
 
             print "# Writing science files for tile:%s band:%s on:%s" % (self.tilename,BAND,self.swarp_scilist[BAND])
             tableio.put_data(self.swarp_scilist[BAND],(self.swarp_inputs[BAND],),format="%s[0]")
 
             print "# Writing weight files for tile: %s band:%s on:%s" % (self.tilename,BAND,self.swarp_wgtlist[BAND])
             tableio.put_data(self.swarp_wgtlist[BAND],(self.swarp_inputs[BAND],),format="%s[2]")
-            
+
+            flxscale = 10.0**(0.4*(magbase - self.swarp_magzero[BAND]))
+            print "# Writing fluxscale values for tile: %s band:%s on:%s" % (self.tilename,BAND,self.swarp_flxlist[BAND])
+            tableio.put_data(self.swarp_flxlist[BAND],(flxscale,),format="%s")
+
+            # 2. SWarp outputs names
+            self.comb_sci[BAND] = os.path.join(self.TILEDIR,"%s_%s_sci.fits" %  (self.tilename, BAND))
+            self.comb_wgt[BAND] = os.path.join(self.TILEDIR,"%s_%s_wgt.fits" %  (self.tilename, BAND))
+
+
+        # The SWarp-combined detection image input and ouputs
+        # Figure out which bands to use that match the detecBANDS
+        useBANDS = list( set(self.BANDS) & set(detecBANDS) )
+        print "# Will use %s bands for detection" % useBANDS
+
+        # The BAND pseudo-name, we'll store with the 'real bands' as a list to access later
+        self.detBAND ='det%s' % "".join(useBANDS)
+        self.dBANDS = list(self.BANDS) + [self.detBAND]
+
+        # Names and lists
+        BAND = self.detBAND  # Short-cut
+        self.comb_sci[BAND] = os.path.join(self.TILEDIR,"%s_%s_sci.fits" %  (self.tilename, BAND))
+        self.comb_wgt[BAND] = os.path.join(self.TILEDIR,"%s_%s_wgt.fits" %  (self.tilename, BAND))
+        
+        # The Science and Weight lists matching the bands used for detection
+        self.swarp_scilist[BAND] = extract_from_keys(self.comb_sci, useBANDS).values()
+        self.swarp_wgtlist[BAND] = extract_from_keys(self.comb_wgt, useBANDS).values()
+
+        print "# Names for SWarp input/output are set"
         return
+
+
+    def setCatNames(self,**kwargs):
+
+        """ Set the names for input/ouput for psfex/Sextractor calls"""
+
+        print "# Setting names for SExPSF/psfex/SExDual"
+
+        # SExPSF
+        self.psfcat = {}
+        self.psf    = {}
+        self.SExpsf_cmd = {}
+        # PsfCall
+        self.psfex_cmd  = {}
+        self.psfexxml     = {}
+        # SExDual
+        self.SExDual_cmd = {}
+        self.checkimage  = {}
+        self.cat = {}
+        
+        for BAND in self.dBANDS:
+            # SExPSF
+            self.psf[BAND]       = os.path.join(self.TILEDIR,"%s_%s_psfcat.psf"  %  (self.tilename, BAND))
+            self.psfcat[BAND]    = os.path.join(self.TILEDIR,"%s_%s_psfcat.fits" %  (self.tilename, BAND))
+            # psfex
+            self.psfexxml[BAND]  = os.path.join(self.TILEDIR,"%s_%s_psfex.xml"   %  (self.tilename, BAND))
+            # SExDual
+            self.cat[BAND]       = os.path.join(self.TILEDIR,"%s_%s_cat.fits"    %  (self.tilename, BAND))
+            self.checkimage[BAND]= os.path.join(self.TILEDIR,"%s_%s_seg.fits"    %  (self.tilename, BAND))
+        print "# Done"
+        return
+    
+
 
     def get_archive_root(self,archive_name='desardata'):
 
@@ -499,29 +600,76 @@ class DEScoadd:
         head.close()
 
 
-    def colorTile(self):
+    def makeStiffCall(self,**kwargs):
 
-        """ Make a color tiff of the tile using stiff"""
+        """ Make a color tiff of the TILENAME using stiff"""
 
-        # NEED TO CREATE a stiff configuration file 
+        if self.NBANDS < 3:
+            print "# Not enough filters to create color image"
+            return 
         
-        self.color_tile =  os.path.join(self.TILEDIR,"%s.tif" % self.tilename)
-        cmd = "stiff %s %s %s -OUTFILE_NAME %s" % (self.comb_sci['i'],
-                                                   self.comb_sci['r'],
-                                                   self.comb_sci['g'],
-                                                   self.color_tile)
-        return cmd
-
-    def makeSWarpTileCall(self,cmdfile=None,**kwargs):
-
-        # in case we want to break
-        bkline = "\\\n" 
-
+        # The Breakline in case we want to break
+        bkline  = kwargs.pop('breakline',"\\\n")
         # The file where we'll write the commands
-        if not cmdfile:
-            cmdfile  = os.path.join(self.TILEDIR,"call_swarpTile_%s.cmd" % self.tilename)
+        cmdfile = kwargs.pop('cmdfile',os.path.join(self.TILEDIR,"call_stiff_%s.cmd" % self.tilename))
         callfile = open(cmdfile, "w")
-        print "# Will write SWarp Tile call to: %s" % cmdfile
+        print "# Will write stiff call to: %s" % cmdfile
+
+        stiff_conf = os.path.join(os.environ['MULTIEPOCH_DIR'],'etc','default.stiff')
+        stiff_exe  = kwargs.pop('stiff_exe','stiff')
+        self.color_tile =  os.path.join(self.TILEDIR,"%s.tif" % self.tilename)
+        
+        pars = {}
+        pars['OUTFILE_NAME']     =  self.color_tile
+        pars['COMPRESSION_TYPE'] =  'JPEG'
+        # Now update pars with kwargs
+        pars = update_pars(pars,kwargs)
+        
+        # Define the color filter sets we'd like to use, by priority depending on what BANDS will be combined
+        cset1 = ['i','r','g']
+        cset2 = ['z','r','g']
+        cset3 = ['z','i','g']
+        cset4 = ['z','i','r']
+        csets = (cset1,cset2,cset3,cset4)
+        CSET = False
+        for color_set in csets:
+            if CSET: break
+            inset = list( set(color_set) & set(self.BANDS))
+            if len(inset) == 3:
+                CSET = color_set
+
+        if not CSET:
+            print "# Could not find a suitable filter set for color image"
+            return 
+        
+        color_cmd = "%s " % stiff_exe
+        for BAND in CSET:
+            color_cmd = color_cmd + "%s " % self.comb_sci[BAND]
+        color_cmd = color_cmd + " -c %s %s" % (stiff_conf,bkline)
+        for param,value in pars.items():
+            color_cmd = color_cmd + " -%s %s %s" % (param,value,bkline)
+        callfile.write("%s\n" % color_cmd)
+        return
+
+    def makeSWarpCall(self,**kwargs):
+
+        """ Make the SWarp call for a given TILENAME"""
+
+        # Grab the KWARGS
+        # The Breakline in case we want to break
+        bkline  = kwargs.pop('breakline',"\\\n")
+        # The file where we'll write the commands
+        cmdfile = kwargs.pop('cmdfile',os.path.join(self.TILEDIR,"call_swarp_%s.cmd" % self.tilename))
+        # The band to consider for the detection image
+        detecBANDS = kwargs.pop('detecBANDS',['r','i','z'])
+        # The COMBINE_TYPE for the detection image
+        DETEC_COMBINE_TYPE = kwargs.pop('DETEC_COMBINE_TYPE',"CHI-MEAN")
+
+        # Set up the names
+        self.setSWarpNames(detecBANDS=detecBANDS)
+
+        callfile = open(cmdfile, "w")
+        print "# Will write SWarp call (filters+detection) to: %s" % cmdfile
 
         swarp_conf = os.path.join(os.environ['MULTIEPOCH_DIR'],'etc','default.swarp')
         swarp_exe  = 'swarp'
@@ -538,17 +686,15 @@ class DEScoadd:
 
         # Now update pars with kwargs
         pars = update_pars(pars,kwargs)
-            
-        self.comb_sci = {}
-        self.comb_wgt = {}
-        self.swarp_cmd = {}
+
+        # Loop over all filters
         for BAND in self.BANDS:
-            self.comb_sci[BAND] = os.path.join(self.TILEDIR,"%s_%s_sci.fits" %  (self.tilename, BAND))
-            self.comb_wgt[BAND] = os.path.join(self.TILEDIR,"%s_%s_wgt.fits" %  (self.tilename, BAND))
+
             # BAND speficit configurations
             pars["WEIGHT_IMAGE"]   = "@%s" % (self.swarp_wgtlist[BAND])
             pars["IMAGEOUT_NAME"]  = "%s" % self.comb_sci[BAND]
             pars["WEIGHTOUT_NAME"] = "%s" % self.comb_wgt[BAND]
+            pars["FSCALE_DEFAULT"] = "@%s" % (self.swarp_flxlist[BAND])
             # Construct the call
             self.swarp_cmd[BAND] = swarp_exe + " @%s %s" % (self.swarp_scilist[BAND],bkline)
             self.swarp_cmd[BAND] = self.swarp_cmd[BAND] + " -c %s %s" % (swarp_conf,bkline)
@@ -556,77 +702,98 @@ class DEScoadd:
                 self.swarp_cmd[BAND] = self.swarp_cmd[BAND] + " -%s %s %s" % (param,value,bkline)
             callfile.write("%s\n" % self.swarp_cmd[BAND])
 
-        color_cmd = self.colorTile()
-        callfile.write("%s\n" % color_cmd)
-        callfile.close()
-        return
-        
-    def makeSWarpDetecCall(self,detecBANDS=['r','i','z'],cmdfile=None,**kwargs):
-
-        """ Make the call to make the detection image with SWarp"""
-
-        bkline = "\\\n"
-        # The file where we'll write the commands
-        if not cmdfile:
-            cmdfile  = os.path.join(self.TILEDIR,"call_swarpDetec_%s.cmd" % self.tilename)
-        callfile = open(cmdfile, "w")
+        ## Prepare the detection call now
         print "# Will write SWarp Detection call to: %s" % cmdfile
+        BAND = self.detBAND
+        if "FSCALE_DEFAULT" in pars : del pars["FSCALE_DEFAULT"]
+        pars["COMBINE_TYPE"]   = DETEC_COMBINE_TYPE
+        pars["WEIGHT_IMAGE"]   = "%s" % " ".join(self.swarp_wgtlist[BAND])
+        pars["IMAGEOUT_NAME"]  = "%s" % self.comb_sci[BAND]
+        pars["WEIGHTOUT_NAME"] = "%s" % self.comb_wgt[BAND]
 
-        # Figure out which bands to use that match the detecBANDS
-        useBANDS = list( set(self.BANDS) & set(detecBANDS) )
-        print "# Will use %s bands for detection" % useBANDS
-
-        # The BAND pseudo-name, we'll store with the 'real bands' as a list to access later
-        BAND='det%s' % "".join(useBANDS)
-        self.detBAND = BAND
-        self.dBANDS = list(self.BANDS) + [self.detBAND]
-        
-        self.comb_sci[BAND] = os.path.join(self.TILEDIR,"%s_%s_sci.fits" %  (self.tilename, BAND))
-        self.comb_wgt[BAND] = os.path.join(self.TILEDIR,"%s_%s_wgt.fits" %  (self.tilename, BAND))
-        
-        # The Science and Weight lists matching the bands used for detection
-        scilist = extract_from_keys(self.comb_sci, useBANDS).values()
-        wgtlist = extract_from_keys(self.comb_wgt, useBANDS).values()
-
-        # Create the detection swarp call
-        swarp_conf = os.path.join(os.environ['MULTIEPOCH_DIR'],'etc','default.swarp')
-        swarp_exe  = 'swarp'
-
-        # The SWarp options that stay the same for all tiles
-        pars = {}
-        pars["COMBINE_TYPE"]    = "CHI-MEAN"
-        pars["WEIGHT_TYPE"]     = "MAP_WEIGHT"
-        pars["PIXEL_SCALE"]     = "%s"  % self.COADDTILE['PIXELSCALE']
-        pars["PIXELSCALE_TYPE"] = "MANUAL"
-        pars["CENTER_TYPE"]     = "MANUAL"
-        pars["IMAGE_SIZE"]      = "%s,%d" % (self.COADDTILE['NAXIS1'],self.COADDTILE['NAXIS2'])
-        pars["CENTER"]          = "%s,%s" % (self.COADDTILE['RA'],self.COADDTILE['DEC'])
-        pars["NTHREADS"]        = "%s" % "8" 
-        # BAND spefic configurations
-        pars["WEIGHT_IMAGE"]    = "%s" % " ".join(wgtlist)
-        pars["IMAGEOUT_NAME"]   = "%s" % self.comb_sci[BAND]
-        pars["WEIGHTOUT_NAME"]  = "%s" % self.comb_wgt[BAND]
-        # Now update pars with kwargs
-        pars = update_pars(pars,kwargs)
-
-        # Build the SWarp call
-        self.swarp_cmd[BAND] = swarp_exe + " %s %s" % (" ".join(scilist),bkline)
+        self.swarp_cmd[BAND] = swarp_exe + " %s %s" % (" ".join(self.swarp_scilist[BAND]),bkline)
         self.swarp_cmd[BAND] = self.swarp_cmd[BAND] + " -c %s %s" % (swarp_conf,bkline)
         for param,value in pars.items():
             self.swarp_cmd[BAND] = self.swarp_cmd[BAND] + " -%s %s %s" % (param,value,bkline)
         callfile.write("%s\n" % self.swarp_cmd[BAND])
+
+
         callfile.close()
         return
 
 
-    def makeSExpsfCall(self,cmdfile=None,**kwargs):
+    # # --- DEPRECATED ----###
+    # def makeSWarpDetecCall(self,**kwargs):
+
+    #     """ Make the call to make the detection image with SWarp"""
+
+    #     # Grab the KWARGS
+    #     # The Breakline in case we want to break
+    #     bkline  = kwargs.pop('breakline',"\\\n")
+    #     # The file where we'll write the commands
+    #     cmdfile = kwargs.pop('cmdfile',os.path.join(self.TILEDIR,"call_swarpDetec_%s.cmd" % self.tilename))
+
+
+    #     callfile = open(cmdfile, "w")
+    #     print "# Will write SWarp Detection call to: %s" % cmdfile
+
+    #     # Figure out which bands to use that match the detecBANDS
+    #     useBANDS = list( set(self.BANDS) & set(detecBANDS) )
+    #     print "# Will use %s bands for detection" % useBANDS
+
+    #     # The BAND pseudo-name, we'll store with the 'real bands' as a list to access later
+    #     BAND='det%s' % "".join(useBANDS)
+    #     self.detBAND = BAND
+    #     self.dBANDS = list(self.BANDS) + [self.detBAND]
+        
+    #     self.comb_sci[BAND] = os.path.join(self.TILEDIR,"%s_%s_sci.fits" %  (self.tilename, BAND))
+    #     self.comb_wgt[BAND] = os.path.join(self.TILEDIR,"%s_%s_wgt.fits" %  (self.tilename, BAND))
+        
+    #     # The Science and Weight lists matching the bands used for detection
+    #     scilist = extract_from_keys(self.comb_sci, useBANDS).values()
+    #     wgtlist = extract_from_keys(self.comb_wgt, useBANDS).values()
+
+    #     # Create the detection swarp call
+    #     swarp_conf = os.path.join(os.environ['MULTIEPOCH_DIR'],'etc','default.swarp')
+    #     swarp_exe  = 'swarp'
+
+    #     # The SWarp options that stay the same for all tiles
+    #     pars = {}
+    #     pars["COMBINE_TYPE"]    = "CHI-MEAN"
+    #     pars["WEIGHT_TYPE"]     = "MAP_WEIGHT"
+    #     pars["PIXEL_SCALE"]     = "%s"  % self.COADDTILE['PIXELSCALE']
+    #     pars["PIXELSCALE_TYPE"] = "MANUAL"
+    #     pars["CENTER_TYPE"]     = "MANUAL"
+    #     pars["IMAGE_SIZE"]      = "%s,%d" % (self.COADDTILE['NAXIS1'],self.COADDTILE['NAXIS2'])
+    #     pars["CENTER"]          = "%s,%s" % (self.COADDTILE['RA'],self.COADDTILE['DEC'])
+    #     pars["NTHREADS"]        = "%s" % "8" 
+    #     # BAND spefic configurations
+    #     pars["WEIGHT_IMAGE"]    = "%s" % " ".join(wgtlist)
+    #     pars["IMAGEOUT_NAME"]   = "%s" % self.comb_sci[BAND]
+    #     pars["WEIGHTOUT_NAME"]  = "%s" % self.comb_wgt[BAND]
+    #     # Now update pars with kwargs
+    #     pars = update_pars(pars,kwargs)
+
+    #     # Build the SWarp call
+    #     self.swarp_cmd[BAND] = swarp_exe + " %s %s" % (" ".join(scilist),bkline)
+    #     self.swarp_cmd[BAND] = self.swarp_cmd[BAND] + " -c %s %s" % (swarp_conf,bkline)
+    #     for param,value in pars.items():
+    #         self.swarp_cmd[BAND] = self.swarp_cmd[BAND] + " -%s %s %s" % (param,value,bkline)
+    #     callfile.write("%s\n" % self.swarp_cmd[BAND])
+    #     callfile.close()
+    #     return
+
+
+    def makeSExpsfCall(self,**kwargs):
 
         """ Build/Execute the SExtractor call for psf on the detection image"""
 
-        bkline = "\\\n"
+        # Grab the KWARGS
+        # The Breakline in case we want to break
+        bkline  = kwargs.pop('breakline',"\\\n")
         # The file where we'll write the commands
-        if not cmdfile:
-            cmdfile  = os.path.join(self.TILEDIR,"call_SExpsf_%s.cmd" % self.tilename)
+        cmdfile = kwargs.pop('cmdfile',os.path.join(self.TILEDIR,"call_SExpsf_%s.cmd" % self.tilename))
+
         callfile = open(cmdfile, "w")
         print "# Will write SEx psf call to: %s" % cmdfile
 
@@ -648,13 +815,7 @@ class DEScoadd:
         pars = update_pars(pars,kwargs)
         
         # Loop over all bands and Detection
-        self.psfcat = {}
-        self.psf    = {}
-        self.SExpsf_cmd = {}
         for BAND in self.dBANDS:
-
-            self.psf[BAND]    = os.path.join(self.TILEDIR,"%s_%s_psfcat.psf"  %  (self.tilename, BAND))
-            self.psfcat[BAND] = os.path.join(self.TILEDIR,"%s_%s_psfcat.fits" %  (self.tilename, BAND))
             pars['WEIGHT_IMAGE'] = self.comb_wgt[BAND]
             pars['CATALOG_NAME'] = self.psfcat[BAND]
             # Build the call
@@ -668,30 +829,29 @@ class DEScoadd:
         return
 
     # Next run psfex on coadd images and detection
-    def makepsfexCall(self,cmdfile=None,**kwargs):
+    def makepsfexCall(self,**kwargs):
 
         """ Build/Execute the psf call"""
 
-        bkline = "\\\n"
+        # Grab the KWARGS
+        # The Breakline in case we want to break
+        bkline  = kwargs.pop('breakline',"\\\n")
         # The file where we'll write the commands
-        if not cmdfile:
-            cmdfile  = os.path.join(self.TILEDIR,"call_psfex_%s.cmd" % self.tilename)
+        cmdfile = kwargs.pop('cmdfile',os.path.join(self.TILEDIR,"call_psfec_%s.cmd" % self.tilename))
+
         callfile = open(cmdfile, "w")
         print "# Will write psf call to: %s" % cmdfile
 
         # SEx configuration
         psfex_conf = os.path.join(os.environ['MULTIEPOCH_DIR'],'etc','default.psfex')
-        psfex_exe  = 'psfex'
+        psfex_exe  = kwargs.pop('psfex_exe','psfex')
 
         pars = {}
         pars['WRITE_XML'] = 'Y'
-        pars['NTHREADS']  = 8
         pars = update_pars(pars,kwargs)
 
-        self.psfex_cmd = {}
         for BAND in self.dBANDS:
-
-            pars['XML_NAME'] = os.path.join(self.TILEDIR,"%s_%s_psfex.xml" %  (self.tilename, BAND))
+            pars['XML_NAME'] = self.psfexxml[BAND]
             # Build the call
             self.psfex_cmd[BAND] = psfex_exe + " %s -c %s %s" % (self.psfcat[BAND],psfex_conf,bkline)
             for param,value in pars.items():
@@ -702,20 +862,22 @@ class DEScoadd:
         return
 
 
-    def makeSExDualCall(self,cmdfile=None,**kwargs):
+    def makeSExDualCall(self,**kwargs):
 
         """ Build/Execute the SEx dual-mode call """
 
-        bkline = "\\\n"
+        # Grab the KWARGS
+        # The Breakline in case we want to break
+        bkline  = kwargs.pop('breakline',"\\\n")
         # The file where we'll write the commands
-        if not cmdfile:
-            cmdfile  = os.path.join(self.TILEDIR,"call_SExDual_%s.cmd" % self.tilename)
+        cmdfile = kwargs.pop('cmdfile',os.path.join(self.TILEDIR,"call_SExDual_%s.cmd" % self.tilename))
+
         callfile = open(cmdfile, "w")
         print "# Will write SEx Dual call to: %s" % cmdfile
 
         # SEx configuration
         sex_conf = os.path.join(os.environ['MULTIEPOCH_DIR'],'etc','default.sex')
-        sex_exe  = 'sex'
+        sex_exe  = kwargs.pop('sex_exe','sex')
 
         # General pars, BAND-independent
         pars = {}
@@ -734,15 +896,9 @@ class DEScoadd:
         # Now update pars with kwargs
         pars = update_pars(pars,kwargs)
 
-        self.checkimage  = {}
-        self.SExDual_cmd = {}
-        self.cat = {}
 
         dBAND = self.detBAND
         for BAND in self.BANDS:
-
-            self.cat[BAND]        = os.path.join(self.TILEDIR,"%s_%s_cat.fits" %  (self.tilename, BAND))
-            self.checkimage[BAND] = os.path.join(self.TILEDIR,"%s_%s_seg.fits" %  (self.tilename, BAND))
             
             pars['MAG_ZEROPOINT']   =  30.0000 
             pars['CATALOG_NAME']    =  self.cat[BAND]           
