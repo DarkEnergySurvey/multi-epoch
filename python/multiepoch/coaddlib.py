@@ -837,7 +837,7 @@ class DEScoadd:
         # The Breakline in case we want to break
         bkline  = kwargs.pop('breakline',"\\\n")
         # The file where we'll write the commands
-        cmdfile = kwargs.pop('cmdfile',os.path.join(self.TILEDIR,"call_psfec_%s.cmd" % self.tilename))
+        cmdfile = kwargs.pop('cmdfile',os.path.join(self.TILEDIR,"call_psfex_%s.cmd" % self.tilename))
 
         callfile = open(cmdfile, "w")
         print "# Will write psf call to: %s" % cmdfile
