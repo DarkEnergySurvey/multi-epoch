@@ -97,3 +97,5 @@ WRITE_FILEINFO		N		# Write information about each input
 VERBOSE_TYPE		NORMAL		# "QUIET","NORMAL" or "FULL"
 
 NTHREADS		1		# 1 single thread
+
+WRITE_XML               N               # Write XML file (Y/N)?
