@@ -672,7 +672,7 @@ class DEScoadd:
         print "# Will write SWarp call (filters+detection) to: %s" % cmdfile
 
         swarp_conf = os.path.join(os.environ['MULTIEPOCH_DIR'],'etc','default.swarp')
-        swarp_exe  = 'swarp'
+        swarp_exe  = kwargs.pop('swarp_exe','swarp')
 
         # The SWarp options that stay the same for all tiles
         pars = {}
@@ -683,6 +683,7 @@ class DEScoadd:
         pars["CENTER_TYPE"]     = "MANUAL"
         pars["IMAGE_SIZE"]      = "%s,%d" % (self.COADDTILE['NAXIS1'],self.COADDTILE['NAXIS2'])
         pars["CENTER"]          = "%s,%s" % (self.COADDTILE['RA'],self.COADDTILE['DEC'])
+        pars["WRITE_XML"]       = "N"
 
         # Now update pars with kwargs
         pars = update_pars(pars,kwargs)
@@ -724,39 +725,39 @@ class DEScoadd:
 
     # # --- DEPRECATED ----###
     # def makeSWarpDetecCall(self,**kwargs):
-
+    #
     #     """ Make the call to make the detection image with SWarp"""
-
+    #
     #     # Grab the KWARGS
     #     # The Breakline in case we want to break
     #     bkline  = kwargs.pop('breakline',"\\\n")
     #     # The file where we'll write the commands
     #     cmdfile = kwargs.pop('cmdfile',os.path.join(self.TILEDIR,"call_swarpDetec_%s.cmd" % self.tilename))
-
-
+    #
+    #
     #     callfile = open(cmdfile, "w")
     #     print "# Will write SWarp Detection call to: %s" % cmdfile
-
+    #
     #     # Figure out which bands to use that match the detecBANDS
     #     useBANDS = list( set(self.BANDS) & set(detecBANDS) )
     #     print "# Will use %s bands for detection" % useBANDS
-
+    #
     #     # The BAND pseudo-name, we'll store with the 'real bands' as a list to access later
     #     BAND='det%s' % "".join(useBANDS)
     #     self.detBAND = BAND
     #     self.dBANDS = list(self.BANDS) + [self.detBAND]
-        
+    #
     #     self.comb_sci[BAND] = os.path.join(self.TILEDIR,"%s_%s_sci.fits" %  (self.tilename, BAND))
     #     self.comb_wgt[BAND] = os.path.join(self.TILEDIR,"%s_%s_wgt.fits" %  (self.tilename, BAND))
-        
+    #
     #     # The Science and Weight lists matching the bands used for detection
     #     scilist = extract_from_keys(self.comb_sci, useBANDS).values()
     #     wgtlist = extract_from_keys(self.comb_wgt, useBANDS).values()
-
+    #
     #     # Create the detection swarp call
     #     swarp_conf = os.path.join(os.environ['MULTIEPOCH_DIR'],'etc','default.swarp')
     #     swarp_exe  = 'swarp'
-
+    #
     #     # The SWarp options that stay the same for all tiles
     #     pars = {}
     #     pars["COMBINE_TYPE"]    = "CHI-MEAN"
@@ -773,7 +774,7 @@ class DEScoadd:
     #     pars["WEIGHTOUT_NAME"]  = "%s" % self.comb_wgt[BAND]
     #     # Now update pars with kwargs
     #     pars = update_pars(pars,kwargs)
-
+    #
     #     # Build the SWarp call
     #     self.swarp_cmd[BAND] = swarp_exe + " %s %s" % (" ".join(scilist),bkline)
     #     self.swarp_cmd[BAND] = self.swarp_cmd[BAND] + " -c %s %s" % (swarp_conf,bkline)
@@ -782,7 +783,6 @@ class DEScoadd:
     #     callfile.write("%s\n" % self.swarp_cmd[BAND])
     #     callfile.close()
     #     return
-
 
     def makeSExpsfCall(self,**kwargs):
 
@@ -799,7 +799,7 @@ class DEScoadd:
 
         # SEx configuration
         sex_conf = os.path.join(os.environ['MULTIEPOCH_DIR'],'etc','default.sex')
-        sex_exe  = 'sex'
+        sex_exe  = kwargs.pop('sex_exe','sex')
         
         pars = {}
         pars['CATALOG_TYPE']    = "FITS_LDAC"
@@ -890,7 +890,8 @@ class DEScoadd:
         pars['CHECKIMAGE_TYPE'] = 'SEGMENTATION'
         pars['DETECT_THRESH']   = 1.5
         pars['DEBLEND_MINCONT'] = 0.001 
-        pars['PARAMETERS_NAME'] = os.path.join(os.environ['MULTIEPOCH_DIR'],'etc','sex.param')
+        #pars['PARAMETERS_NAME'] = os.path.join(os.environ['MULTIEPOCH_DIR'],'etc','sex.param')
+        pars['PARAMETERS_NAME'] = os.path.join(os.environ['MULTIEPOCH_DIR'],'etc','sex.param_psfonly')
         pars['VERBOSE_TYPE']    = 'NORMAL'
 
         # Now update pars with kwargs

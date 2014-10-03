@@ -15,7 +15,6 @@ if __name__ == "__main__":
     except:
         TILENAME = 'DES2246-4457'
 
-
     # 0. Initialize class
     #outpath = os.path.join(os.getcwd(),'timing-tests')
     outpath = os.path.join(os.environ['HOME'],'tileTesting')
