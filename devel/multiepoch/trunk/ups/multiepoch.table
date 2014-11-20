@@ -1,5 +1,6 @@
-setupRequired(despyutils 0.1.8+1)
-
+setupRequired(despyastro 0.2.0+0)
+setupRequired(despydb    2.0.0+0)
+setupRequired(despymic   0.1.0+0)
 envAppend(PYTHONPATH, ${PRODUCT_DIR}/python)
 envAppend(PATH, ${PRODUCT_DIR}/bin)
 

@@ -1,12 +1,12 @@
 #!/usr/bin/env python
 
-import coreutils.desdbi
-from despyutils import wcsutil
+from despyastro import wcsutil
+import despydb
 import os,sys
 
 
 section_desoper = "db-desoper"
-dbh = coreutils.desdbi.DesDbi(None,section_desoper)
+dbh = despydb.desdbi.DesDbi(None,section_desoper)
 
 pixelscale   = 0.263
 ra_center   = 16.1620977018

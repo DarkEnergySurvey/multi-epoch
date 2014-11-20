@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 import time
-import despyutils
+import despymisc
 from multiepoch.destiling import DEStiling
 
 def cmdline():
@@ -39,4 +39,4 @@ if __name__ == "__main__":
                         dec_end    = -85,
                         ra_range   = 360,
                         **kwargs)
-    print "# Time:%s" % despyutils.elapsed_time(t0)
+    print "# Time:%s" % despymisc.miscutils.elapsed_time(t0)

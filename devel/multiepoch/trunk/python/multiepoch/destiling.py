@@ -5,9 +5,10 @@ import math
 import time
 
 # DESDM modules
-import despyutils
-from despyutils import astroFM as astrometry
-from despyutils import wcsutil
+import despydb
+import despyastro
+from despyastro import astrometry
+from despyastro import wcsutil
 
 class DEStiling:
     
@@ -19,6 +20,8 @@ class DEStiling:
     
     Author:
       Felipe Menanteau, NCSA, April 2014.
+
+    Modified into new Scheme
 
     """
 
@@ -366,7 +369,7 @@ class DEStiling:
 
         # Connect if we'd like to check against DB
         if checkDB or writeDB:
-            self.dbh = despyutils.createDBH(section=sectionDB)
+            self.dbh = despydb.desdbi.DesDbi(section=sectionDB)
 
         # if write DB, initialize the table
         if writeDB: self.createCOADDTILE(table=tablename)

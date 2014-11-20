@@ -2,11 +2,11 @@
 
 import os,sys
 import math
-import coreutils.desdbi
+import despydb
 import matplotlib.pyplot as plt
 from matplotlib.patches import Ellipse, Polygon
 import numpy
-from despyutils import astroFM as astrometry
+from despyastro import astrometry
 
 
 """
@@ -65,7 +65,7 @@ except:
     desdmfile = None
 
 # Connect to desoper for comparisons
-dbh = coreutils.desdbi.DesDbi(desdmfile,"db-desoper")
+dbh = despydb.desdbi.DesDbi(desdmfile,"db-desoper")
 cur = dbh.cursor()
 
 # Matplotlib handle

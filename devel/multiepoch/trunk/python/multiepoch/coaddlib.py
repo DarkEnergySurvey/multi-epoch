@@ -10,9 +10,9 @@ from matplotlib.patches     import Polygon
 from matplotlib.collections import PatchCollection
 
 # DESDM modules
-import despyutils
-from despyutils import wcsutil
-from despyutils import tableio
+import despyastro
+from despyastro import wcsutil
+from despyastro import tableio
 
 D2R = math.pi/180. # degrees to radians shorthand
 
@@ -36,7 +36,8 @@ class DEScoadd:
         except:
             # For now all connections will be to the old DB
             print "# setting up DES-DB connection(s)"
-            self.dbh = despyutils.createDBH(section="db-desoper",verbose=self.verbose)
+            self.dbh = despydb.desdbi.DesDbi(section="db-desoper")
+
         else:
             print "# Connection already open: %s" % self.dbh
             
@@ -209,7 +210,7 @@ class DEScoadd:
                 (%s) ) """ % (select_constraints, from_constraints,and_constraints,checkC1,checkC2,checkC3,checkC4)
         if self.verbose: print "# Getting images within the tile: %s\n %s" % (tilename,query)
         # Get the images that are part of the DESTILE
-        self.ccdimages = despyutils.query2dict_of_columns(query,dbhandle=self.dbh)
+        self.ccdimages = despyastro.genutil.query2dict_of_columns(query,dbhandle=self.dbh,array=True)
 
         # Get the filters we found
         self.BANDS = numpy.unique(self.ccdimages['BAND'])
@@ -917,7 +918,7 @@ class DEScoadd:
         callfile.close()
         return
 
-# MOVE TO despyutils!!!
+# MOVE TO despymisc!!!
 def extract_from_keys(dictionary, keys):
     """ Returns a dictionary of a subset of keys """
     return dict((k, dictionary[k]) for k in keys if k in dictionary)

@@ -2,8 +2,8 @@
 
 import os,sys
 import astrometry
-import coreutils.desdbi
-from despyutils import wcsutil
+import despydb
+from despyastro import wcsutil
 
 def main():
 
@@ -15,7 +15,7 @@ def main():
         desdmfile = os.environ["des_services"]
     except KeyError:
         desdmfile = None
-    dbh = coreutils.desdbi.DesDbi(desdmfile,section)
+    dbh = despydb.desdbi.DesDbi(desdmfile,section)
     cur = dbh.cursor()
 
     wcskeys = ["BAND",
