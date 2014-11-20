@@ -9,8 +9,9 @@ import matplotlib
 import matplotlib.pyplot as plt
 from matplotlib.patches     import Polygon
 from matplotlib.collections import PatchCollection
-import despyutils
-from despyutils import tableio
+import despyastro
+import despymisc
+from despyastro import tableio
 import time
 
 
@@ -68,7 +69,7 @@ plt.xlabel("R.A. (degrees)")
 plt.ylabel("Decl.(degrees)")
 plt.xlim(ra1,ra2)
 plt.ylim(dec1,dec2)
-print >>sys.stderr,"# Time:%s" % despyutils.elapsed_time(t0)
+print >>sys.stderr,"# Time:%s" % despymisc.miscutils.elapsed_time(t0)
 plt.savefig("DES-zoom0.png")
 
 #plt.show()
@@ -102,7 +103,7 @@ plt.xlabel("R.A. (degrees)")
 plt.ylabel("Decl.(degrees)")
 plt.xlim(ra1,ra2)
 plt.ylim(dec1,dec2)
-print >>sys.stderr,"# Time:%s" % despyutils.elapsed_time(t0)
+print >>sys.stderr,"# Time:%s" % despymisc.miscutils.elapsed_time(t0)
 plt.savefig("DES-zoom1.png")
 
 #################
@@ -125,7 +126,7 @@ ax.add_collection(p)
 
 plt.xlabel("R.A. (degrees)")
 plt.ylabel("Decl.(degrees)")
-print >>sys.stderr,"# Time:%s" % despyutils.elapsed_time(t0)
+print >>sys.stderr,"# Time:%s" % despymisc.miscutils.elapsed_time(t0)
 plt.xlim(275-360,275)
 plt.ylim(-90,30)
 plt.savefig("DES-alltiles-car.png")

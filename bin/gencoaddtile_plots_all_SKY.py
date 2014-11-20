@@ -8,8 +8,8 @@ import matplotlib
 import matplotlib.pyplot as plt
 from matplotlib.patches     import Polygon
 from matplotlib.collections import PatchCollection
-import despyutils
-from despyutils import tableio
+import despymisc
+from despyastro import tableio
 import time
 
 # For all sky plots
@@ -63,6 +63,6 @@ for k in range(Ntiles):
         ax['fk5'].plot(uras[:,k], udecs[:,k],  lw=0.5, ls="--",color='red')
 
 
-print >>sys.stderr,"# Time:%s" % despyutils.elapsed_time(t0)
+print >>sys.stderr,"# Time:%s" % despymisc.miscutils.elapsed_time(t0)
 ax.grid(True)
 plt.show()

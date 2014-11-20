@@ -6,7 +6,7 @@ Simple script to compare the corners from a SWarped file withe entries in the DB
 
 import os,sys
 from pyfits import getheader
-from despyutils import wcsutil
+from despyastro import wcsutil
 
 def get_corners_filename(fileName):
 

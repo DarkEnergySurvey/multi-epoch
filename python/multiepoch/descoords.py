@@ -8,9 +8,11 @@ from matplotlib.patches import Ellipse, Polygon
 from pyfits import getheader
 
 # DESDM Modules
-import despyutils
-from despyutils import astroFM as astrometry
-from despyutils import wcsutil
+import despymisc
+import despydb
+import despyastro
+from despyastro import astrometry
+from despyastro import wcsutil
 # -----------------------
 
 class DEScoords:
@@ -31,7 +33,8 @@ class DEScoords:
         self.verbose = verbose
         
         # Make the DB connections
-        self.dbh = despyutils.createDBH(self.section,verbose=self.verbose)
+        self.dbh = despydb.desdbi.DesDbi(section=self.section)
+            
 
     def computeCCDcorners_filename(self,filename):
 
@@ -158,7 +161,7 @@ class DEScoordsOLD:
     def __init__ (self,verbose=False):
 
         self.verbose = verbose
-        self.dbh = despyutils.createDBH(section="db-desoper",verbose=self.verbose)
+        self.dbh = despydb.desdbi.DesDbi(section="db-desoper")
 
 
     def insertCCDcorners_query(self,query,tablename='felipe.imagecorners_test',clobber=False):
@@ -181,7 +184,7 @@ class DEScoordsOLD:
         try:
             cur = self.dbh.cursor()
         except:
-            self.dbh = despyutils.createDBH(section="db-desoper",verbose=self.verbose)
+            self.dbh =  despydb.desdbi.DesDbi(section="db-desoper")
             cur = self.dbh.cursor()
             
         cur.execute(query)
@@ -198,7 +201,7 @@ class DEScoordsOLD:
 
         # Commit after we are done
         self.dbh.commit()
-        print "#\n# Time:%s" % despyutils.elapsed_time(t0)
+        print "#\n# Time:%s" % despymisc.miscutils.elapsed_time(t0)
         return
     
     def insertCCDcornersID(self,ID, IMAGENAME, TABLENAME, commit=False):

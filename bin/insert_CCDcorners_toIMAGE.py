@@ -9,7 +9,7 @@ given reqnum and exec_name
 F. Menanteau, Apr 2014.
 
 July 2014, this function is not needed anymore as corners are now
-written in the the Refact database automatically, using despyutils.wcsutils
+written in the the Refact database automatically, using wcsutils
 
 """
 
