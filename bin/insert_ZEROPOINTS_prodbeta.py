@@ -47,6 +47,10 @@ def findZEROPOINTS(filenames, exposurenames, section='db-desoper'):
 
     # Runs '20130717213138_20121124' and '20130712064117_20121207' are
     # the original ones with the 'SVA1_FINALCUT' tag
+    # To find the runs from SVA1_FINALCUT for el Gordo and RXJ
+    # select RUN from  RUNTAG  where runtag.RUN like '%20121207%' and runtag.tag='SVA1_FINALCUT';
+    # select RUN from  RUNTAG  where runtag.RUN like '%20121124%' and runtag.tag='SVA1_FINALCUT';
+
     query = """SELECT distinct zeropoint.IMAGEID, image.IMAGENAME, zeropoint.MAG_ZERO
     from IMAGE, ZEROPOINT, RUNTAG
     where
