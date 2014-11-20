@@ -3,8 +3,7 @@
 import os,sys
 import time
 # DESDM Modules
-import despyutils
-
+import despydb
 
 """
 A temporary ans simple script to copy the matched ZEROPOINT.MAG_ZERO
@@ -29,7 +28,7 @@ def checkTABLENAMEexists(tablename):
     query = """
     select count (*) from all_tables where owner||'.'||table_name='%s'""" % tablename
 
-    dbh = despyutils.createDBH(section="db-desoper",verbose=True)
+    dbh = despydb.desdbi.DesDbi(section="db-desoper")
     cur = dbh.cursor()
     cur.execute(query)
     count = cur.fetchone()[0]
@@ -45,7 +44,7 @@ def checkTABLENAMEexists(tablename):
 
 def createZEROPOINTtable(tablename,clobber=False):
 
-    dbh = despyutils.createDBH(section="db-desoper",verbose=True)
+    dbh = despydb.desdbi.DesDbi(section="db-desoper")
     cur = dbh.cursor()
     
     # make sure we delete before we created -- if it exist only
@@ -114,9 +113,10 @@ def insertZEROPOINTS(tablename,clobber=False):
 
     print "# Will query:\n %s\n" % query
 
-    dbh = despyutils.createDBH(section="db-desoper",verbose=True)
+    dbh = despydb.desdbi.DesDbi(section="db-desoper")
     cur = dbh.cursor()
-    qdict = despyutils.query2dict_of_columns(query,dbhandle=dbh)
+    #qdict = despyastro.query2dict_of_columns(query,dbhandle=dbh)
+    qdict = despyastro.genutil.query2dict_of_columns(query,dbhandle=dbh,array=True)
     N = len(qdict['MAG_ZERO'])
     print "# Found %s matches with query" % N
     
