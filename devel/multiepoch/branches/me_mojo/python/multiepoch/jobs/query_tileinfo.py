@@ -65,9 +65,12 @@ class Job(BaseJob):
         if 'dbh' not in self.ctx:
             try:
                 from despydb import desdbi
-                self.ctx.dbh = desdbi.DesDbi(section='db-desoper')
+                db-section = selt.ctx.get(db-section,'db-desoper')
+                self.ctx.dbh = desdbi.DesDbi(section=db-section)
             except:
                 raise ValueError('Database handler could not be provided for context.')
+        else:
+            print "# Will recycle existing db-handle"
 
         # EXECUTE THE QUERY
         cur = self.ctx.dbh.cursor()
