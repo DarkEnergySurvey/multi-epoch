@@ -11,13 +11,9 @@ We will use this dictionary to make the head file later.
 """
 
 
-import numpy
-
 from mojo.jobs.base_job import BaseJob
-
-from multiepoch.exceptions import exceptions
-
 from despydb import desdbi
+import numpy
 
 
 QUERY = '''
@@ -71,8 +67,8 @@ class Job(BaseJob):
                 from despydb import desdbi
                 self.ctx.dbh = desdbi.DesDbi(section='db-desoper')
             except:
-                raise exceptions.NoDBHError(('Database handler could not be '
-                    ' provided for context.'))
+                raise ValueError('Database handler could not be provided for context.')
+
         # EXECUTE THE QUERY
         cur = self.ctx.dbh.cursor()
         cur.execute(self.get_query(**self.ctx.get_kwargs_dict()))
