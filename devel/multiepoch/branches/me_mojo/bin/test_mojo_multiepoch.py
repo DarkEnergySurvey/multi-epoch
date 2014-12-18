@@ -2,19 +2,19 @@
 
 """ Make sure we do:
 
-setup -v -r ~/DESDM-Code/devel/mojo/trunk/ 
 setup -v despydb 2.0.0+0
-setup -v despyastro 0.2.0+0
-setup -v ipython 2.1.0+3
+setup -v -r ~/DESDM-Code/devel/mojo/trunk/ 
 setup -v -r ~/DESDM-Code/devel/despyastro/trunk
+setup -v -r ~/DESDM-Code/devel/despymisc/trunk
 setup -v matplotlib 1.2.0+16 
-setenv PYTHONPATH ${PYTHONPATH}:${HOME}/DESDM-Code/devel/mojo/trunk/examples 
-setenv MULTIEPOCH_DIR ${HOME}/DESDM-Code/devel/multiepoch/trunk 
-setup -v despymisc 0.1.0+0
+setenv PYTHONPATH ${PYTHONPATH}:${HOME}/DESDM-Code/devel/multiepoch/branches/me_mojo/python
+setenv MULTIEPOCH_DIR ${HOME}/DESDM-Code/devel/multiepoch/branches/me_mojo 
 setup -v sextractor 2.18.10+15  
 setup -v stiff 2.1.3+1
 setup -v swarp 2.36.2+2 
 setup -v psfex 3.17.0+7
+
+setup -v astromatic fall2014+0 
 
 """
 
@@ -28,7 +28,7 @@ jo  = job_operator.JobOperator('multiepoch.config_db-destest')
 jo.run_job('multiepoch.jobs.query_tileinfo', tilename='DES2246-4457', coaddtile_table='felipe.coaddtile_new')
 
 # 2. Set up the output directory
-jo.run_job('multiepoch.jobs.setup_tile_directory', outputpath=os.environ['HOME']+"/TILEBUILDER_TEST")
+jo.run_job('multiepoch.jobs.set_tile_directory', outputpath=os.environ['HOME']+"/TILEBUILDER_TEST")
 
 # 3. Get the CCDs inside the tile
 SELECT_EXTRAS = "felipe.extraZEROPOINT.MAG_ZERO,"
