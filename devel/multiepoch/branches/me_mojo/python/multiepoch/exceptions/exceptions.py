@@ -1,4 +1,0 @@
-
-class NoDBHError(Exception):
-    pass
-
