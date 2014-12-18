@@ -32,7 +32,7 @@ except:
     USERNAME = None
     PASSWORD = None
     URL = None 
-    print 'could not load credentials from .desservices.ini file'
+    print "WARNING: could not load credentials from .desservices.ini file -- make sure "
 
 # -----------------------------------------------------------------------------
 

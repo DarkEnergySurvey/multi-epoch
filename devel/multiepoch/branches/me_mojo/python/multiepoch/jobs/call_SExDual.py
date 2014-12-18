@@ -5,6 +5,7 @@ import subprocess
 import multiprocessing
 import time
 from despymisc.miscutils import elapsed_time
+from despymisc.miscutils import work_subprocess_logging
 
 class Job(BaseJob):
 
@@ -170,19 +171,5 @@ class Job(BaseJob):
 
     def __str__(self):
         return 'Creates the SExtractor call for dual detection'
-
-
-def work_subprocess(cmd):
-        
-    """ Dummy function to call in multiprocess with shell=True """
-    return subprocess.call(cmd,shell=True) 
-
-def work_subprocess_logging(tup):
-
-    """ Dummy function to call in multiprocess with shell=True """
-    cmd,logfile = tup
-    log = open(logfile,"w")
-    print "# Will write to logfile: %s" % logfile
-    return subprocess.call(cmd,shell=True ,stdout=log, stderr=log)
 
 
