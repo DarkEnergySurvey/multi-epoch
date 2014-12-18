@@ -2,6 +2,7 @@ from mojo.jobs.base_job import BaseJob
 import os
 import sys
 import time
+import subprocess
 from despymisc.miscutils import elapsed_time
 
 class Job(BaseJob):
@@ -65,7 +66,7 @@ class Job(BaseJob):
     def runpsfex(self,cmd_list):
 
         t0 = time.time()
-        print "# Will proceed to run the SEx psf call now:"
+        print "# Will proceed to run the psfex call now:"
 
         logfile = self.ctx.get('logfile', os.path.join(self.ctx.tiledir,"SExpsf_%s.log" % self.ctx.tilename))
         log = open(logfile,"w")

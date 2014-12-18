@@ -34,7 +34,7 @@ tablename = 'felipe.coaddtile_new'
 jobs = [
         'multiepoch.jobs.query_tileinfo',
         'multiepoch.jobs.find_ccds_in_tile',
-        'multiepoch.jobs.setup_tile_directory',
+        'multiepoch.jobs.set_tile_directory',
         'multiepoch.jobs.plot_ccd_corners_destile',
         'multiepoch.jobs.find_fitsfiles_location',
         'multiepoch.jobs.get_fitsfiles',

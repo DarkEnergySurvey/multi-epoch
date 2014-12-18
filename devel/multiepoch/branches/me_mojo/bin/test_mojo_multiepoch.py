@@ -14,7 +14,7 @@ setup -v stiff 2.1.3+1
 setup -v swarp 2.36.2+2 
 setup -v psfex 3.17.0+7
 
-setup -v astromatic fall2014+0 
+#setup -v astromatic fall2014+0 
 
 """
 
@@ -76,15 +76,14 @@ jo.run_job('multiepoch.jobs.call_Stiff',stiff_parameters=stiff_params, stiff_exe
 jo.run_job('multiepoch.jobs.set_catNames')
 
 # 10. make the SEx psf Call
-jo.run_job('multiepoch.jobs.call_SExpsf',SExpsf_execution_mode='dryrun')
-#jo.run_job('multiepoch.jobs.call_SExpsf',SExpsf_execution_mode='execute',MP_SEx=8)
-
+#jo.run_job('multiepoch.jobs.call_SExpsf',SExpsf_execution_mode='dryrun')
+jo.run_job('multiepoch.jobs.call_SExpsf',SExpsf_execution_mode='execute',MP_SEx=8)
 
 # 11. Run  psfex
-jo.run_job('multiepoch.jobs.call_psfex',psfex_parameters={"NTHREADS"  :8,},psfex_execution_mode='dryrun')
-#jo.run_job('multiepoch.jobs.call_psfex',psfex_parameters={"NTHREADS"  :8,},psfex_execution_mode='execute')
+#jo.run_job('multiepoch.jobs.call_psfex',psfex_parameters={"NTHREADS"  :8,},psfex_execution_mode='dryrun')
+jo.run_job('multiepoch.jobs.call_psfex',psfex_parameters={"NTHREADS"  :8,},psfex_execution_mode='execute')
 
 # 12. Run SExtractor un dual mode
-jo.run_job('multiepoch.jobs.call_SExDual',SExDual_parameters={"MAG_ZEROPOINT":30,}, SExDual_execution_mode='dryrun',MP_SEx=8)
-#jo.run_job('multiepoch.jobs.call_SExDual',SExDual_parameters={"MAG_ZEROPOINT":30,}, SExDual_execution_mode='execute',MP_SEx=8)
+#jo.run_job('multiepoch.jobs.call_SExDual',SExDual_parameters={"MAG_ZEROPOINT":30,}, SExDual_execution_mode='dryrun',MP_SEx=8)
+jo.run_job('multiepoch.jobs.call_SExDual',SExDual_parameters={"MAG_ZEROPOINT":30,}, SExDual_execution_mode='execute',MP_SEx=8)
 

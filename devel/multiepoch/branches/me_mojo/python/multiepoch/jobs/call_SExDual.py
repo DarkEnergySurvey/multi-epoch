@@ -5,7 +5,7 @@ import subprocess
 import multiprocessing
 import time
 from despymisc.miscutils import elapsed_time
-from despymisc.miscutils import work_subprocess_logging
+from despymisc.subprocess_utils import work_subprocess_logging
 
 class Job(BaseJob):
 

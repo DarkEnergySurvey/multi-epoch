@@ -23,6 +23,7 @@ QUERY = '''
     '''
 
 class Job(BaseJob):
+
     '''
     DESDM multi-epoch pipeline : QUERY TILEINFO JOB
     ===============================================
@@ -32,7 +33,7 @@ class Job(BaseJob):
     Required INPUT from context (ctx):
     ``````````````````````````````````
     - tilename : string, default_value=None
-    - tablename : string, default_value='felipe.coaddtile_new'
+    - coaddtile_table : string, default_value='felipe.coaddtile_new'
 
     Writes as OUTPUT to context (ctx):
     ``````````````````````````````````
@@ -41,6 +42,7 @@ class Job(BaseJob):
     '''
 
     def get_query(self, **kwargs):
+
         '''
         Get the database query that returns DES tile information.
 
@@ -51,7 +53,7 @@ class Job(BaseJob):
         '''
 
         tablename = kwargs.get('coaddtile_table', None)
-        tilename = kwargs.get('tilename', None)
+        tilename  = kwargs.get('tilename', None)
 
         if not tablename or not tilename:
             raise ValueError('tablename and tilename need to be provided as kwargs')
@@ -64,9 +66,8 @@ class Job(BaseJob):
         # CHECK IF DATABASE HANDLER IS PRESENT
         if 'dbh' not in self.ctx:
             try:
-                from despydb import desdbi
-                db-section = selt.ctx.get(db-section,'db-desoper')
-                self.ctx.dbh = desdbi.DesDbi(section=db-section)
+                db_section = self.ctx.get('db-section','db-desoper')
+                self.ctx.dbh = desdbi.DesDbi(section=db_section)
             except:
                 raise ValueError('Database handler could not be provided for context.')
         else:
