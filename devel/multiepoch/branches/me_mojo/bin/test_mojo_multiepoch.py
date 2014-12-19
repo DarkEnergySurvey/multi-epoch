@@ -1,25 +1,17 @@
 #!/usr/bin/env python
 
-""" Make sure we do:
-
-setup -v despydb 2.0.0+0
-setup -v -r ~/DESDM-Code/devel/mojo/trunk/ 
-setup -v -r ~/DESDM-Code/devel/despyastro/trunk
-setup -v -r ~/DESDM-Code/devel/despymisc/trunk
-setup -v matplotlib 1.2.0+16 
-setenv PYTHONPATH ${PYTHONPATH}:${HOME}/DESDM-Code/devel/multiepoch/branches/me_mojo/python
-setenv MULTIEPOCH_DIR ${HOME}/DESDM-Code/devel/multiepoch/branches/me_mojo 
-setup -v sextractor 2.18.10+15  
-setup -v stiff 2.1.3+1
-setup -v swarp 2.36.2+2 
-setup -v psfex 3.17.0+7
-
-#setup -v astromatic fall2014+0 
-
+"""
+Make sure we do:
+ setup -v -r ~/DESDM-Code/devel/multiepoch/branches/me_mojo
 """
 
 from mojo import job_operator
 import os,sys
+import time
+from despymisc.miscutils import elapsed_time
+
+# Take time
+t0 = time.time()
 
 # 0. Initialize Job Operator
 jo  = job_operator.JobOperator('multiepoch.config_db-destest')
@@ -69,8 +61,8 @@ stiff_params={
     "NTHREADS"  :8,
     "COPYRIGHT" : "NCSA/DESDM",
     "WRITE_XML" : "N"}
-#jo.run_job('multiepoch.jobs.call_Stiff',stiff_parameters=stiff_params, stiff_execution_mode='execute')
-jo.run_job('multiepoch.jobs.call_Stiff',stiff_parameters=stiff_params, stiff_execution_mode='dryrun')
+jo.run_job('multiepoch.jobs.call_Stiff',stiff_parameters=stiff_params, stiff_execution_mode='execute')
+#jo.run_job('multiepoch.jobs.call_Stiff',stiff_parameters=stiff_params, stiff_execution_mode='dryrun')
 
 # 9. Set up the catalogs names for SEx and psfex
 jo.run_job('multiepoch.jobs.set_catNames')
@@ -87,3 +79,6 @@ jo.run_job('multiepoch.jobs.call_psfex',psfex_parameters={"NTHREADS"  :8,},psfex
 #jo.run_job('multiepoch.jobs.call_SExDual',SExDual_parameters={"MAG_ZEROPOINT":30,}, SExDual_execution_mode='dryrun',MP_SEx=8)
 jo.run_job('multiepoch.jobs.call_SExDual',SExDual_parameters={"MAG_ZEROPOINT":30,}, SExDual_execution_mode='execute',MP_SEx=8)
 
+
+
+print "# Grand Total time: %s" % elapsed_time(t0)
