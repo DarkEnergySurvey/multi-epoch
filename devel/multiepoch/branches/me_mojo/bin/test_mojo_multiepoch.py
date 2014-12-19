@@ -53,8 +53,8 @@ swarp_params={
     "NTHREADS"     :8,
     "COMBINE_TYPE" : "SUM",    
     "PIXEL_SCALE"  : 0.263}
-#jo.run_job('multiepoch.jobs.call_SWarp',swarp_parameters=swarp_params, DETEC_COMBINE_TYPE="CHI-MEAN",swarp_execution_mode='execute')
-jo.run_job('multiepoch.jobs.call_SWarp',swarp_parameters=swarp_params, DETEC_COMBINE_TYPE="CHI-MEAN",swarp_execution_mode='dryrun')
+jo.run_job('multiepoch.jobs.call_SWarp',swarp_parameters=swarp_params, DETEC_COMBINE_TYPE="CHI-MEAN",swarp_execution_mode='execute')
+#jo.run_job('multiepoch.jobs.call_SWarp',swarp_parameters=swarp_params, DETEC_COMBINE_TYPE="CHI-MEAN",swarp_execution_mode='dryrun')
 
 # 8. Create the color images using stiff
 stiff_params={
