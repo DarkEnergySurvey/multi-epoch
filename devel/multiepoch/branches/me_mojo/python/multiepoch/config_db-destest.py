@@ -38,6 +38,7 @@ jobs = [
         'multiepoch.jobs.plot_ccd_corners_destile',
         'multiepoch.jobs.find_fitsfiles_location',
         'multiepoch.jobs.get_fitsfiles',
+        'multiepoch.jobs.make_SWarp_weights',
         'multiepoch.jobs.call_SWarp',
         'multiepoch.jobs.call_Stiff',
         'multiepoch.jobs.set_catNames',

@@ -9,6 +9,7 @@ setupRequired(despymisc  0.2.0+0)
 # Python core
 setupRequired(matplotlib 1.2.0+16)
 setupRequired(pyfits 3.3+1)
+setupRequired(fitsio 0.9.6+0)
 
 # Astromatic stuff
 setupRequired(sextractor 2.18.10+15)

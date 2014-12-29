@@ -1,0 +1,103 @@
+"""
+
+If in a remote machine, retrieve the fits file needed for coaddition using https
+
+INPUTS:
+
+ - self.ctx.FILEPATH_LOCAL (if in cosmology cluster self.ctx.FILEPATH_LOCAL =  self.ctx.FILEPATH_ARCHIVE)
+ - clobber_weights       : Defined local clobber (to self.ctx.clobber_weights)
+
+OUTPUTS:
+  - self.ctx.FILEPATH_LOCAL_WGT (contains the weight for SWarp science combination)
+
+"""
+
+from mojo.jobs.base_job import BaseJob
+import os,sys
+from multiepoch.DESfits import DESFITS
+from despymisc.miscutils import elapsed_time
+import numpy
+import time
+
+class Job(BaseJob):
+
+    def __call__(self):
+
+        # Get all of the relevant kwargs
+        kwargs = self.ctx.get_kwargs_dict()
+        clobber = kwargs.get('clobber_weights', False)
+        wgt_ext = kwargs.get('weight_extension','_wgt')
+
+        # Create the directory -- if it doesn't exist.
+        create_local_archive(self.ctx.local_archive)
+
+        # Create the weights
+        self.create_weights_for_SWarp(clobber,wgt_ext)
+
+        return
+
+    def create_weights_for_SWarp(self,clobber,wgt_ext):
+
+        """ Transfer the files """
+
+        local_archive = self.ctx.local_archive
+
+        # Now get the files via http
+        Nfiles = len(self.ctx.FILEPATH_LOCAL)
+        self.ctx.FILEPATH_LOCAL_WGT = []
+
+        for k in range(Nfiles):
+            
+            # Define the local filename
+
+            basename  = self.ctx.FILEPATH[k].split(".fits")[0]
+            extension = self.ctx.FILEPATH[k].split(".fits")[1:]
+            local_wgtfile = os.path.join(local_archive,"%s%s.fits" % (basename,wgt_ext))
+            self.ctx.FILEPATH_LOCAL_WGT.append(local_wgtfile)
+
+            # Make sure the file does not already exists exits
+            if not os.path.exists(local_wgtfile) or clobber:
+                
+                dirname   = os.path.dirname(local_wgtfile)
+                if not os.path.exists(dirname):
+                    os.makedirs(dirname)
+
+                sys.stdout.write("\r# Making Weight:  %s (%s/%s)\n" % (local_wgtfile,k+1,Nfiles))
+                modify_weight(self.ctx.FILEPATH_LOCAL[k],self.ctx.FILEPATH_LOCAL_WGT[k],clobber)
+                #sys.stdout.flush()
+            else:
+                sys.stdout.write("\r# Skipping: %s (%s/%s) -- file exists" % (local_wgtfile,k+1,Nfiles))
+                sys.stdout.flush()
+
+        # Make it a np-char array
+        print "\n#\n"
+        self.ctx.FILEPATH_LOCAL_WGT = numpy.array(self.ctx.FILEPATH_LOCAL_WGT)
+        return
+        
+
+
+    def __str__(self):
+        return 'Create Custom inputs Weights for SWarp'
+
+
+
+def modify_weight(fileName,outName,clobber):
+
+    """ Simple call to modify weight image, based on a bitmask"""
+
+    # Get the start time
+    t0 = time.time()
+    desfits = DESFITS(fileName,outName,clobber=clobber)
+    # Replace bleed trails 2^6 = 64
+    desfits.replace_weightBit(maskbit=64)
+    desfits.write_weight()
+    print "# Done in %s\n" % elapsed_time(t0)
+    return
+
+def create_local_archive(local_archive):
+    """ Creates the local cache for the desar archive """
+    if not os.path.exists(local_archive):
+        print "# Will create LOCAL ARCHIVE at %s" % local_archive
+        os.mkdir(local_archive)
+    return
+

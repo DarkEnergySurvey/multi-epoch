@@ -48,6 +48,10 @@ jo.run_job('multiepoch.jobs.find_fitsfiles_location',archive_name='desar2home')
 LOCAL_DESAR = os.path.join(os.environ['HOME'],'LOCAL_DESAR')
 jo.run_job('multiepoch.jobs.get_fitsfiles',local_archive=LOCAL_DESAR)
 
+# Create custom weight for SWarp
+jo.run_job('multiepoch.jobs.make_SWarp_weights')
+exit()
+
 # 7. Prepare call to SWarp
 swarp_params={
     "NTHREADS"     :8,
