@@ -41,37 +41,46 @@ class Job(BaseJob):
         # 3. check execution mode and write/print/execute commands accordingly --------------
         executione_mode = self.ctx.get('swarp_execution_mode', 'tofile')
         if executione_mode == 'tofile':
-            bkline  = self.ctx.get('breakline',self.BKLINE)
-            # The file where we'll write the commands
-            cmdfile = self.ctx.get('cmdfile', os.path.join(self.ctx.tiledir,"call_swarp_%s.cmd" % self.ctx.tilename))
-            print "# Will write SWarp Detection call to: %s" % cmdfile
-            with open(cmdfile, 'w') as fid:
-                for band in self.ctx.dBANDS:
-                    fid.write(bkline.join(cmd_list[band])+'\n')
-                    fid.write('\n')
-                    
+            self.writeCall(cmd_list_sci)
+            
         elif executione_mode == 'dryrun':
             print "# For now we only print the commands (dry-run)"
             for band in self.ctx.dBANDS:
                 print ' '.join(cmd_list[band])
-
         elif executione_mode == 'execute':
-            logfile = self.ctx.get('logfile', os.path.join(self.ctx.tiledir,"swarp_%s.log" % self.ctx.tilename))
-            log = open(logfile,"w")
-            print "# Will proceed to run the SWarp calls now:"
-            print "# Will write to logfile: %s" % logfile
-            t0 = time.time()
-            for band in self.ctx.dBANDS:
-                t1 = time.time()
-                cmd  = ' '.join(cmd_list[band])
-                print "# Executing SWarp for tile:%s, BAND:%s" % (self.ctx.tilename,band)
-                print "# %s " % cmd
-                subprocess.call(cmd,shell=True,stdout=log, stderr=log)
-                print "# Done in %s\n" % elapsed_time(t1)
-            print "# Total SWarp time %s" % elapsed_time(t0)
+            self.runSWarp(cmd_list):
         else:
             raise ValueError('Execution mode %s not implemented.' % executione_mode)
 
+
+    def writeCall(self,cmd_list):
+
+        bkline  = self.ctx.get('breakline',self.BKLINE)
+        # The file where we'll write the commands
+        cmdfile = self.ctx.get('cmdfile', os.path.join(self.ctx.tiledir,"call_swarp_%s.cmd" % self.ctx.tilename))
+        print "# Will write SWarp Detection call to: %s" % cmdfile
+        with open(cmdfile, 'w') as fid:
+            for band in self.ctx.dBANDS:
+                fid.write(bkline.join(cmd_list[band])+'\n')
+                fid.write('\n')
+        return
+
+    def runSWarp(self,cmd_list):
+
+        logfile = self.ctx.get('logfile', os.path.join(self.ctx.tiledir,"swarp_%s.log" % self.ctx.tilename))
+        log = open(logfile,"w")
+        print "# Will proceed to run the SWarp calls now:"
+        print "# Will write to logfile: %s" % logfile
+        t0 = time.time()
+        for band in self.ctx.dBANDS:
+            t1 = time.time()
+            cmd  = ' '.join(cmd_list[band])
+            print "# Executing SWarp for tile:%s, BAND:%s" % (self.ctx.tilename,band)
+            print "# %s " % cmd
+            subprocess.call(cmd,shell=True,stdout=log, stderr=log)
+            print "# Done in %s\n" % elapsed_time(t1)
+        print "# Total SWarp time %s" % elapsed_time(t0)
+        return
 
     def get_swarp_cmd_list(self, swarp_scilist, swarp_wgtlist, swarp_flxlist,
                            comb_sci, comb_wgt, swarp_parameters={}):
