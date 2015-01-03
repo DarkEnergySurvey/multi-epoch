@@ -1,6 +1,6 @@
 """
 
-If in a remote machine, retrieve the fits file needed for coaddition using https
+Create the custom weights, with interpolated weight values for the SWarp input weights
 
 INPUTS:
 
