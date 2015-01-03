@@ -46,5 +46,6 @@ jobs = [
         'multiepoch.jobs.call_SExpsf',
         'multiepoch.jobs.call_psfex',
         'multiepoch.jobs.call_SExDual',
+        'multiepoch.jobs.make_MEFs',
         ]
 

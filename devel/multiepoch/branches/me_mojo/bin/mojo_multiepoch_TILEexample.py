@@ -64,10 +64,6 @@ swarp_params={
 #jo.run_job('multiepoch.jobs.call_SWarp_CustomWeights',swarp_parameters=swarp_params, DETEC_COMBINE_TYPE="CHI-MEAN",swarp_execution_mode='execute')
 jo.run_job('multiepoch.jobs.call_SWarp_CustomWeights',swarp_parameters=swarp_params, DETEC_COMBINE_TYPE="CHI-MEAN",swarp_execution_mode='dryrun')
 
-# 13. Create the MEF fits files in the formar we like
-jo.run_job('multiepoch.jobs.make_MEFs',clobber_MEF=True)
-exit()
-
 # 9. Create the color images using stiff
 stiff_params={
     "NTHREADS"  :8,
@@ -91,8 +87,7 @@ jo.run_job('multiepoch.jobs.call_psfex',psfex_parameters={"NTHREADS"  :8,},psfex
 #jo.run_job('multiepoch.jobs.call_SExDual',SExDual_parameters={"MAG_ZEROPOINT":30,}, SExDual_execution_mode='dryrun',MP_SEx=8)
 jo.run_job('multiepoch.jobs.call_SExDual',SExDual_parameters={"MAG_ZEROPOINT":30,}, SExDual_execution_mode='execute',MP_SEx=8)
 
-
 # 13. Create the MEF fits files in the formar we like
-jo.run_job('multiepoch.jobs.make_MEFs',clobber_MEF=True)
+jo.run_job('multiepoch.jobs.make_MEFs',clobber_MEF=False)
 
 print "# Grand Total time: %s" % elapsed_time(t0)
