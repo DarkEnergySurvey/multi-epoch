@@ -48,19 +48,24 @@ jo.run_job('multiepoch.jobs.find_fitsfiles_location',archive_name='desar2home')
 LOCAL_DESAR = os.path.join(os.environ['HOME'],'LOCAL_DESAR')
 jo.run_job('multiepoch.jobs.get_fitsfiles',local_archive=LOCAL_DESAR)
 
-# Create custom weight for SWarp
-jo.run_job('multiepoch.jobs.make_SWarp_weights')
-exit()
+# 7 Create custom weights for SWarp
+jo.run_job('multiepoch.jobs.make_SWarp_weights',clobber_weights=False, MP_weight=4)
 
-# 7. Prepare call to SWarp
+# Prepare call to SWarp
 swarp_params={
     "NTHREADS"     :8,
-    "COMBINE_TYPE" : "SUM",    
+    "COMBINE_TYPE" : "AVERAGE",    
     "PIXEL_SCALE"  : 0.263}
-jo.run_job('multiepoch.jobs.call_SWarp',swarp_parameters=swarp_params, DETEC_COMBINE_TYPE="CHI-MEAN",swarp_execution_mode='execute')
+# 8a. The simple call, no custom weights (deprecated?)
+#jo.run_job('multiepoch.jobs.call_SWarp',swarp_parameters=swarp_params, DETEC_COMBINE_TYPE="CHI-MEAN",swarp_execution_mode='execute')
 #jo.run_job('multiepoch.jobs.call_SWarp',swarp_parameters=swarp_params, DETEC_COMBINE_TYPE="CHI-MEAN",swarp_execution_mode='dryrun')
 
-# 8. Create the color images using stiff
+# 8b. The Custom call with custom weights 
+jo.run_job('multiepoch.jobs.call_SWarp_CustomWeights',swarp_parameters=swarp_params, DETEC_COMBINE_TYPE="CHI-MEAN",swarp_execution_mode='execute')
+#jo.run_job('multiepoch.jobs.call_SWarp_CustomWeights',swarp_parameters=swarp_params, DETEC_COMBINE_TYPE="CHI-MEAN",swarp_execution_mode='dryrun')
+
+
+# 9. Create the color images using stiff
 stiff_params={
     "NTHREADS"  :8,
     "COPYRIGHT" : "NCSA/DESDM",
@@ -68,10 +73,10 @@ stiff_params={
 jo.run_job('multiepoch.jobs.call_Stiff',stiff_parameters=stiff_params, stiff_execution_mode='execute')
 #jo.run_job('multiepoch.jobs.call_Stiff',stiff_parameters=stiff_params, stiff_execution_mode='dryrun')
 
-# 9. Set up the catalogs names for SEx and psfex
+# 10. Set up the catalogs names for SEx and psfex
 jo.run_job('multiepoch.jobs.set_catNames')
 
-# 10. make the SEx psf Call
+# 11. make the SEx psf Call
 #jo.run_job('multiepoch.jobs.call_SExpsf',SExpsf_execution_mode='dryrun')
 jo.run_job('multiepoch.jobs.call_SExpsf',SExpsf_execution_mode='execute',MP_SEx=8)
 
@@ -82,7 +87,5 @@ jo.run_job('multiepoch.jobs.call_psfex',psfex_parameters={"NTHREADS"  :8,},psfex
 # 12. Run SExtractor un dual mode
 #jo.run_job('multiepoch.jobs.call_SExDual',SExDual_parameters={"MAG_ZEROPOINT":30,}, SExDual_execution_mode='dryrun',MP_SEx=8)
 jo.run_job('multiepoch.jobs.call_SExDual',SExDual_parameters={"MAG_ZEROPOINT":30,}, SExDual_execution_mode='execute',MP_SEx=8)
-
-
 
 print "# Grand Total time: %s" % elapsed_time(t0)
