@@ -61,8 +61,8 @@ swarp_params={
 #jo.run_job('multiepoch.jobs.call_SWarp',swarp_parameters=swarp_params, DETEC_COMBINE_TYPE="CHI-MEAN",swarp_execution_mode='dryrun')
 
 # 8b. The Custom call with custom weights 
-#jo.run_job('multiepoch.jobs.call_SWarp_CustomWeights',swarp_parameters=swarp_params, DETEC_COMBINE_TYPE="CHI-MEAN",swarp_execution_mode='execute')
-jo.run_job('multiepoch.jobs.call_SWarp_CustomWeights',swarp_parameters=swarp_params, DETEC_COMBINE_TYPE="CHI-MEAN",swarp_execution_mode='dryrun')
+jo.run_job('multiepoch.jobs.call_SWarp_CustomWeights',swarp_parameters=swarp_params, DETEC_COMBINE_TYPE="CHI-MEAN",swarp_execution_mode='execute')
+#jo.run_job('multiepoch.jobs.call_SWarp_CustomWeights',swarp_parameters=swarp_params, DETEC_COMBINE_TYPE="CHI-MEAN",swarp_execution_mode='dryrun')
 
 # 9. Create the color images using stiff
 stiff_params={
