@@ -8,7 +8,7 @@ setupRequired(despymisc  0.2.0+0)
 setupRequired(despyfits  0.1.1+0) 
 
 # Python core
-setupRequired(matplotlib 1.2.0+16)
+setupRequired(matplotlib 1.2.0+17)
 setupRequired(pyfits 3.3+1)
 setupRequired(fitsio 0.9.6+0)
 
