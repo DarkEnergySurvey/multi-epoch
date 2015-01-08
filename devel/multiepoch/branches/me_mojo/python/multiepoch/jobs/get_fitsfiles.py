@@ -74,8 +74,8 @@ class Job(BaseJob):
                     
                 sys.stdout.write("\r# Getting:  %s (%s/%s)" % (url,k+1,Nfiles))
                 sys.stdout.flush()
-                
-                http_requests.download_file(url,localfile)
+                # Get a file using the $HOME/.desservices.ini credentials
+                http_requests.download_file_des(url,localfile)
             else:
                 sys.stdout.write("\r# Skipping: %s (%s/%s) -- file exists" % (url,k+1,Nfiles))
                 sys.stdout.flush()
