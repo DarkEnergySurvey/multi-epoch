@@ -47,7 +47,6 @@ jo.run_job('multiepoch.jobs.find_fitsfiles_location',archive_name='desar2home')
 # 6. Retrieve the files -- if remotely
 LOCAL_DESAR = os.path.join(os.environ['HOME'],'LOCAL_DESAR')
 jo.run_job('multiepoch.jobs.get_fitsfiles',local_archive=LOCAL_DESAR)
-exit()
 
 # 7 Create custom weights for SWarp
 jo.run_job('multiepoch.jobs.make_SWarp_weights',clobber_weights=False, MP_weight=4)
