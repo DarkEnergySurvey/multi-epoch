@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+
 """
 Builds a dictionary/header with all of the information on the COADDTILE_XXXX
 table for a given TILENAME (input). It store the RAC[1,4] and DECC[1,4] corners
@@ -10,8 +12,11 @@ We will use this dictionary to make the head file later.
 
 """
 
-
-from mojo.jobs.base_job import BaseJob
+try:
+    from mojo.jobs.base_job import BaseJob
+except:
+    print "WARNING: mojo not loaded"
+    
 from despydb import desdbi
 import numpy
 
@@ -123,3 +128,41 @@ class Job(BaseJob):
         
     def __str__(self):
         return 'query tileinfo'
+
+
+
+def cmdline():
+
+    """
+    The funtion to generate and populate the commnand-line arguments into the context
+    """
+
+    import argparse
+    parser = argparse.ArgumentParser(description="Builds a dictionary/header with all of the information")
+
+    # The positional arguments
+    parser.add_argument("tileName", help="The Name of the Tile Name to query")
+
+    # Positional arguments
+    parser.add_argument("--db_section", action="store", default="db-desoper",
+                        help="DataBase Section to connect")
+    parser.add_argument("--coaddtile_table", action="store", default="felipe.coaddtile_new",
+                        help="Database table with COADDTILE information")
+    args = parser.parse_args()
+    return args
+
+    
+if __name__ == "__main__":
+
+    args = cmdline()
+
+
+    job = Job()
+    job.ctx = args
+    print job.run()
+    
+    #job.__call__()
+
+    #print "Hello World"
+
+    print args
