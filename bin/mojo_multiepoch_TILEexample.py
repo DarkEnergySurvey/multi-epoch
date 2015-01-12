@@ -2,7 +2,7 @@
 
 """
 Make sure we do:
- setup -v -r ~/DESDM-Code/devel/multiepoch/branches/me_mojo
+ setup -v -r ~/DESDM-Code/devel/multiepoch/branches/me_mojo_0.1
 """
 
 from mojo import job_operator
