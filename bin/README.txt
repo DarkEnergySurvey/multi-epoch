@@ -1,7 +1,6 @@
 To EUPS setuo
 
-setup -v -r ~/DESDM-Code/devel/despyutils/trunk
-setup -v -r ~/DESDM-Code/devel/multiepoch/trunk
+setup -v -r ~/DESDM-Code/devel/multiepoch/branches/me_mojo
 
 Code descriptions:
 
@@ -38,3 +37,5 @@ Libraries/Classes
   Proto-type class to handle coords in new TEST DB and compute
   coordinates for tiles
  
+- DESfits.py  
+  A fitsio-based class to handle DES MEF files
