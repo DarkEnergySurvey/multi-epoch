@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+
 """
 Finds all of the CCCs in the IMAGE table that fall inside the (RACMI,RACMAX)
 and (DECCMIN,DECCMAX) of a DES tile with a given set of extras SQL and/or
@@ -59,45 +61,21 @@ TILE_DECCMIN = min(DEC Corners[1,4])
 TILE_DECCMAX = man(DEC Corners[1,4])
 
 **** Note1: We need to do something about inverting MIN,MAX when crossRAzero='Y' ****
-
 **** Note2: We need add the general query, when the tile is smaller than the CCDs ****
+
+Author: Felipe Menanteau, NCSA, Nov 2014.
 
 """
 
+import json
 import numpy
 import despyastro
 from mojo.jobs.base_job import BaseJob
+from despydb import desdbi
 
-# THE QUERY THAT IS RUN TO GET THE CCDs
+# THE QUERY TEMPLATE THAT IS RUN TO GET THE CCDs
 # -----------------------------------------------------------------------------
 #
-
-# DEPRECATED
-QUERY_OLDSCHEMA = """
-    SELECT
-        {select_extras}
-        filepath_desar.PATH, image.IMAGENAME, filepath_desar, COMPRESSION, image.BAND, image.RUN,
-        image.PROJECT, image.IMAGETYPE, image.ID, c.RA, c.RAC1, c.RAC2, c.RAC3,
-        c.RAC4, c.DEC, c.DECC1, c.DECC2, c.DECC3, c.DECC4
-    FROM
-        IMAGE, felipe.IMAGECORNERS c, FILEPATH_DESAR,
-        {from_extras} 
-    WHERE
-        image.IMAGENAME=c.IMAGENAME
-    AND
-        filepath_desar.ID=IMAGE.ID
-    AND
-        {and_extras} 
-     """
-
-""" This the query in the new schema based in FILENAME
-It will get:
-  - the filepath of the FILENANE.
-  - corners of FILENAME
-  - within a tagname (i.e. Y2T1_FIRSTCUT) 
-  - for FILENAME that are 'red'
-  - for FILENAME with a given EXEC_NAME (i.e. 'immask')
-"""
 
 QUERY = """
      SELECT
@@ -122,15 +100,16 @@ QUERY = """
          {and_extras} 
          """
 
-# DEFAULT PARAMETER VALUES
+# DEFAULT PARAMETER VALUES -- Change from felipe.XXXXX --> XXXXX
 # -----------------------------------------------------------------------------
-SELECT_EXTRAS = "felipe.extraZEROPOINT.FILENAME, felipe.extraZEROPOINT.MAG_ZERO,"
+SELECT_EXTRAS = "felipe.extraZEROPOINT.MAG_ZERO,"
 FROM_EXTRAS   = "felipe.extraZEROPOINT"
-AND_EXTRAS    = "file_archive_info.FILENAME  = felipe.extraZEROPOINT.FILENAME"
+AND_EXTRAS    = "felipe.extraZEROPOINT.FILENAME = image.FILENAME" 
 # -----------------------------------------------------------------------------
 
 
 class Job(BaseJob):
+
     '''
     DESDM multi-epoch pipeline : QUERY TILEINFO JOB
     ===============================================
@@ -164,6 +143,13 @@ class Job(BaseJob):
         tagname       = kwargs.get('tagname',       'Y2T1_FIRSTCUT')
         exec_name     = kwargs.get('exec_name',     'immask')
 
+
+        # Create the tile_edges tuple structure
+        self.ctx.tile_edges = (
+            self.ctx.tileinfo['RACMIN'], self.ctx.tileinfo['RACMAX'],
+            self.ctx.tileinfo['DECCMIN'],self.ctx.tileinfo['DECCMAX']
+            )
+
         corners_and = [
                 "((image.RAC1 BETWEEN %.10f AND %.10f) AND (image.DECC1 BETWEEN %.10f AND %.10f))\n" % self.ctx.tile_edges,
                 "((image.RAC2 BETWEEN %.10f AND %.10f) AND (image.DECC2 BETWEEN %.10f AND %.10f))\n" % self.ctx.tile_edges,
@@ -179,23 +165,27 @@ class Job(BaseJob):
                 and_extras    = and_extras + ' AND\n (' + ' OR '.join(corners_and) + ')',
                 )
 
+        print query
         return query
 
 
     def __call__(self):
 
-        # FM writes...
-        # Comment for Michael:
-        # I'd like to enforce 'tagname' to exist, and not be an optional kwarg
-        # such as:
-        #    query = self.get_query(tagname, **self.ctx.get_kwargs_dict())
+        # Get the db handle
+        if 'dbh' not in self.ctx:
+            try:
+                db_section = self.ctx.get('db_section','db-desoper')
+                print "# Creating db-handle to section: %s" % db_section
+                self.ctx.dbh = desdbi.DesDbi(section=db_section)
+            except:
+                raise ValueError('ERROR: Database handler could not be provided for context.')
+        else:
+            print "# Will recycle existing db-handle"
 
         # Call the query built function
         query = self.get_query(**self.ctx.get_kwargs_dict())
         
-        if self.ctx.verbose:
-            print "# Getting images within the tile: %s\n %s" % (\
-                    self.ctx.tilename, query)
+        print "# Getting CCD images within the tile definition"
         # Get the ccd images that are part of the DESTILE
         #self.ctx.CCDS = despyastro.genutil.query2dict_of_columns(query,dbhandle=self.ctx.dbh,array=True)
         self.ctx.CCDS = despyastro.genutil.query2rec(query,dbhandle=self.ctx.dbh)
@@ -205,6 +195,85 @@ class Job(BaseJob):
         self.ctx.BANDS  = numpy.unique(self.ctx.CCDS['BAND'])
         self.ctx.NBANDS = len(self.ctx.BANDS)
 
-
     def __str__(self):
         return 'find ccds in tile'
+
+    def write_info(self,ccdsinfo_file,names=['FILENAME','PATH','BAND','MAG_ZERO']):
+
+        print "# Writing CCDS information to: %s" % ccdsinfo_file
+
+        # FIX
+        # FIX -- this way of dumping is silly!!!!!
+        # FIX
+
+        #names = self.ctx.CCDS.dtype.names
+        N = len(names)
+        header =  "%12s "*N % tuple(names)
+
+        o = open(ccdsinfo_file,"w")
+        o.write("# %s\n" % header)
+        for k in range(len(self.ctx.CCDS['FILENAME'])):
+            for name in names:
+                o.write("%s " % self.ctx.CCDS[name][k])
+            o.write("\n")
+        o.close()
+        return
+
+def read_tileinfo(geomfile):
+
+    print "# Reading the tile Geometry from file: %s" % geomfile
+    with open(geomfile, 'rb') as fp:
+        tileinfo = json.load(fp)
+    return tileinfo
+
+def cmdline():
+
+    """
+    The funtion to generate and populate the commnand-line arguments into the context
+    """
+
+    import argparse
+    parser = argparse.ArgumentParser(description="Find the CCDs that fall inside a tile")
+
+
+    # The positional arguments
+    parser.add_argument("tileinfo", help="The json file with the tile information")
+
+    # Positional arguments
+    parser.add_argument("--db_section", action="store", default="db-desoper",
+                        help="DataBase Section to connect")
+    parser.add_argument("--select_extras", action="store", default=SELECT_EXTRAS,
+                        help="string with extra SELECT for query")
+    parser.add_argument("--and_extras", action="store", default=AND_EXTRAS,
+                        help="string with extra AND for query")
+    parser.add_argument("--from_extras", action="store", default=FROM_EXTRAS,
+                        help="string with extra FROM for query")
+    parser.add_argument("--tagname", action="store", default='Y2T1_FIRSTCUT',
+                        help="TAGNAME for images in the database")
+    parser.add_argument("--exec_name", action="store", default='immask',
+                        help="EXEC_NAME for images in the database")
+    parser.add_argument("--ccdsinfo", action="store", default=None, # We might want to change the name of the "--option"
+                        help="Name of the output file where we will store the cccds information")
+    args = parser.parse_args()
+    return args
+
+
+if __name__ == "__main__":
+
+    from mojo.utils.struct import Struct
+
+    args = cmdline()
+
+    # Initialize the class
+    job = Job()
+    job.ctx = Struct(dict(**args.__dict__))
+    job.ctx.tileinfo = read_tileinfo(args.tileinfo)
+    # Add cmdline options to the context using Struct
+    job()  # Execute -- do call()
+
+    # Write out the ccds information
+    job.write_info(args.ccdsinfo)
+
+    print 
+
+

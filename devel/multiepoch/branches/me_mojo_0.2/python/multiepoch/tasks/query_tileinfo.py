@@ -3,26 +3,30 @@
 """
 Builds a dictionary/header with all of the information on the COADDTILE_XXXX
 table for a given TILENAME (input). It store the RAC[1,4] and DECC[1,4] corners
-of the TILENAME an computes and stores the: (TILE_RACMIN, TILE_RACMAX) and
-(TILE_DECCMIN,TILE_DECCMAX) for that tile.
+of the TILENAME an computes and stores the: (RACMIN, RACMAX) and
+(DECCMIN,DECCMAX) for that tile.
 
-We will use this dictionary to make the head file later.
-
--- We won't need the *.head file in the future --
+Author: Felipe Menanteau, NCSA, Nov 2014.
 
 """
 
 try:
     from mojo.jobs.base_job import BaseJob
+
 except:
     print "WARNING: mojo not loaded"
     
 from despydb import desdbi
 import numpy
+import json
 
 
 QUERY = '''
-    SELECT *
+    SELECT PIXELSCALE, NAXIS1, NAXIS2,
+    RA, DEC,
+    RAC1, RAC2, RAC3, RAC4,
+    DECC1, DECC2, DECC3, DECC4,
+    CROSSRAZERO
     FROM {tablename}
     WHERE tilename='{tilename}'
     '''
@@ -37,12 +41,30 @@ class Job(BaseJob):
 
     Required INPUT from context (ctx):
     ``````````````````````````````````
-    - tilename : string, default_value=None
-    - coaddtile_table : string, default_value='felipe.coaddtile_new'
+    - tilename :        string, default_value=None
+    - coaddtile_table : string, default_value="felipe.coaddtile_new"
+    - db_section:       string, default_balue="db-desoper"
 
     Writes as OUTPUT to context (ctx):
     ``````````````````````````````````
     - tileinfo : dictionary
+
+    What we **REALLY** use from tileinfo in the process:
+
+    Object                         function/task used
+    -------                        ----------------------
+    - tiles_edges =                find_ccds_in_tile.py
+       [RAMIN,RAMAX,DECMIN,DECMAX]   
+
+    - tileinfo["PIXELSCALE"]      "PIXEL_SCALE",call_SWarp.py 
+    - tileinfo["NAXIS1"]          "IMAGE_SIZE", call_SWarp.py\ IMAGE_SIZE=(NAXIS1,NAXIS2)
+    - tileinfo["NAXIS2"]          "IMAGE_SIZE", call_SWarp.py/ 
+    - tileinfo["RA"]              "CENTER", call_SWarp.py \ CENTER=(RA,DEC)
+    - tileinfo["DEC"]             "CENTER", call_SWarp.py /
+    
+    - tileinfo["RACS"]            plot_ccd_corners_destile.py -- RA corners of tile
+    - tileinfo["DECCS"]           plot_ccd_corners_destile.py -- DEC corners of tile
+    - tileinfo["DEC"]             plot_ccd_corners_destile.py -- DEC center of tile
 
     '''
 
@@ -61,9 +83,10 @@ class Job(BaseJob):
         tilename  = kwargs.get('tilename', None)
 
         if not tablename or not tilename:
-            raise ValueError('tablename and tilename need to be provided as kwargs')
+            raise ValueError('ERROR: tablename and tilename need to be provided as kwargs')
 
-        return QUERY.format(tablename=tablename, tilename=tilename)
+        query_string = QUERY.format(tablename=tablename, tilename=tilename)
+        return query_string
 
 
     def __call__(self):
@@ -71,7 +94,7 @@ class Job(BaseJob):
         # CHECK IF DATABASE HANDLER IS PRESENT
         if 'dbh' not in self.ctx:
             try:
-                db_section = self.ctx.get('db-section','db-desoper')
+                db_section = self.ctx.get('db_section','db-desoper')
                 self.ctx.dbh = desdbi.DesDbi(section=db_section)
             except:
                 raise ValueError('Database handler could not be provided for context.')
@@ -91,8 +114,8 @@ class Job(BaseJob):
         self.ctx.tileinfo = dict(zip(desc, line))
 
         # Lower-case for compatibility with wcsutils
-        for k, v in self.ctx.tileinfo.items():
-            self.ctx.tileinfo[k.lower()] = v
+        #for k, v in self.ctx.tileinfo.items():
+        #    self.ctx.tileinfo[k.lower()] = v
 
         # The minimum values for the tilename
         ras  = numpy.array([
@@ -105,30 +128,42 @@ class Job(BaseJob):
             ])
 
         ### TODO : add alls the following infered parameters to tileinfo?
-        ### TODO @ Felipe : add TILE_RACMIN xxx into database schema for COADDTILE
+        ### TODO @ Felipe : add RACMIN xxx into database schema for COADDTILE
         if self.ctx.tileinfo['CROSSRAZERO'] == 'Y':
             # Maybe we substract 360?
-            self.ctx.tileinfo['TILE_RACMIN'] = ras.max()
-            self.ctx.tileinfo['TILE_RACMAX'] = ras.min()
+            self.ctx.tileinfo['RACMIN'] = ras.max()
+            self.ctx.tileinfo['RACMAX'] = ras.min()
         else:
-            self.ctx.tileinfo['TILE_RACMIN'] = ras.min()
-            self.ctx.tileinfo['TILE_RACMAX'] = ras.max()
+            self.ctx.tileinfo['RACMIN'] = ras.min()
+            self.ctx.tileinfo['RACMAX'] = ras.max()
             
-        self.ctx.tileinfo['TILE_DECCMIN'] = decs.min()
-        self.ctx.tileinfo['TILE_DECCMAX'] = decs.max()
+        self.ctx.tileinfo['DECCMIN'] = decs.min()
+        self.ctx.tileinfo['DECCMAX'] = decs.max()
 
-        # Store the packed corners of the COADDTILES for plotting later
-        self.ctx.tileinfo['TILE_RACS'] = ras  #numpy.append(ras,ras[0])
-        self.ctx.tileinfo['TILE_DECCS'] = decs #numpy.append(decs,decs[0])
+        ######################################################################
+        # This re-packing will be done at plotting time now
+        # Store the packed corners of the COADDTILES for plotting later --
+        #self.ctx.tileinfo['RACS']  = ras  #numpy.append(ras,ras[0])
+        #self.ctx.tileinfo['DECCS'] = decs #numpy.append(decs,decs[0])
+        ####################################################################
 
-        self.ctx.tile_edges = (
-                self.ctx.tileinfo['TILE_RACMIN'], self.ctx.tileinfo['TILE_RACMAX'],
-                self.ctx.tileinfo['TILE_DECCMIN'],self.ctx.tileinfo['TILE_DECCMAX']
-                )
-        
+    def write_tileinfo(self,geomfile=None):
+
+        if not geomfile:
+            geomfile = "%s.json" % self.ctx.tilename
+            
+        geo = open(geomfile,'w')
+        geo.write(json.dumps(self.ctx.tileinfo,sort_keys=True,indent=4))
+        geo.close()
+        print "# Wrote the tile Geometry to file: %s" % geomfile
+        # To read in ...
+        #with open(geomfile, 'rb') as fp:
+        #    data = json.load(fp)
+        return
+
+
     def __str__(self):
         return 'query tileinfo'
-
 
 
 def cmdline():
@@ -138,31 +173,34 @@ def cmdline():
     """
 
     import argparse
-    parser = argparse.ArgumentParser(description="Builds a dictionary/header with all of the information")
+    parser = argparse.ArgumentParser(description="Collect the tile geometry information using the DESDM Database")
 
     # The positional arguments
-    parser.add_argument("tileName", help="The Name of the Tile Name to query")
+    parser.add_argument("tilename", help="The Name of the Tile Name to query")
 
     # Positional arguments
     parser.add_argument("--db_section", action="store", default="db-desoper",
                         help="DataBase Section to connect")
     parser.add_argument("--coaddtile_table", action="store", default="felipe.coaddtile_new",
                         help="Database table with COADDTILE information")
+    parser.add_argument("--json_file", action="store", default=None, # We might want to change the name of the "--option"
+                        help="Name of the output json file where we will store the tile information")
     args = parser.parse_args()
     return args
-
     
 if __name__ == "__main__":
 
+    from mojo.utils.struct import Struct
+
     args = cmdline()
 
-
+    # Initialize the class
     job = Job()
-    job.ctx = args
-    print job.run()
+    # In case we want to execute only the query
+    #job.get_query(**args.__dict__)
+    # Add cmdline options to the context using Struct
+    job.ctx = Struct(dict(**args.__dict__))
+    job()  # Execute -- do call()
+    job.write_tileinfo(args.json_file) # Write the json file with the tileinfo
+
     
-    #job.__call__()
-
-    #print "Hello World"
-
-    print args
