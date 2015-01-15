@@ -21,4 +21,6 @@ setupRequired(psfex 3.17.0+7)
 
 envAppend(PYTHONPATH, ${PRODUCT_DIR}/python)
 envAppend(PATH, ${PRODUCT_DIR}/bin)
+# Add the tasks to the path
+envAppend(PATH, ${PRODUCT_DIR}/python/multiepoch/tasks)
 
