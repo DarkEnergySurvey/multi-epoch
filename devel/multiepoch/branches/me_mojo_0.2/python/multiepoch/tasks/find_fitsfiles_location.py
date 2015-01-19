@@ -65,7 +65,7 @@ class Job(BaseJob):
         self.ctx.FILEPATH_HTTPS   = npadd(path,self.ctx.FILEPATH)
 
     def __str__(self):
-        return 'setup tile directory'
+        return "Find the location of the fits files"
 
 
     def get_archive_root(self,archive_name='desar2home'):
