@@ -223,8 +223,8 @@ def read_tileinfo(geomfile):
 
     print "# Reading the tile Geometry from file: %s" % geomfile
     with open(geomfile, 'rb') as fp:
-        tileinfo = json.load(fp)
-    return tileinfo
+        json_dict = json.load(fp)
+    return json_dict
 
 def cmdline():
 
@@ -254,6 +254,9 @@ def cmdline():
                         help="EXEC_NAME for images in the database")
     parser.add_argument("--ccdsinfo", action="store", default=None, # We might want to change the name of the "--option"
                         help="Name of the output file where we will store the cccds information")
+    parser.add_argument("--plot_overlap", action="store_true", default=False, 
+                        help="Plot overlapping tiles")
+
     args = parser.parse_args()
     return args
 
@@ -266,13 +269,24 @@ if __name__ == "__main__":
 
     # Initialize the class
     job = Job()
-    job.ctx = Struct(dict(**args.__dict__))
-    job.ctx.tileinfo = read_tileinfo(args.tileinfo)
     # Add cmdline options to the context using Struct
+    job.ctx = Struct(dict(**args.__dict__))
+    # Load in the json file
+    json_dict = read_tileinfo(args.tileinfo)
+    job.ctx.tileinfo =json_dict['tileinfo']
+    job.ctx.tilename =json_dict['tilename']
     job()  # Execute -- do call()
+
+    # HACK -- fix later
+    job.ctx.tiledir = "./"
 
     # Write out the ccds information
     job.write_info(args.ccdsinfo)
+
+    if args.plot_overlap:
+        from multiepoch.tasks.plot_ccd_corners_destile import Job as plot_job
+        plot = plot_job(ctx=job.ctx) # need to define figname
+        plot()
 
     print 
 

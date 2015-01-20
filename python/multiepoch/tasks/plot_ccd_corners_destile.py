@@ -85,8 +85,8 @@ class Job(BaseJob):
 
             # Draw the TILE footprint at the end
             P = Polygon(
-                    zip(self.ctx.tileinfo['TILE_RACS'],
-                        self.ctx.tileinfo['TILE_DECCS']),
+                    zip(self.ctx.tileinfo['RACS'],
+                        self.ctx.tileinfo['DECCS']),
                     closed=True, Fill=False, hatch='',lw=1.0, color='r'
                     )
 
@@ -146,8 +146,8 @@ class Job(BaseJob):
 
         # Draw the TILE footprint at the end
         P = Polygon(
-                zip(self.ctx.tileinfo['TILE_RACS'],
-                    self.ctx.tileinfo['TILE_DECCS']),
+                zip(self.ctx.tileinfo['RACS'],
+                    self.ctx.tileinfo['DECCS']),
                 closed=True, Fill=False, hatch='',lw=1.0, color='r'
                 )
         ax.add_patch(P)
