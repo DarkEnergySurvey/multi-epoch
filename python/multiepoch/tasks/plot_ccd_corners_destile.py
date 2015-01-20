@@ -34,9 +34,12 @@ class Job(BaseJob):
         """ Plot the CCDs overlaping the DESTILENAME using subplots"""
 
         # Get kwargs and set defaults...
-        FIGNUMBER = kwargs.get('fignumber', 4)
-        FIGSIZE   = kwargs.get('figsize',  18)
-        SHOW      = kwargs.get('show', False)
+        FIGNUMBER    = kwargs.get('fignumber', 4)
+        FIGSIZE      = kwargs.get('figsize',  18)
+        SHOW         = kwargs.get('show', False)
+        plot_outname = kwargs.get('plot_outname')
+        if not plot_outname:
+            plot_outname =  os.path.join(self.ctx.tiledir,"%s_overlap.pdf" % self.ctx.tilename)
 
         # Figure out the layout depending on the number of filters
         # found in the overlapping ares
@@ -102,10 +105,9 @@ class Job(BaseJob):
             kplot = kplot + 1
 
         fig.set_tight_layout(True) # This avoids backend warnings.
-        figname = os.path.join(self.ctx.tiledir,"%s_overlap.pdf" % self.ctx.tilename)
-        fig.savefig(figname)
+        fig.savefig(plot_outname)
         if SHOW: plt.show()
-        print "# Wrote: %s" % figname
+        print "# Wrote: %s" % plot_outname
 
     def plot_CCDcornersDESTILEsingle(self,BAND,**kwargs):
 

@@ -229,12 +229,11 @@ def read_tileinfo(geomfile):
 def cmdline():
 
     """
-    The funtion to generate and populate the commnand-line arguments into the context
+    The function to generate and populate the commnand-line arguments into the context
     """
 
     import argparse
     parser = argparse.ArgumentParser(description="Find the CCDs that fall inside a tile")
-
 
     # The positional arguments
     parser.add_argument("tileinfo", help="The json file with the tile information")
@@ -256,6 +255,10 @@ def cmdline():
                         help="Name of the output file where we will store the cccds information")
     parser.add_argument("--plot_overlap", action="store_true", default=False, 
                         help="Plot overlapping tiles")
+    parser.add_argument("--plot_outname", action="store", default=None, 
+                        help="Output file name for plot")
+    parser.add_argument("--tiledir", action="store", default="./", 
+                        help="Path to Directory where we will write out plot the files ")
 
     args = parser.parse_args()
     return args
@@ -276,18 +279,16 @@ if __name__ == "__main__":
     job.ctx.tileinfo =json_dict['tileinfo']
     job.ctx.tilename =json_dict['tilename']
     job()  # Execute -- do call()
-
-    # HACK -- fix later
-    job.ctx.tiledir = "./"
-
     # Write out the ccds information
     job.write_info(args.ccdsinfo)
 
+    # In Case we want to plot the overlapping CCDs
     if args.plot_overlap:
+        # FELIPE: Add check for existence of self.ctx.tiledir
+        print "# Will plot overlapping tiles"
         from multiepoch.tasks.plot_ccd_corners_destile import Job as plot_job
-        plot = plot_job(ctx=job.ctx) # need to define figname
+        plot = plot_job(ctx=job.ctx) 
         plot()
 
-    print 
-
+        
 
