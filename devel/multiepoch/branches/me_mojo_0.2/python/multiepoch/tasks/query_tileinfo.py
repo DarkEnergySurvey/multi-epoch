@@ -62,7 +62,7 @@ class Job(BaseJob):
     - tileinfo["RA"]              "CENTER", call_SWarp.py \ CENTER=(RA,DEC)
     - tileinfo["DEC"]             "CENTER", call_SWarp.py /
     
-    - tileinfo["RACS"]            plot_ccd_corners_destile.py -- RA corners of tile
+    - tileinfo["RACS"]            plot_ccd_corners_destile.py -- RA  corners of tile
     - tileinfo["DECCS"]           plot_ccd_corners_destile.py -- DEC corners of tile
     - tileinfo["DEC"]             plot_ccd_corners_destile.py -- DEC center of tile
 
@@ -140,12 +140,11 @@ class Job(BaseJob):
         self.ctx.tileinfo['DECCMIN'] = decs.min()
         self.ctx.tileinfo['DECCMAX'] = decs.max()
 
-        ######################################################################
-        # This re-packing will be done at plotting time now
-        # Store the packed corners of the COADDTILES for plotting later --
-        #self.ctx.tileinfo['RACS']  = ras  #numpy.append(ras,ras[0])
-        #self.ctx.tileinfo['DECCS'] = decs #numpy.append(decs,decs[0])
-        ####################################################################
+        # Store the packed corners of the COADDTILES for plotting later
+        self.ctx.tileinfo['RACS'] =  ras.tolist() 
+        self.ctx.tileinfo['DECCS'] = decs.tolist()
+        
+
 
     def write_tileinfo(self,geomfile=None):
 
@@ -153,12 +152,13 @@ class Job(BaseJob):
             geomfile = "%s.json" % self.ctx.tilename
             
         geo = open(geomfile,'w')
-        geo.write(json.dumps(self.ctx.tileinfo,sort_keys=True,indent=4))
+        jsondict = {
+            'tileinfo' : self.ctx.tileinfo,
+            'tilename' : self.ctx.tilename,
+            }
+        geo.write(json.dumps(jsondict,sort_keys=True,indent=4))
         geo.close()
         print "# Wrote the tile Geometry to file: %s" % geomfile
-        # To read in ...
-        #with open(geomfile, 'rb') as fp:
-        #    data = json.load(fp)
         return
 
 
