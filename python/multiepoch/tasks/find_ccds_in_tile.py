@@ -219,6 +219,19 @@ class Job(BaseJob):
         o.close()
         return
 
+
+    def write_info_json(self,ccdsinfo_jsonfile,names=['FILENAME','PATH','BAND','MAG_ZERO']):
+
+        print "# Writing CCDS information to: %s" % ccdsinfo_jsonfile
+        # Make them lists instead of rec arrays
+        dict_CCDS = {}
+        for name in names:
+            dict_CCDS[name] =  self.ctx.CCDS[name].tolist()
+        o = open(ccdsinfo_jsonfile,"w")
+        o.write(json.dumps(dict_CCDS,sort_keys=True,indent=4))
+        o.close()
+        return
+
 def read_tileinfo(geomfile):
 
     print "# Reading the tile Geometry from file: %s" % geomfile
@@ -280,7 +293,16 @@ if __name__ == "__main__":
     job.ctx.tilename =json_dict['tilename']
     job()  # Execute -- do call()
     # Write out the ccds information
-    job.write_info(args.ccdsinfo)
+    #job.write_info(args.ccdsinfo)
+    job.write_info_json(args.ccdsinfo)
+
+    # Now we get the absolute paths
+    from multiepoch.tasks.find_fitsfiles_location import Job as find_job    
+    find = find_job(ctx=job.ctx) 
+    find()
+    print find.ctx.FILEPATH_ARCHIVE
+    exit()
+
 
     # In Case we want to plot the overlapping CCDs
     if args.plot_overlap:
@@ -290,5 +312,4 @@ if __name__ == "__main__":
         plot = plot_job(ctx=job.ctx) 
         plot()
 
-        
 

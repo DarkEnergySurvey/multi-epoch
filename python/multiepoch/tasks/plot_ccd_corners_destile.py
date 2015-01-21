@@ -37,7 +37,7 @@ class Job(BaseJob):
         FIGNUMBER    = kwargs.get('fignumber', 4)
         FIGSIZE      = kwargs.get('figsize',  18)
         SHOW         = kwargs.get('show', False)
-        plot_outname = kwargs.get('plot_outname')
+        plot_outname = kwargs.get('plot_outname',False)
         if not plot_outname:
             plot_outname =  os.path.join(self.ctx.tiledir,"%s_overlap.pdf" % self.ctx.tilename)
 
