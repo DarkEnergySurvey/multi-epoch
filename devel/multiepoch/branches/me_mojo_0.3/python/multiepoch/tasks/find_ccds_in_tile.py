@@ -229,12 +229,12 @@ class Job(BaseJob):
     def get_root_archive(self,archive_name='desar2home'):
 
         """
-        Get the archive root and root_https fron the database
+        Get the root-archive  and root_https fron the database
         """
 
         cur = self.ctx.dbh.cursor()
         
-        # archive root
+        # root_archive
         query = "select root from ops_archive where name='%s'" % archive_name
         print "# Getting the archive root name for section: %s" % archive_name
         print "# Will execute the SQL query:\n********\n** %s\n********" % query
@@ -248,21 +248,22 @@ class Job(BaseJob):
         print "# Will execute the SQL query:\n********\n** %s\n********" % query
         cur.execute(query)
         self.ctx.root_https = cur.fetchone()[0]
-        print "# root_https: %s" % self.ctx.root_https
-
+        print "# root_https:   %s" % self.ctx.root_https
         cur.close()
         return
 
-    def write_info(self,ccdsinfo_file,names=['FILENAME','PATH','BAND','MAG_ZERO']):
+    def write_files_info(self,ccdsinfo_file,ccds_names=['BAND','MAG_ZERO']):
 
-        print "# Writing CCDS information to: %s" % ccdsinfo_file
+        variables = [self.ctx.FILEPATH_ARCHIVE]
+        for name in ccds_names:
+            variables.append(self.ctx.CCDS[name].tolist())
+
+        names = ['FILEPATH_ARCHIVE'] + ccds_names
+        print "# Writing CCDS files information to: %s" % ccdsinfo_file
         #names = self.ctx.CCDS.dtype.names
         N = len(names)
-        header =  "%12s "*N % tuple(names)
-        format =  "%-12s "*N 
-        variables = []
-        for name in names:
-            variables.append(self.ctx.CCDS[name].tolist())
+        header =  "# " + "%s "*N % tuple(names)
+        format =  "%-s "*N 
         tableio.put_data(ccdsinfo_file,tuple(variables), header=header, format=format)
         return
 
@@ -358,9 +359,8 @@ if __name__ == "__main__":
     job.ctx.tilename =json_dict['tilename']
     job()  # Execute -- do run()
     # Write out the ccds information
-    #job.write_info(args.ccdsinfo)
+    job.write_files_info(args.ccdsinfo)
     #job.write_info_json(args.ccdsinfo)
-    #exit()
 
     # In Case we want to plot the overlapping CCDs
     if args.plot_overlap:
