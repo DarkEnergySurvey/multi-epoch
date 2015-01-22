@@ -8,7 +8,7 @@
 2) Check-out and EUPS setup the multiepoch pipeline from SVN 
 
  svn co $SVNROOT/multiepoch multiepoch
- setup -v -r multiepoch/branches/me_mojo_0.3
+ setup -v -r ~/DESDM-code/devel/multiepoch/trunk
 
 3) Now run the steps...
 
