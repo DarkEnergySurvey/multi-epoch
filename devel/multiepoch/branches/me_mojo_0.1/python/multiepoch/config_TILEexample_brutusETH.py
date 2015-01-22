@@ -28,6 +28,9 @@ except:
     print 'no connection to the database.'
 
 
+BASE_PATH = '/cluster/scratch_xl/shareholder/refregier/gamperl/desdm/MULTIEPOCH_DATA/'
+
+
 # PARAMETERS
 verbose = True
 
@@ -37,7 +40,7 @@ tilename = 'DES0445-4623'
 coaddtile_table = 'felipe.coaddtile_new'
 
 # set_tile_directory
-outputpath = os.environ['HOME']+"/TILEBUILDER_TEST"
+outputpath = os.path.join(BASE_PATH, 'TILEBUILDER_TEST')
 
 # find_ccds_in_tile
 tagname = 'Y2T1_FIRSTCUT'
@@ -50,7 +53,7 @@ and_extras = "felipe.extraZEROPOINT.FILENAME = image.FILENAME"
 archive_name = 'desar2home'
 
 # get_fitsfiles
-local_archive = os.path.join(os.environ['HOME'],'LOCAL_DESAR')
+local_archive = os.path.join(BASE_PATH, 'LOCAL_DESAR')
 
 # make_SWarp_weights
 clobber_weights = False
