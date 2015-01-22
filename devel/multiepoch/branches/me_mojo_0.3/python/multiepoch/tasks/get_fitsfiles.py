@@ -26,7 +26,7 @@ import numpy
 
 class Job(BaseJob):
 
-    def __call__(self):
+    def run(self):
 
         # Get all of the relevant kwargs
         kwargs = self.ctx.get_kwargs_dict()
@@ -110,7 +110,7 @@ class Job(BaseJob):
             
 
     def __str__(self):
-        return 'setup tile directory'
+        return 'Transfer the fits files'
 
 
 def create_local_archive(local_archive):

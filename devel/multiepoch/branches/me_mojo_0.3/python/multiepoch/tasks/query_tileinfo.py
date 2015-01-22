@@ -22,6 +22,7 @@ QUERY = '''
     RA, DEC,
     RAC1, RAC2, RAC3, RAC4,
     DECC1, DECC2, DECC3, DECC4,
+    RACMIN,RACMAX,DECCMIN,DECCMAX,
     CROSSRAZERO
     FROM {tablename}
     WHERE tilename='{tilename}'
@@ -96,32 +97,22 @@ class Job(BaseJob):
         # Make a dictionary/header for the all columns from COADDTILE table
         self.ctx.tileinfo = dict(zip(desc, line))
         
-        # The minimum values for the tilename
-        ras  = numpy.array([
-            self.ctx.tileinfo['RAC1'], self.ctx.tileinfo['RAC2'],
-            self.ctx.tileinfo['RAC3'], self.ctx.tileinfo['RAC4']
-            ])
-        decs = numpy.array([
-            self.ctx.tileinfo['DECC1'], self.ctx.tileinfo['DECC2'],
-            self.ctx.tileinfo['DECC3'], self.ctx.tileinfo['DECC4']
-            ])
 
-        ### TODO : add alls the following infered parameters to tileinfo?
-        ### TODO @ Felipe : add RACMIN xxx into database schema for COADDTILE
-        if self.ctx.tileinfo['CROSSRAZERO'] == 'Y':
-            # Maybe we substract 360?
-            self.ctx.tileinfo['RACMIN'] = ras.max()
-            self.ctx.tileinfo['RACMAX'] = ras.min()
-        else:
-            self.ctx.tileinfo['RACMIN'] = ras.min()
-            self.ctx.tileinfo['RACMAX'] = ras.max()
-            
-        self.ctx.tileinfo['DECCMIN'] = decs.min()
-        self.ctx.tileinfo['DECCMAX'] = decs.max()
-
+        #### TODO : add alls the following infered parameters to tileinfo?
+        #### TODO @ Felipe : add RACMIN xxx into database schema for COADDTILE
+        #if self.ctx.tileinfo['CROSSRAZERO'] == 'Y':
+        #    # Maybe we substract 360?
+        #    self.ctx.tileinfo['RACMIN'] = ras.max()
+        #    self.ctx.tileinfo['RACMAX'] = ras.min()
+        #else:
+        #    self.ctx.tileinfo['RACMIN'] = ras.min()
+        #    self.ctx.tileinfo['RACMAX'] = ras.max()
+        #    
+        #self.ctx.tileinfo['DECCMIN'] = decs.min()
+        #self.ctx.tileinfo['DECCMAX'] = decs.max()
         # Store the packed corners of the COADDTILES for plotting later
-        self.ctx.tileinfo['RACS'] =  ras.tolist() 
-        self.ctx.tileinfo['DECCS'] = decs.tolist()
+        #self.ctx.tileinfo['RACS'] =  ras.tolist() 
+        #self.ctx.tileinfo['DECCS'] = decs.tolist()
 
 
     def get_query(self, **kwargs):
@@ -177,7 +168,7 @@ def cmdline():
     parser.add_argument("tilename", help="The Name of the Tile Name to query")
 
     # Positional arguments
-    parser.add_argument("--db_section", action="store", default="db-desoper",
+    parser.add_argument("--db_section", action="store", default="db-desoper",choices=['db-desoper','db-destest'],
                         help="DataBase Section to connect")
     parser.add_argument("--coaddtile_table", action="store", default="felipe.coaddtile_new",
                         help="Database table with COADDTILE information")

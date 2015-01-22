@@ -24,7 +24,7 @@ To get the URL for http access, the sql queries are:
 
  OUTPUTS:
 
- - self.ctx.FILEPATH : The relative path of the fits files
+ - self.ctx.FILEPATH :         The relative path of the fits files
  - self.ctx.FILEPATH_ARCHIVE : The full path in the cosmology archive
  - self.ctx.FILEPATH_HTTPS:    The full URL for download
 
@@ -38,8 +38,7 @@ npadd = numpy.core.defchararray.add
 
 class Job(BaseJob):
 
-    def __call__(self):
-
+    def run(self):
 
         # Get all of the relevant kwargs
         kwargs = self.ctx.get_kwargs_dict()
@@ -64,21 +63,18 @@ class Job(BaseJob):
         path = [self.ctx.root_https+"/"]*Nimages
         self.ctx.FILEPATH_HTTPS   = npadd(path,self.ctx.FILEPATH)
 
-    def __str__(self):
-        return "Find the location of the fits files"
-
-
     def get_archive_root(self,archive_name='desar2home'):
 
         """
         Get the archive root and root_https fron the database
         """
 
+        cur = self.ctx.dbh.cursor()
+        
         # archive root
         query = "select root from ops_archive where name='%s'" % archive_name
         print "# Getting the archive root name for section: %s" % archive_name
         print "# Will execute the SQL query:\n********\n** %s\n********" % query
-        cur = self.ctx.dbh.cursor()
         cur.execute(query)
         self.ctx.archive_root = cur.fetchone()[0]
         print "# archive_root: %s" % self.ctx.archive_root
@@ -93,3 +89,6 @@ class Job(BaseJob):
 
         cur.close()
         return
+
+    def __str__(self):
+        return "Find the location of the fits files"

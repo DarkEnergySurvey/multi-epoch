@@ -9,6 +9,7 @@ import despydb
 import despyastro
 from despyastro import astrometry
 from despyastro import wcsutil
+import numpy
 
 class DEStiling:
     
@@ -139,6 +140,21 @@ class DEStiling:
         self.RAC2,self.DECC2 = wcs.image2sky(nx, 1 )
         self.RAC3,self.DECC3 = wcs.image2sky(nx, ny)
         self.RAC4,self.DECC4 = wcs.image2sky(1 , ny)
+
+        ras  = numpy.array([self.RAC1,  self.RAC2, self.RAC3,  self.RAC4])
+        decs = numpy.array([self.DECC1, self.DECC2,self.DECC3, self.DECC4])
+
+        if self.crossRAzero == 'Y':
+            # Maybe we substract 360 instead?
+            self.RACMIN = ras.max()
+            self.RACMAX = ras.min()
+        else:
+            self.RACMIN = ras.min()
+            self.RACMAX = ras.max()
+            
+        self.DECCMIN = decs.min()
+        self.DECCMAX = decs.max()
+
         return
         
 
@@ -212,6 +228,10 @@ class DEStiling:
         DECC2			NUMBER(15,10),
         DECC3			NUMBER(15,10),
         DECC4			NUMBER(15,10),
+        RACMIN                  NUMBER(15,10),
+        RACMAX                  NUMBER(15,10),
+        DECCMIN                 NUMBER(15,10),
+        DECCMAX                 NUMBER(15,10),
         URAL                    NUMBER(15,10),
         URAU                    NUMBER(15,10),
         UDECL                   NUMBER(15,10),
@@ -234,19 +254,23 @@ class DEStiling:
         
         # -- Add description of columns
         comments ="""comment on column %s.DEC    is 'RA  center of DES tile (deg)' 
-        comment on column %s.RA     is 'DEC center of DES file (deg)'
-        comment on column %s.RAC1   is 'Corner 1 RA of DES tile (deg)'
-        comment on column %s.RAC2   is 'Corner 2 RA of DES tile (deg)'
-        comment on column %s.RAC3   is 'Corner 3 RA of DES tile (deg)'
-        comment on column %s.RAC4   is 'Corner 4 RA of DES tile (deg)'
-        comment on column %s.DECC1  is 'Corner 1 DEC of DES tile (deg)'
-        comment on column %s.DECC2  is 'Corner 2 DEC of DES tile (deg)'
-        comment on column %s.DECC3  is 'Corner 3 DEC of DES tile (deg)'
-        comment on column %s.DECC4  is 'Corner 4 DEC of DES tile (deg)'
-        comment on column %s.URAL   is 'Unique RA lower (deg)'
-        comment on column %s.URAU   is 'Unique RA upper (deg)'
-        comment on column %s.UDECL  is 'Unique DEC lower (deg)'
-        comment on column %s.UDECU  is 'Unique DEC upper (deg)'
+        comment on column %s.RA      is 'DEC center of DES file (deg)'
+        comment on column %s.RAC1    is 'Corner 1 RA of DES tile (deg)'
+        comment on column %s.RAC2    is 'Corner 2 RA of DES tile (deg)'
+        comment on column %s.RAC3    is 'Corner 3 RA of DES tile (deg)'
+        comment on column %s.RAC4    is 'Corner 4 RA of DES tile (deg)'
+        comment on column %s.DECC1   is 'Corner 1 DEC of DES tile (deg)'
+        comment on column %s.DECC2   is 'Corner 2 DEC of DES tile (deg)'
+        comment on column %s.DECC3   is 'Corner 3 DEC of DES tile (deg)'
+        comment on column %s.DECC4   is 'Corner 4 DEC of DES tile (deg)'
+        comment on column %s.RACMIN  is 'Minimum RA[1-4] corner (deg)'
+        comment on column %s.RACMAX  is 'Maximum RA[1-4] corner (deg)'
+        comment on column %s.DECCMIN is 'Minimum DEC[1-4] corner (deg)'
+        comment on column %s.DECCMAX is 'Maximum DEC[1-4] corner (deg)'
+        comment on column %s.URAL    is 'Unique RA lower (deg)'
+        comment on column %s.URAU    is 'Unique RA upper (deg)'
+        comment on column %s.UDECL   is 'Unique DEC lower (deg)'
+        comment on column %s.UDECU   is 'Unique DEC upper (deg)'
         comment on column %s.CROSSRAZERO  is 'DES tile crosses RA=0 [Y/N]'"""
 
         print "# Will create new COADDTILE table: %s" % table
@@ -264,7 +288,12 @@ class DEStiling:
             cur.execute(comment % table)
 
         # Grand permission
-        grant = "grant select on %s to des_reader" % table.split(".")[1]
+        roles = ['des_reader','PROD_ROLE','PROD_READER_ROLE']
+        for role in roles:
+            grant = "grant select on %s to %s" % (table.split(".")[1],role)
+            print "# Granting permission: %s\n" % grant
+            cur.execute(grant)
+
         self.dbh.commit()
         cur.close()
         return
@@ -292,6 +321,10 @@ class DEStiling:
                    'DECC2',
                    'DECC3',
                    'DECC4',
+                   'RACMIN',
+                   'RACMAX',
+                   'DECCMIN',
+                   'DECCMAX',
                    'URAL',
                    'URAU',
                    'UDECL',
@@ -320,6 +353,10 @@ class DEStiling:
                   self.DECC2,
                   self.DECC3,
                   self.DECC4,
+                  self.RACMIN,
+                  self.RACMAX,
+                  self.DECCMIN,
+                  self.DECCMAX,
                   self.ural,
                   self.urau,
                   self.udecl,
@@ -347,7 +384,6 @@ class DEStiling:
         cur.execute(insert_cmd)
         cur.close()
         return
-
     
     def generateTiles(self,
                       ra_ini   = 275, # do not change
