@@ -3,8 +3,7 @@
 import glob
 from distutils.core import setup
 
-
-bin_files = glob.glob("bin/*.py")
+bin_files = glob.glob("bin/*.py") + glob.glob("bin/*.txt") 
 etc_files = glob.glob("etc/*.*")
 
 setup(name='multiepoch',
@@ -19,7 +18,7 @@ setup(name='multiepoch',
           'multiepoch.config',
           ],
       package_dir = {'': 'python'},
-      scripts    = bin_files,          # Clean this up FM
+      scripts    = bin_files,           # Clean this up FM
       data_files = [('etc',etc_files)], # Clean this up FM
       )
 
