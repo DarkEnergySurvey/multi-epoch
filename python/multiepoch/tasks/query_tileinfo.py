@@ -11,11 +11,8 @@ Author: Felipe Menanteau, NCSA, Nov 2014.
 """
 import json
 import numpy
-
 from despydb import desdbi
-
 from traitlets import Unicode, Bool, Float, Int, CUnicode, CBool, CFloat, CInt, Instance
-
 from mojo.jobs.base_job import BaseJob, IO, IO_ValidationError
 from mojo.context import ContextProvider
     
@@ -69,18 +66,21 @@ class Job(BaseJob):
     '''
 
     class Input(IO):
+
+        """
+        Collect the tile geometry information using the DESDM Database
+        """
+        
         # Required inputs
-        tilename   = CUnicode(None, help="The Name of the Tile Name to query")
+        tilename        = CUnicode(None, help="The Name of the Tile Name to query")
         # Optional inputs
-        db_section = CUnicode("db-destest", help="DataBase Section to connect")
-        json_job_output_file = CUnicode("", help= ("Name of the output json "
-            "file where we will store the tile information"))
-        coaddtile_table = CUnicode("felipe.coaddtile_new", help=("Database "
-            "table with COADDTILE information"))
+        db_section      = CUnicode("db-destest", help="DataBase Section to connect",choices=['db-desoper','db-destest'])
+        json_tileinfo   = CUnicode("", help= "Name of the output json file where we will store the tile information")
+        coaddtile_table = CUnicode("felipe.coaddtile_new", help="Database table with COADDTILE information")
 
         def _validate_conditional(self):
             # if in job standalone mode json
-            if self.execution_mode == 'job as script' and self.json_job_output_file == "":
+            if self.execution_mode == 'job as script' and self.json_tileinfo == "":
                 mess = 'If job is run standalone json_job_output_file cannot be ""'
                 raise IO_ValidationError(mess)
 
@@ -130,7 +130,6 @@ class Job(BaseJob):
 
     def __str__(self):
         return 'query tileinfo' 
-
 
 if __name__ == '__main__':
     from mojo.utils import main_runner
