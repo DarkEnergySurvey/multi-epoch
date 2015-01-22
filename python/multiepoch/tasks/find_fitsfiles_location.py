@@ -39,6 +39,12 @@ npadd = numpy.core.defchararray.add
 class Job(BaseJob):
 
     def run(self):
+        
+        self.get_fitsfile_locations()
+        return
+
+
+    def get_fitsfile_locations(self):
 
         # Get all of the relevant kwargs
         kwargs = self.ctx.get_kwargs_dict()
