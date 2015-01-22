@@ -1,0 +1,100 @@
+# DB wisdom
+
+# To get the filename from the archive
+# select path||'/'||filename||compression from prod.file_archive_info where rownum<10;
+
+
+# select prodbeta.file_archive_info.path,  prodbeta.image.filename from prodbeta.file_archive_info, prodbeta.image, prodbeta.wgb where image.filename=wgb.filename and (reqnum=1007 or reqnum=1155) and exec_name='immask' order by ccdnum,wrapnum 
+
+#select prodbeta.file_archive_info.path, 
+#       prodbeta.image.filename 
+#       from 
+#       prodbeta.file_archive_info, prodbeta.image, prodbeta.wgb 
+#        where image.filename=wgb.filename 
+#          and reqnum IN (1007,1155)
+#          and exec_name='immask' 
+#          and prodbeta.file_archive_info.filename=image.filename; 
+
+select prodbeta.file_archive_info.path, 
+       prodbeta.image.filename 
+       from 
+       prodbeta.file_archive_info, prodbeta.image, prodbeta.wgb 
+        where image.filename=wgb.filename 
+          and reqnum IN (1007,1155)
+          and exec_name='immask' 
+          and prodbeta.file_archive_info.filename=image.filename; 
+
+select prodbeta.file_archive_info.path, prodbeta.image.filename from prodbeta.file_archive_info, prodbeta.image, prodbeta.wgb where image.filename=wgb.filename  and reqnum IN (1007,1155) and exec_name='immask' and prodbeta.file_archive_info.filename=prodbeta.image.filename;  
+
+
+
+# select exposure.filename, file_archive_info.filename from image, file_archive_info, wgb, exposure, used  where wgb.reqnum=1155 and wgb.exec_name='immask' and file_archive_info.filename=wgb.filename and file_archive_info.filename=image.filename and used.reqnum=wgb.reqnum and used.attnum=wgb.attnum and used.unitname=wgb.unitname and used.filename=exposure.filename;
+#select prodbeta.file_archive_info.path,  prodbeta.image.filename from prodbeta.file_archive_info, prodbeta.image, prodbeta.wgb where prodbeta.image.filename=wgb.filename and ( (reqnum=1007 and attnum=5) or (reqnum=1155 and attnum=1)) and exec_name='immask' and prodbeta.file_archive_info.filename=image.filename;
+
+select file_archive_info.path, image.filename from file_archive_info, image, wgb where image.filename=wgb.filename and ( (reqnum=1007 and attnum=5) or (reqnum=1155 and attnum=1)) and exec_name='immask' and file_archive_info.filename=image.filename;
+
+select image.expnum, image.ccdnum, file_archive_info.path||'/'||image.filename||file_archive_info.compression from file_archive_info, image, wgb where image.filename=wgb.filename and ( (reqnum=1007 and attnum=5) or (reqnum=1155 and attnum=1)) and exec_name='immask' and file_archive_info.filename=image.filename;
+
+
+select exposure.filename, file_archive_info.filename 
+ from image, file_archive_info, wgb, exposure, used  
+ where wgb.reqnum IN (1155,1007) and 
+ wgb.exec_name='immask' and 
+ file_archive_info.filename=wgb.filename and 
+ file_archive_info.filename=image.filename and 
+ used.reqnum=wgb.reqnum and 
+ used.attnum=wgb.attnum and 
+ used.unitname=wgb.unitname and 
+ used.filename=exposure.filename;
+
+SELECT
+    felipe.extraZEROPOINT.FILENAME, felipe.extraZEROPOINT.MAG_ZERO,
+    file_archive_info.PATH, file_archive_info.FILENAME, image.FILENAME, image.BAND
+FROM
+    IMAGE, FILE_ARCHIVE_INFO, WGB, OPS_PROCTAG, felipe.extraZEROPOINT 
+WHERE
+    file_archive_info.FILENAME=image.FILENAME 
+AND
+    wgb.FILENAME = image.FILENAME
+AND
+    felipe.extraZEROPOINT.FILENAME = image.FILENAME
+AND 
+    ops_proctag.TAG='Y2T1_FIRSTCUT';
+
+
+
+# setup mojo
+#setup -v -r .
+setup -v -r ~/DESDM-Code/devel/mojo/trunk/ 
+setup -v despydb 2.0.0+0
+setup -v despyastro 0.2.0+0
+setup -v ipython 2.1.0+3
+
+# to start a job
+cd examples
+
+# Start ipython
+ipython
+from mojo import job_operator
+jo  = job_operator.JobOperator('multiepoch.config')
+
+#jo.run_next_job()
+# or
+
+# Get the TILENAME INFORMATION
+jo.run_job('multiepoch.jobs.query_tileinfo', tilename='DES2246-4457', tablename='felipe.coaddtile_new')
+
+
+# or
+job = jo.get_next_job()
+job()
+
+
+# or 
+job = jo.get_next_job()
+job.ctx.update({'bla':1})
+job()
+
+# or
+jo.run_job('mojotest.jobs.testjob_A', bla='bla')
+
