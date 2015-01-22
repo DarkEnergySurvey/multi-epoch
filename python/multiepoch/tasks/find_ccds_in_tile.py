@@ -72,6 +72,7 @@ import numpy
 import despyastro
 from mojo.jobs.base_job import BaseJob
 from despydb import desdbi
+from despyastro import tableio
 
 # THE QUERY TEMPLATE THAT IS RUN TO GET THE CCDs
 # -----------------------------------------------------------------------------
@@ -201,22 +202,14 @@ class Job(BaseJob):
     def write_info(self,ccdsinfo_file,names=['FILENAME','PATH','BAND','MAG_ZERO']):
 
         print "# Writing CCDS information to: %s" % ccdsinfo_file
-
-        # FIX
-        # FIX -- this way of dumping is silly!!!!!
-        # FIX
-
         #names = self.ctx.CCDS.dtype.names
         N = len(names)
         header =  "%12s "*N % tuple(names)
-
-        o = open(ccdsinfo_file,"w")
-        o.write("# %s\n" % header)
-        for k in range(len(self.ctx.CCDS['FILENAME'])):
-            for name in names:
-                o.write("%s " % self.ctx.CCDS[name][k])
-            o.write("\n")
-        o.close()
+        format =  "%-12s "*N 
+        variables = []
+        for name in names:
+            variables.append(self.ctx.CCDS[name].tolist())
+        tableio.put_data(ccdsinfo_file,tuple(variables), header=header, format=format)
         return
 
 
@@ -291,17 +284,16 @@ if __name__ == "__main__":
     json_dict = read_tileinfo(args.tileinfo)
     job.ctx.tileinfo =json_dict['tileinfo']
     job.ctx.tilename =json_dict['tilename']
-    job()  # Execute -- do call()
+    job()  # Execute -- do run()
     # Write out the ccds information
     #job.write_info(args.ccdsinfo)
-    job.write_info_json(args.ccdsinfo)
+    #job.write_info_json(args.ccdsinfo)
+    exit()
 
-    # Now we get the absolute paths
+    # Now we get the absolute paths in the archive 
     from multiepoch.tasks.find_fitsfiles_location import Job as find_job    
     find = find_job(ctx=job.ctx) 
-    find()
-    print find.ctx.FILEPATH_ARCHIVE
-    exit()
+    find() # Get find.ctx.FILEPATH_ARCHIVE
 
 
     # In Case we want to plot the overlapping CCDs

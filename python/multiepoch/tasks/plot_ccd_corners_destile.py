@@ -14,13 +14,23 @@ D2R = math.pi/180. # degrees to radians shorthand
 
 class Job(BaseJob):
 
-    def __call__(self):
+    def run(self):
 
         # Get all of the kwargs
         kwargs = self.ctx.get_kwargs_dict()
 
         # Decide if we want to plot MULTI panel (subplot) or SINGLE planel
         BAND = kwargs.pop('band', False)
+
+        # Re-pack the tile corners
+        self.tile_racs  = numpy.array([
+            self.ctx.tileinfo['RAC1'], self.ctx.tileinfo['RAC2'],
+            self.ctx.tileinfo['RAC3'], self.ctx.tileinfo['RAC4']
+            ])
+        self.tile_deccs = numpy.array([
+            self.ctx.tileinfo['DECC1'], self.ctx.tileinfo['DECC2'],
+            self.ctx.tileinfo['DECC3'], self.ctx.tileinfo['DECC4']
+            ])
         
         if BAND:
             self.plot_CCDcornersDESTILEsingle(BAND,**kwargs)
@@ -87,12 +97,8 @@ class Job(BaseJob):
                 y2 = max(y2, decs.max())
 
             # Draw the TILE footprint at the end
-            P = Polygon(
-                    zip(self.ctx.tileinfo['RACS'],
-                        self.ctx.tileinfo['DECCS']),
-                    closed=True, Fill=False, hatch='',lw=1.0, color='r'
-                    )
-
+            P = Polygon(zip(self.tile_racs,self.tile_deccs),
+                        closed=True, Fill=False, hatch='',lw=1.0, color='r')
             ax.add_patch(P)
         
             # Fix range
@@ -147,11 +153,8 @@ class Job(BaseJob):
             y2 = max(y2,decs.max())
 
         # Draw the TILE footprint at the end
-        P = Polygon(
-                zip(self.ctx.tileinfo['RACS'],
-                    self.ctx.tileinfo['DECCS']),
-                closed=True, Fill=False, hatch='',lw=1.0, color='r'
-                )
+        P = Polygon(zip(self.tile_racs,self.tile_deccs),
+                    closed=True, Fill=False, hatch='',lw=1.0, color='r')
         ax.add_patch(P)
         
         # Fix range
@@ -169,12 +172,6 @@ class Job(BaseJob):
 
         return
 
-
-
-    def __str__(self):
-        return 'plot ccd corners desfile'
-
-
     def repackCCDcorners(self, filename):
         """
         Repacks the CCD corners for plotting, from the existing
@@ -186,3 +183,6 @@ class Job(BaseJob):
         ras   = numpy.array([ccds['RAC1'][k], ccds['RAC2'][k], ccds['RAC3'][k], ccds['RAC4'][k]])
         decs  = numpy.array([ccds['DECC1'][k],ccds['DECC2'][k],ccds['DECC3'][k],ccds['DECC4'][k]])
         return ras, decs
+
+    def __str__(self):
+        return 'plot the ccd corners for a DES tile'

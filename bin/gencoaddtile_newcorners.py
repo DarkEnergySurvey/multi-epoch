@@ -1,8 +1,14 @@
 #!/usr/bin/env python
 
 import time
-import despymisc
+from despymisc.miscutils import elapsed_time
 from multiepoch.destiling import DEStiling
+
+"""
+Example:
+  gencoaddtile_newcorners.py --sectionDB db-destest --writeDB
+  gencoaddtile_newcorners.py --sectionDB db-desoper --writeDB
+"""
 
 def cmdline():
     import argparse
@@ -39,4 +45,4 @@ if __name__ == "__main__":
                         dec_end    = -85,
                         ra_range   = 360,
                         **kwargs)
-    print "# Time:%s" % despymisc.miscutils.elapsed_time(t0)
+    print "# Time:%s" % elapsed_time(t0)
