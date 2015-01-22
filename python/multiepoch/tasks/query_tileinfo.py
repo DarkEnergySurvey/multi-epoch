@@ -9,13 +9,16 @@ of the TILENAME an computes and stores the: (RACMIN, RACMAX) and
 Author: Felipe Menanteau, NCSA, Nov 2014.
 
 """
-
-from mojo.jobs.base_job import BaseJob, IO
-from traitlets import Unicode, Bool, Float, Int, CUnicode, CBool, CFloat, CInt, Instance
-    
-from despydb import desdbi
-import numpy
 import json
+import numpy
+
+from despydb import desdbi
+
+from traitlets import Unicode, Bool, Float, Int, CUnicode, CBool, CFloat, CInt, Instance
+
+from mojo.jobs.base_job import BaseJob, IO, IO_ValidationError
+from mojo.context import ContextProvider
+    
 
 QUERY = '''
     SELECT PIXELSCALE, NAXIS1, NAXIS2,
@@ -65,22 +68,31 @@ class Job(BaseJob):
 
     '''
 
-
     class Input(IO):
-
         # Required inputs
-        tilename   = CUnicode(None,help="The Name of the Tile Name to query")
+        tilename   = CUnicode(None, help="The Name of the Tile Name to query")
         # Optional inputs
-        db_section = CUnicode("db-desoper",help="DataBase Section to connect")
-        json_file  = CUnicode("",help="Name of the output json file where we will store the tile information")
+        db_section = CUnicode("db-destest", help="DataBase Section to connect")
+        json_job_output_file = CUnicode("", help= ("Name of the output json "
+            "file where we will store the tile information"))
+        coaddtile_table = CUnicode("felipe.coaddtile_new", help=("Database "
+            "table with COADDTILE information"))
+
+        def _validate_conditional(self):
+            # if in job standalone mode json
+            if (self.execution_mode == 'mojo run_job' or
+                    self.execution_mode == 'job as script') and (
+                            self.json_job_output_file == ""):
+                mess = 'If job is run standalone json_job_output_file cannot be ""'
+                raise IO_ValidationError(mess)
+
 
     def run(self):
 
         # CHECK IF DATABASE HANDLER IS PRESENT
         if 'dbh' not in self.ctx:
             try:
-                db_section = self.ctx.get('db_section','db-desoper')
-                self.ctx.dbh = desdbi.DesDbi(section=db_section)
+                self.ctx.dbh = desdbi.DesDbi(section=self.input.db_section)
             except:
                 raise ValueError('Database handler could not be provided for context.')
         else:
@@ -88,7 +100,7 @@ class Job(BaseJob):
 
         # EXECUTE THE QUERY
         cur = self.ctx.dbh.cursor()
-        cur.execute(self.get_query(**self.ctx.get_kwargs_dict()))
+        cur.execute(self.get_query(**self.input.as_dict()))
         desc = [d[0] for d in cur.description]
         # cols description
         line = cur.fetchone()
@@ -96,6 +108,12 @@ class Job(BaseJob):
 
         # Make a dictionary/header for the all columns from COADDTILE table
         self.ctx.tileinfo = dict(zip(desc, line))
+
+        # dump data into json if json_job_output_file is given
+        if self.input.json_job_output_file != "":
+            ContextProvider().json_dump_ctx(self.ctx,
+                    var_list=('tilename', 'tileinfo',),
+                    filename=self.input.json_job_output_file)
 
 
     def get_query(self, **kwargs):
@@ -118,61 +136,11 @@ class Job(BaseJob):
         query_string = QUERY.format(tablename=tablename, tilename=tilename)
         return query_string
 
-    def write_tileinfo(self,geomfile=None):
-
-        if geomfile == "":
-            geomfile = "%s.json" % self.ctx.tilename
-            
-        geo = open(geomfile,'w')
-        jsondict = {
-            'tileinfo' : self.ctx.tileinfo,
-            'tilename' : self.ctx.tilename,
-            }
-        geo.write(json.dumps(jsondict,sort_keys=True,indent=4))
-        geo.close()
-        print "# Wrote the tile Geometry to file: %s" % geomfile
-        return
-
 
     def __str__(self):
-        return 'query tileinfo'
+        return 'query tileinfo' 
 
 
-def cmdline():
-
-    """
-    The funtion to generate and populate the commnand-line arguments into the context
-    """
-
-    import argparse
-    parser = argparse.ArgumentParser(description="Collect the tile geometry information using the DESDM Database")
-
-    # The positional arguments
-    parser.add_argument("tilename", help="The Name of the Tile Name to query")
-
-    # Positional arguments
-    parser.add_argument("--db_section", action="store", default="db-desoper",choices=['db-desoper','db-destest'],
-                        help="DataBase Section to connect")
-    parser.add_argument("--coaddtile_table", action="store", default="felipe.coaddtile_new",
-                        help="Database table with COADDTILE information")
-    parser.add_argument("--json_file", action="store", default=None, # We might want to change the name of the "--option"
-                        help="Name of the output json file where we will store the tile information")
-    args = parser.parse_args()
-    return args
-    
-if __name__ == "__main__":
-
-    from mojo.utils.struct import Struct
-
-    args = cmdline()
-
-    # Initialize the class
-    job = Job()
-    # In case we want to execute only the query
-    #job.get_query(**args.__dict__)
-    # Add cmdline options to the context using Struct
-    job.ctx = Struct(dict(**args.__dict__))
-    job()  # Execute -- do call()
-    job.write_tileinfo(args.json_file) # Write the json file with the tileinfo
-
-    
+if __name__ == '__main__':
+    from mojo.utils import main_runner
+    main_runner.run_as_main(Job)
