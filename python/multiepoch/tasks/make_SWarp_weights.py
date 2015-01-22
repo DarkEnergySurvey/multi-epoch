@@ -95,8 +95,6 @@ class Job(BaseJob):
         self.ctx.FILEPATH_LOCAL_WGT = numpy.array(self.ctx.FILEPATH_LOCAL_WGT)
         return
         
-
-
     def __str__(self):
         return 'Create Custom inputs Weights for SWarp'
 

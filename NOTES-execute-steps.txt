@@ -17,3 +17,8 @@
 
  b) Get the CCDs needed for a tile
  find_ccds_in_tile.py DES2246-4457_tileinfo.json --db_section db-destest --ccdsinfo DES2246-4457_ccdinfo.dat
+
+ (by hand modify the DES2246-4457_ccdinfo.dat --> DES2246-4457_ccdinfo_local.dat with the local paths)
+
+ c) Now we are ready to create the custom weights
+
