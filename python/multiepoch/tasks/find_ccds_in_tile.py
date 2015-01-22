@@ -126,6 +126,33 @@ class Job(BaseJob):
 
     '''
 
+    def run(self):
+
+        # Get the db handle
+        if 'dbh' not in self.ctx:
+            try:
+                db_section = self.ctx.get('db_section','db-desoper')
+                print "# Creating db-handle to section: %s" % db_section
+                self.ctx.dbh = desdbi.DesDbi(section=db_section)
+            except:
+                raise ValueError('ERROR: Database handler could not be provided for context.')
+        else:
+            print "# Will recycle existing db-handle"
+
+        # Call the query built function
+        query = self.get_query(**self.ctx.get_kwargs_dict())
+        
+        print "# Getting CCD images within the tile definition"
+        # Get the ccd images that are part of the DESTILE
+        #self.ctx.CCDS = despyastro.genutil.query2dict_of_columns(query,dbhandle=self.ctx.dbh,array=True)
+        self.ctx.CCDS = despyastro.genutil.query2rec(query,dbhandle=self.ctx.dbh)
+        print "# Nelem %s" % len(self.ctx.CCDS['FILENAME'])
+
+        # Get the filters we found
+        self.ctx.BANDS  = numpy.unique(self.ctx.CCDS['BAND'])
+        self.ctx.NBANDS = len(self.ctx.BANDS)
+
+
     def get_query(self,**kwargs): 
         '''
         Get the database query that returns the ccds.
@@ -170,31 +197,6 @@ class Job(BaseJob):
         return query
 
 
-    def __call__(self):
-
-        # Get the db handle
-        if 'dbh' not in self.ctx:
-            try:
-                db_section = self.ctx.get('db_section','db-desoper')
-                print "# Creating db-handle to section: %s" % db_section
-                self.ctx.dbh = desdbi.DesDbi(section=db_section)
-            except:
-                raise ValueError('ERROR: Database handler could not be provided for context.')
-        else:
-            print "# Will recycle existing db-handle"
-
-        # Call the query built function
-        query = self.get_query(**self.ctx.get_kwargs_dict())
-        
-        print "# Getting CCD images within the tile definition"
-        # Get the ccd images that are part of the DESTILE
-        #self.ctx.CCDS = despyastro.genutil.query2dict_of_columns(query,dbhandle=self.ctx.dbh,array=True)
-        self.ctx.CCDS = despyastro.genutil.query2rec(query,dbhandle=self.ctx.dbh)
-        print "# Nelem %s" % len(self.ctx.CCDS['FILENAME'])
-
-        # Get the filters we found
-        self.ctx.BANDS  = numpy.unique(self.ctx.CCDS['BAND'])
-        self.ctx.NBANDS = len(self.ctx.BANDS)
 
     def write_info(self,ccdsinfo_file,names=['FILENAME','PATH','BAND','MAG_ZERO']):
 

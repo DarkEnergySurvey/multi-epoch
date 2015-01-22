@@ -96,23 +96,6 @@ class Job(BaseJob):
 
         # Make a dictionary/header for the all columns from COADDTILE table
         self.ctx.tileinfo = dict(zip(desc, line))
-        
-
-        #### TODO : add alls the following infered parameters to tileinfo?
-        #### TODO @ Felipe : add RACMIN xxx into database schema for COADDTILE
-        #if self.ctx.tileinfo['CROSSRAZERO'] == 'Y':
-        #    # Maybe we substract 360?
-        #    self.ctx.tileinfo['RACMIN'] = ras.max()
-        #    self.ctx.tileinfo['RACMAX'] = ras.min()
-        #else:
-        #    self.ctx.tileinfo['RACMIN'] = ras.min()
-        #    self.ctx.tileinfo['RACMAX'] = ras.max()
-        #    
-        #self.ctx.tileinfo['DECCMIN'] = decs.min()
-        #self.ctx.tileinfo['DECCMAX'] = decs.max()
-        # Store the packed corners of the COADDTILES for plotting later
-        #self.ctx.tileinfo['RACS'] =  ras.tolist() 
-        #self.ctx.tileinfo['DECCS'] = decs.tolist()
 
 
     def get_query(self, **kwargs):
