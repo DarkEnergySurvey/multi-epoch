@@ -196,9 +196,6 @@ class Job(BaseJob):
         self.ctx.BANDS  = numpy.unique(self.ctx.CCDS['BAND'])
         self.ctx.NBANDS = len(self.ctx.BANDS)
 
-    def __str__(self):
-        return 'find ccds in tile'
-
     def write_info(self,ccdsinfo_file,names=['FILENAME','PATH','BAND','MAG_ZERO']):
 
         print "# Writing CCDS information to: %s" % ccdsinfo_file
@@ -224,6 +221,11 @@ class Job(BaseJob):
         o.write(json.dumps(dict_CCDS,sort_keys=True,indent=4))
         o.close()
         return
+
+
+    def __str__(self):
+        return 'find ccds in tile'
+
 
 def read_tileinfo(geomfile):
 
