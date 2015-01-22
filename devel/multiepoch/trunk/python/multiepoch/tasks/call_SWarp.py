@@ -48,7 +48,7 @@ class Job(BaseJob):
             for band in self.ctx.dBANDS:
                 print ' '.join(cmd_list[band])
         elif executione_mode == 'execute':
-            self.runSWarp(cmd_list):
+            self.runSWarp(cmd_list)
         else:
             raise ValueError('Execution mode %s not implemented.' % executione_mode)
 
