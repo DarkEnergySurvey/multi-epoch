@@ -42,6 +42,9 @@ class Job(BaseJob):
             print "# All files are local -- inside the DESAR cluster"
             return
 
+        # Create the list of local names -- gets self.ctx.FILEPATH_LOCAL
+        self.define_localnames(local_archive)
+
         # Create the directory -- if it doesn't exist.
         create_local_archive(self.ctx.local_archive)
 
@@ -49,21 +52,28 @@ class Job(BaseJob):
         self.transfer_files(clobber,local_archive)
 
         return
+    
+    def define_localnames(self, local_archive):
 
-    def transfer_files(self,clobber,local_archive):
-
-        """ Transfer the files """
-
-        # Now get the files via http
         Nfiles = len(self.ctx.FILEPATH_HTTPS)
         self.ctx.FILEPATH_LOCAL = []
-
         for k in range(Nfiles):
-            
             # Get the remote and local names
             url       = self.ctx.FILEPATH_HTTPS[k]
             localfile = os.path.join(local_archive,self.ctx.FILEPATH[k])
             self.ctx.FILEPATH_LOCAL.append(localfile)
+        return
+
+    def transfer_files(self,clobber):
+
+        """ Transfer the files """
+    
+        # Now get the files via http
+        Nfiles = len(self.ctx.FILEPATH_HTTPS)
+        for k in range(Nfiles):
+            
+            url       = self.ctx.FILEPATH_HTTPS[k]
+            localfile = self.ctx.FILEPATH_LOCAL[k]
 
             # Make sure the file does not already exists exits
             if not os.path.exists(localfile) or clobber:
@@ -79,7 +89,6 @@ class Job(BaseJob):
             else:
                 sys.stdout.write("\r# Skipping: %s (%s/%s) -- file exists" % (url,k+1,Nfiles))
                 sys.stdout.flush()
-
 
         # Make it a np-char array
         print "\n#\n"
