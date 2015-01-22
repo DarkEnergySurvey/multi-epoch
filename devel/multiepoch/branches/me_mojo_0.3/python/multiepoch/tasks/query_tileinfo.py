@@ -80,12 +80,9 @@ class Job(BaseJob):
 
         def _validate_conditional(self):
             # if in job standalone mode json
-            if (self.execution_mode == 'mojo run_job' or
-                    self.execution_mode == 'job as script') and (
-                            self.json_job_output_file == ""):
+            if self.execution_mode == 'job as script' and self.json_job_output_file == "":
                 mess = 'If job is run standalone json_job_output_file cannot be ""'
                 raise IO_ValidationError(mess)
-
 
     def run(self):
 
@@ -108,12 +105,6 @@ class Job(BaseJob):
 
         # Make a dictionary/header for the all columns from COADDTILE table
         self.ctx.tileinfo = dict(zip(desc, line))
-
-        # dump data into json if json_job_output_file is given
-        if self.input.json_job_output_file != "":
-            ContextProvider().json_dump_ctx(self.ctx,
-                    var_list=('tilename', 'tileinfo',),
-                    filename=self.input.json_job_output_file)
 
 
     def get_query(self, **kwargs):
@@ -143,4 +134,5 @@ class Job(BaseJob):
 
 if __name__ == '__main__':
     from mojo.utils import main_runner
-    main_runner.run_as_main(Job)
+    job = main_runner.run_as_main(Job)
+    job.write_ctx_to_json('test.json', vars_list=['tileinfo', 'tilename'])
