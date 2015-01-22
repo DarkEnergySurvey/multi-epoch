@@ -72,16 +72,16 @@ class Job(BaseJob):
         """
         
         # Required inputs
-        tilename        = CUnicode(None, help="The Name of the Tile Name to query")
+        tilename           = CUnicode(None, help="The Name of the Tile Name to query")
         # Optional inputs
-        db_section      = CUnicode("db-destest", help="DataBase Section to connect",choices=['db-desoper','db-destest'])
-        json_tileinfo   = CUnicode("", help= "Name of the output json file where we will store the tile information")
-        coaddtile_table = CUnicode("felipe.coaddtile_new", help="Database table with COADDTILE information")
+        db_section         = CUnicode("db-destest", help="DataBase Section to connect",choices=['db-desoper','db-destest'])
+        json_tileinfo_file = CUnicode("", help= "Name of the output json file where we will store the tile information")
+        coaddtile_table    = CUnicode("felipe.coaddtile_new", help="Database table with COADDTILE information")
 
         def _validate_conditional(self):
             # if in job standalone mode json
-            if self.execution_mode == 'job as script' and self.json_tileinfo == "":
-                mess = 'If job is run standalone json_job_output_file cannot be ""'
+            if self.execution_mode == 'job as script' and self.json_tileinfo_file == "":
+                mess = 'If job is run standalone json_tileinfo_file cannot be ""'
                 raise IO_ValidationError(mess)
 
     def run(self):
@@ -134,4 +134,4 @@ class Job(BaseJob):
 if __name__ == '__main__':
     from mojo.utils import main_runner
     job = main_runner.run_as_main(Job)
-    job.write_ctx_to_json('test.json', vars_list=['tileinfo', 'tilename'])
+    job.write_ctx_to_json(job.input.json_tileinfo_file, vars_list=['tileinfo', 'tilename'])
