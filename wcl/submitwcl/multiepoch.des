@@ -1,89 +1,35 @@
-<<include mypfwcfg.des>>
+# defines my environment
+<<include michaelgraber_cfg.des>>
 
 <<include modulewcl/modnamepat.wcl>>
-<<include modulewcl/finalcut/01-crosstalk-sci.wcl>>
-<<include modulewcl/finalcut/02-detrend_fringe.wcl>>
-<<include modulewcl/finalcut/03-create-scamp-cat.wcl>>
-<<include modulewcl/finalcut/04-run-scamp.wcl>>
-<<include modulewcl/finalcut/04b-ingest-scamp-xml.wcl>>
-<<include modulewcl/finalcut/05-update-scamp-headers.wcl>>
-<<include modulewcl/finalcut/06-mkbleedmask.wcl>>
-<<include modulewcl/finalcut/07-create-bkg-img.wcl>>
-<<include modulewcl/finalcut/08-immask.wcl>>
-<<include modulewcl/finalcut/09-create-psfex-cat.wcl>>
-<<include modulewcl/finalcut/10-run-psfex.wcl>>
-<<include modulewcl/finalcut/10b-ingest-psfex-xml.wcl>>
-<<include modulewcl/finalcut/11-create-finalcut-catalog.wcl>>
-<<include modulewcl/finalcut/12-ingest-se-objects.wcl>>
+<<include modulewcl/01-query_tileinfo.wcl>>
 
-<<include usedb.des>>
+<<include destest_computingsite.des>>       
 
-#<<include cosmolocal.des>>
-#<<include cosmoglobus.des>>      
-<<include fermigrid.des>>       
-#<<include cosmohttp.des>>       
+reqnum = 0001
+jira_id = ME-TEST # example 
+label = query_tileinfo,test 
 
-reqnum = 02
-jira_id = DESOPS-143  # example 
-label = 20121124-fringe,el-gordo
-basket = ${nite}
-GROUP_SUBMIT_ID = 1
+pipeline = me # used in desstat output 
+pipeprod = Y2Nstack # eups meta package name
+pipever = 1.0.5+0  # eups meta package version
+ops_run_dir = ${project}/${pipeline}/${tilename}-r${reqnum}/p${attnum:2}
+unitname = ${tilename}
 
-pipeline = finalcut    # used in desstat output 
-pipeprod = FWRefact    # eups meta package name
-pipever = 0.9.10+1  # eups meta package version
-ops_run_dir = ${project}/${pipeline}/${nite}-r${reqnum}/${unitname}/p${attnum:2}
-unitname = ${camera}${expnum:8}
-
-
-camera = D         # Camera + expnum create unique criteria to find/name exposure file
-band = yyyy
-expnum = xxxx
-nite = 20121124     # used in archive directory structure
-photflagvar = 1    # needed for crosstalk code
-ccdnum = (1:62)    # full exposure
-
-xtalkcoefffile = DECam_20130606.xtalk 
-hupdatefile = 20130924_DES_header_update.20130628
-lintablefile = lin_tbl_v0.4
-bpmnite = 20130716
-fringecornite = 20130702
-illumcornite = 20130829
-pupilnite = 20130829
-photflatcornite = null
-precalnite = 20131112
-precalrun = r11p03
-scampupdatefile = 20130924_decam_pvmodel_20121017.ahead
-
-se_object_table = PROD.SE_OBJECT
-transfer_stats = filemgmt.transfer_stats_db.TransferStatsDB
-transfer_semname= filetrans
-submit_run_dir = /cluster_scratch/users/newframe/submit/${project}/${pipeline}/n${nite}r${reqnum}/D${expnum:8}/p${attnum:2}
-
-blocklist = se_fringe
+blocklist = uptime
 
 <block>
-    <se_fringe>
-	modulelist = crosstalk-sci,detrend_fringe,create-scamp-catalog,run-scamp,ingest-scamp-xml,update-scamp-headers,mkbleedmask,create-bkg-img,immask,create-psfex-catalog,run-psfex,ingest-psfex-xml,create-finalcut-catalog,ingest-se-objects
-	#modulelist = crosstalk-sci,detrend_fringe,create-scamp-catalog,run-scamp,update-scamp-headers,mkbleedmask,create-bkg-img,immask,create-psfex-catalog,run-psfex,create-finalcut-catalog
-    </se_fringe>
+    <uptime>
+        modulelist = uptime 
+    </uptime>
 </block>
 
-#### uncomment for 2 CCD test, comment out for full exposure
-#ccdnum = 2,10     # ccdlist for DECam_crosstalk takes comma-separated list
-#<module run-scamp>   # use a different ahead file
-#    <file>
-#        <scamp_ahead>
-#            filename = 20130924_decam_pvmodel_20121017_twoccd_c0210.ahead
-#        </scamp_ahead>
-#    </file>
-#</module>
-
-#<module crosstalk-sci>    # put ccd list on command-line so crosstalk only outputs those ccds
-#    <exec_1>
-#        <cmdline>
-#            ccdlist = ${ccdnum}
-#        </cmdline>
-#    </exec_1>
-#</module>
-#### end 2 CCD test
+<module>
+    <uptime>
+        wrappername = generic.py
+        modnamepat=${modnamepat_tile_generic}
+        <exec_1>
+            execname = uptime
+        </exec_1>
+    </uptime>
+</module>

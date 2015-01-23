@@ -1,58 +1,37 @@
 <module>
-    <crosstalk-sci>
+    <query_tileinfo>
         wrappername = generic.py
         #wrapperloop = exposurename
-        modnamepat=${modnamepat_expband}
-        loopobj = file.raw
+        modnamepat=${modnamepat_tile_generic}
+        #loopobj = file.raw
 
         <file>
-            <raw>
-	        filetype = raw
-                filename = DECam_${expnum:8}.fits
-                dirpat = raw
-                rundir = raw
-            </raw>
-            <xtalkcoeff>
-                filetype = config
-                filename = ${xtalkcoefffile}
-                dirpat = se
-                rundir = config
-            </xtalkcoeff>
-            <red_xtalked>
-                filetype = xtalked_sci
-                filepat = ccdnum_band
-		flabel = scix
-                fsuffix = fits
-                dirpat = se
-                ops_enddir = red
-                rundir = red 
-		savefiles = false
-            </red_xtalked>
-	    <hupdate>
-		filetype = config
-                filename = ${hupdatefile}
-                dirpat = se
-                rundir = config
-	    </hupdate>
+            <json_geom>
+                filetype = config 
+                filepat = tile_generic
+		        flabel = geom
+                fsuffix = json
+                dirpat = me 
+                ops_enddir = aux
+                rundir = aux
+                # bring file back home?
+		        savefiles = true
+            </json_geom>
         </file>
         <exec_1>
-            execname = DECam_crosstalk
-            used = file.raw, file.xtalkcoeff,file.hupdate
-            was_generated_by = file.red_xtalked
-            ancestry = file.raw:file.red_xtalked, file.xtalkcoeff:file.red_xtalked,file.hupdate:file.red_xtalked
+            execname = query_tileinfo.py 
+            #used = file.raw, file.xtalkcoeff,file.hupdate
+            was_generated_by = file.json_geom
+            #ancestry = file.raw:file.red_xtalked, file.xtalkcoeff:file.red_xtalked,file.hupdate:file.red_xtalked
             <cmdline>
-                _01_raw = ${file.raw.fullname}
-                _02_red_xtalked = red/${camera}${expnum:8}_${band}_c%02d_r${reqnum}p${attnum:2}_scix.fits 
-                crosstalk = ${file.xtalkcoeff.fullname}
-                postsatmask = _flag
-                overscansample = 1
-		overscanorder = 1
-                overscanfunction = 0
-                overscantrim = 5
-		replace = ${file.hupdate.fullname}
-                verbose = 3
-                photflag = ${photflagvar}
+                # positional arguments with _num_blabla
+                _01_tilename = ${tilename}
+                # optional arguments
+                json_tileinfo_file = ${file.json_geom.fullname}
+                # do not interface the following optional inputs now ..
+                #db_section = ${db_section}
+                #coaddtile_table = ${coaddtile_table}
             </cmdline>
         </exec_1>
-    </crosstalk-sci>
+    </query_tileinfo>
 </module>
