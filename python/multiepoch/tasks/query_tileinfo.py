@@ -67,6 +67,8 @@ class Job(BaseJob):
 
     class Input(IO):
 
+
+        # This is the description that argparse will register.
         """
         Collect the tile geometry information using the DESDM Database
         """

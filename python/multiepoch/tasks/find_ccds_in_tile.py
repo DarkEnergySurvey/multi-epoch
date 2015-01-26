@@ -4,7 +4,13 @@ import json
 import numpy
 import time
 import despyastro
+
+# Mojo imports
 from mojo.jobs.base_job import BaseJob
+from traitlets import Unicode, Bool, Float, Int, CUnicode, CBool, CFloat, CInt, Instance
+from mojo.jobs.base_job import BaseJob, IO, IO_ValidationError
+from mojo.context import ContextProvider
+
 from despydb import desdbi
 from despyastro import tableio
 from despymisc.miscutils import elapsed_time
@@ -129,6 +135,44 @@ class Job(BaseJob):
     - ccdinfo
 
     '''
+
+    class Input(IO):
+
+        """Find the CCDs that fall inside a tile"""
+    
+        # Required inputs
+        tileinfo = CUnicode(None, help="The json file with the tile information")
+        # Optional inputs
+        db_section     = CUnicode("db-destest",
+                                   help="DataBase Section to connect",choices=['db-desoper','db-destest'])
+        archive_name   = CUnicode("desar2home",
+                                  help="DataBase Archive Name section")
+        select_extras  = CUnicode(SELECT_EXTRAS,
+                                  help="string with extra SELECT for query")
+        and_extras     = CUnicode(AND_EXTRAS,
+                                  help="string with extra AND for query")
+        from_extras    = CUnicode(FROM_EXTRAS,
+                                  help="string with extra FROM for query")
+        tagname        = CUnicode('Y2T1_FIRSTCUT',
+                                  help="TAGNAME for images in the database")
+        exec_name      = CUnicode('immask',
+                                  help="EXEC_NAME for images in the database")
+        ccdsinfo       = CUnicode(None, # We might want to change the name of the "--option"
+                                  help="Name of the output file where we will store the cccds information")
+        plot_overlap   = Bool(False, 
+                              help="Plot overlapping tiles")
+        plot_outname   = CUnicode(None, 
+                                  help="Output file name for plot")
+        tiledir        = CUnicode("./", 
+                                  help="Path to Directory where we will write out plot the files ")
+
+        #def _validate_conditional(self):
+        #    # if in job standalone mode json
+        #    if self.execution_mode == 'job as script' and self.json_tileinfo_file == "":
+        #        mess = 'If job is run standalone json_tileinfo_file cannot be ""'
+        #        raise IO_ValidationError(mess)
+
+    
 
     def run(self):
 
@@ -345,10 +389,13 @@ def cmdline():
 
 if __name__ == "__main__":
 
+    from mojo.utils import main_runner
+    job = main_runner.run_as_main(Job)
+    #job.write_ctx_to_json(job.input.json_tileinfo_file, vars_list=['tileinfo', 'tilename'])
+    exit()
+
     from mojo.utils.struct import Struct
-
     args = cmdline()
-
     # Initialize the class
     job = Job()
     # Add cmdline options to the context using Struct
