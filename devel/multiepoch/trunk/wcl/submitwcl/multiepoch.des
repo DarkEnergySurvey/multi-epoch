@@ -1,10 +1,15 @@
 # defines my environment
-<<include michaelgraber_cfg.des>>
+<<include ../michaelgraber_cfg.des>>
 
-<<include modulewcl/modnamepat.wcl>>
-<<include modulewcl/01-query_tileinfo.wcl>>
+<<include ../modulewcl/modnamepat.wcl>>
+<<include ../modulewcl/01-query_tileinfo.wcl>>
 
-<<include destest_computingsite.des>>       
+#<<include destest_computingsite.des>>       
+
+tilename = DESXXXYYY
+
+project = MHG
+target_site = destest_computingsite
 
 reqnum = 0001
 jira_id = ME-TEST # example 

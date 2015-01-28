@@ -1,10 +1,19 @@
 operator = mgraber
 email = michael.graber@fhnw.ch
-create_junk_tarbal = true
+create_junk_tarball = true
 
 submit_des_services = /home/mgraber/.desservices.ini
 submit_des_db_section = db-destest
+target_des_services = /home/mgraber/.desservices.ini
+target_des_db_section = db-destest
+
 submit_files_mvmt = filemgmt.job_mvmt_http.JobArchiveHttp
+
+# no target archive
+use_target_archive_input = never
+use_target_archive_output = never
+use_home_archive_input = wrapper
+use_home_archive_output = job
 
 des_http_section = file-http
 home_archive = desar2home
