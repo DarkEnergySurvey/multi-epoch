@@ -150,8 +150,7 @@ class Job(BaseJob):
 
         # Required inputs when run as script
         #
-        # BE AWARE THAT INPUT FILES NEED TO END WITH input_file:
-        # variables ending with ..input_file will be loaded into the ctx
+        # variables with keyword input_file=True are loaded into the ctx
         # automatically when intializing the Job class if provided, Input
         # validation happens only thereafter
         # you can implement a implement a custom reader for you input file in
@@ -369,20 +368,6 @@ class Job(BaseJob):
 
     def __str__(self):
         return 'find ccds in tile'
-
-
-'''
-I guess this function is not needed anymore
-
-def read_tileinfo(geomfile):
-
-    print "# Reading the tile Geometry from file: %s" % geomfile
-    with open(geomfile, 'rb') as fp:
-        json_dict = json.load(fp)
-    return json_dict
-
-'''
-
 
 
 if __name__ == "__main__":
