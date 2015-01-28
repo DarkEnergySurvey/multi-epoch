@@ -145,7 +145,7 @@ class Job(BaseJob):
         # to the command line parser
         tileinfo = Dict(None, help="The json file with the tile information",
                 argparse=False)
-        tilename = CUnicode(None, help="The Name of the Tile Name to query",
+        tilename = Unicode(None, help="The Name of the Tile Name to query",
                 argparse=False)
 
         # Required inputs when run as script
@@ -201,6 +201,8 @@ class Job(BaseJob):
 
     def run(self):
 
+        print self.input
+        '''
         # Check for the db_handle
         self.check_dbh()
 
@@ -214,6 +216,7 @@ class Job(BaseJob):
         # Get the filters we found
         self.ctx.BANDS  = numpy.unique(self.ctx.CCDS['BAND'])
         self.ctx.NBANDS = len(self.ctx.BANDS)
+        '''
 
 
     def get_CCDS(self,**kwargs): 
