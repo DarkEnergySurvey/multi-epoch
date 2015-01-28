@@ -67,24 +67,40 @@ class Job(BaseJob):
 
     class Input(IO):
 
-
         # This is the description that argparse will register.
         """
         Collect the tile geometry information using the DESDM Database
         """
         
         # Required inputs
-        tilename           = CUnicode(None, help="The Name of the Tile Name to query")
+        tilename = CUnicode(None, 
+                help="The Name of the Tile Name to query",
+                argparse={'argtype': 'positional', } )
         # Optional inputs
-        db_section         = CUnicode("db-destest", help="DataBase Section to connect",choices=['db-desoper','db-destest'])
-        json_tileinfo_file = CUnicode("", help= "Name of the output json file where we will store the tile information")
-        coaddtile_table    = CUnicode("felipe.coaddtile_new", help="Database table with COADDTILE information")
+        db_section  = CUnicode("db-destest",
+                help="DataBase Section to connect",
+                argparse={'choices': ('db-desoper','db-destest')} )
+        json_tileinfo_file = CUnicode("",
+                help=('Name of the output json file where we will store the '
+                    'tile information'),
+                # we set required to True because we need this if executed as
+                # script, even though argument will be declared with -- and
+                # only then we use the parser
+                argparse={'required': True,})
+        coaddtile_table = CUnicode("felipe.coaddtile_new",
+                help="Database table with COADDTILE information",
+                argparse=True)
+
+        # not used currently
+        # ctx_input_file_vars = ('bla_input', 'json_tileinfo', )
 
         def _validate_conditional(self):
             # if in job standalone mode json
-            if self.execution_mode == 'job as script' and self.json_tileinfo_file == "":
+            if self.mojo_execution_mode == 'job as script' and\
+                    self.json_tileinfo_file == "":
                 mess = 'If job is run standalone json_tileinfo_file cannot be ""'
                 raise IO_ValidationError(mess)
+        
 
     def run(self):
 

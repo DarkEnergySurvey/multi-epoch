@@ -7,7 +7,7 @@ import despyastro
 
 # Mojo imports
 from mojo.jobs.base_job import BaseJob
-from traitlets import Unicode, Bool, Float, Int, CUnicode, CBool, CFloat, CInt, Instance
+from traitlets import Unicode, Bool, Float, Int, CUnicode, CBool, CFloat, CInt, Instance, Dict
 from mojo.jobs.base_job import BaseJob, IO, IO_ValidationError
 from mojo.context import ContextProvider
 
@@ -135,47 +135,71 @@ class Job(BaseJob):
     - ccdinfo
 
     '''
-
+    
     class Input(IO):
 
         """Find the CCDs that fall inside a tile"""
     
-        # Required inputs
-        tileinfo = CUnicode(None, help="The json file with the tile information")
-        # Optional inputs
-        db_section     = CUnicode("db-destest",
-                                   help="DataBase Section to connect",choices=['db-desoper','db-destest'])
-        archive_name   = CUnicode("desar2home",
-                                  help="DataBase Archive Name section")
-        select_extras  = CUnicode(SELECT_EXTRAS,
-                                  help="string with extra SELECT for query")
-        and_extras     = CUnicode(AND_EXTRAS,
-                                  help="string with extra AND for query")
-        from_extras    = CUnicode(FROM_EXTRAS,
-                                  help="string with extra FROM for query")
-        tagname        = CUnicode('Y2T1_FIRSTCUT',
-                                  help="TAGNAME for images in the database")
-        exec_name      = CUnicode('immask',
-                                  help="EXEC_NAME for images in the database")
-        ccdsinfo       = CUnicode(None, # We might want to change the name of the "--option"
-                                  help="Name of the output file where we will store the cccds information")
-        plot_overlap   = Bool(False, 
-                              help="Plot overlapping tiles")
-        plot_outname   = CUnicode(None, 
-                                  help="Output file name for plot")
-        tiledir        = CUnicode("./", 
-                                  help="Path to Directory where we will write out plot the files ")
+        # Required inputs to run the job (in ctx, after loading files)
+        # because we set the argparse keyword to False they are not interfaced
+        # to the command line parser
+        tileinfo = Dict(None, help="The json file with the tile information",
+                argparse=False)
+        tilename = CUnicode(None, help="The Name of the Tile Name to query",
+                argparse=False)
 
-        #def _validate_conditional(self):
-        #    # if in job standalone mode json
-        #    if self.execution_mode == 'job as script' and self.json_tileinfo_file == "":
-        #        mess = 'If job is run standalone json_tileinfo_file cannot be ""'
-        #        raise IO_ValidationError(mess)
+        # Required inputs when run as script
+        #
+        # BE AWARE THAT INPUT FILES NEED TO END WITH input_file:
+        # variables ending with ..input_file will be loaded into the ctx
+        # automatically when intializing the Job class if provided, Input
+        # validation happens only thereafter
+        # you can implement a implement a custom reader for you input file in
+        # your input class, let's say for a variable like
+        #
+        # my_input_file = CUnicode('',
+        #        help='My input file.',
+        #        argparse={'argtype': 'positional'})
+        #
+        # def _read_my_input_file(self):
+        #     do the stuff
+        #     return a dict
 
-    
+        tile_geom_input_file = CUnicode('',
+                help='The json file with the tile information',
+                # declare this variable as input_file, this leads the content
+                # of the file to be loaded into the ctx at initialization
+                input_file=True,
+                # set argtype=positional !! to make this a required positional
+                # argument when using the parser
+                argparse={ 'argtype': 'positional', })
+
+        # Optional inputs, also when interfaced to argparse
+        db_section = CUnicode("db-destest",
+                help="DataBase Section to connect", 
+                argparse={'choices': ('db-desoper','db-destest', )} )
+        archive_name = CUnicode("desar2home",
+                help="DataBase Archive Name section",)
+        select_extras = CUnicode(SELECT_EXTRAS,
+                help="string with extra SELECT for query",)
+        and_extras = CUnicode(AND_EXTRAS,
+                help="string with extra AND for query",)
+        from_extras = CUnicode(FROM_EXTRAS,
+                help="string with extra FROM for query",)
+        tagname = CUnicode('Y2T1_FIRSTCUT',
+                help="TAGNAME for images in the database",)
+        exec_name = CUnicode('immask',
+                help="EXEC_NAME for images in the database",)
+        ccdsinfo = CUnicode(None, # We might want to change the name of the "--option"
+                help=("Name of the output file where we will store the cccds "
+                    "information"),)
+        plot_overlap = CBool(False, help="Plot overlapping tiles",)
+        plot_outname = CUnicode(None, help="Output file name for plot",)
+        tiledir = CUnicode("./",
+                help="Path to Directory where we will write out plot the files",)
+
 
     def run(self):
-
 
         # Check for the db_handle
         self.check_dbh()
@@ -191,10 +215,12 @@ class Job(BaseJob):
         self.ctx.BANDS  = numpy.unique(self.ctx.CCDS['BAND'])
         self.ctx.NBANDS = len(self.ctx.BANDS)
 
+
     def get_CCDS(self,**kwargs): 
 
         '''
-        Get the database query that returns the ccds and store them in a numpy record array
+        Get the database query that returns the ccds and store them in a numpy
+        record array
 
         kwargs
         ``````
@@ -342,6 +368,9 @@ class Job(BaseJob):
         return 'find ccds in tile'
 
 
+'''
+I guess this function is not needed anymore
+
 def read_tileinfo(geomfile):
 
     print "# Reading the tile Geometry from file: %s" % geomfile
@@ -349,72 +378,33 @@ def read_tileinfo(geomfile):
         json_dict = json.load(fp)
     return json_dict
 
-def cmdline():
+'''
 
-    """
-    The function to generate and populate the commnand-line arguments into the context
-    """
 
-    import argparse
-    parser = argparse.ArgumentParser(description="Find the CCDs that fall inside a tile")
-
-    # The positional arguments
-    parser.add_argument("tileinfo", help="The json file with the tile information")
-
-    # Optional arguments
-    parser.add_argument("--db_section", action="store", default="db-desoper",
-                        help="DataBase Section to connect")
-    parser.add_argument("--archive_name", action="store", default="desar2home",
-                        help="DataBase Archive Name section")
-    parser.add_argument("--select_extras", action="store", default=SELECT_EXTRAS,
-                        help="string with extra SELECT for query")
-    parser.add_argument("--and_extras", action="store", default=AND_EXTRAS,
-                        help="string with extra AND for query")
-    parser.add_argument("--from_extras", action="store", default=FROM_EXTRAS,
-                        help="string with extra FROM for query")
-    parser.add_argument("--tagname", action="store", default='Y2T1_FIRSTCUT',
-                        help="TAGNAME for images in the database")
-    parser.add_argument("--exec_name", action="store", default='immask',
-                        help="EXEC_NAME for images in the database")
-    parser.add_argument("--ccdsinfo", action="store", default=None, # We might want to change the name of the "--option"
-                        help="Name of the output file where we will store the cccds information")
-    parser.add_argument("--plot_overlap", action="store_true", default=False, 
-                        help="Plot overlapping tiles")
-    parser.add_argument("--plot_outname", action="store", default=None, 
-                        help="Output file name for plot")
-    parser.add_argument("--tiledir", action="store", default="./", 
-                        help="Path to Directory where we will write out plot the files ")
-    args = parser.parse_args()
-    return args
 
 if __name__ == "__main__":
 
+    # 0. take care of the sys arguments
+    import sys
+    args = sys.argv[1:]
+    # 1. read the input arguments into the job input
+    inp = Job.Input()
+    # 2. load a context
+    ctx = ContextProvider.create_ctx(**inp.parse_arguments(args))
+    # 3. set the pipeline execution mode
+    ctx['mojo_execution_mode'] = 'job as script'
+    # 4. create an empty JobOperator with context
+    from mojo import job_operator
+    jo = job_operator.JobOperator(**ctx)
+    # 5. run the job
+    job_instance = jo.run_job(Job)
+    # 6. dump the context if json_dump
+    if jo.ctx.get('json_dump', False):
+        jo.json_dump_ctx()
+    
+
+    # ALTERNATIVELY the following code does exactly the same as the above
+    '''
     from mojo.utils import main_runner
     job = main_runner.run_as_main(Job)
-    #job.write_ctx_to_json(job.input.json_tileinfo_file, vars_list=['tileinfo', 'tilename'])
-    exit()
-
-    from mojo.utils.struct import Struct
-    args = cmdline()
-    # Initialize the class
-    job = Job()
-    # Add cmdline options to the context using Struct
-    job.ctx = Struct(dict(**args.__dict__))
-    # Load in the info in the input json file
-    json_dict = read_tileinfo(args.tileinfo)
-    job.ctx.tileinfo =json_dict['tileinfo']
-    job.ctx.tilename =json_dict['tilename']
-    job()  # Execute -- do run()
-    # Write out the ccds information
-    job.write_files_info(args.ccdsinfo)
-    #job.write_info_json(args.ccdsinfo)
-
-    # In Case we want to plot the overlapping CCDs
-    if args.plot_overlap:
-        # FELIPE: Add check for existence of self.ctx.tiledir
-        print "# Will plot overlapping tiles"
-        from multiepoch.tasks.plot_ccd_corners_destile import Job as plot_job
-        plot = plot_job(ctx=job.ctx) 
-        plot()
-
-
+    '''
