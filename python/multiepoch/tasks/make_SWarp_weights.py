@@ -187,5 +187,5 @@ if __name__ == "__main__":
     # 5. run the job
     job_instance = jo.run_job(Job)
     # 6. dump the context if json_dump
-    if jo.ctx.get('json_dump', False):
+    if jo.ctx.get('json_dump_file', ''):
         jo.json_dump_ctx()
