@@ -1,3 +1,12 @@
+#!/usr/bin/env python
+
+# Mojo imports
+from mojo.jobs.base_job import BaseJob
+from traitlets import Unicode, Bool, Float, Int, CUnicode, CBool, CFloat, CInt, Instance, Dict, List, Integer
+from mojo.jobs.base_job import BaseJob, IO, IO_ValidationError
+from mojo.context import ContextProvider
+
+
 from mojo.jobs.base_job import BaseJob
 from despyastro import tableio
 import os
@@ -16,16 +25,41 @@ class Job(BaseJob):
     SWARP_EXE = 'swarp'
     DETEC_BANDS_DEFAULT = ['r', 'i', 'z']
     BKLINE = "\\\n"
+    MAGBASE = 30.0
 
-    def __call__(self):
+    class Input(IO):
+        
+
+        # Required inputs
+        assoc      = Dict(None,help="The Dictionary containing the association file",
+                          argparse=False)
+        assoc_file = CUnicode('',help="Input association file with CCDs information",
+                              input_file=True,
+                              argparse={ 'argtype': 'positional', })
+
+        # Optional arguments
+        detecBANDS       = List(self.DETEC_BANDS_DEFAULT, help="List of bands used to build the Detection Image")
+        magbase          = CFloat(MAGBASE, help="Zero point magnitude base for SWarp, default=30.")
+        weight_extension = CUnicode('_wgt',help="Weight extension for the custom weight files")
+        coadd_basename   = Cunicode(None,help="Base Name for coadd fits files in the shape: BASENAME_$BAND.fits"
+
+        # ??????
+        # WE NEED TO FIGURE OUT how to pass the rest of the swarp ARGUMENTS
+        # ?????
+
+    def run(self):
 
         # 1. set up names -----------------------------------------------------
         # The band to consider for the detection image
-        detecBANDS = self.ctx.get('detecBANDS', self.DETEC_BANDS_DEFAULT)
+        detecBANDS = self.ctx.detecBANDS
+
+        exit()
 
         # Gets swarp_scilist, swarp_wgtlist, swarp_flxlist, comb_sci, comb_wgt and  comb_sci/tmps
         (swarp_scilist, swarp_wgtlist, swarp_swglist, swarp_flxlist,
         comb_sci, comb_wgt, comb_sci_tmp, comb_wgt_tmp) = self.get_swarp_names(detecBANDS=detecBANDS)
+
+        exit()
         
         # Make some objects visible to the context that will be needed
         # down the line for SEx, psfex, etc.
