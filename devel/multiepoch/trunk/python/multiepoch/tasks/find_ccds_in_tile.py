@@ -11,7 +11,8 @@ from traitlets import Unicode, Bool, Float, Int, CUnicode, CBool, CFloat, CInt, 
 from mojo.jobs.base_job import BaseJob, IO, IO_ValidationError
 from mojo.context import ContextProvider
 
-from despydb import desdbi
+import multiepoch.utils as utils
+
 from despyastro import tableio
 from despymisc.miscutils import elapsed_time
 npadd = numpy.core.defchararray.add
@@ -144,9 +145,9 @@ class Job(BaseJob):
         # because we set the argparse keyword to False they are not interfaced
         # to the command line parser
         tileinfo = Dict(None, help="The json file with the tile information",
-                argparse=False)
+                        argparse=False)
         tilename = Unicode(None, help="The Name of the Tile Name to query",
-                argparse=False)
+                           argparse=False)
 
         # Required inputs when run as script
         #
@@ -164,8 +165,7 @@ class Job(BaseJob):
         #     do the stuff
         #     return a dict
 
-        tile_geom_input_file = CUnicode('',
-                help='The json file with the tile information',
+        tile_geom_input_file = CUnicode('',help='The json file with the tile information',
                 # declare this variable as input_file, this leads the content
                 # of the file to be loaded into the ctx at initialization
                 input_file=True,
@@ -174,36 +174,30 @@ class Job(BaseJob):
                 argparse={ 'argtype': 'positional', })
 
         # Optional inputs, also when interfaced to argparse
-        db_section = CUnicode("db-destest",
-                help="DataBase Section to connect", 
-                argparse={'choices': ('db-desoper','db-destest', )} )
-        archive_name = CUnicode("desar2home",
-                help="DataBase Archive Name section",)
+        db_section    = CUnicode("db-destest",
+                                 help="DataBase Section to connect", 
+                                 argparse={'choices': ('db-desoper','db-destest', )} )
+        archive_name  = CUnicode("desar2home",
+                                 help="DataBase Archive Name section",)
         select_extras = CUnicode(SELECT_EXTRAS,
-                help="string with extra SELECT for query",)
-        and_extras = CUnicode(AND_EXTRAS,
-                help="string with extra AND for query",)
-        from_extras = CUnicode(FROM_EXTRAS,
-                help="string with extra FROM for query",)
-        tagname = CUnicode('Y2T1_FIRSTCUT',
-                help="TAGNAME for images in the database",)
-        exec_name = CUnicode('immask',
-                help="EXEC_NAME for images in the database",)
-        ccdsinfo = CUnicode(None, # We might want to change the name of the "--option"
-                help=("Name of the output file where we will store the cccds "
-                    "information"),)
-        plot_overlap = CBool(False, help="Plot overlapping tiles",)
-        plot_outname = CUnicode(None, help="Output file name for plot",)
-        tiledir = CUnicode("./",
-                help="Path to Directory where we will write out plot the files",)
-
+                                 help="string with extra SELECT for query",)
+        and_extras    = CUnicode(AND_EXTRAS,
+                                 help="string with extra AND for query",)
+        from_extras   = CUnicode(FROM_EXTRAS,
+                                 help="string with extra FROM for query",)
+        tagname       = CUnicode('Y2T1_FIRSTCUT',
+                                 help="TAGNAME for images in the database",)
+        exec_name     = CUnicode('immask',
+                                 help="EXEC_NAME for images in the database",)
+        assoc_file    = CUnicode(None, # We might want to change the name of the "--option"
+                                 help="Name of the output association file where we will store the cccds information for coadd")
+        plot_outname  = CUnicode(None, help="Output file name for plot, in case we want to plot",)
 
     def run(self):
 
-        print self.input
-        '''
+        
         # Check for the db_handle
-        self.check_dbh()
+        self.ctx = utils.check_dbh(self.ctx)
 
         # Call the query built function
         print "# Getting CCD images within the tile definition"
@@ -215,8 +209,6 @@ class Job(BaseJob):
         # Get the filters we found
         self.ctx.BANDS  = numpy.unique(self.ctx.CCDS['BAND'])
         self.ctx.NBANDS = len(self.ctx.BANDS)
-        '''
-
 
     def get_CCDS(self,**kwargs): 
 
@@ -324,19 +316,19 @@ class Job(BaseJob):
         cur.close()
         return
 
-    def write_files_info(self,ccdsinfo_file,ccds_names=['BAND','MAG_ZERO']):
+    def write_files_info(self,assoc_file,ccds_names=['BAND','MAG_ZERO']):
 
         variables = [self.ctx.FILEPATH_ARCHIVE]
         for name in ccds_names:
             variables.append(self.ctx.CCDS[name].tolist())
 
         names = ['FILEPATH_ARCHIVE'] + ccds_names
-        print "# Writing CCDS files information to: %s" % ccdsinfo_file
+        print "# Writing CCDS files information to: %s" % assoc_file
         #names = self.ctx.CCDS.dtype.names
         N = len(names)
         header =  "# " + "%s "*N % tuple(names)
         format =  "%-s "*N 
-        tableio.put_data(ccdsinfo_file,tuple(variables), header=header, format=format)
+        tableio.put_data(assoc_file,tuple(variables), header=header, format=format)
         return
 
     def write_info_json(self,ccdsinfo_jsonfile,names=['FILENAME','PATH','BAND','MAG_ZERO']):
@@ -351,20 +343,6 @@ class Job(BaseJob):
         o.close()
         return
 
-    def check_dbh(self):
-
-        """ Check if we have a valid database handle (dbh)"""
-        
-        if 'dbh' not in self.ctx:
-            try:
-                db_section = self.ctx.get('db_section','db-desoper')
-                print "# Creating db-handle to section: %s" % db_section
-                self.ctx.dbh = desdbi.DesDbi(section=db_section)
-            except:
-                raise ValueError('ERROR: Database handler could not be provided for context.')
-        else:
-            print "# Will recycle existing db-handle"
-        return
 
     def __str__(self):
         return 'find ccds in tile'
@@ -389,7 +367,16 @@ if __name__ == "__main__":
     # 6. dump the context if json_dump
     if jo.ctx.get('json_dump', False):
         jo.json_dump_ctx()
-    
+
+    # 7 - Custom step, write the files as column-separated 
+    job_instance.write_files_info(ctx.assoc_file)
+
+    # 8 - Custom step, in Case we want to plot the overlapping CCDs
+    if ctx.plot_outname:
+        print "# Will plot overlapping tiles"
+        from multiepoch.tasks.plot_ccd_corners_destile import Job as plot_job
+        plot = plot_job(ctx=jo.ctx)
+        plot()
 
     # ALTERNATIVELY the following code does exactly the same as the above
     '''

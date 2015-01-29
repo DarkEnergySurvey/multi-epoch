@@ -15,26 +15,72 @@ OUTPUTS:
 
 from mojo.jobs.base_job import BaseJob
 import os,sys
-from multiepoch.DESfits import DESFITS
 from despymisc.miscutils import elapsed_time
 import numpy
 import time
 import multiprocessing
+import multiepoch.utils as utils
+from multiepoch.DESfits import DESFITS
 
 class Job(BaseJob):
 
-    def __call__(self):
+
+    class Input(IO):
+
+        """Create Custom inputs Weights for SWarp"""
+    
+        # Required inputs to run the job (in ctx, after loading files)
+        # because we set the argparse keyword to False they are not interfaced
+        # to the command line parser
+        tileinfo = Dict(None, help="The json file with the tile information",
+                        argparse=False)
+        tilename = Unicode(None, help="The Name of the Tile Name to query",
+                           argparse=False)
+
+        # Required inputs when run as script
+        #
+        # variables with keyword input_file=True are loaded into the ctx
+        # automatically when intializing the Job class if provided, Input
+        # validation happens only thereafter
+        # you can implement a implement a custom reader for you input file in
+        # your input class, let's say for a variable like
+        #
+        # my_input_file = CUnicode('',
+        #        help='My input file.',
+        #        argparse={'argtype': 'positional'})
+        #
+        # def _read_my_input_file(self):
+        #     do the stuff
+        #     return a dict
+
+        assoc_file = CUnicode('',help="Input association file with CCDs information",
+                # declare this variable as input_file, this leads the content
+                # of the file to be loaded into the ctx at initialization
+                input_file=True,
+                # set argtype=positional !! to make this a required positional
+                # argument when using the parser
+                argparse={ 'argtype': 'positional', })
+                
+        clobber_weights  = Bool(False,
+                                help="Cloober the existing custom weight files")
+
+
+        weight_extension = CUnicode('_wgt',help="Weight extension to add to custom weight files")
+        MP_weight        = CBool(False,help="run in MP")
+
+
+    def run(self):
 
         t0 = time.time()
 
-        # Get all of the relevant kwargs
-        kwargs = self.ctx.get_kwargs_dict()
-        clobber = kwargs.get('clobber_weights', False)
-        wgt_ext = kwargs.get('weight_extension','_wgt')
-        MP      = kwargs.get('MP_weight',False)
+        # Get the relevant context variables
+        clobber = self.ctx.clobber_weights
+        wgt_ext = self.ctx.weight_extension
+        MP      = self.ctx.MP_weight
 
+        # ONLY if NOT in script mode
         # Create the directory -- if it doesn't exist.
-        create_local_archive(self.ctx.local_archive)
+        utils.create_local_archive(self.ctx.local_archive)
 
         # Create the weights
         self.create_weights_for_SWarp(clobber,wgt_ext, MP)
@@ -53,6 +99,10 @@ class Job(BaseJob):
 
         args = []
         for k in range(Nfiles):
+
+            # REDO the naming convention based on FILEPATH_LOCAL instead of FILEPATH
+            # FILEPATH_LOCAL should be read from the assoc file in case it is run as script
+            # FILEPATH_LOCAL is defined in get_fitsfiles, but can be override by the assoc file.
             
             # Define the local filename
             basename  = self.ctx.FILEPATH[k].split(".fits")[0]
@@ -75,7 +125,7 @@ class Job(BaseJob):
         # Get ready to run if applicable
         N = len(args)
         if N > 0 and MP:
-            NP = get_NP(MP)
+            NP = utils.get_NP(MP)
 
             print "# Will create weights multi-process using %s processor" % NP
             pool = multiprocessing.Pool(processes=NP)
@@ -99,16 +149,6 @@ class Job(BaseJob):
         return 'Create Custom inputs Weights for SWarp'
 
 
-def get_NP(MP):
-
-    if type(MP) is bool:
-        NP = multiprocessing.cpu_count()
-    elif type(MP) is int:
-        NP = MP
-    else:
-        raise ValueError('MP is wrong type: %s, must be bool or integer type' % MP)
-    return NP
-
 
 def modify_weight(args):
 
@@ -128,10 +168,24 @@ def modify_weight(args):
     print "# Done in %s\n" % elapsed_time(t0)
     return
 
-def create_local_archive(local_archive):
-    """ Creates the local cache for the desar archive """
-    if not os.path.exists(local_archive):
-        print "# Will create LOCAL ARCHIVE at %s" % local_archive
-        os.mkdir(local_archive)
-    return
 
+
+if __name__ == "__main__":
+
+    # 0. take care of the sys arguments
+    import sys
+    args = sys.argv[1:]
+    # 1. read the input arguments into the job input
+    inp = Job.Input()
+    # 2. load a context
+    ctx = ContextProvider.create_ctx(**inp.parse_arguments(args))
+    # 3. set the pipeline execution mode
+    ctx['mojo_execution_mode'] = 'job as script'
+    # 4. create an empty JobOperator with context
+    from mojo import job_operator
+    jo = job_operator.JobOperator(**ctx)
+    # 5. run the job
+    job_instance = jo.run_job(Job)
+    # 6. dump the context if json_dump
+    if jo.ctx.get('json_dump', False):
+        jo.json_dump_ctx()

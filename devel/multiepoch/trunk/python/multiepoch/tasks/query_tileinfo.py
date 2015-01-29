@@ -11,10 +11,11 @@ Author: Felipe Menanteau, NCSA, Nov 2014.
 """
 import json
 import numpy
-from despydb import desdbi
 from traitlets import Unicode, Bool, Float, Int, CUnicode, CBool, CFloat, CInt, Instance
 from mojo.jobs.base_job import BaseJob, IO, IO_ValidationError
 from mojo.context import ContextProvider
+import multiepoch.utils as utils
+
     
 
 QUERY = '''
@@ -73,31 +74,26 @@ class Job(BaseJob):
         """
         
         # Required inputs
-        tilename = CUnicode(None, 
-                help="The Name of the Tile Name to query",
-                argparse={'argtype': 'positional', } )
+        tilename           = CUnicode(None, help="The Name of the Tile Name to query",
+                                      argparse={'argtype': 'positional', } )
         # Optional inputs
-        db_section  = CUnicode("db-destest",
-                help="DataBase Section to connect",
-                argparse={'choices': ('db-desoper','db-destest')} )
-        json_tileinfo_file = CUnicode("",
-                help=('Name of the output json file where we will store the '
-                    'tile information'),
-                # we set required to True because we need this if executed as
-                # script, even though argument will be declared with -- and
-                # only then we use the parser
-                argparse={'required': True,})
-        coaddtile_table = CUnicode("felipe.coaddtile_new",
-                help="Database table with COADDTILE information",
-                argparse=True)
+        db_section         = CUnicode("db-destest", help="DataBase Section to connect",
+                                      argparse={'choices': ('db-desoper','db-destest')} )
+        json_tileinfo_file = CUnicode("",help="Name of the output json file where we will store the tile information",
+                                      argparse={'required': True,})
+        
+        # we set required to True because we need this if executed as
+        # script, even though argument will be declared with -- and
+        # only then we use the parser
+        coaddtile_table    = CUnicode("felipe.coaddtile_new", help="Database table with COADDTILE information",
+                                      argparse=True)
 
         # not used currently
         # ctx_input_file_vars = ('bla_input', 'json_tileinfo', )
 
         def _validate_conditional(self):
             # if in job standalone mode json
-            if self.mojo_execution_mode == 'job as script' and\
-                    self.json_tileinfo_file == "":
+            if self.mojo_execution_mode == 'job as script' and self.json_tileinfo_file == "":
                 mess = 'If job is run standalone json_tileinfo_file cannot be ""'
                 raise IO_ValidationError(mess)
         
@@ -105,13 +101,7 @@ class Job(BaseJob):
     def run(self):
 
         # CHECK IF DATABASE HANDLER IS PRESENT
-        if 'dbh' not in self.ctx:
-            try:
-                self.ctx.dbh = desdbi.DesDbi(section=self.input.db_section)
-            except:
-                raise ValueError('Database handler could not be provided for context.')
-        else:
-            print "# Will recycle existing db-handle"
+        self.ctx = utils.check_dbh(self.ctx)
 
         # EXECUTE THE QUERY
         cur = self.ctx.dbh.cursor()
