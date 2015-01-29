@@ -348,7 +348,9 @@ class Job(BaseJob):
             # Make them lists instead of rec arrays
             dict_assoc[name] =  self.ctx.assoc[name].tolist()
         o = open(assoc_jsonfile,"w")
-        o.write(json.dumps(dict_assoc,sort_keys=False,indent=4))
+        # Put in the proper container
+        jsondict = {'assoc': dict_assoc}
+        o.write(json.dumps(jsondict,sort_keys=False,indent=4))
         o.close()
         return
 

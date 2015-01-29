@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+
 """
 
 Create the custom weights, with interpolated weight values for the SWarp input weights
@@ -20,7 +22,7 @@ OUTPUTS:
 
 # Mojo imports
 from mojo.jobs.base_job import BaseJob
-from traitlets import Unicode, Bool, Float, Int, CUnicode, CBool, CFloat, CInt, Instance, Dict, List
+from traitlets import Unicode, Bool, Float, Int, CUnicode, CBool, CFloat, CInt, Instance, Dict, List, Integer
 from mojo.jobs.base_job import BaseJob, IO, IO_ValidationError
 from mojo.context import ContextProvider
 
@@ -43,24 +45,8 @@ class Job(BaseJob):
         # Required inputs to run the job (in ctx, after loading files)
         # because we set the argparse keyword to False they are not interfaced
         # to the command line parser
-        FILEPATH_LOCAL = List(None,help="The List of images to be processed",
-                              argparse=False)
-
-        # Required inputs when run as script
-        #
-        # variables with keyword input_file=True are loaded into the ctx
-        # automatically when intializing the Job class if provided, Input
-        # validation happens only thereafter
-        # you can implement a implement a custom reader for you input file in
-        # your input class, let's say for a variable like
-        #
-        # my_input_file = CUnicode('',
-        #        help='My input file.',
-        #        argparse={'argtype': 'positional'})
-        #
-        # def _read_my_input_file(self):
-        #     do the stuff
-        #     return a dict
+        assoc = Dict(None,help="The Dictionary containing the association file",
+                     argparse=False)
 
         assoc_file = CUnicode('',help="Input association file with CCDs information",
                 # declare this variable as input_file, this leads the content
@@ -69,11 +55,20 @@ class Job(BaseJob):
                 # set argtype=positional !! to make this a required positional
                 # argument when using the parser
                 argparse={ 'argtype': 'positional', })
-                
-        # Optional inputs
+
+        # MICHAEL: This does not work
+        #def _read_assoc_file(self):
+        #
+        #    print "# Hello"
+        #    print self.input.assoc_file
+        #    my_dict = read_ascii_to_dict(self.input.assoc_file)
+        #    print "Done"
+        #    return mydict
+
+        # Optional inputs -- postional arguments
         clobber_weights  = Bool(False, help="Cloober the existing custom weight files")
         weight_extension = CUnicode('_wgt',help="Weight extension to add to custom weight files")
-        MP_weight        = Bool(False,help="run in MP")
+        MP_weight        = CInt(1,help="run using multi-process, 0=automatic, 1=single-process [default]")
 
     def run(self):
 
@@ -84,56 +79,66 @@ class Job(BaseJob):
         wgt_ext = self.ctx.weight_extension
         MP      = self.ctx.MP_weight
 
-        # ONLY if NOT in script mode
-        # Create the directory -- if it doesn't exist.
-        utils.create_local_archive(self.ctx.local_archive)
+        # ONLY if NOT in script mode we create the directory -- if it doesn't exist, 
+        if self.ctx.mojo_execution_mode != "job as script":
+            utils.create_local_archive(self.ctx.local_archive)
+        else:
+            print "# Skipping local_archive creation: mode:%s" % self.ctx.mojo_execution_mode
 
         # Create the weights
         self.create_weights_for_SWarp(clobber,wgt_ext, MP)
         print "# Weights created on: %s" % elapsed_time(t0)
         return
 
-    def create_weights_for_SWarp(self,clobber,wgt_ext, MP):
 
-        """ Transfer the files """
+    def set_weight_names_and_args(self,wgt_ext,clobber):
 
-        local_archive = self.ctx.local_archive
+        """ Set up the names for the weights and the args for the
+        calls, we need the weight names to be defined when running as
+        a library. When run as a script, they will be re-constructed
+        from the wgt_ext used.
+        """
 
-        # Now get the files via http
-        Nfiles = len(self.ctx.FILEPATH_LOCAL)
-        self.ctx.FILEPATH_LOCAL_WGT = []
+        Nfiles = len(self.ctx.assoc['FILEPATH_LOCAL'])
+        self.ctx.assoc['FILEPATH_LOCAL_WGT'] = []  # FELIPE: CHECK if we still need this
 
+        # A shortcut
+        filepath_local = self.ctx.assoc['FILEPATH_LOCAL']
+
+        # Define the wgt local filename
         args = []
         for k in range(Nfiles):
-
-            # REDO the naming convention based on FILEPATH_LOCAL instead of FILEPATH
-            # FILEPATH_LOCAL should be read from the assoc file in case it is run as script
-            # FILEPATH_LOCAL is defined in get_fitsfiles, but can be override by the assoc file.
-            
-            # Define the local filename
-            basename  = self.ctx.FILEPATH[k].split(".fits")[0]
-            extension = self.ctx.FILEPATH[k].split(".fits")[1:]
-            local_wgtfile = os.path.join(local_archive,"%s%s.fits" % (basename,wgt_ext))
-            self.ctx.FILEPATH_LOCAL_WGT.append(local_wgtfile)
+            basename  = filepath_local[k].split(".fits")[0] 
+            extension = filepath_local[k].split(".fits")[1:]
+            local_wgt = "%s%s.fits" % (basename,wgt_ext)
+            local_sci = self.ctx.assoc['FILEPATH_LOCAL'][k]
+            self.ctx.assoc['FILEPATH_LOCAL_WGT'].append(local_wgt) # FELIPE: CHECK if we still need this
 
             # Make sure the file does not already exists exits
-            if not os.path.exists(local_wgtfile) or clobber:
-                
-                dirname   = os.path.dirname(local_wgtfile)
-                if not os.path.exists(dirname):
-                    os.makedirs(dirname)
-                # Create the inputs for later
-                args.append((self.ctx.FILEPATH_LOCAL[k],self.ctx.FILEPATH_LOCAL_WGT[k],clobber))
+            if not os.path.exists(local_wgt) or clobber:
+                # Create the inputs args for later call
+                args.append( (local_sci,local_wgt,clobber))
             else:
-                sys.stdout.write("\r# Skipping: %s (%s/%s) -- file exists" % (local_wgtfile,k+1,Nfiles))
+                sys.stdout.write("\r# Skipping: %s (%s/%s) -- file exists" % (local_wgt,k+1,Nfiles))
                 sys.stdout.flush()
+                
+        print "\n#"
+        return args
+        
+
+    def create_weights_for_SWarp(self,clobber,wgt_ext, MP):
+
+        """ Run the custom weight files"""
+
+        # Set up the names and get the args for the actual call
+        args = self.set_weight_names_and_args(wgt_ext,clobber)
 
         # Get ready to run if applicable
         N = len(args)
         if N > 0 and MP:
-            NP = utils.get_NP(MP)
-
-            print "# Will create weights multi-process using %s processor" % NP
+            NP = utils.get_NP(MP) # Figure out NP to use, 0=automatic
+            
+            print "# Will create weights multi-process using %s processor(s)" % NP
             pool = multiprocessing.Pool(processes=NP)
             pool.map(modify_weight, args)
             
@@ -148,7 +153,8 @@ class Job(BaseJob):
         print "\n#\n"
 
         # Pass them up as array as an np-char array
-        self.ctx.FILEPATH_LOCAL_WGT = numpy.array(self.ctx.FILEPATH_LOCAL_WGT)
+        #self.ctx.FILEPATH_LOCAL_WGT = numpy.array(self.ctx.FILEPATH_LOCAL_WGT)
+        self.ctx.assoc['FILEPATH_LOCAL_WGT'] = numpy.array(self.ctx.assoc['FILEPATH_LOCAL_WGT'])
         return
         
     def __str__(self):
@@ -173,6 +179,31 @@ def modify_weight(args):
     desfits.write_weight()
     print "# Done in %s\n" % elapsed_time(t0)
     return
+
+
+def read_ascii_to_dict(filename,sep=' '):
+
+    from despyastro import tableio
+
+    print "# Reading file: %s " % filename
+
+    mydict = {}
+    # Get the header
+    header = tableio.get_header(filename)
+    header = header[1:].strip()
+    keys   = header.split(sep)
+    # Read filename coluns a tuple of lists of strings
+    mytuple = tableio.get_str(filename,cols=range(len(keys)))
+
+    # Repack as a dictionary
+    for index, key in enumerate(keys):
+        # Convert to float if possible
+        try:
+            if isinstance(float(mytuple[index][0]), float):
+                mydict[key] = map(float,mytuple[index])
+        except:
+            mydict[key] = mytuple[index]
+    return mydict
 
 
 

@@ -24,17 +24,32 @@ def check_dbh(ctx):
 
 def get_NP(MP):
 
-    """ Get the number of processors in the machine"""
+    """ Get the number of processors in the machine
+    if MP == 0, use all available processor
+    """
 
+    # For it to be a integer
+    MP = int(MP)
     import multiprocessing
-    if type(MP) is bool:
+    if MP == 0:
         NP = multiprocessing.cpu_count()
-    elif type(MP) is int:
+    elif isinstance(MP,int):
         NP = MP
     else:
-        raise ValueError('MP is wrong type: %s, must be bool or integer type' % MP)
+        raise ValueError('MP is wrong type: %s, integer type' % MP)
     return NP
 
+
+# def get_NP_old(MP):
+#     """ Get the number of processors in the machine"""
+#     import multiprocessing
+#     if type(MP) is bool:
+#         NP = multiprocessing.cpu_count()
+#     elif type(MP) is int:
+#         NP = MP
+#     else:
+#         raise ValueError('MP is wrong type: %s, must be bool or integer type' % MP)
+#     return NP
 
 def create_local_archive(local_archive):
 
