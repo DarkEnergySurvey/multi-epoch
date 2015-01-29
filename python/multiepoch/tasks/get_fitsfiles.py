@@ -23,6 +23,7 @@ import sys
 import re
 from despymisc  import http_requests
 import numpy
+import multiepoch.utils as utils
 
 class Job(BaseJob):
 
@@ -34,7 +35,7 @@ class Job(BaseJob):
         clobber       = kwargs.get('clobber', False)
         
         # Figure out if in the cosmology.illinois.edu cluster
-        self.ctx.LOCALFILES = self.inDESARcluster()
+        self.ctx.LOCALFILES = inDESARcluster()
 
         # if we have local files, then we'll skip the rest
         if self.ctx.LOCALFILES:
@@ -46,7 +47,7 @@ class Job(BaseJob):
         self.define_localnames(local_archive)
 
         # Create the directory -- if it doesn't exist.
-        create_local_archive(self.ctx.local_archive)
+        utils.create_local_archive(self.ctx.local_archive)
 
         # Transfer the files
         self.transfer_files(clobber,local_archive)
@@ -96,35 +97,36 @@ class Job(BaseJob):
         return
         
 
-    def inDESARcluster(self,domain_name='cosmology.illinois.edu'):
-
-        """ Figure out if we are in the cosmology.illinois.edu cluster """
-
-        uname    = os.uname()[0]
-        hostname = os.uname()[1]
-        mach     = os.uname()[4]
-
-        pattern = r"%s$" % domain_name
-        
-        if re.search(pattern, hostname) and uname == 'Linux':
-            LOCAL = True
-            print "# Found hostname: %s, running:%s" % (hostname,uname)
-            print "# In %s cluster -- will NOT transfer files" % domain_name
-        else:
-            LOCAL = False
-            print "# Found hostname: %s, running:%s" % (hostname,uname)
-            print "# NOT in %s cluster -- will try to transfer files" % domain_name
-
-        return LOCAL
             
 
     def __str__(self):
         return 'Transfer the fits files'
 
 
-def create_local_archive(local_archive):
-    """ Creates the local cache for the desar archive """
-    if not os.path.exists(local_archive):
-        print "# Will create LOCAL ARCHIVE at %s" % local_archive
-        os.mkdir(local_archive)
-    return
+def inDESARcluster(domain_name='cosmology.illinois.edu'):
+
+    """ Figure out if we are in the cosmology.illinois.edu cluster """
+    
+    uname    = os.uname()[0]
+    hostname = os.uname()[1]
+    mach     = os.uname()[4]
+    
+    pattern = r"%s$" % domain_name
+        
+    if re.search(pattern, hostname) and uname == 'Linux':
+        LOCAL = True
+        print "# Found hostname: %s, running:%s" % (hostname,uname)
+        print "# In %s cluster -- will NOT transfer files" % domain_name
+    else:
+        LOCAL = False
+        print "# Found hostname: %s, running:%s" % (hostname,uname)
+        print "# NOT in %s cluster -- will try to transfer files" % domain_name
+
+    return LOCAL
+
+#def create_local_archive(local_archive):
+#    """ Creates the local cache for the desar archive """
+#    if not os.path.exists(local_archive):
+#        print "# Will create LOCAL ARCHIVE at %s" % local_archive
+#        os.mkdir(local_archive)
+#    return

@@ -42,7 +42,8 @@ jo.run_job('multiepoch.tasks.plot_ccd_corners_destile')
 #jo.run_job('multiepoch.tasks.plot_ccd_corners_destile', band='i')
 
 # 5 Collect files for swarp
-jo.run_job('multiepoch.tasks.find_fitsfiles_location',archive_name='desar2home')
+# Now this is done by find_ccds_in_tile
+# jo.run_job('multiepoch.tasks.find_fitsfiles_location',archive_name='desar2home')
 
 # 6. Retrieve the files -- if remotely
 LOCAL_DESAR = os.path.join(os.environ['HOME'],'LOCAL_DESAR')
