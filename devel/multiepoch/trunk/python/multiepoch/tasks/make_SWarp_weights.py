@@ -4,21 +4,32 @@ Create the custom weights, with interpolated weight values for the SWarp input w
 
 INPUTS:
 
- - self.ctx.FILEPATH_LOCAL (if in cosmology cluster self.ctx.FILEPATH_LOCAL =  self.ctx.FILEPATH_ARCHIVE)
- - clobber_weights       : Defined local clobber (to self.ctx.clobber_weights)
- - MP_weight             : Run the process in MP
+ REQUIRED:
+  - self.ctx.assoc['FILEPATH_LOCAL'] (if in cosmology cluster self.ctx.FILEPATH_LOCAL =  self.ctx.FILEPATH_ARCHIVE)
+
+ OPTIONAL:
+  - clobber_weights       : Defined local clobber (to self.ctx.clobber_weights)
+  - MP_weight             : Run the process in MP
 
 OUTPUTS:
-  - self.ctx.FILEPATH_LOCAL_WGT (contains the weight for SWarp science combination)
+  - self.ctx.assoc['FILEPATH_LOCAL_WGT'] (contains the weight for SWarp science combination)
+
+  FELIPE: we might want to re-define it later depending on the wgt extension that we decided to use?
 
 """
 
+# Mojo imports
 from mojo.jobs.base_job import BaseJob
+from traitlets import Unicode, Bool, Float, Int, CUnicode, CBool, CFloat, CInt, Instance, Dict, List
+from mojo.jobs.base_job import BaseJob, IO, IO_ValidationError
+from mojo.context import ContextProvider
+
 import os,sys
 from despymisc.miscutils import elapsed_time
 import numpy
 import time
 import multiprocessing
+# Multi-epoch loads
 import multiepoch.utils as utils
 from multiepoch.DESfits import DESFITS
 
@@ -32,10 +43,8 @@ class Job(BaseJob):
         # Required inputs to run the job (in ctx, after loading files)
         # because we set the argparse keyword to False they are not interfaced
         # to the command line parser
-        tileinfo = Dict(None, help="The json file with the tile information",
-                        argparse=False)
-        tilename = Unicode(None, help="The Name of the Tile Name to query",
-                           argparse=False)
+        FILEPATH_LOCAL = List(None,help="The List of images to be processed",
+                              argparse=False)
 
         # Required inputs when run as script
         #
@@ -61,13 +70,10 @@ class Job(BaseJob):
                 # argument when using the parser
                 argparse={ 'argtype': 'positional', })
                 
-        clobber_weights  = Bool(False,
-                                help="Cloober the existing custom weight files")
-
-
+        # Optional inputs
+        clobber_weights  = Bool(False, help="Cloober the existing custom weight files")
         weight_extension = CUnicode('_wgt',help="Weight extension to add to custom weight files")
-        MP_weight        = CBool(False,help="run in MP")
-
+        MP_weight        = Bool(False,help="run in MP")
 
     def run(self):
 

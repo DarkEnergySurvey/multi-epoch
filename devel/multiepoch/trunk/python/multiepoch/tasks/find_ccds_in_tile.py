@@ -10,7 +10,6 @@ from mojo.jobs.base_job import BaseJob
 from traitlets import Unicode, Bool, Float, Int, CUnicode, CBool, CFloat, CInt, Instance, Dict
 from mojo.jobs.base_job import BaseJob, IO, IO_ValidationError
 from mojo.context import ContextProvider
-
 import multiepoch.utils as utils
 
 from despyastro import tableio
@@ -189,8 +188,10 @@ class Job(BaseJob):
                                  help="TAGNAME for images in the database",)
         exec_name     = CUnicode('immask',
                                  help="EXEC_NAME for images in the database",)
-        assoc_file    = CUnicode(None, # We might want to change the name of the "--option"
-                                 help="Name of the output association file where we will store the cccds information for coadd")
+        assoc_file    = CUnicode(None, 
+                                 help="Name of the output ASCII association file where we will store the cccds information for coadd")
+        assoc_json    = CUnicode(None, 
+                                 help="Name of the output JSON association file where we will store the cccds information for coadd")
         plot_outname  = CUnicode(None, help="Output file name for plot, in case we want to plot",)
 
     def run(self):
@@ -277,17 +278,25 @@ class Job(BaseJob):
         # self.ctx.root_archive and self.ctx.root_https
         self.get_root_archive(archive_name)
 
-        # 2. Construnct the relative path for each file as a combination of PATH + FILENAME
-        self.ctx.FILEPATH = npadd(self.ctx.CCDS['PATH'],"/")
-        self.ctx.FILEPATH = npadd(self.ctx.FILEPATH,self.ctx.CCDS['FILENAME'])
+
+        # 2. Construct an new dictionary that will store the
+        # information required to associate files for co-addition
+        self.ctx.assoc = {}
+        self.ctx.assoc['MAG_ZERO'] = self.ctx.CCDS['MAG_ZERO']
+        self.ctx.assoc['BAND']     = self.ctx.CCDS['BAND']
+        self.ctx.assoc['FILENAME'] = self.ctx.CCDS['FILENAME']
+
+        self.ctx.assoc['FILEPATH'] = npadd(self.ctx.CCDS['PATH'],"/")
+        self.ctx.assoc['FILEPATH'] = npadd(self.ctx.assoc['FILEPATH'],self.ctx.CCDS['FILENAME'])
 
         # 3. Create the archive locations for each file
         path = [self.ctx.root_archive+"/"]*Nimages
-        self.ctx.FILEPATH_ARCHIVE = npadd(path,self.ctx.FILEPATH)
+        self.ctx.assoc['FILEPATH_ARCHIVE'] = npadd(path,self.ctx.assoc['FILEPATH'])
 
         # 4. Create the https locations for each file
         path = [self.ctx.root_https+"/"]*Nimages
-        self.ctx.FILEPATH_HTTPS   = npadd(path,self.ctx.FILEPATH)
+        self.ctx.assoc['FILEPATH_HTTPS']   = npadd(path,self.ctx.assoc['FILEPATH'])
+        
         return
 
     def get_root_archive(self,archive_name='desar2home'):
@@ -316,30 +325,30 @@ class Job(BaseJob):
         cur.close()
         return
 
-    def write_files_info(self,assoc_file,ccds_names=['BAND','MAG_ZERO']):
 
-        variables = [self.ctx.FILEPATH_ARCHIVE]
-        for name in ccds_names:
-            variables.append(self.ctx.CCDS[name].tolist())
+    def write_assoc_file(self,assoc_file,names=['FILEPATH_ARCHIVE','FILENAME','BAND','MAG_ZERO']):
 
-        names = ['FILEPATH_ARCHIVE'] + ccds_names
+        variables = []
+        for name in names:
+            variables.append(self.ctx.assoc[name].tolist())
+            
         print "# Writing CCDS files information to: %s" % assoc_file
-        #names = self.ctx.CCDS.dtype.names
         N = len(names)
         header =  "# " + "%s "*N % tuple(names)
         format =  "%-s "*N 
         tableio.put_data(assoc_file,tuple(variables), header=header, format=format)
         return
 
-    def write_info_json(self,ccdsinfo_jsonfile,names=['FILENAME','PATH','BAND','MAG_ZERO']):
 
-        print "# Writing CCDS information to: %s" % ccdsinfo_jsonfile
-        # Make them lists instead of rec arrays
-        dict_CCDS = {}
+    def write_assoc_json(self,assoc_jsonfile,names=['FILEPATH_ARCHIVE','FILENAME','BAND','MAG_ZERO']):
+
+        print "# Writing CCDS information to: %s" % assoc_jsonfile
+        dict_assoc = {}
         for name in names:
-            dict_CCDS[name] =  self.ctx.CCDS[name].tolist()
-        o = open(ccdsinfo_jsonfile,"w")
-        o.write(json.dumps(dict_CCDS,sort_keys=True,indent=4))
+            # Make them lists instead of rec arrays
+            dict_assoc[name] =  self.ctx.assoc[name].tolist()
+        o = open(assoc_jsonfile,"w")
+        o.write(json.dumps(dict_assoc,sort_keys=False,indent=4))
         o.close()
         return
 
@@ -369,7 +378,10 @@ if __name__ == "__main__":
         jo.json_dump_ctx()
 
     # 7 - Custom step, write the files as column-separated 
-    job_instance.write_files_info(ctx.assoc_file)
+    # FELIPE: We need to decide whether want to write the assoc file
+    # as json or space-separated ascii file.
+    job_instance.write_assoc_file(ctx.assoc_file)
+    job_instance.write_assoc_json(ctx.assoc_json)
 
     # 8 - Custom step, in Case we want to plot the overlapping CCDs
     if ctx.plot_outname:
