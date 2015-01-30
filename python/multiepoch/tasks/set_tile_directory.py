@@ -13,7 +13,8 @@ class Job(BaseJob):
 
         kwargs = self.ctx.get_kwargs_dict()
         self.ctx.outputpath = kwargs.get('outputpath', './TILEBUILDER')
-        self.ctx.tiledir = os.path.join(self.ctx.outputpath, self.ctx.tilename)
+        self.ctx.tiledir  = os.path.join(self.ctx.outputpath, self.ctx.tilename)
+        self.ctx.basename = os.path.join(self.ctx.tiledir, self.ctx.tilename)
         if not os.path.exists(self.ctx.tiledir):
             print "# Creating %s" % self.ctx.tiledir
             os.makedirs(self.ctx.tiledir)

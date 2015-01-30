@@ -49,7 +49,8 @@ class Job(BaseJob):
         SHOW         = kwargs.get('show', False)
         plot_outname = kwargs.get('plot_outname',False)
         if not plot_outname:
-            plot_outname =  os.path.join(self.ctx.tiledir,"%s_overlap.pdf" % self.ctx.tilename)
+            #plot_outname =  os.path.join(self.ctx.tiledir,"%s_overlap.pdf" % self.ctx.tilename)
+            plot_outname =  "%s_overlap.pdf" % self.ctx.basename
 
         # Figure out the layout depending on the number of filters
         # found in the overlapping ares
