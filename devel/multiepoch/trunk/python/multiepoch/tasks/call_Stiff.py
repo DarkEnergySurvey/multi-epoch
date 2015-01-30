@@ -22,7 +22,7 @@ class Job(BaseJob):
     STIFF_EXE = 'stiff'
     BKLINE = "\\\n"
 
-    def __call__(self):
+    def run(self):
 
         # 1. Set the output name of the color tiff file
         color_tile =  self.ctx.get('color_tile',os.path.join(self.ctx.tiledir,"%s.tif" % self.ctx.tilename))
