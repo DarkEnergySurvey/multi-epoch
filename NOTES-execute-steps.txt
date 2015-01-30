@@ -28,3 +28,4 @@
  3.4)  Make the SWArp call to coadd the images
 call_SWarp_CustomWeights.py DES2246-4457_ccdinfo_local.json DES2246-4457_tileinfo.json --basename ~/TILEBUILDER_TEST/DES2246-4457_test --swarp_execution_mode execute
 
+call_SWarp_CustomWeights.py DES2246-4457_ccdinfo_local.json DES2246-4457_tileinfo.json --basename ~/TILEBUILDER_TEST/DES2246-4457_test --swarp_execution_mode tofile --swarp_parameters NTHREADS=8 COMBINE_TYPE=MEAN COPY_KEYWORDS=OBJECT,EXPTIME 

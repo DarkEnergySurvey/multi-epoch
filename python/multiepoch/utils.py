@@ -27,10 +27,10 @@ def get_NP(MP):
     """ Get the number of processors in the machine
     if MP == 0, use all available processor
     """
-
+    import multiprocessing
+    
     # For it to be a integer
     MP = int(MP)
-    import multiprocessing
     if MP == 0:
         NP = multiprocessing.cpu_count()
     elif isinstance(MP,int):
@@ -39,22 +39,9 @@ def get_NP(MP):
         raise ValueError('MP is wrong type: %s, integer type' % MP)
     return NP
 
-
-# def get_NP_old(MP):
-#     """ Get the number of processors in the machine"""
-#     import multiprocessing
-#     if type(MP) is bool:
-#         NP = multiprocessing.cpu_count()
-#     elif type(MP) is int:
-#         NP = MP
-#     else:
-#         raise ValueError('MP is wrong type: %s, must be bool or integer type' % MP)
-#     return NP
-
 def create_local_archive(local_archive):
-
+    
     import os
-
     """ Creates the local cache for the desar archive """
     if not os.path.exists(local_archive):
         print "# Will create LOCAL ARCHIVE at %s" % local_archive
@@ -81,7 +68,6 @@ def get_local_weight_names(ctx,wgt_ext):
     return filepath_local_wgt
 
 def dict2arrays(dictionary):
-
     """
     Re-cast list in contained in a dictionary as numpy arrays
     """
@@ -91,3 +77,64 @@ def dict2arrays(dictionary):
             dictionary[key] = numpy.array(value)
     return dictionary
 
+
+def set_BANDS(ctx,detname='det',detBANDS=[]):
+
+    import numpy
+
+    """
+    Generic function to set up the band from the context information
+    into the context in case they are missing. This function defines
+    how the BAND names are to be setup at every step into the context
+    in case they are not present
+    """
+
+    if not ctx.get('BANDinfo'):
+        print "# Setting the BANDs information in the context"
+        ctx.BANDS    = numpy.unique(ctx.assoc['BAND']) 
+        ctx.NBANDS   = len(ctx.BANDS)                  
+        # --------------
+        # MIGHT BE USEFUL IN CASE WE WANT TO  NAME THE Detection as 'det_riz'
+        # In case we want to store with the 'real bands' as a list to access later
+        # Figure out which bands to use that match the detecBANDS
+        #useBANDS = list( set(ctx.BANDS) & set(detecBANDS) )
+        #print "# Will use %s bands for detection" % useBANDS
+        #ctx.detBAND ='det%s' % "".join(useBANDS)
+        # ---------------------
+
+        # The SWarp-combined detection image input and ouputs
+        ctx.detBAND  ='%s' % detname
+        ctx.dBANDS   = list(ctx.BANDS) + [ctx.detBAND]
+        ctx.BANDinfo = True
+    else:
+        print "# BANDs already setup -- Skipping"
+    return ctx
+
+def set_SWarp_output_names(ctx,detname='det'):
+
+
+    """ Add SWarp output names to the context in case they are not present """
+
+    # Make sure that bands have been set
+    ctx = set_BANDS(ctx,detname)
+
+    if not ctx.get('comb_sci') or not ctx.get('comb_wgt'):
+        
+        # SWarp outputs per filer
+        ctx.comb_sci      = {} # SWarp coadded science images
+        ctx.comb_wgt      = {} # SWarp coadded weight images
+        ctx.comb_sci_tmp  = {} # SWarp coadded temporary science images  -- to be removed later
+        ctx.comb_wgt_tmp  = {} # SWarp coadded custom weight images -- to be removed
+
+        # Loop over bands
+        for BAND in ctx.dBANDS:
+            # SWarp outputs names
+            ctx.comb_sci[BAND]     = "%s_%s_sci.fits" %  (ctx.basename, BAND)
+            ctx.comb_wgt[BAND]     = "%s_%s_wgt.fits" %  (ctx.basename, BAND)
+            # temporary files need for dual-run -- to be removed
+            ctx.comb_sci_tmp[BAND] = "%s_%s_sci_tmp.fits" %  (ctx.basename, BAND)
+            ctx.comb_wgt_tmp[BAND] = "%s_%s_wgt_tmp.fits" %  (ctx.basename, BAND)
+    else:
+        print "# SWarp output names already in the context"
+
+    return ctx
