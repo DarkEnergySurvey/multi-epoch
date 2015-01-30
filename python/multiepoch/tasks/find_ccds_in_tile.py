@@ -208,8 +208,8 @@ class Job(BaseJob):
         self.get_fitsfile_locations()
         
         # Get the filters we found
-        self.ctx.BANDS  = numpy.unique(self.ctx.CCDS['BAND'])
-        self.ctx.NBANDS = len(self.ctx.BANDS)
+        #self.ctx.BANDS  = numpy.unique(self.ctx.CCDS['BAND'])
+        #self.ctx.NBANDS = len(self.ctx.BANDS)
 
     def get_CCDS(self,**kwargs): 
 

@@ -6,8 +6,6 @@ from traitlets import Unicode, Bool, Float, Int, CUnicode, CBool, CFloat, CInt, 
 from mojo.jobs.base_job import BaseJob, IO, IO_ValidationError
 from mojo.context import ContextProvider
 
-
-from mojo.jobs.base_job import BaseJob
 from despyastro import tableio
 import os
 import sys
@@ -15,33 +13,44 @@ import numpy
 import subprocess
 import time
 from despymisc.miscutils import elapsed_time
+import multiepoch.utils as utils
 
+# JOB INTERNAL CONFIGURATION
+SWARP_EXE = 'swarp'
+DETEC_BANDS_DEFAULT = ['r', 'i', 'z']
+BKLINE = "\\\n"
+MAGBASE = 30.0
 
 class Job(BaseJob):
 
     """ SWARP call for the multiepoch pipeline"""
 
-    # JOB INTERNAL CONFIGURATION
-    SWARP_EXE = 'swarp'
-    DETEC_BANDS_DEFAULT = ['r', 'i', 'z']
-    BKLINE = "\\\n"
-    MAGBASE = 30.0
-
     class Input(IO):
-        
 
+        ######################
         # Required inputs
+        # 1. Association file and assoc dictionary
         assoc      = Dict(None,help="The Dictionary containing the association file",
                           argparse=False)
         assoc_file = CUnicode('',help="Input association file with CCDs information",
                               input_file=True,
                               argparse={ 'argtype': 'positional', })
 
+        # 2. Geometry and tilename
+        tileinfo = Dict(None, help="The json file with the tile information",
+                        argparse=False)
+        tilename = Unicode(None, help="The Name of the Tile Name to query",
+                           argparse=False)
+        tile_geom_input_file = CUnicode('',help='The json file with the tile information',
+                                        input_file=True,
+                                        argparse={ 'argtype': 'positional', })
+
+        ######################
         # Optional arguments
-        detecBANDS       = List(self.DETEC_BANDS_DEFAULT, help="List of bands used to build the Detection Image")
+        detecBANDS       = List(DETEC_BANDS_DEFAULT, help="List of bands used to build the Detection Image")
         magbase          = CFloat(MAGBASE, help="Zero point magnitude base for SWarp, default=30.")
         weight_extension = CUnicode('_wgt',help="Weight extension for the custom weight files")
-        coadd_basename   = Cunicode(None,help="Base Name for coadd fits files in the shape: BASENAME_$BAND.fits"
+        coadd_basename   = CUnicode(None,help="Base Name for coadd fits files in the shape: BASENAME_$BAND.fits")
 
         # ??????
         # WE NEED TO FIGURE OUT how to pass the rest of the swarp ARGUMENTS
@@ -49,15 +58,21 @@ class Job(BaseJob):
 
     def run(self):
 
+        # 0. Pre-wash of inputs  ------------------------------------------------
+        # Re-construct the names for the custom weights in case not present
+        if 'FILEPATH_LOCAL_WGT' not in self.ctx.assoc.keys():
+            self.ctx.assoc['FILEPATH_LOCAL_WGT'] = utils.get_local_weight_names(self.ctx,self.ctx.weight_extension)
+
+        # Re-cast the ctx.assoc as dictionary of arrays instead of lists
+        self.ctx.assoc  = utils.dict2arrays(self.ctx.assoc)
+        self.ctx.BANDS  = numpy.unique(self.ctx.assoc['BAND'])
+        self.ctx.NBANDS = len(self.ctx.BANDS)
+
+
         # 1. set up names -----------------------------------------------------
-        # The band to consider for the detection image
-        detecBANDS = self.ctx.detecBANDS
-
-        exit()
-
         # Gets swarp_scilist, swarp_wgtlist, swarp_flxlist, comb_sci, comb_wgt and  comb_sci/tmps
         (swarp_scilist, swarp_wgtlist, swarp_swglist, swarp_flxlist,
-        comb_sci, comb_wgt, comb_sci_tmp, comb_wgt_tmp) = self.get_swarp_names(detecBANDS=detecBANDS)
+        comb_sci, comb_wgt, comb_sci_tmp, comb_wgt_tmp) = self.get_swarp_names()
 
         exit()
         
@@ -101,7 +116,6 @@ class Job(BaseJob):
                 fid.write(bkline.join(cmd_list_wgt[band])+'\n')
                 fid.write('\n\n')
         return
-
 
     def runSWarpCustomWeight(self,cmd_list_sci,cmd_list_wgt):
 
@@ -234,8 +248,8 @@ class Job(BaseJob):
         - magbase: from kwargs (or 30)
 
         Inputs (passive passed as ctx)
-        - self.ctx.CCDS['MAGZERO']
-        - self.ctx.FILEPATH_LOCAL
+        - self.ctx.assoc['MAGZERO']
+        - self.ctx.assoc['FILEPATH_LOCAL']
 
         Ouputs:
          - swarp_scilist, swarp_wgtlist, swarp_flxlist needed for SWarp
@@ -246,9 +260,11 @@ class Job(BaseJob):
         print "# Setting names for SWarp calls"
 
         # Extract the relevant kwargs
-        detecBANDS = kwargs.get('detecBANDS',['r','i','z']) # The band to consider for the detection image
-        magbase    = kwargs.get('magbase',30.0) # The magbase for flxscale, FLXSCALE = 10**(0.4*(magbase-zp))
+        # FELIPE -- CLEAN UP, this should not be run as kwargs anymore now that we have Input(IO)
+        detecBANDS = kwargs.get('detecBANDS',self.ctx.detecBANDS) # The band to consider for the detection image
+        magbase    = kwargs.get('magbase',self.ctx.magbase) # The magbase for flxscale, FLXSCALE = 10**(0.4*(magbase-zp))
         tilename   = kwargs.get('tilename',self.ctx.tilename)
+        # --------------------------
 
         # output variables
         swarp_scilist = {} # File with list of science names -- fits[0]
@@ -268,18 +284,20 @@ class Job(BaseJob):
         swarp_magzero = {} # Array with all fluxscales in BAND
         swarp_weights = {} # Array with custom weights for SWarp
 
+
+
         # Loop over filters
         for BAND in self.ctx.BANDS:
 
             print "# Examining BAND: %s" % BAND
 
             # Relevant indices per band
-            idx = numpy.where(self.ctx.CCDS['BAND'] == BAND)[0]
-
+            idx = numpy.where(self.ctx.assoc['BAND'] == BAND)[0]
+            
             # 1. SWarp inputs
-            swarp_inputs[BAND]  = self.ctx.FILEPATH_LOCAL[idx]
-            swarp_weights[BAND] = self.ctx.FILEPATH_LOCAL_WGT[idx]
-            swarp_magzero[BAND] = self.ctx.CCDS['MAG_ZERO'][idx]
+            swarp_inputs[BAND]  = self.ctx.assoc['FILEPATH_LOCAL'][idx]
+            swarp_weights[BAND] = self.ctx.assoc['FILEPATH_LOCAL_WGT'][idx]
+            swarp_magzero[BAND] = self.ctx.assoc['MAG_ZERO'][idx]
             
             swarp_scilist[BAND] = os.path.join(self.ctx.tiledir,"%s_%s_sci.list" % (self.ctx.tilename,BAND))
             swarp_wgtlist[BAND] = os.path.join(self.ctx.tiledir,"%s_%s_wgt.list" % (self.ctx.tilename,BAND))
@@ -335,6 +353,28 @@ class Job(BaseJob):
 
     def __str__(self):
         return 'Creates the Custom call to SWarp'
+
+
+
+if __name__ == "__main__":
+
+    # 0. take care of the sys arguments
+    import sys
+    args = sys.argv[1:]
+    # 1. read the input arguments into the job input
+    inp = Job.Input()
+    # 2. load a context
+    ctx = ContextProvider.create_ctx(**inp.parse_arguments(args))
+    # 3. set the pipeline execution mode
+    ctx['mojo_execution_mode'] = 'job as script'
+    # 4. create an empty JobOperator with context
+    from mojo import job_operator
+    jo = job_operator.JobOperator(**ctx)
+    # 5. run the job
+    job_instance = jo.run_job(Job)
+    # 6. dump the context if json_dump
+    if jo.ctx.get('json_dump_file', ''):
+        jo.json_dump_ctx()
 
 
 
