@@ -50,7 +50,20 @@ class Job(BaseJob):
         detecBANDS       = List(DETEC_BANDS_DEFAULT, help="List of bands used to build the Detection Image")
         magbase          = CFloat(MAGBASE, help="Zero point magnitude base for SWarp, default=30.")
         weight_extension = CUnicode('_wgt',help="Weight extension for the custom weight files")
-        coadd_basename   = CUnicode(None,help="Base Name for coadd fits files in the shape: BASENAME_$BAND.fits")
+        basename         = CUnicode("",help="Base Name for coadd fits files in the shape: COADD_BASENAME_$BAND.fits")
+        swarp_execution_mode  = CUnicode("tofile",help="SWarp excution mode",
+                                          argparse={'choices': ('tofile','dryrun','execute')})
+
+        def _validate_conditional(self):
+            # if in job standalone mode json
+            if self.mojo_execution_mode == 'job as script' and self.basename == "":
+                mess = 'If job is run standalone coadd_basename cannot be ""'
+                raise IO_ValidationError(mess)
+
+            elif self.mojo_execution_mode == 'job as script':
+                self.basedir = os.path.dirname(self.basename)
+                #self.ctx.basedir = os.path.dirname(self.basename)
+            
 
         # ??????
         # WE NEED TO FIGURE OUT how to pass the rest of the swarp ARGUMENTS
@@ -65,17 +78,14 @@ class Job(BaseJob):
 
         # Re-cast the ctx.assoc as dictionary of arrays instead of lists
         self.ctx.assoc  = utils.dict2arrays(self.ctx.assoc)
-        self.ctx.BANDS  = numpy.unique(self.ctx.assoc['BAND'])
-        self.ctx.NBANDS = len(self.ctx.BANDS)
-
+        self.ctx.BANDS  = numpy.unique(self.ctx.assoc['BAND']) # This might be done before hand
+        self.ctx.NBANDS = len(self.ctx.BANDS)                  # This might be done before hand
 
         # 1. set up names -----------------------------------------------------
         # Gets swarp_scilist, swarp_wgtlist, swarp_flxlist, comb_sci, comb_wgt and  comb_sci/tmps
         (swarp_scilist, swarp_wgtlist, swarp_swglist, swarp_flxlist,
         comb_sci, comb_wgt, comb_sci_tmp, comb_wgt_tmp) = self.get_swarp_names()
 
-        exit()
-        
         # Make some objects visible to the context that will be needed
         # down the line for SEx, psfex, etc.
         self.ctx.comb_sci = comb_sci
@@ -87,8 +97,8 @@ class Job(BaseJob):
                                                              comb_sci, comb_wgt, comb_sci_tmp, comb_wgt_tmp,
                                                              swarp_parameters=swarp_parameters)
 
-        # 3. check execution mode and write/print/execute commands accordingly --------------
-        executione_mode = self.ctx.get('swarp_execution_mode', 'tofile')
+        # 3. check execution mode and tofile/dryrun/execute commands accordingly --------------
+        executione_mode = self.ctx.swarp_execution_mode
         if executione_mode == 'tofile':
             self.writeCall(cmd_list_sci,cmd_list_wgt)
                     
@@ -106,9 +116,9 @@ class Job(BaseJob):
 
     def writeCall(self,cmd_list_sci,cmd_list_wgt):
 
-        bkline  = self.ctx.get('breakline',self.BKLINE)
+        bkline  = self.ctx.get('breakline',BKLINE)
         # The file where we'll write the commands
-        cmdfile = self.ctx.get('cmdfile', os.path.join(self.ctx.tiledir,"call_swarp_%s.cmd" % self.ctx.tilename))
+        cmdfile = self.ctx.get('cmdfile', "%s_call_swarp.cmd" % self.ctx.basename)
         print "# Will write SWarp call to: %s" % cmdfile
         with open(cmdfile, 'w') as fid:
             for band in self.ctx.dBANDS:
@@ -119,7 +129,7 @@ class Job(BaseJob):
 
     def runSWarpCustomWeight(self,cmd_list_sci,cmd_list_wgt):
 
-        logfile = self.ctx.get('logfile', os.path.join(self.ctx.tiledir,"swarp_%s.log" % self.ctx.tilename))
+        logfile = self.ctx.get('swarp_logfile', "%s_swarp.log" % self.ctx.basename)
         log = open(logfile,"w")
         print "# Will proceed to run the SWarp calls now:"
         print "# Will write to logfile: %s" % logfile
@@ -169,7 +179,7 @@ class Job(BaseJob):
             pars["IMAGEOUT_NAME"]  = "%s" % comb_sci[BAND]
             pars["WEIGHTOUT_NAME"] = "%s" % comb_wgt_tmp[BAND]     # We won't keep this sci
             # Construct the call
-            cmd.append(self.SWARP_EXE)
+            cmd.append(SWARP_EXE)
             cmd.append("@%s" % swarp_scilist[BAND])
             cmd.append("-c %s" % swarp_conf)
             for param,value in pars.items():
@@ -182,7 +192,7 @@ class Job(BaseJob):
             pars["IMAGEOUT_NAME"]  = "%s" % comb_sci_tmp[BAND]     # We won't keep this weight
             pars["WEIGHTOUT_NAME"] = "%s" % comb_wgt[BAND]
             # Construct the call
-            cmd.append(self.SWARP_EXE)
+            cmd.append(SWARP_EXE)
             cmd.append("@%s" % swarp_scilist[BAND])
             cmd.append("-c %s" % swarp_conf)
             for param,value in pars.items():
@@ -198,7 +208,7 @@ class Job(BaseJob):
         pars["IMAGEOUT_NAME"]  = "%s" % comb_sci[BAND]
         pars["WEIGHTOUT_NAME"] = "%s" % comb_wgt_tmp[BAND]
 
-        swarp_cmd_sci[BAND] = [self.SWARP_EXE, ]
+        swarp_cmd_sci[BAND] = [SWARP_EXE, ]
         swarp_cmd_sci[BAND].append("%s" % " ".join(swarp_scilist[BAND]))
         swarp_cmd_sci[BAND].append("-c %s" % swarp_conf)
         for param,value in pars.items():
@@ -208,7 +218,7 @@ class Job(BaseJob):
         pars["WEIGHT_IMAGE"]   = "%s" % " ".join(swarp_wgtlist[BAND])
         pars["IMAGEOUT_NAME"]  = "%s" % comb_sci_tmp[BAND]
         pars["WEIGHTOUT_NAME"] = "%s" % comb_wgt[BAND]
-        swarp_cmd_wgt[BAND] = [self.SWARP_EXE, ]
+        swarp_cmd_wgt[BAND] = [SWARP_EXE, ]
         swarp_cmd_wgt[BAND].append("%s" % " ".join(swarp_scilist[BAND]))
         swarp_cmd_wgt[BAND].append("-c %s" % swarp_conf)
         for param,value in pars.items():
@@ -228,7 +238,7 @@ class Job(BaseJob):
             "WEIGHT_TYPE"     : "MAP_WEIGHT",
             "PIXEL_SCALE"     : "%.3f"  % self.ctx.tileinfo['PIXELSCALE'],
             "PIXELSCALE_TYPE" : "MANUAL",
-            "NTHREADS"        : 1,
+            "NTHREADS"        : 0, ### FIX!!!
             "CENTER_TYPE"     : "MANUAL",
             "IMAGE_SIZE"      : "%s,%d" % (self.ctx.tileinfo['NAXIS1'],self.ctx.tileinfo['NAXIS2']),
             "CENTER"          : "%s,%s" % (self.ctx.tileinfo['RA'],self.ctx.tileinfo['DEC']),
@@ -284,8 +294,6 @@ class Job(BaseJob):
         swarp_magzero = {} # Array with all fluxscales in BAND
         swarp_weights = {} # Array with custom weights for SWarp
 
-
-
         # Loop over filters
         for BAND in self.ctx.BANDS:
 
@@ -298,12 +306,12 @@ class Job(BaseJob):
             swarp_inputs[BAND]  = self.ctx.assoc['FILEPATH_LOCAL'][idx]
             swarp_weights[BAND] = self.ctx.assoc['FILEPATH_LOCAL_WGT'][idx]
             swarp_magzero[BAND] = self.ctx.assoc['MAG_ZERO'][idx]
-            
-            swarp_scilist[BAND] = os.path.join(self.ctx.tiledir,"%s_%s_sci.list" % (self.ctx.tilename,BAND))
-            swarp_wgtlist[BAND] = os.path.join(self.ctx.tiledir,"%s_%s_wgt.list" % (self.ctx.tilename,BAND))
-            swarp_swglist[BAND] = os.path.join(self.ctx.tiledir,"%s_%s_swg.list" % (self.ctx.tilename,BAND))
-            swarp_flxlist[BAND] = os.path.join(self.ctx.tiledir,"%s_%s_flx.list" % (self.ctx.tilename,BAND))
 
+            swarp_scilist[BAND] = "%s_%s_sci.list" % (self.ctx.basename,BAND)
+            swarp_wgtlist[BAND] = "%s_%s_wgt.list" % (self.ctx.basename,BAND)
+            swarp_swglist[BAND] = "%s_%s_swg.list" % (self.ctx.basename,BAND)
+            swarp_flxlist[BAND] = "%s_%s_flx.list" % (self.ctx.basename,BAND)
+            
             print "# Writing science files for tile:%s band:%s on:%s" % (self.ctx.tilename,BAND,swarp_scilist[BAND])
             tableio.put_data(swarp_scilist[BAND],(swarp_inputs[BAND],),format="%s[0]")
 
@@ -318,12 +326,12 @@ class Job(BaseJob):
             tableio.put_data(swarp_flxlist[BAND],(flxscale,),format="%s")
 
             # 2. SWarp outputs names
-            comb_sci[BAND] = os.path.join(self.ctx.tiledir,"%s_%s_sci.fits" %  (self.ctx.tilename, BAND))
-            comb_wgt[BAND] = os.path.join(self.ctx.tiledir,"%s_%s_wgt.fits" %  (self.ctx.tilename, BAND))
+            comb_sci[BAND] = "%s_%s_sci.fits" %  (self.ctx.basename, BAND)
+            comb_wgt[BAND] = "%s_%s_wgt.fits" %  (self.ctx.basename, BAND)
 
             # temporary files to be removed
-            comb_sci_tmp[BAND] = os.path.join(self.ctx.tiledir,"%s_%s_sci_tmp.fits" %  (self.ctx.tilename, BAND))
-            comb_wgt_tmp[BAND] = os.path.join(self.ctx.tiledir,"%s_%s_wgt_tmp.fits" %  (self.ctx.tilename, BAND))
+            comb_sci_tmp[BAND] = "%s_%s_sci_tmp.fits" %  (self.ctx.basename, BAND)
+            comb_wgt_tmp[BAND] = "%s_%s_wgt_tmp.fits" %  (self.ctx.basename, BAND)
 
 
         # The SWarp-combined detection image input and ouputs
@@ -337,10 +345,10 @@ class Job(BaseJob):
 
         # Names and lists
         BAND = self.ctx.detBAND  # Short-cut
-        comb_sci[BAND] = os.path.join(self.ctx.tiledir,"%s_%s_sci.fits" %  (self.ctx.tilename, BAND))
-        comb_wgt[BAND] = os.path.join(self.ctx.tiledir,"%s_%s_wgt.fits" %  (self.ctx.tilename, BAND))
-        comb_sci_tmp[BAND] = os.path.join(self.ctx.tiledir,"%s_%s_sci_tmp.fits" %  (self.ctx.tilename, BAND))
-        comb_wgt_tmp[BAND] = os.path.join(self.ctx.tiledir,"%s_%s_wgt_tmp.fits" %  (self.ctx.tilename, BAND))
+        comb_sci[BAND]     = "%s_%s_sci.fits" %  (self.ctx.basename, BAND)
+        comb_wgt[BAND]     = "%s_%s_wgt.fits" %  (self.ctx.basename, BAND)
+        comb_sci_tmp[BAND] = "%s_%s_sci_tmp.fits" %  (self.ctx.basename, BAND)
+        comb_wgt_tmp[BAND] = "%s_%s_wgt_tmp.fits" %  (self.ctx.basename, BAND)
         
         # The Science and Weight lists matching the bands used for detection
         swarp_scilist[BAND] = [comb_sci[band] for band in useBANDS] # old: extract_from_keys(comb_sci, useBANDS).values()
