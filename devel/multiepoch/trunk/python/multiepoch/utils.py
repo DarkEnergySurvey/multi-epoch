@@ -61,3 +61,33 @@ def create_local_archive(local_archive):
         os.mkdir(local_archive)
     return
 
+
+def get_local_weight_names(ctx,wgt_ext):
+
+    """
+    A common method to define the local weight names based on
+    FILEPATH_LOCAL passed in the ctx, and wgt_ext
+    """
+    # A shortcut
+    filepath_local = ctx.assoc['FILEPATH_LOCAL']
+    Nfiles = len(filepath_local)
+    # Define the wgt local filenames
+    filepath_local_wgt = []
+    for k in range(Nfiles):
+        basename  = filepath_local[k].split(".fits")[0] 
+        extension = filepath_local[k].split(".fits")[1:]
+        local_wgt = "%s%s.fits" % (basename,wgt_ext)
+        filepath_local_wgt.append(local_wgt)
+    return filepath_local_wgt
+
+def dict2arrays(dictionary):
+
+    """
+    Re-cast list in contained in a dictionary as numpy arrays
+    """
+    import numpy
+    for key, value in dictionary.iteritems():
+        if isinstance(value, list):
+            dictionary[key] = numpy.array(value)
+    return dictionary
+

@@ -112,7 +112,7 @@ class Job(BaseJob):
             extension = filepath_local[k].split(".fits")[1:]
             local_wgt = "%s%s.fits" % (basename,wgt_ext)
             local_sci = self.ctx.assoc['FILEPATH_LOCAL'][k]
-            self.ctx.assoc['FILEPATH_LOCAL_WGT'].append(local_wgt) # FELIPE: CHECK if we still need this
+            self.ctx.assoc['FILEPATH_LOCAL_WGT'].append(local_wgt) 
 
             # Make sure the file does not already exists exits
             if not os.path.exists(local_wgt) or clobber:
@@ -121,10 +121,11 @@ class Job(BaseJob):
             else:
                 sys.stdout.write("\r# Skipping: %s (%s/%s) -- file exists" % (local_wgt,k+1,Nfiles))
                 sys.stdout.flush()
-                
         print "\n#"
+
+        # Pass them up as arrays instead of lists
+        self.ctx.assoc['FILEPATH_LOCAL_WGT'] = numpy.array(self.ctx.assoc['FILEPATH_LOCAL_WGT'])
         return args
-        
 
     def create_weights_for_SWarp(self,clobber,wgt_ext, MP):
 
