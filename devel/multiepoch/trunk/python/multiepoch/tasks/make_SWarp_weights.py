@@ -33,6 +33,7 @@ import time
 import multiprocessing
 # Multi-epoch loads
 import multiepoch.utils as utils
+import multiepoch.contextDefs as contextDefs
 from multiepoch.DESfits import DESFITS
 
 class Job(BaseJob):
@@ -81,7 +82,7 @@ class Job(BaseJob):
 
         # ONLY if NOT in script mode we create the directory -- if it doesn't exist, 
         if self.ctx.mojo_execution_mode != "job as script":
-            utils.create_local_archive(self.ctx.local_archive)
+            contextDefs.create_local_archive(self.ctx.local_archive)
         else:
             print "# Skipping local_archive creation: mode:%s" % self.ctx.mojo_execution_mode
 

@@ -20,10 +20,10 @@
  find_ccds_in_tile.py DES2246-4457_tileinfo.json --db_section db-destest --assoc_file DES2246-4457_ccdinfo.assoc --assoc_json DES2246-4457_ccdinfo.json --plot_outname DES2246-4457_overlap.pdf 
 
  (by hand modify the DES2246-4457_ccdinfo.assoc --> DES2246-4457_ccdinfo_local.assoc with the local paths and FILEPATH_ARCHIVE-> FILEPATH_LOCAL)
- (by hand modify the DES2246-4457_ccdinfo.json --> DES2246-4457_ccdinfo_local.json with the local paths and FILEPATH_ARCHIVE-> FILEPATH_LOCAL)
+ (by hand modify the DES2246-4457_ccdinfo.json  --> DES2246-4457_ccdinfo_local.json  with the local paths and FILEPATH_ARCHIVE-> FILEPATH_LOCAL)
 
  3.3) Now we are ready to create the custom weights
- make_SWarp_weights.py DES2246-4457_ccdinfo_local.json --MP_weights 4 --weight_extension _wgt
+ make_SWarp_weights.py DES2246-4457_ccdinfo_local.json --MP_weight 4 --weight_extension _wgt
 
  3.4)  Make the SWArp call to coadd the images
 call_SWarp_CustomWeights.py DES2246-4457_ccdinfo_local.json DES2246-4457_tileinfo.json --basename ~/TILEBUILDER_TEST/DES2246-4457_test --swarp_execution_mode execute
