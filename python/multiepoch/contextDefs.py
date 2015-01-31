@@ -6,6 +6,8 @@ Set of functions to add defintions to the context
 
 def set_tile_directory(ctx,outputpath='./TILEBUILDER'):
 
+    """ Se the output directory for the TILE to be built"""
+
     import os
 
     if ctx.get('basename'):

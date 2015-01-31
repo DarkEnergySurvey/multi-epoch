@@ -331,26 +331,6 @@ class Job(BaseJob):
         print "# Names for SWarp input/output are set"
         return swarp_scilist, swarp_wgtlist, swarp_swglist, swarp_flxlist #, comb_sci, comb_wgt, comb_sci_tmp, comb_wgt_tmp
 
-            
-        # # The SWarp-combined detection image input and ouputs
-        # # Figure out which bands to use that match the detecBANDS
-        # useBANDS = list( set(self.ctx.BANDS) & set(detecBANDS) )
-        # print "# Will use %s bands for detection" % useBANDS
-
-        # # The BAND pseudo-name, we'll store with the 'real bands' as a list to access later
-        # #self.ctx.detBAND ='det%s' % "".join(useBANDS)
-        # self.ctx.detBAND ='det%s' % "".join(useBANDS)
-        # self.ctx.dBANDS = list(self.ctx.BANDS) + [self.ctx.detBAND]
-
-
-        # Names and lists
-        #comb_sci[BAND]     = "%s_%s_sci.fits" %  (self.ctx.basename, BAND)
-        #comb_wgt[BAND]     = "%s_%s_wgt.fits" %  (self.ctx.basename, BAND)
-        #comb_sci_tmp[BAND] = "%s_%s_sci_tmp.fits" %  (self.ctx.basename, BAND)
-        #comb_wgt_tmp[BAND] = "%s_%s_wgt_tmp.fits" %  (self.ctx.basename, BAND)
-        
-
-
     def __str__(self):
         return 'Creates the Custom call to SWarp'
 
