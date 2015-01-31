@@ -16,12 +16,22 @@ def set_tile_directory(ctx,outputpath='./TILEBUILDER'):
         ctx.basedir  = os.path.join(outputpath, ctx.tilename)
         ctx.basename = os.path.join(ctx.basedir, ctx.tilename)
 
-    # Make sure that the filepath exists
-    if not os.path.exists(ctx.basedir):
-        print "# Creating directory: %s" % ctx.basedir
-        os.makedirs(ctx.basedir)
-    else:
-        print "# Will write output files to: %s" % ctx.basedir
+    # In most cases filepattern == tilename
+    ctx.filepattern = os.path.basename(ctx.basename)
+
+    ctx.auxdir = os.path.join(ctx.basedir,"aux")
+    ctx.logdir = os.path.join(ctx.basedir,"log")
+    
+    # Make sure that the filepaths exists
+    if not os.path.exists(ctx.auxdir):
+        print "# Creating directory: %s" % ctx.auxdir
+        os.makedirs(ctx.auxdir)
+
+    if not os.path.exists(ctx.logdir):
+        print "# Creating directory: %s" % ctx.logdir
+        os.makedirs(ctx.logdir)
+    #else:
+    #    print "# Will write output files to: %s" % ctx.basedir
     return ctx
 
 def get_local_weight_names(ctx,wgt_ext):

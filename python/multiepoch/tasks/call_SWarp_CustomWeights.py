@@ -131,7 +131,8 @@ class Job(BaseJob):
 
     def runSWarpCustomWeight(self,cmd_list_sci,cmd_list_wgt):
 
-        logfile = self.ctx.get('swarp_logfile', "%s_swarp.log" % self.ctx.basename)
+        #logfile = self.ctx.get('swarp_logfile', "%s_swarp.log" % self.ctx.basename)
+        logfile = self.ctx.get('swarp_logfile', os.path.join(self.ctx.logdir,"%s_swarp.log" % self.ctx.pattername)
         log = open(logfile,"w")
         print "# Will proceed to run the SWarp calls now:"
         print "# Will write to logfile: %s" % logfile
@@ -301,10 +302,22 @@ class Job(BaseJob):
             swarp_magzero[BAND] = self.ctx.assoc['MAG_ZERO'][idx]
             
             # 2. Files with images/flux lists
-            swarp_scilist[BAND] = "%s_%s_sci.list" % (self.ctx.basename,BAND)
-            swarp_wgtlist[BAND] = "%s_%s_wgt.list" % (self.ctx.basename,BAND)
-            swarp_swglist[BAND] = "%s_%s_swg.list" % (self.ctx.basename,BAND)
-            swarp_flxlist[BAND] = "%s_%s_flx.list" % (self.ctx.basename,BAND)
+            #swarp_scilist[BAND] = "%s_%s_sci.list" % (self.ctx.basename,BAND)
+            #swarp_wgtlist[BAND] = "%s_%s_wgt.list" % (self.ctx.basename,BAND)
+            #swarp_swglist[BAND] = "%s_%s_swg.list" % (self.ctx.basename,BAND)
+            #swarp_flxlist[BAND] = "%s_%s_flx.list" % (self.ctx.basename,BAND)
+
+            # In case we want to put the in aux
+            auxdir = os.path.join(self.ctx.basedir,"aux")
+            if not os.path.exists(auxdir):
+                print "# Creating directory: %s" % auxdir
+                os.makedirs(auxdir)
+                                  
+            filepattern = self.ctx.filepattern
+            swarp_scilist[BAND] = os.path.join(self.ctx.basedir,"aux","%s_%s_sci.list" % (filepattern,BAND))
+            swarp_wgtlist[BAND] = os.path.join(self.ctx.basedir,"aux","%s_%s_wgt.list" % (filepattern,BAND))
+            swarp_swglist[BAND] = os.path.join(self.ctx.basedir,"aux","%s_%s_swg.list" % (filepattern,BAND))
+            swarp_flxlist[BAND] = os.path.join(self.ctx.basedir,"aux","%s_%s_flx.list" % (filepattern,BAND))
 
             # 3. Put them into the files
             print "# Writing science files for tile:%s band:%s on:%s" % (self.ctx.tilename,BAND,swarp_scilist[BAND])
