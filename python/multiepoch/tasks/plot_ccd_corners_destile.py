@@ -54,8 +54,13 @@ class Job(BaseJob):
 
         # Figure out the layout depending on the number of filters
         # found in the overlapping ares
+
+        # Get the filters we found
+        BANDS  = numpy.unique(self.ctx.CCDS['BAND'])
+        NBANDS = len(BANDS)
+
         ncols = 3
-        if self.ctx.NBANDS > 3:
+        if NBANDS > 3:
             nrows = 2
         else:
             nrows = 1
@@ -74,7 +79,7 @@ class Job(BaseJob):
         y2 = x2
         
         kplot = 1
-        for BAND in self.ctx.BANDS:
+        for BAND in BANDS:
 
             plt.subplot(nrows,ncols,kplot)
             ax = plt.gca()

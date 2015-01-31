@@ -10,7 +10,9 @@ from mojo.jobs.base_job import BaseJob
 from traitlets import Unicode, Bool, Float, Int, CUnicode, CBool, CFloat, CInt, Instance, Dict
 from mojo.jobs.base_job import BaseJob, IO, IO_ValidationError
 from mojo.context import ContextProvider
+# Mutiepoch loads
 import multiepoch.utils as utils
+import multiepoch.contextDefs as contextDefs
 
 from despyastro import tableio
 from despymisc.miscutils import elapsed_time
@@ -207,9 +209,6 @@ class Job(BaseJob):
         # Now we get the locations
         self.get_fitsfile_locations()
         
-        # Get the filters we found
-        #self.ctx.BANDS  = numpy.unique(self.ctx.CCDS['BAND'])
-        #self.ctx.NBANDS = len(self.ctx.BANDS)
 
     def get_CCDS(self,**kwargs): 
 

@@ -14,6 +14,7 @@ import subprocess
 import time
 from despymisc.miscutils import elapsed_time
 import multiepoch.utils as utils
+import multiepoch.contextDefs as contextDefs
 
 # JOB INTERNAL CONFIGURATION
 SWARP_EXE = 'swarp'
@@ -62,9 +63,6 @@ class Job(BaseJob):
                 mess = 'If job is run standalone coadd_basename cannot be ""'
                 raise IO_ValidationError(mess)
 
-            elif self.mojo_execution_mode == 'job as script':
-                self.basedir = os.path.dirname(self.basename)
-
     def run(self):
 
         
@@ -77,21 +75,23 @@ class Job(BaseJob):
             self.ctx.swarp_parameters = dict( [ swarp_pars[index].split("=") for index, item in enumerate(swarp_pars) ] )
 
         # Re-construct the names for the custom weights in case not present
-        if 'FILEPATH_LOCAL_WGT' not in self.ctx.assoc.keys():
-            self.ctx.assoc['FILEPATH_LOCAL_WGT'] = utils.get_local_weight_names(self.ctx,self.ctx.weight_extension)
+        if not self.ctx.assoc.get('FILEPATH_LOCAL_WGT'): 
+            print "# Re-consrtuncting FILEPATH_LOCAL_WGT to ctx.assoc"
+            self.ctx.assoc['FILEPATH_LOCAL_WGT'] = contextDefs.get_local_weight_names(self.ctx,self.ctx.weight_extension)
         # Re-cast the ctx.assoc as dictionary of arrays instead of lists
         self.ctx.assoc  = utils.dict2arrays(self.ctx.assoc)
+        # Make sure we set up the output dir
+        self.ctx = contextDefs.set_tile_directory(self.ctx)
         
         # 1. set up names -----------------------------------------------------
         # Get the BANDs information in the context if they are not present
-        self.ctx = utils.set_BANDS(self.ctx)
+        self.ctx = contextDefs.set_BANDS(self.ctx)
 
         # Get the output names for SWarp
-        self.ctx = utils.set_SWarp_output_names(self.ctx)
+        self.ctx = contextDefs.set_SWarp_output_names(self.ctx)
         
         # Gets swarp_scilist, swarp_wgtlist, swarp_flxlist, 
         (swarp_scilist, swarp_wgtlist, swarp_swglist, swarp_flxlist) = self.get_swarp_input_lists()
-
 
         # 2. get the updated SWarp parameters and the full command list of SWarp calls --
         swarp_parameters = self.ctx.get('swarp_parameters', {})
