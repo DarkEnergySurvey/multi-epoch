@@ -132,7 +132,7 @@ class Job(BaseJob):
     def runSWarpCustomWeight(self,cmd_list_sci,cmd_list_wgt):
 
         #logfile = self.ctx.get('swarp_logfile', "%s_swarp.log" % self.ctx.basename)
-        logfile = self.ctx.get('swarp_logfile', os.path.join(self.ctx.logdir,"%s_swarp.log" % self.ctx.pattername)
+        logfile = self.ctx.get('swarp_logfile', os.path.join(self.ctx.logdir,"%s_swarp.log" % self.ctx.pattername))
         log = open(logfile,"w")
         print "# Will proceed to run the SWarp calls now:"
         print "# Will write to logfile: %s" % logfile
@@ -154,6 +154,8 @@ class Job(BaseJob):
             print "# Done in %s\n" % elapsed_time(t2)
 
         print "# Total SWarp time %s" % elapsed_time(t0)
+        log.write("# Total SWarp time %s\n") % elapsed_time(t0)
+        log.close()
         return
 
     def get_swarp_cmd_list(self, swarp_scilist, swarp_wgtlist, swarp_swglist,
