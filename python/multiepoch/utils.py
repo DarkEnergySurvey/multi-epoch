@@ -48,7 +48,6 @@ def create_local_archive(local_archive):
         os.mkdir(local_archive)
     return
 
-
 def dict2arrays(dictionary):
     """
     Re-cast list in contained in a dictionary as numpy arrays
