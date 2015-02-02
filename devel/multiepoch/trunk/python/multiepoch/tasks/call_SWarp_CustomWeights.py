@@ -24,9 +24,9 @@ MAGBASE = 30.0
 
 class Job(BaseJob):
 
-    """ SWARP call for the multiepoch pipeline"""
-
     class Input(IO):
+
+        """ SWARP call for the multiepoch pipeline"""
 
         ######################
         # Required inputs
@@ -54,24 +54,22 @@ class Job(BaseJob):
         basename         = CUnicode("",help="Base Name for coadd fits files in the shape: COADD_BASENAME_$BAND.fits")
         swarp_execution_mode  = CUnicode("tofile",help="SWarp excution mode",
                                           argparse={'choices': ('tofile','dryrun','execute')})
-        swarp_parameters = List([],help="A list of swarp parameters to pass to SWarp",
+        swarp_parameters = List([],help="A list of parameters to pass to SWarp",
                                 argparse={'nargs':'+',})
 
         def _validate_conditional(self):
             # if in job standalone mode json
             if self.mojo_execution_mode == 'job as script' and self.basename == "":
-                mess = 'If job is run standalone coadd_basename cannot be ""'
+                mess = 'If job is run standalone basename cannot be ""'
                 raise IO_ValidationError(mess)
 
     def run(self):
         
         # 0. Pre-wash of inputs  ------------------------------------------------
         # WE WILL TRY TO MOVE THIS TO Input()
-        # Re-pack as a dictionary the swarp_parameters fron the command-line, if run as script
-        # Make the list into a dictionary
+        # Make the list of extra command-line args into a dictionary
         if self.ctx.mojo_execution_mode == 'job as script' and self.input.swarp_parameters:
-            swarp_pars = self.input.swarp_parameters
-            self.ctx.swarp_parameters = dict( [ swarp_pars[index].split("=") for index, item in enumerate(swarp_pars) ] )
+            self.ctx.swarp_parameters = utils.arglist2dict(self.input.swarp_parameters,separator='=')
 
         # Re-construct the names for the custom weights in case not present
         if not self.ctx.assoc.get('FILEPATH_LOCAL_WGT'): 
@@ -100,20 +98,20 @@ class Job(BaseJob):
                                                              swarp_parameters=swarp_parameters)
 
         # 3. check execution mode and tofile/dryrun/execute commands accordingly --------------
-        executione_mode = self.ctx.swarp_execution_mode
-        if executione_mode == 'tofile':
+        execution_mode = self.ctx.swarp_execution_mode
+        if execution_mode == 'tofile':
             self.writeCall(cmd_list_sci,cmd_list_wgt)
                     
-        elif executione_mode == 'dryrun':
+        elif execution_mode == 'dryrun':
             print "# For now we only print the commands (dry-run)"
             for band in self.ctx.dBANDS:
                 print ' '.join(cmd_list_sci[band])
                 print ' '.join(cmd_list_wgt[band])
 
-        elif executione_mode == 'execute':
+        elif execution_mode == 'execute':
             self.runSWarpCustomWeight(cmd_list_sci,cmd_list_wgt)
         else:
-            raise ValueError('Execution mode %s not implemented.' % executione_mode)
+            raise ValueError('Execution mode %s not implemented.' % execution_mode)
 
 
     def writeCall(self,cmd_list_sci,cmd_list_wgt):
@@ -132,7 +130,7 @@ class Job(BaseJob):
     def runSWarpCustomWeight(self,cmd_list_sci,cmd_list_wgt):
 
         #logfile = self.ctx.get('swarp_logfile', "%s_swarp.log" % self.ctx.basename)
-        logfile = self.ctx.get('swarp_logfile', os.path.join(self.ctx.logdir,"%s_swarp.log" % self.ctx.pattername))
+        logfile = self.ctx.get('swarp_logfile', os.path.join(self.ctx.logdir,"%s_swarp.log" % self.ctx.filepattern))
         log = open(logfile,"w")
         print "# Will proceed to run the SWarp calls now:"
         print "# Will write to logfile: %s" % logfile
@@ -143,18 +141,22 @@ class Job(BaseJob):
             cmd  = ' '.join(cmd_list_sci[band])
             print "# Executing SWarp SCI for tile:%s, BAND:%s" % (self.ctx.tilename,band)
             print "# %s " % cmd
-            subprocess.call(cmd,shell=True,stdout=log, stderr=log)
+            status = subprocess.call(cmd,shell=True,stdout=log, stderr=log)
+            if status > 0:
+                sys.exit("***\nERROR while running SWArp, check logfile: %s\n***" % logfile)
             print "# Done in %s\n" % elapsed_time(t1)
 
             t2 = time.time()
             cmd  = ' '.join(cmd_list_wgt[band])
             print "# Executing SWarp WGT for tile:%s, BAND:%s" % (self.ctx.tilename,band)
             print "# %s " % cmd
-            subprocess.call(cmd,shell=True,stdout=log, stderr=log)
+            status = subprocess.call(cmd,shell=True,stdout=log, stderr=log)
+            if status > 0:
+                sys.exit("***\nERROR while running SWArp, check logfile: %s\n***" % logfile)
             print "# Done in %s\n" % elapsed_time(t2)
 
         print "# Total SWarp time %s" % elapsed_time(t0)
-        log.write("# Total SWarp time %s\n") % elapsed_time(t0)
+        log.write("# Total SWarp time %s\n" % elapsed_time(t0))
         log.close()
         return
 
