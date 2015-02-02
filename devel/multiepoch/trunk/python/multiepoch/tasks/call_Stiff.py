@@ -12,6 +12,10 @@ import subprocess
 import time
 from despymisc.miscutils import elapsed_time
 
+# Multi-epoch
+import multiepoch.utils as utils
+import multiepoch.contextDefs as contextDefs
+
 # JOB INTERNAL CONFIGURATION
 STIFF_EXE = 'stiff'
 BKLINE = "\\\n"
@@ -19,19 +23,20 @@ BKLINE = "\\\n"
 class Job(BaseJob):
 
 
+    """ Stiff call for the multi-epoch pipeline
+    Inputs:
+    - self.ctx.comb_sci
+    
+    Outputs:
+    - self.ctx.color_tile
+    """
+
+
     class Input(IO):
 
-
-        """ Stiff call for the multi-epoch pipeline
-        
-        Inputs:
-        - self.ctx.comb_sci
-        
-        Outputs:
-        - self.ctx.color_tile
-        
         """
-
+        Stiff call for the multi-epoch pipeline
+        """
         ######################
         # Required inputs
         # 1. Association file and assoc dictionary
@@ -43,7 +48,7 @@ class Job(BaseJob):
 
         # Optional Arguments
         basename         = CUnicode("",help="Base Name for coadd fits files in the shape: COADD_BASENAME_$BAND.fits")
-        stiff_execution_mode  = CUnicode("tofile",help="SWarp excution mode",
+        stiff_execution_mode  = CUnicode("tofile",help="Stiff excution mode",
                                          argparse={'choices': ('tofile','dryrun','execute')})
         stiff_parameters = List([],help="A list of parameters to pass to Stiff",
                                 argparse={'nargs':'+',})
@@ -60,8 +65,11 @@ class Job(BaseJob):
         # 0. Pre-wash of inputs  ------------------------------------------------
         # WE WILL TRY TO MOVE THIS TO Input()
         # Make the list of extra command-line args into a dictionary
-        if self.ctx.mojo_execution_mode == 'job as script' and self.input.stiff_parameters:
-            self.ctx.stiff_parameters = utils.arglist2dict(self.input.stiff_parameters,separator='=')
+        if self.ctx.mojo_execution_mode == 'job as script':
+            if self.input.stiff_parameters:
+                self.ctx.stiff_parameters = utils.arglist2dict(self.input.stiff_parameters,separator='=')
+            else:
+                self.ctx.stiff_parameters = {}
 
         # Re-cast the ctx.assoc as dictionary of arrays instead of lists
         self.ctx.assoc  = utils.dict2arrays(self.ctx.assoc)
@@ -79,18 +87,15 @@ class Job(BaseJob):
         # 1. Set the output name of the color tiff file
         color_tile =  self.ctx.get('color_tile',"%s.tiff" %  self.ctx.basename)
 
-        # Make color tile visible to the context
-        #self.ctx.color_tile = color_tile
-
         # 2. get the update stiff parameters  --
         stiff_parameters = self.ctx.get('stiff_parameters', {})
         cmd_list = self.get_stiff_cmd_list(color_tile,stiff_parameters=stiff_parameters)  
         
         # 3. check execution mode and write/print/execute commands accordingly --------------
-        executione_mode = self.ctx.stiff_execution_mode
+        execution_mode = self.ctx.stiff_execution_mode
 
-        if executione_mode == 'tofile':
-            bkline  = self.ctx.get('breakline',self.BKLINE)
+        if execution_mode == 'tofile':
+            bkline  = self.ctx.get('breakline',BKLINE)
             # The file where we'll write the commands
             cmdfile = self.ctx.get('cmdfile', "%s_call_stiff.cmd" % self.ctx.basename)
             print "# Will write stiff call to: %s" % cmdfile
@@ -98,11 +103,11 @@ class Job(BaseJob):
                 fid.write(bkline.join(cmd_list)+'\n')
                 fid.write('\n')
 
-        elif executione_mode == 'dryrun':
+        elif execution_mode == 'dryrun':
             print "# For now we only print the commands (dry-run)"
             print ' '.join(cmd_list)
 
-        elif executione_mode == 'execute':
+        elif execution_mode == 'execute':
             logfile = self.ctx.get('swarp_logfile', os.path.join(self.ctx.logdir,"%s_swarp.log" % self.ctx.filepattern))
             log = open(logfile,"w")
             print "# Will proceed to run the stiff call now:"
@@ -111,10 +116,12 @@ class Job(BaseJob):
             cmd  = ' '.join(cmd_list)
             print "# Executing stiff for tile:%s " % self.ctx.filepattern
             print "# %s " % cmd
-            subprocess.call(cmd,shell=True,stdout=log, stderr=log)
+            status = subprocess.call(cmd,shell=True,stdout=log, stderr=log)
+            if status > 0:
+                sys.exit("***\nERROR while running Stiff, check logfile: %s\n***" % logfile)
             print "# Total stiff time %s" % elapsed_time(t0)
         else:
-            raise ValueError('Execution mode %s not implemented.' % executione_mode)
+            raise ValueError('Execution mode %s not implemented.' % execution_mode)
         return
 
 
@@ -133,7 +140,6 @@ class Job(BaseJob):
         stiff_parameters.update(kwargs)
         return stiff_parameters
 
-
     def get_stiff_cmd_list(self,color_tile,stiff_parameters={}):
 
         """ Make a color tiff of the TILENAME using stiff"""
@@ -142,7 +148,6 @@ class Job(BaseJob):
             print "# WARINING: Not enough filters to create color image"
             print "# WARINING: No color images will be created"
             return 
-        
         
         # The default stiff configuration file
         stiff_conf = os.path.join(os.environ['MULTIEPOCH_DIR'],'etc','default.stiff')
@@ -168,7 +173,7 @@ class Job(BaseJob):
             return 
         
         cmd_list = []
-        cmd_list.append("%s" % self.STIFF_EXE)
+        cmd_list.append("%s" % STIFF_EXE)
         for BAND in CSET:
             cmd_list.append( "%s" % self.ctx.comb_sci[BAND])
 
@@ -180,6 +185,7 @@ class Job(BaseJob):
     def __str__(self):
         return 'Creates the call to Stiff'
 
-
-
+if __name__ == '__main__':
+    from mojo.utils import main_runner
+    job = main_runner.run_as_main(Job)
 
