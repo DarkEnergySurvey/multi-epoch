@@ -68,8 +68,11 @@ class Job(BaseJob):
         # 0. Pre-wash of inputs  ------------------------------------------------
         # WE WILL TRY TO MOVE THIS TO Input()
         # Make the list of extra command-line args into a dictionary
-        if self.ctx.mojo_execution_mode == 'job as script' and self.input.swarp_parameters:
-            self.ctx.swarp_parameters = utils.arglist2dict(self.input.swarp_parameters,separator='=')
+        if self.ctx.mojo_execution_mode == 'job as script':
+            if self.input.swarp_parameters:
+                self.ctx.swarp_parameters = utils.arglist2dict(self.input.swarp_parameters,separator='=')
+            else:
+                self.ctx.swarp_parameters = {}
 
         # Re-construct the names for the custom weights in case not present
         if not self.ctx.assoc.get('FILEPATH_LOCAL_WGT'): 

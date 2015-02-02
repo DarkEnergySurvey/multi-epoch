@@ -1,6 +1,8 @@
 
 """
 Set of utility functions used across different multi-epoch tasks
+Felipe Menanteau, NCSA Jan 2015.
+
 """
 
 # Check if database handle is in the context
@@ -59,3 +61,14 @@ def dict2arrays(dictionary):
     return dictionary
 
 
+def arglist2dict(inputlist,separator='='):
+    """
+    Re-shape a list of items ['VAL1=value1', 'VAL2=value2', etc]  into a dictionary
+    dict['VAL1'] = value1, dict['VAL2'] = values, etc
+    This is used to pass optional command-line argument option to the astromatic codes.
+    
+    We Re-pack as a dictionary the astromatic extras fron the command-line, if run as script
+    """
+    return dict( [ inputlist[index].split(separator) for index, item in enumerate(inputlist) ] )
+    
+    

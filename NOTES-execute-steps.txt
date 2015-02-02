@@ -26,6 +26,8 @@
  make_SWarp_weights.py DES2246-4457_ccdinfo_local.json --MP_weight 4 --weight_extension _wgt
 
  3.4)  Make the SWArp call to coadd the images
-call_SWarp_CustomWeights.py DES2246-4457_ccdinfo_local.json DES2246-4457_tileinfo.json --basename ~/TILEBUILDER_TEST/DES2246-4457_test --swarp_execution_mode execute
+call_SWarp_CustomWeights.py DES2246-4457_ccdinfo_local.json DES2246-4457_tileinfo.json --basename ~/TILEBUILDER_TEST/DES2246-4457_r01 --swarp_execution_mode execute
 
-call_SWarp_CustomWeights.py DES2246-4457_ccdinfo_local.json DES2246-4457_tileinfo.json --basename ~/TILEBUILDER_TEST/DES2246-4457_test --swarp_execution_mode tofile --swarp_parameters NTHREADS=8 COMBINE_TYPE=MEAN COPY_KEYWORDS=OBJECT,EXPTIME 
+call_SWarp_CustomWeights.py DES2246-4457_ccdinfo_local.json DES2246-4457_tileinfo.json --basename ~/TILEBUILDER_TEST/DES2246-4457_r01 --swarp_execution_mode tofile --swarp_parameters NTHREADS=8 COMBINE_TYPE=MEAN COPY_KEYWORDS=OBJECT,EXPTIME 
+
+call_SWarp_CustomWeights.py DES2246-4457_ccdinfo_local.json DES2246-4457_tileinfo.json --basename ~/TILEBUILDER_TEST/DES2246-4457_r01 --swarp_execution_mode execute --swarp_parameters NTHREADS=8 COMBINE_TYPE=MEAN COPY_KEYWORDS=OBJECT,EXPTIME 

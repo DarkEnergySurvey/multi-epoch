@@ -25,12 +25,10 @@ def set_tile_directory(ctx,outputpath='./TILEBUILDER'):
     if not os.path.exists(ctx.auxdir):
         print "# Creating directory: %s" % ctx.auxdir
         os.makedirs(ctx.auxdir)
-
     if not os.path.exists(ctx.logdir):
         print "# Creating directory: %s" % ctx.logdir
         os.makedirs(ctx.logdir)
-    #else:
-    #    print "# Will write output files to: %s" % ctx.basedir
+
     return ctx
 
 def get_local_weight_names(filepath_local,wgt_ext):
