@@ -92,6 +92,7 @@ class Job(BaseJob):
         return
 
 
+    # MODIFY to use utils. get_local_weight_names(filepath_local,wgt_ext) instead
     def set_weight_names_and_args(self,wgt_ext,clobber):
 
         """ Set up the names for the weights and the args for the
@@ -101,8 +102,8 @@ class Job(BaseJob):
         """
 
         Nfiles = len(self.ctx.assoc['FILEPATH_LOCAL'])
-        self.ctx.assoc['FILEPATH_LOCAL_WGT'] = []  # FELIPE: CHECK if we still need this
-
+        # Get the weight names
+        self.ctx.assoc['FILEPATH_LOCAL_WGT'] = contextDefs.get_local_weight_names(self.ctx.assoc['FILEPATH_LOCAL'],wgt_ext)
         # A shortcut
         filepath_local = self.ctx.assoc['FILEPATH_LOCAL']
 
@@ -111,7 +112,7 @@ class Job(BaseJob):
         for k in range(Nfiles):
             basename  = filepath_local[k].split(".fits")[0] 
             extension = filepath_local[k].split(".fits")[1:]
-            local_wgt = "%s%s.fits" % (basename,wgt_ext)
+            local_wgt = self.ctx.assoc['FILEPATH_LOCAL_WGT'][k]
             local_sci = self.ctx.assoc['FILEPATH_LOCAL'][k]
             self.ctx.assoc['FILEPATH_LOCAL_WGT'].append(local_wgt) 
 

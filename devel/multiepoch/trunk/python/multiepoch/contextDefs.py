@@ -3,7 +3,6 @@
 Set of functions to add defintions to the context
 """
 
-
 def set_tile_directory(ctx,outputpath='./TILEBUILDER'):
 
     """ Se the output directory for the TILE to be built"""
@@ -34,14 +33,12 @@ def set_tile_directory(ctx,outputpath='./TILEBUILDER'):
     #    print "# Will write output files to: %s" % ctx.basedir
     return ctx
 
-def get_local_weight_names(ctx,wgt_ext):
+def get_local_weight_names(filepath_local,wgt_ext):
 
     """
     A common method to define the local weight names based on
-    FILEPATH_LOCAL passed in the ctx, and wgt_ext
+    FILEPATH_LOCAL and wgt_ext
     """
-    # A shortcut
-    filepath_local = ctx.assoc['FILEPATH_LOCAL']
     Nfiles = len(filepath_local)
     # Define the wgt local filenames
     filepath_local_wgt = []
@@ -85,7 +82,6 @@ def set_BANDS(ctx,detname='det',detBANDS=[], force=False):
     return ctx
 
 def set_SWarp_output_names(ctx,detname='det'):
-
 
     """ Add SWarp output names to the context in case they are not present """
 

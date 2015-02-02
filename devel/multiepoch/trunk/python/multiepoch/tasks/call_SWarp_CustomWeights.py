@@ -64,10 +64,9 @@ class Job(BaseJob):
                 raise IO_ValidationError(mess)
 
     def run(self):
-
         
         # 0. Pre-wash of inputs  ------------------------------------------------
-        # MICHAEL: Can we move them to Input()
+        # WE WILL TRY TO MOVE THIS TO Input()
         # Re-pack as a dictionary the swarp_parameters fron the command-line, if run as script
         # Make the list into a dictionary
         if self.ctx.mojo_execution_mode == 'job as script' and self.input.swarp_parameters:
@@ -77,7 +76,8 @@ class Job(BaseJob):
         # Re-construct the names for the custom weights in case not present
         if not self.ctx.assoc.get('FILEPATH_LOCAL_WGT'): 
             print "# Re-consrtuncting FILEPATH_LOCAL_WGT to ctx.assoc"
-            self.ctx.assoc['FILEPATH_LOCAL_WGT'] = contextDefs.get_local_weight_names(self.ctx,self.ctx.weight_extension)
+            self.ctx.assoc['FILEPATH_LOCAL_WGT'] = contextDefs.get_local_weight_names(self.ctx.assoc['FILEPATH_LOCAL'],
+                                                                                      self.ctx.weight_extension)
         # Re-cast the ctx.assoc as dictionary of arrays instead of lists
         self.ctx.assoc  = utils.dict2arrays(self.ctx.assoc)
         # Make sure we set up the output dir
