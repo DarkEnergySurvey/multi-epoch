@@ -12,7 +12,9 @@ import subprocess
 import multiprocessing
 import time
 from despymisc.miscutils import elapsed_time
-from despymisc.subprocess_utils import work_subprocess_logging
+
+import multiepoch.utils as utils
+import multiepoch.contextDefs as contextDefs
 
 
 # JOB INTERNAL CONFIGURATION
@@ -31,7 +33,6 @@ class Job(BaseJob):
     - self.ctx.cat[BAND]
 
     """
-
 
 
     class Input(IO):
@@ -65,9 +66,28 @@ class Job(BaseJob):
 
     def run(self):
 
-        # 0. Do we want full MP SEx
-        MP = self.ctx.get('MP_SEx', False)
 
+        # 0. Pre-wash of inputs  ------------------------------------------------
+        # WE WILL TRY TO MOVE THIS TO Input()
+        # Make the list of extra command-line args into a dictionary
+        if self.ctx.mojo_execution_mode == 'job as script':
+            if self.input.SExDual_parameters:
+                self.ctx.SExDual_parameters = utils.arglist2dict(self.input.SExDual_parameters,separator='=')
+            else:
+                self.ctx.SExDual_parameters = {}
+
+        # Re-cast the ctx.assoc as dictionary of arrays instead of lists
+        self.ctx.assoc  = utils.dict2arrays(self.ctx.assoc)
+        # Make sure we set up the output dir
+        self.ctx = contextDefs.set_tile_directory(self.ctx)
+        # 1. set up names -----------------------------------------------------
+        # 1a. Get the BANDs information in the context if they are not present
+        self.ctx = contextDefs.set_BANDS(self.ctx)
+        # 1b. Get the output names for SWarp
+        self.ctx = contextDefs.set_SWarp_output_names(self.ctx)
+        # 1c. Get the outnames for the catalogs
+        self.ctx = contextDefs.setCatNames(self.ctx)
+        # ---------------------------------------------------------
         # 1. get the update SEx parameters for dual detection  --
         SExDual_parameters = self.ctx.get('SExDual_parameters', {})
 
@@ -85,6 +105,7 @@ class Job(BaseJob):
                 print ' '.join(cmd_list[band])
 
         elif executione_mode == 'execute':
+            MP = self.ctx.MP_SEx # MP or single Processs
             self.runSExDual(cmd_list,MP=MP)
         else:
             raise ValueError('Execution mode %s not implemented.' % executione_mode)
@@ -94,9 +115,9 @@ class Job(BaseJob):
 
         """ Write the SEx psf call to a file """
 
-        bkline  = self.ctx.get('breakline',self.BKLINE)
+        bkline  = self.ctx.get('breakline',BKLINE)
         # The file where we'll write the commands
-        cmdfile = self.ctx.get('cmdfile', os.path.join(self.ctx.tiledir,"call_SExDual_%s.cmd" % self.ctx.tilename))
+        cmdfile = self.ctx.get('cmdfile', "%s_call_SExDual.cmd" % self.ctx.basename)
         print "# Will write SExDual call to: %s" % cmdfile
         with open(cmdfile, 'w') as fid:
             for band in self.ctx.BANDS:
@@ -107,42 +128,38 @@ class Job(BaseJob):
 
     def runSExDual(self,cmd_list,MP=False):
 
-        t0 = time.time()
         print "# Will proceed to run the SEx psf call now:"
-
-        # Case A ---- single process MP is False
-        if not MP:
-            logfile = self.ctx.get('logfile', os.path.join(self.ctx.tiledir,"SExDual_%s.log" % self.ctx.tilename))
+        t0 = time.time()
+        NP = utils.get_NP(MP) # Figure out NP to use, 0=automatic
+        
+        # Case A -- NP=1
+        if NP == 1:
+            logfile = self.ctx.get('SExDual_logfile',  os.path.join(self.ctx.logdir,"%s_SExDual.log" % self.ctx.filepattern))
             log = open(logfile,"w")
             print "# Will write to logfile: %s" % logfile
 
             for band in self.ctx.dBANDS:
                 t1 = time.time()
                 cmd  = ' '.join(cmd_list[band])
-                print "# Executing SEx/psf for tile:%s, BAND:%s" % (self.ctx.tilename,band)
+                print "# Executing SExDual for BAND:%s" % band
                 print "# %s " % cmd
-                subprocess.call(cmd,shell=True,stdout=log, stderr=log)
+                #status = subprocess.call(cmd,shell=True,stdout=log, stderr=log)
+                #if status > 0:
+                #    raise RuntimeError("\n***\nERROR while running SExDual, check logfile: %s\n***" % logfile)
                 print "# Done band %s in %s\n" % (band,elapsed_time(t1))
             
-        # Case B -- multi-process MP true or interger to decide number of processor to use
+        # Case B -- multi-process in case NP > 1
         else:
-            if type(MP) is bool:
-                NP = multiprocessing.cpu_count()
-            elif type(MP) is int:
-                NP = MP
-            else:
-                raise ValueError('MP is wrong type: %s, must be bool or integer type' % MP)
-
             print "# Will Use %s processors" % NP
             cmds = []
             logs = []
             for band in self.ctx.BANDS:
                 cmds.append(' '.join(cmd_list[band]))
-                logfile = os.path.join(self.ctx.tiledir,"SExDual_%s_%s.log" % (self.ctx.tilename,band))
+                logfile = os.path.join(self.ctx.logdir,"%s_%s_SExDual.log" % (self.ctx.filepattern,band))
                 logs.append(logfile)
                 
             pool = multiprocessing.Pool(processes=NP)
-            pool.map(work_subprocess_logging, zip(cmds,logs))
+            pool.map(utils.work_subprocess_logging, zip(cmds,logs))
 
         print "# Total SExtractor Dual time %s" % elapsed_time(t0)
         return
@@ -187,7 +204,7 @@ class Job(BaseJob):
 
         SExDual_cmd = {}
         # Loop over all bands 
-        dBAND = self.ctx.detBAND
+        dBAND = self.ctx.get('detBAND','det')  ### PLEASE REVISE HOW WE PASS DET
         for BAND in self.ctx.BANDS:
             
             pars['MAG_ZEROPOINT']   =  30.0000 
@@ -198,7 +215,7 @@ class Job(BaseJob):
             
             # Build the call for the band, using dband as detection image
             cmd = []
-            cmd.append("%s" % self.SEX_EXE)
+            cmd.append("%s" % SEX_EXE)
             cmd.append("%s,%s" % (self.ctx.comb_sci[dBAND],self.ctx.comb_sci[BAND]))
             cmd.append("-c %s" % sex_conf)
             for param,value in pars.items():
@@ -212,3 +229,6 @@ class Job(BaseJob):
         return 'Creates the SExtractor call for dual detection'
 
 
+if __name__ == '__main__':
+    from mojo.utils import main_runner
+    job = main_runner.run_as_main(Job)
