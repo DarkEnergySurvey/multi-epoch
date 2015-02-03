@@ -1,4 +1,12 @@
+#!/usr/bin/env python
+
+
+# Mojo imports
 from mojo.jobs.base_job import BaseJob
+from traitlets import Unicode, Bool, Float, Int, CUnicode, CBool, CFloat, CInt, Instance, Dict, List, Integer
+from mojo.jobs.base_job import BaseJob, IO, IO_ValidationError
+from mojo.context import ContextProvider
+
 import os
 import sys
 import subprocess
@@ -14,17 +22,18 @@ class Job(BaseJob):
 
     Inputs:
     - self.ctx.comb_sci
-
     Outputs:
     - self.ctx.psfcat
-
     """
 
     # JOB INTERNAL CONFIGURATION
     SEX_EXE = 'sex'
     BKLINE = "\\\n"
 
-    def __call__(self):
+    class Input(IO):
+
+
+    def run(self):
 
         # 0. Do we want full MP SEx
         MP = self.ctx.get('MP_SEx', False)
