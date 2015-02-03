@@ -1,4 +1,11 @@
+#!/usr/bin/env python
+
+# Mojo imports
 from mojo.jobs.base_job import BaseJob
+from traitlets import Unicode, Bool, Float, Int, CUnicode, CBool, CFloat, CInt, Instance, Dict, List, Integer
+from mojo.jobs.base_job import BaseJob, IO, IO_ValidationError
+from mojo.context import ContextProvider
+
 import os
 import sys
 import subprocess
@@ -6,6 +13,11 @@ import multiprocessing
 import time
 from despymisc.miscutils import elapsed_time
 from despymisc.subprocess_utils import work_subprocess_logging
+
+
+# JOB INTERNAL CONFIGURATION
+SEX_EXE = 'sex'
+BKLINE = "\\\n"
 
 class Job(BaseJob):
 
@@ -20,11 +32,38 @@ class Job(BaseJob):
 
     """
 
-    # JOB INTERNAL CONFIGURATION
-    SEX_EXE = 'sex'
-    BKLINE = "\\\n"
 
-    def __call__(self):
+
+    class Input(IO):
+
+        """
+        SExtractor call for catalog creation
+        """
+
+        ######################
+        # Required inputs
+        # 1. Association file and assoc dictionary
+        assoc      = Dict(None,help="The Dictionary containing the association file",
+                          argparse=False)
+        assoc_file = CUnicode('',help="Input association file with CCDs information",
+                              input_file=True,
+                              argparse={ 'argtype': 'positional', })
+        # Optional Arguments
+        basename               = CUnicode("",help="Base Name for coadd fits files in the shape: COADD_BASENAME_$BAND.fits")
+        SExDual_execution_mode = CUnicode("tofile",help="Stiff excution mode",
+                                          argparse={'choices': ('tofile','dryrun','execute')})
+        SExDual_parameters      = List([],help="A list of parameters to pass to SExtractor",
+                                       argparse={'nargs':'+',})
+        MP_SEx        = CInt(1,help="run using multi-process, 0=automatic, 1=single-process [default]")
+
+        def _validate_conditional(self):
+            # if in job standalone mode json
+            if self.mojo_execution_mode == 'job as script' and self.basename == "":
+                mess = 'If job is run standalone basename cannot be ""'
+                raise IO_ValidationError(mess)
+
+
+    def run(self):
 
         # 0. Do we want full MP SEx
         MP = self.ctx.get('MP_SEx', False)

@@ -35,8 +35,56 @@ class Job(BaseJob):
 
     """
 
+    class Input(IO):
+
+        """
+        The psfex call for the multi-epoch pipeline runs psfex on coadd images and detection image
+        """
+
+        ######################
+        # Required inputs
+        # 1. Association file and assoc dictionary
+        assoc      = Dict(None,help="The Dictionary containing the association file",
+                          argparse=False)
+        assoc_file = CUnicode('',help="Input association file with CCDs information",
+                              input_file=True,
+                              argparse={ 'argtype': 'positional', })
+        # Optional Arguments
+        basename               = CUnicode("",help="Base Name for coadd fits files in the shape: COADD_BASENAME_$BAND.fits")
+        psfex_execution_mode  = CUnicode("tofile",help="Stiff excution mode",
+                                          argparse={'choices': ('tofile','dryrun','execute')})
+        psfex_parameters       = List([],help="A list of parameters to pass to SExtractor",
+                                       argparse={'nargs':'+',})
+        def _validate_conditional(self):
+            # if in job standalone mode json
+            if self.mojo_execution_mode == 'job as script' and self.basename == "":
+                mess = 'If job is run standalone basename cannot be ""'
+                raise IO_ValidationError(mess)
+
 
     def run(self):
+
+        # 0. Pre-wash of inputs  ------------------------------------------------
+        # WE WILL TRY TO MOVE THIS TO Input()
+        # Make the list of extra command-line args into a dictionary
+        if self.ctx.mojo_execution_mode == 'job as script':
+            if self.input.psfex_parameters:
+                self.ctx.psfex_parameters = utils.arglist2dict(self.input.psfex_parameters,separator='=')
+            else:
+                self.ctx.psfex_parameters = {}
+
+        # Re-cast the ctx.assoc as dictionary of arrays instead of lists
+        self.ctx.assoc  = utils.dict2arrays(self.ctx.assoc)
+        # Make sure we set up the output dir
+        self.ctx = contextDefs.set_tile_directory(self.ctx)
+        # 1. set up names -----------------------------------------------------
+        # 1a. Get the BANDs information in the context if they are not present
+        self.ctx = contextDefs.set_BANDS(self.ctx)
+        # 1b. Get the output names for SWarp
+        self.ctx = contextDefs.set_SWarp_output_names(self.ctx)
+        # 1c. Get the outnames for the catalogs
+        self.ctx = contextDefs.setCatNames(self.ctx)
+        # ---------------------------------------------------------
 
         # 1. get the update SEx parameters for psf --
         psfex_parameters = self.ctx.get('psfex_parameters', {})
@@ -64,9 +112,9 @@ class Job(BaseJob):
 
         """ Write the psfex call to a file """
 
-        bkline  = self.ctx.get('breakline',self.BKLINE)
+        bkline  = self.ctx.get('breakline',BKLINE)
         # The file where we'll write the commands
-        cmdfile = self.ctx.get('cmdfile', os.path.join(self.ctx.tiledir,"call_psfex_%s.cmd" % self.ctx.tilename))
+        cmdfile = self.ctx.get('cmdfile', "%s_call_psfex.cmd" % self.ctx.basename)
         print "# Will write psfex call to: %s" % cmdfile
         with open(cmdfile, 'w') as fid:
             for band in self.ctx.dBANDS:
@@ -79,21 +127,21 @@ class Job(BaseJob):
 
         t0 = time.time()
         print "# Will proceed to run the psfex call now:"
-
-        logfile = self.ctx.get('logfile', os.path.join(self.ctx.tiledir,"SExpsf_%s.log" % self.ctx.tilename))
+        logfile = self.ctx.get('SExpsf_logfile',  os.path.join(self.ctx.logdir,"%s_psfex.log" % self.ctx.filepattern))
         log = open(logfile,"w")
         print "# Will write to logfile: %s" % logfile
 
         for band in self.ctx.dBANDS:
             t1 = time.time()
             cmd  = ' '.join(cmd_list[band])
-            print "# Executing SEx/psf for tile:%s, BAND:%s" % (self.ctx.tilename,band)
+            print "# Executing psfex for BAND:%s" % band
             print "# %s " % cmd
-            subprocess.call(cmd,shell=True,stdout=log, stderr=log)
+            status = subprocess.call(cmd,shell=True,stdout=log, stderr=log)
+            if status > 0:
+                raise RuntimeError("\n***\nERROR while running psfex, check logfile: %s\n***" % logfile)
             print "# Done band %s in %s\n" % (band,elapsed_time(t1))
         print "# Total psfex time %s" % elapsed_time(t0)
         return
-
 
     def get_psfex_parameter_set(self,**kwargs):
 
@@ -124,7 +172,7 @@ class Job(BaseJob):
             pars['XML_NAME'] = self.ctx.psfexxml[BAND]
             # Build the call
             cmd = []
-            cmd.append("%s" % self.PSFEX_EXE)
+            cmd.append("%s" % PSFEX_EXE)
             cmd.append("%s" % self.ctx.psfcat[BAND])
             cmd.append("-c %s" % psfex_conf)
             for param,value in pars.items():
@@ -138,3 +186,6 @@ class Job(BaseJob):
 
 
 
+if __name__ == '__main__':
+    from mojo.utils import main_runner
+    job = main_runner.run_as_main(Job)
