@@ -122,12 +122,11 @@ class Job(BaseJob):
 
     def runSExpsf(self,cmd_list,MP):
 
-        t0 = time.time()
         print "# Will proceed to run the SEx psf call now:"
-
+        t0 = time.time()
         NP = utils.get_NP(MP) # Figure out NP to use, 0=automatic
         
-        # Case A ---- single process MP is False
+        # Case A -- NP=1
         if NP == 1:
             logfile = self.ctx.get('SExpsf_logfile',  os.path.join(self.ctx.logdir,"%s_SExpsf.log" % self.ctx.filepattern))
             log = open(logfile,"w")
