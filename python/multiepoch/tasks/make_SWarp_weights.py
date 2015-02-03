@@ -140,7 +140,6 @@ class Job(BaseJob):
         N = len(args)
         if N > 0 and MP:
             NP = utils.get_NP(MP) # Figure out NP to use, 0=automatic
-            
             print "# Will create weights multi-process using %s processor(s)" % NP
             pool = multiprocessing.Pool(processes=NP)
             pool.map(modify_weight, args)
@@ -173,7 +172,6 @@ def modify_weight(args):
     Simple call to modify weight image, based on a bitmask that
     can be called from multiprocess
     """
-
     # Get the start time
     t0 = time.time()
     desfits = DESFITS(fileName,outName,clobber=clobber)

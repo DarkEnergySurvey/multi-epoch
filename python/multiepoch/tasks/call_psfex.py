@@ -1,9 +1,25 @@
+#!/usr/bin/env python
+
+
+# Mojo imports
 from mojo.jobs.base_job import BaseJob
+from traitlets import Unicode, Bool, Float, Int, CUnicode, CBool, CFloat, CInt, Instance, Dict, List, Integer
+from mojo.jobs.base_job import BaseJob, IO, IO_ValidationError
+from mojo.context import ContextProvider
+
 import os
 import sys
 import time
 import subprocess
 from despymisc.miscutils import elapsed_time
+
+import multiepoch.utils as utils
+import multiepoch.contextDefs as contextDefs
+
+
+# JOB INTERNAL CONFIGURATION
+PSFEX_EXE = 'psfex'
+BKLINE = "\\\n"
 
 class Job(BaseJob):
 
@@ -19,12 +35,8 @@ class Job(BaseJob):
 
     """
 
-    # JOB INTERNAL CONFIGURATION
-    PSFEX_EXE = 'psfex'
-    BKLINE = "\\\n"
 
-    def __call__(self):
-
+    def run(self):
 
         # 1. get the update SEx parameters for psf --
         psfex_parameters = self.ctx.get('psfex_parameters', {})

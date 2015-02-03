@@ -47,12 +47,12 @@ class Job(BaseJob):
                               argparse={ 'argtype': 'positional', })
 
         # Optional Arguments
-        basename         = CUnicode("",help="Base Name for coadd fits files in the shape: COADD_BASENAME_$BAND.fits")
+        basename              = CUnicode("",help="Base Name for coadd fits files in the shape: COADD_BASENAME_$BAND.fits")
         stiff_execution_mode  = CUnicode("tofile",help="Stiff excution mode",
                                          argparse={'choices': ('tofile','dryrun','execute')})
         stiff_parameters = List([],help="A list of parameters to pass to Stiff",
                                 argparse={'nargs':'+',})
-
+        
         def _validate_conditional(self):
             # if in job standalone mode json
             if self.mojo_execution_mode == 'job as script' and self.basename == "":

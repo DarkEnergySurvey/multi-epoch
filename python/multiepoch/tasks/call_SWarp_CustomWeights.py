@@ -146,7 +146,7 @@ class Job(BaseJob):
             print "# %s " % cmd
             status = subprocess.call(cmd,shell=True,stdout=log, stderr=log)
             if status > 0:
-                sys.exit("***\nERROR while running SWArp, check logfile: %s\n***" % logfile)
+                raise RuntimeError("\n***\nERROR while running SWarp, check logfile: %s\n***" % logfile)
             print "# Done in %s\n" % elapsed_time(t1)
 
             t2 = time.time()
@@ -155,7 +155,7 @@ class Job(BaseJob):
             print "# %s " % cmd
             status = subprocess.call(cmd,shell=True,stdout=log, stderr=log)
             if status > 0:
-                sys.exit("***\nERROR while running SWArp, check logfile: %s\n***" % logfile)
+                raise RuntimeError("\n***\nERROR while running SWarp, check logfile: %s\n***" % logfile)
             print "# Done in %s\n" % elapsed_time(t2)
 
         print "# Total SWarp time %s" % elapsed_time(t0)

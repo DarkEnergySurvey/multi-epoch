@@ -79,15 +79,19 @@ def set_BANDS(ctx,detname='det',detBANDS=[], force=False):
         print "# BANDs already setup -- Skipping"
     return ctx
 
-def set_SWarp_output_names(ctx,detname='det'):
+def set_SWarp_output_names(ctx,detname='det',force=False):
 
     """ Add SWarp output names to the context in case they are not present """
 
-    # Make sure that bands have been set
-    ctx = set_BANDS(ctx,detname)
 
-    if not ctx.get('comb_sci') or not ctx.get('comb_wgt'):
-        
+    # Only add if not in context or forced
+    if not ctx.get('swarp_names') or force:
+
+        print "# Setting the SWarp output names to the context"
+
+        # Make sure that bands have been set
+        ctx = set_BANDS(ctx,detname)
+
         # SWarp outputs per filer
         ctx.comb_sci      = {} # SWarp coadded science images
         ctx.comb_wgt      = {} # SWarp coadded weight images
@@ -97,12 +101,51 @@ def set_SWarp_output_names(ctx,detname='det'):
         # Loop over bands
         for BAND in ctx.dBANDS:
             # SWarp outputs names
-            ctx.comb_sci[BAND]     = "%s_%s_sci.fits" %  (ctx.basename, BAND)
-            ctx.comb_wgt[BAND]     = "%s_%s_wgt.fits" %  (ctx.basename, BAND)
+            ctx.comb_sci[BAND]     = "%s_%s_sci.fits"     %  (ctx.basename, BAND)
+            ctx.comb_wgt[BAND]     = "%s_%s_wgt.fits"     %  (ctx.basename, BAND)
             # temporary files need for dual-run -- to be removed
             ctx.comb_sci_tmp[BAND] = "%s_%s_sci_tmp.fits" %  (ctx.basename, BAND)
             ctx.comb_wgt_tmp[BAND] = "%s_%s_wgt_tmp.fits" %  (ctx.basename, BAND)
+
+        ctx.swarp_names = True
     else:
-        print "# SWarp output names already in the context"
+        print "# SWarp output names already in the context -- Skipping"
+
+    return ctx
+
+
+def setCatNames(ctx,detname='det',force=False):
+
+    """ Set the names for input/ouput for psfex/Sextractor calls"""
+
+    # Only add if not in context or forced
+    if not ctx.get('cat_names') or force:
+
+        print "# Setting the output names for SExPSF/psfex and SExDual and adding them to the context"
+        # Make sure that bands have been set
+        ctx = set_BANDS(ctx,detname)
+        
+        # SExPSF
+        ctx.psfcat = {}
+        ctx.psf    = {}
+        # PsfCall
+        ctx.psfexxml = {}
+        # SExDual
+        ctx.checkimage = {}
+        ctx.cat = {}
+        for BAND in ctx.dBANDS:
+            # SExPSF
+            ctx.psf[BAND]       = "%s_%s_psfcat.psf"  %  (ctx.basename, BAND)
+            ctx.psfcat[BAND]    = "%s_%s_psfcat.fits" %  (ctx.basename, BAND)
+            # psfex
+            ctx.psfexxml[BAND]  = "%s_%s_psfex.xml"   %  (ctx.basename, BAND)
+            # SExDual
+            ctx.cat[BAND]       = "%s_%s_cat.fits"    %  (ctx.basename, BAND)
+            ctx.checkimage[BAND]= "%s_%s_seg.fits"    %  (ctx.basename, BAND)
+
+        print "# Done with Catalogs names"
+        ctx.cat_names = True
+    else:
+        print "# Catalogs output names already in the context -- Skipping"
 
     return ctx
