@@ -1,6 +1,5 @@
 #!/usr/bin/env python
 
-
 # Mojo imports
 from mojo.jobs.base_job import BaseJob
 from traitlets import Unicode, Bool, Float, Int, CUnicode, CBool, CFloat, CInt, Instance, Dict, List, Integer
