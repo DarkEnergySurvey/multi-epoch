@@ -70,5 +70,31 @@ def arglist2dict(inputlist,separator='='):
     We Re-pack as a dictionary the astromatic extras fron the command-line, if run as script
     """
     return dict( [ inputlist[index].split(separator) for index, item in enumerate(inputlist) ] )
-    
-    
+
+
+"""
+A collection of utilities to call subprocess from multiprocess in python.
+F. Menanteau, NCSA, Dec 2014
+"""
+
+def work_subprocess(cmd):
+
+    import subprocess
+    """ Dummy function to call in multiprocess with shell=True """
+    return subprocess.call(cmd,shell=True) 
+
+def work_subprocess_logging(tup):
+
+    import subprocess
+    """
+    Dummy function to call in multiprocess with shell=True and a
+    logfile using a tuple as inputs
+    """
+    cmd,logfile = tup
+    log = open(logfile,"w")
+    print "# Will write to logfile: %s" % logfile
+
+    status = subprocess.call(cmd,shell=True ,stdout=log, stderr=log)
+    if status > 0:
+        raise RuntimeError("\n***\nERROR while running SExpsf, check logfile: %s\n***" % logfile)
+    return status

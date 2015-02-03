@@ -9,11 +9,18 @@ from mojo.context import ContextProvider
 
 import os
 import sys
+import time
 import subprocess
 import multiprocessing
-import time
 from despymisc.miscutils import elapsed_time
-from despymisc.subprocess_utils import work_subprocess_logging
+
+import multiepoch.utils as utils
+import multiepoch.contextDefs as contextDefs
+
+
+# JOB INTERNAL CONFIGURATION
+SEX_EXE = 'sex'
+BKLINE = "\\\n"
 
 class Job(BaseJob):
 
@@ -26,18 +33,56 @@ class Job(BaseJob):
     - self.ctx.psfcat
     """
 
-    # JOB INTERNAL CONFIGURATION
-    SEX_EXE = 'sex'
-    BKLINE = "\\\n"
-
     class Input(IO):
 
+        """ SExtractor call to psfex"""
 
+        ######################
+        # Required inputs
+        # 1. Association file and assoc dictionary
+        assoc      = Dict(None,help="The Dictionary containing the association file",
+                          argparse=False)
+        assoc_file = CUnicode('',help="Input association file with CCDs information",
+                              input_file=True,
+                              argparse={ 'argtype': 'positional', })
+        # Optional Arguments
+        basename               = CUnicode("",help="Base Name for coadd fits files in the shape: COADD_BASENAME_$BAND.fits")
+        SExpsf_execution_mode  = CUnicode("tofile",help="Stiff excution mode",
+                                          argparse={'choices': ('tofile','dryrun','execute')})
+        SExpsf_parameters       = List([],help="A list of parameters to pass to SExtractor",
+                                       argparse={'nargs':'+',})
+        MP_SEx        = CInt(1,help="run using multi-process, 0=automatic, 1=single-process [default]")
+
+        def _validate_conditional(self):
+            # if in job standalone mode json
+            if self.mojo_execution_mode == 'job as script' and self.basename == "":
+                mess = 'If job is run standalone basename cannot be ""'
+                raise IO_ValidationError(mess)
+            
     def run(self):
 
-        # 0. Do we want full MP SEx
-        MP = self.ctx.get('MP_SEx', False)
 
+        # 0. Pre-wash of inputs  ------------------------------------------------
+        # WE WILL TRY TO MOVE THIS TO Input()
+        # Make the list of extra command-line args into a dictionary
+        if self.ctx.mojo_execution_mode == 'job as script':
+            if self.input.SExpsf_parameters:
+                self.ctx.SExpsf_parameters = utils.arglist2dict(self.input.SExpsf_parameters,separator='=')
+            else:
+                self.ctx.SExpsf_parameters = {}
+
+        # Re-cast the ctx.assoc as dictionary of arrays instead of lists
+        self.ctx.assoc  = utils.dict2arrays(self.ctx.assoc)
+        # Make sure we set up the output dir
+        self.ctx = contextDefs.set_tile_directory(self.ctx)
+        # 1. set up names -----------------------------------------------------
+        # 1a. Get the BANDs information in the context if they are not present
+        self.ctx = contextDefs.set_BANDS(self.ctx)
+        # 1b. Get the output names for SWarp
+        self.ctx = contextDefs.set_SWarp_output_names(self.ctx)
+        # 1c. Get the outnames for the catalogs
+        self.ctx = contextDefs.setCatNames(self.ctx)
+        # ---------------------------------------------------------
         # 1. get the update SEx parameters for psf --
         SExpsf_parameters = self.ctx.get('SExpsf_parameters', {})
 
@@ -55,6 +100,7 @@ class Job(BaseJob):
                 print ' '.join(cmd_list[band])
 
         elif executione_mode == 'execute':
+            MP = self.ctx.MP_SEx # MP or single Processs
             self.runSExpsf(cmd_list,MP=MP)
         else:
             raise ValueError('Execution mode %s not implemented.' % executione_mode)
@@ -64,9 +110,9 @@ class Job(BaseJob):
 
         """ Write the SEx psf call to a file """
 
-        bkline  = self.ctx.get('breakline',self.BKLINE)
+        bkline  = self.ctx.get('breakline',BKLINE)
         # The file where we'll write the commands
-        cmdfile = self.ctx.get('cmdfile', os.path.join(self.ctx.tiledir,"call_SExpsf_%s.cmd" % self.tilename))
+        cmdfile = self.ctx.get('cmdfile', "%s_call_SExpsf.cmd" % self.ctx.basename)
         print "# Will write SExpsf call to: %s" % cmdfile
         with open(cmdfile, 'w') as fid:
             for band in self.ctx.dBANDS:
@@ -75,44 +121,40 @@ class Job(BaseJob):
         return
 
 
-    def runSExpsf(self,cmd_list,MP=False):
+    def runSExpsf(self,cmd_list,MP):
 
         t0 = time.time()
         print "# Will proceed to run the SEx psf call now:"
 
+        NP = utils.get_NP(MP) # Figure out NP to use, 0=automatic
+        
         # Case A ---- single process MP is False
-        if not MP:
-            logfile = self.ctx.get('logfile', os.path.join(self.ctx.tiledir,"SExpsf_%s.log" % self.ctx.tilename))
+        if NP == 1:
+            logfile = self.ctx.get('SExpsf_logfile',  os.path.join(self.ctx.logdir,"%s_SExpsf.log" % self.ctx.filepattern))
             log = open(logfile,"w")
             print "# Will write to logfile: %s" % logfile
-
             for band in self.ctx.dBANDS:
                 t1 = time.time()
                 cmd  = ' '.join(cmd_list[band])
-                print "# Executing SEx/psf for tile:%s, BAND:%s" % (self.ctx.tilename,band)
+                print "# Executing SEx/psf for BAND:%s" % band
                 print "# %s " % cmd
-                subprocess.call(cmd,shell=True,stdout=log, stderr=log)
+                status = subprocess.call(cmd,shell=True,stdout=log, stderr=log)
+                if status > 0:
+                    raise RuntimeError("\n***\nERROR while running SExpsf, check logfile: %s\n***" % logfile)
                 print "# Done band %s in %s\n" % (band,elapsed_time(t1))
             
-        # Case B -- multi-process MP true or interger to decide number of processor to use
+        # Case B -- multi-process in case NP > 1
         else:
-            if type(MP) is bool:
-                NP = multiprocessing.cpu_count()
-            elif type(MP) is int:
-                NP = MP
-            else:
-                raise ValueError('MP is wrong type: %s, must be bool or integer type' % MP)
-
             print "# Will Use %s processors" % NP
             cmds = []
             logs = []
             for band in self.ctx.dBANDS:
                 cmds.append(' '.join(cmd_list[band]))
-                logfile = os.path.join(self.ctx.tiledir,"SExpsf_%s_%s.log" % (self.ctx.tilename,band))
+                logfile = os.path.join(self.ctx.logdir,"%s_%s_SExpsf.log" % (self.ctx.filepattern,band))
                 logs.append(logfile)
                 
             pool = multiprocessing.Pool(processes=NP)
-            pool.map(work_subprocess_logging, zip(cmds,logs))
+            pool.map(utils.work_subprocess_logging, zip(cmds,logs))
 
         print "# Total SEx psf time %s" % elapsed_time(t0)
         return
@@ -158,7 +200,7 @@ class Job(BaseJob):
             # Build the call
             
             cmd = []
-            cmd.append("%s" % self.SEX_EXE)
+            cmd.append("%s" % SEX_EXE)
             cmd.append("%s" % self.ctx.comb_sci[BAND])
             cmd.append("-c %s" % sex_conf)
             for param,value in pars.items():
@@ -170,5 +212,11 @@ class Job(BaseJob):
 
     def __str__(self):
         return 'Creates the SExtractor call for psf'
+
+
+if __name__ == '__main__':
+    from mojo.utils import main_runner
+    job = main_runner.run_as_main(Job)
+    
 
 
