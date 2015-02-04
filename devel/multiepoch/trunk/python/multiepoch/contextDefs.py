@@ -97,6 +97,7 @@ def set_SWarp_output_names(ctx,detname='det',force=False):
         ctx.comb_wgt      = {} # SWarp coadded weight images
         ctx.comb_sci_tmp  = {} # SWarp coadded temporary science images  -- to be removed later
         ctx.comb_wgt_tmp  = {} # SWarp coadded custom weight images -- to be removed
+        ctx.comb_MEF      = {} # SWarp coadded MEF files with SCI/WGT
 
         # Loop over bands
         for BAND in ctx.dBANDS:
@@ -106,6 +107,7 @@ def set_SWarp_output_names(ctx,detname='det',force=False):
             # temporary files need for dual-run -- to be removed
             ctx.comb_sci_tmp[BAND] = "%s_%s_sci_tmp.fits" %  (ctx.basename, BAND)
             ctx.comb_wgt_tmp[BAND] = "%s_%s_wgt_tmp.fits" %  (ctx.basename, BAND)
+            ctx.comb_MEF[BAND]     = "%s_%s.fits" %  (ctx.basename, BAND)
 
         ctx.swarp_names = True
     else:
