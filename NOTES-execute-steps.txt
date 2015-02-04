@@ -36,3 +36,5 @@
  call_psfex.py DES2246-4457_ccdinfo_local.json --basename ~/TILEBUILDER_TEST/DES2246-4457_r01 --psfex_execution_mode execute --psfex_parameters NTHREADS=8
 
  3.7) SEx Dual
+ call_SExDual.py DES2246-4457_ccdinfo_local.json --basename ~/TILEBUILDER_TEST/DES2246-4457_r01 --SExDual_execution_mode tofile --MP_SEx 6 --SExDual_parameters DETECT_MINAREA=9 DETECT_THRESH=1.2
+ call_SExDual.py DES2246-4457_ccdinfo_local.json --basename ~/TILEBUILDER_TEST/DES2246-4457_r01 --SExDual_execution_mode tofile --MP_SEx 6 --SExDual_parameters DETECT_MINAREA=9 DETECT_THRESH=1.2
