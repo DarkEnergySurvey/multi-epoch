@@ -129,17 +129,19 @@ class Job(BaseJob):
         self.ctx.assoc['FILEPATH_LOCAL_WGT'] = numpy.array(self.ctx.assoc['FILEPATH_LOCAL_WGT'])
         return args
 
-    def create_weights_for_SWarp(self,clobber,wgt_ext, MP):
+    def create_weights_for_SWarp(self,clobber,wgt_ext, MP=1):
 
         """ Run the custom weight files"""
 
         # Set up the names and get the args for the actual call
         args = self.set_weight_names_and_args(wgt_ext,clobber)
 
+        # Figure out NP to use, 0=automatic
+        NP = utils.get_NP(MP) 
+
         # Get ready to run if applicable
         N = len(args)
-        if N > 0 and MP:
-            NP = utils.get_NP(MP) # Figure out NP to use, 0=automatic
+        if N > 0 and NP!=1:
             print "# Will create weights multi-process using %s processor(s)" % NP
             pool = multiprocessing.Pool(processes=NP)
             pool.map(modify_weight, args)
@@ -166,12 +168,11 @@ class Job(BaseJob):
 
 def modify_weight(args):
 
-    fileName,outName,clobber = args
-
     """
     Simple call to modify weight image, based on a bitmask that
     can be called from multiprocess
     """
+    fileName,outName,clobber = args
     # Get the start time
     t0 = time.time()
     desfits = DESFITS(fileName,outName,clobber=clobber)
