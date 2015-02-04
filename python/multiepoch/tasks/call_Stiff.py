@@ -50,7 +50,11 @@ class Job(BaseJob):
         basename              = CUnicode("",help="Base Name for coadd fits files in the shape: COADD_BASENAME_$BAND.fits")
         stiff_execution_mode  = CUnicode("tofile",help="Stiff excution mode",
                                          argparse={'choices': ('tofile','dryrun','execute')})
-        stiff_parameters = List([],help="A list of parameters to pass to Stiff",
+
+#       stiff_parameters = List([],help="A list of parameters to pass to Stiff",
+#                               argparse={'nargs':'+',})
+        
+        stiff_parameters = Dict({},help="A list of parameters to pass to Stiff",
                                 argparse={'nargs':'+',})
         
         def _validate_conditional(self):
@@ -58,6 +62,10 @@ class Job(BaseJob):
             if self.mojo_execution_mode == 'job as script' and self.basename == "":
                 mess = 'If job is run standalone basename cannot be ""'
                 raise IO_ValidationError(mess)
+
+        def _argparse_postproc_stiff_parameters(self, v):
+            return utils.arglist2dict(v, separator='=')
+
 
     def run(self):
 
