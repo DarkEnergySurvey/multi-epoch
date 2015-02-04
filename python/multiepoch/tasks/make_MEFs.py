@@ -92,6 +92,9 @@ class Job(BaseJob):
             # Call it
             t0 = time.time()
             print "# Making MEF file for BAND:%s --> %s" % (BAND,outname)
+
+            # FELIPE: We need to modify the return of despyfits.makeMEF
+            # to WARN and not quit with error when the file exists
             despyfits.makeMEF(filenames=filenames,outname=outname,clobber=clobber,extnames=extnames)
             print "# Done in %s\n" % elapsed_time(t0)
 
