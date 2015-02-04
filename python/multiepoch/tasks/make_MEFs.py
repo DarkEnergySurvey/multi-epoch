@@ -1,36 +1,79 @@
-"""
+#!/usr/bin/env python
 
+# Mojo imports
+from mojo.jobs.base_job import BaseJob
+from traitlets import Unicode, Bool, Float, Int, CUnicode, CBool, CFloat, CInt, Instance, Dict, List, Integer
+from mojo.jobs.base_job import BaseJob, IO, IO_ValidationError
+from mojo.context import ContextProvider
 
-INPUTS:
-
- - selt.ctx.sci
- - selt.ctx.wgt
- - clobber_MED   : Defined local clobber (to self.ctx.clobber_MEF)
- - MP_MEF        : Run the process in MP
-
-OUTPUTS:
- - self.ctx.combMEF
-
-"""
+import multiepoch.utils as utils
+import multiepoch.contextDefs as contextDefs
 
 from mojo.jobs.base_job import BaseJob
 import os,sys
+
 from despymisc.miscutils import elapsed_time
 import despyfits
 import time
 import multiprocessing
 
+
+
 class Job(BaseJob):
 
-    def __call__(self):
+    """
+    INPUTS:
+    
+    - selt.ctx.sci
+    - selt.ctx.wgt
+    - clobber_MED   : Defined local clobber (to self.ctx.clobber_MEF)
+    - MP_MEF        : Run the process in MP
+    
+    OUTPUTS:
+    - self.ctx.combMEF
+    """
+
+
+    class Input(IO):
+        
+        """ Create MEF for the coadded fits files"""
+
+        ######################
+        # Required inputs
+        # 1. Association file and assoc dictionary
+        assoc      = Dict(None,help="The Dictionary containing the association file",
+                          argparse=False)
+        assoc_file = CUnicode('',help="Input association file with CCDs information",
+                              input_file=True,
+                              argparse={ 'argtype': 'positional', })
+        # Optional Arguments
+        basename     = CUnicode("",help="Base Name for coadd fits files in the shape: COADD_BASENAME_$BAND.fits")
+        clobber_MEF  = Bool(False, help="Cloober the existing MEF fits")
+
+        def _validate_conditional(self):
+            # if in job standalone mode json
+            if self.mojo_execution_mode == 'job as script' and self.basename == "":
+                mess = 'If job is run standalone basename cannot be ""'
+                raise IO_ValidationError(mess)
+
+    def run(self):
+
+        # 0. Pre-wash of inputs  ------------------------------------------------
+        # Re-cast the ctx.assoc as dictionary of arrays instead of lists
+        self.ctx.assoc  = utils.dict2arrays(self.ctx.assoc)
+        # Make sure we set up the output dir
+        self.ctx = contextDefs.set_tile_directory(self.ctx)
+        # 1. Set up names 
+        # 1a. Get the BANDs information in the context if they are not present
+        self.ctx = contextDefs.set_BANDS(self.ctx)
+        # 1b. Get the output names for SWarp
+        self.ctx = contextDefs.set_SWarp_output_names(self.ctx)
+        # 1c. Get the outnames for the catalogs
+        self.ctx = contextDefs.setCatNames(self.ctx)
+        # ---------------------------------------------------------
 
         t0 = time.time()
-
-        # Get all of the relevant kwargs
-        kwargs = self.ctx.get_kwargs_dict()
-        clobber = kwargs.get('clobber_MEF', False)
-
-        self.create_MEFs(clobber)
+        self.create_MEFs(self.ctx.clobber_MEF)
         print "# MEFs Creation Total time: %s" % elapsed_time(t0)
         return
 
@@ -38,15 +81,14 @@ class Job(BaseJob):
 
         """ Create the MEF files using despyfits"""
 
-        self.ctx.combMEF = {}
         for BAND in self.ctx.dBANDS:
 
             # Inputs
             filenames = [self.ctx.comb_sci[BAND],
                          self.ctx.comb_wgt[BAND]]
             
-            # Set up the MEF output name
-            outname = os.path.join(self.ctx.tiledir,"%s_%s.fits" %  (self.ctx.tilename, BAND))
+            # output name of the MEF
+            outname = self.ctx.comb_MEF[BAND]
 
             # Call it
             t0 = time.time()
@@ -54,16 +96,12 @@ class Job(BaseJob):
             despyfits.makeMEF(filenames=filenames,outname=outname,clobber=clobber,extnames=['SCI','WGT'])
             print "# Done in %s\n" % elapsed_time(t0)
             
-            # Pass it to the context
-            self.ctx.combMEF[BAND] = outname
-
         return
 
     def __str__(self):
-        return 'Create MEF file for a TILE'
+        return 'Create MEF file for a coadded TILE'
 
-
-# In case we want to run it as multi-process
+# In case we want to run it as multi-process -- not really necessary because of IO penalty
 # def runMakeMEF(args):
 #     filenames,outname,clobber,extnames = args
 #     """
@@ -74,4 +112,11 @@ class Job(BaseJob):
 #     despyfits.makeMEF(filenames=filenames,outname=outname,clobber=clobber,extnames=extnames)
 #     print "# Done in %s\n" % elapsed_time(t0)
 #     return
+
+if __name__ == '__main__':
+    from mojo.utils import main_runner
+    job = main_runner.run_as_main(Job)
+
+
+
 
