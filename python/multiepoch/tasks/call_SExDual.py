@@ -31,9 +31,7 @@ class Job(BaseJob):
 
     Outputs:
     - self.ctx.cat[BAND]
-
     """
-
 
     class Input(IO):
 
@@ -51,9 +49,9 @@ class Job(BaseJob):
                               argparse={ 'argtype': 'positional', })
         # Optional Arguments
         basename               = CUnicode("",help="Base Name for coadd fits files in the shape: COADD_BASENAME_$BAND.fits")
-        SExDual_execution_mode = CUnicode("tofile",help="Stiff excution mode",
+        SExDual_execution_mode = CUnicode("tofile",help="SExtractor Dual excution mode",
                                           argparse={'choices': ('tofile','dryrun','execute')})
-        SExDual_parameters      = List([],help="A list of parameters to pass to SExtractor",
+        SExDual_parameters     = List([],help="A list of parameters to pass to SExtractor",
                                        argparse={'nargs':'+',})
         MP_SEx        = CInt(1,help="run using multi-process, 0=automatic, 1=single-process [default]")
 
@@ -126,7 +124,7 @@ class Job(BaseJob):
         return
 
 
-    def runSExDual(self,cmd_list,MP=False):
+    def runSExDual(self,cmd_list,MP):
 
         print "# Will proceed to run the SEx psf call now:"
         t0 = time.time()
@@ -138,14 +136,14 @@ class Job(BaseJob):
             log = open(logfile,"w")
             print "# Will write to logfile: %s" % logfile
 
-            for band in self.ctx.dBANDS:
+            for band in self.ctx.BANDS:
                 t1 = time.time()
                 cmd  = ' '.join(cmd_list[band])
                 print "# Executing SExDual for BAND:%s" % band
                 print "# %s " % cmd
-                #status = subprocess.call(cmd,shell=True,stdout=log, stderr=log)
-                #if status > 0:
-                #    raise RuntimeError("\n***\nERROR while running SExDual, check logfile: %s\n***" % logfile)
+                status = subprocess.call(cmd,shell=True,stdout=log, stderr=log)
+                if status > 0:
+                    raise RuntimeError("\n***\nERROR while running SExDual, check logfile: %s\n***" % logfile)
                 print "# Done band %s in %s\n" % (band,elapsed_time(t1))
             
         # Case B -- multi-process in case NP > 1

@@ -46,7 +46,7 @@ class Job(BaseJob):
                               argparse={ 'argtype': 'positional', })
         # Optional Arguments
         basename               = CUnicode("",help="Base Name for coadd fits files in the shape: COADD_BASENAME_$BAND.fits")
-        SExpsf_execution_mode  = CUnicode("tofile",help="Stiff excution mode",
+        SExpsf_execution_mode  = CUnicode("tofile",help="SEx for psfex excution mode",
                                           argparse={'choices': ('tofile','dryrun','execute')})
         SExpsf_parameters       = List([],help="A list of parameters to pass to SExtractor",
                                        argparse={'nargs':'+',})
