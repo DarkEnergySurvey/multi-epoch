@@ -2,7 +2,7 @@
 
 """
 Make sure we do:
- setup -v -r ~/DESDM-Code/devel/multiepoch/branches/me_mojo_0.2
+ setup -v -r ~/DESDM-Code/devel/multiepoch/trunk
 """
 
 from mojo import job_operator
@@ -80,6 +80,7 @@ jo.run_job('multiepoch.tasks.set_catNames')
 #jo.run_job('multiepoch.tasks.call_SExpsf',SExpsf_execution_mode='dryrun')
 jo.run_job('multiepoch.tasks.call_SExpsf',SExpsf_execution_mode='execute',MP_SEx=8)
 
+# ---- Up to here ----
 # 11. Run  psfex
 #jo.run_job('multiepoch.tasks.call_psfex',psfex_parameters={"NTHREADS"  :8,},psfex_execution_mode='dryrun')
 jo.run_job('multiepoch.tasks.call_psfex',psfex_parameters={"NTHREADS"  :8,},psfex_execution_mode='execute')
