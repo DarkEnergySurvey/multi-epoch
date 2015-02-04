@@ -15,7 +15,8 @@ from traitlets import Unicode, Bool, Float, Int, CUnicode, CBool, CFloat, CInt, 
 from mojo.jobs.base_job import BaseJob, IO, IO_ValidationError
 from mojo.context import ContextProvider
 import multiepoch.utils as utils
-
+import time
+from despymisc.miscutils import elapsed_time
     
 
 QUERY = '''
@@ -88,9 +89,6 @@ class Job(BaseJob):
         coaddtile_table    = CUnicode("felipe.coaddtile_new", help="Database table with COADDTILE information",
                                       argparse=True)
 
-        # not used currently
-        # ctx_input_file_vars = ('bla_input', 'json_tileinfo', )
-
         def _validate_conditional(self):
             # if in job standalone mode json
             if self.mojo_execution_mode == 'job as script' and self.json_tileinfo_file == "":
@@ -100,10 +98,12 @@ class Job(BaseJob):
 
     def run(self):
 
-        # CHECK IF DATABASE HANDLER IS PRESENT
+        # Check that we have a database handle
         self.ctx = utils.check_dbh(self.ctx)
 
-        # EXECUTE THE QUERY
+        # We execute the query
+        t0 = time.time()
+        print "# Getting geometry information for tile:%s" % self.ctx.tilename
         cur = self.ctx.dbh.cursor()
         cur.execute(self.get_query(**self.input.as_dict()))
         desc = [d[0] for d in cur.description]
@@ -113,7 +113,8 @@ class Job(BaseJob):
 
         # Make a dictionary/header for the all columns from COADDTILE table
         self.ctx.tileinfo = dict(zip(desc, line))
-
+        print "# Done in %s" % elapsed_time(t0)
+        
 
     def get_query(self, **kwargs):
 
@@ -142,4 +143,5 @@ class Job(BaseJob):
 if __name__ == '__main__':
     from mojo.utils import main_runner
     job = main_runner.run_as_main(Job)
+    print "# Writing ouput to: %s" % job.input.json_tileinfo_file
     job.write_ctx_to_json(job.input.json_tileinfo_file, vars_list=['tileinfo', 'tilename'])
