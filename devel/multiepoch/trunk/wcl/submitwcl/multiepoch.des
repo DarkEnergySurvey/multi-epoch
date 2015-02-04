@@ -21,6 +21,13 @@ pipever = 1.0.5+0  # eups meta package version
 ops_run_dir = ${project}/${pipeline}/${tilename}-r${reqnum}/p${attnum:2}
 unitname = ${tilename}
 
+# because we start a python on the remote site with user
+# nobody in this test setup. we need to trick the system
+# to look for the python eggs somewhere else.
+<job_environment>
+   PYTHON_EGG_CACHE =  /cluster_scratch/users/mgraber/secret
+</job_environment>
+
 blocklist = uptime
 
 <block>

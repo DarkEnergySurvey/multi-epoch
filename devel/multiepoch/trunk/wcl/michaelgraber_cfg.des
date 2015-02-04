@@ -4,7 +4,8 @@ create_junk_tarball = true
 
 submit_des_services = /home/mgraber/.desservices.ini
 submit_des_db_section = db-destest
-target_des_services = /home/mgraber/.desservices.ini
+#target_des_services = /home/mgraber/.desservices.ini
+target_des_services = /cluster_scratch/users/mgraber/secret/.desservices.ini
 target_des_db_section = db-destest
 
 submit_files_mvmt = filemgmt.job_mvmt_http.JobArchiveHttp
@@ -18,7 +19,7 @@ use_home_archive_output = job
 des_http_section = file-http
 home_archive = desar2home
 
-transfer_stats = filemgmt.transfer_state_db.TransferStatsDB
+transfer_stats = filemgmt.transfer_stats_db.TransferStatsDB
 transfer_semname = filetrans
 
 use_qcf = False
