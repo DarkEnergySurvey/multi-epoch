@@ -34,7 +34,7 @@ class Job(BaseJob):
 
     class Input(IO):
 
-        """ SExtractor call to psfex"""
+        """ SExtractor call to build inputs for psfex"""
 
         ######################
         # Required inputs
@@ -74,7 +74,7 @@ class Job(BaseJob):
         self.ctx.assoc  = utils.dict2arrays(self.ctx.assoc)
         # Make sure we set up the output dir
         self.ctx = contextDefs.set_tile_directory(self.ctx)
-        # 1. set up names -----------------------------------------------------
+        # 1. set up names 
         # 1a. Get the BANDs information in the context if they are not present
         self.ctx = contextDefs.set_BANDS(self.ctx)
         # 1b. Get the output names for SWarp

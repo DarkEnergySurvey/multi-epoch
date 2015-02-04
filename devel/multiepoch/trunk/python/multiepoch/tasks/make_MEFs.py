@@ -47,8 +47,9 @@ class Job(BaseJob):
                               input_file=True,
                               argparse={ 'argtype': 'positional', })
         # Optional Arguments
-        basename     = CUnicode("",help="Base Name for coadd fits files in the shape: COADD_BASENAME_$BAND.fits")
-        clobber_MEF  = Bool(False, help="Cloober the existing MEF fits")
+        basename    = CUnicode("",help="Base Name for coadd fits files in the shape: COADD_BASENAME_$BAND.fits")
+        clobber_MEF = Bool(False, help="Cloober the existing MEF fits")
+        MP_MEF      = CInt(1,help="run using multi-process, 0=automatic, 1=single-process [default]")
 
         def _validate_conditional(self):
             # if in job standalone mode json
@@ -73,46 +74,56 @@ class Job(BaseJob):
         # ---------------------------------------------------------
 
         t0 = time.time()
-        self.create_MEFs(self.ctx.clobber_MEF)
+        self.create_MEFs(self.ctx.clobber_MEF,MP=self.ctx.MP_MEF)
         print "# MEFs Creation Total time: %s" % elapsed_time(t0)
         return
 
-    def create_MEFs(self,clobber):
+    def create_MEFs(self,clobber,MP=1,extnames=['SCI','WGT']):
 
         """ Create the MEF files using despyfits"""
+
+        NP = utils.get_NP(MP) # Figure out NP to use, 0=automatic
+        args = []
 
         for BAND in self.ctx.dBANDS:
 
             # Inputs
             filenames = [self.ctx.comb_sci[BAND],
                          self.ctx.comb_wgt[BAND]]
-            
             # output name of the MEF
             outname = self.ctx.comb_MEF[BAND]
 
             # Call it
             t0 = time.time()
-            print "# Making MEF file for BAND:%s --> %s" % (BAND,outname)
-            despyfits.makeMEF(filenames=filenames,outname=outname,clobber=clobber,extnames=['SCI','WGT'])
-            print "# Done in %s\n" % elapsed_time(t0)
-            
+            if NP == 1:
+                print "# Making MEF file for BAND:%s --> %s" % (BAND,outname)
+                despyfits.makeMEF(filenames=filenames,outname=outname,clobber=clobber,extnames=extnames)
+                print "# Done in %s\n" % elapsed_time(t0)
+            else:
+                # Create the inputs args for later call
+                args.append( (filenames,outname,clobber,extnames))
+
+
+        # Now we run in MP if required
+        if NP != 1:
+            print "# Will create MEF files using %s processor(s)" % NP
+            pool = multiprocessing.Pool(processes=NP)
+            pool.map(runMakeMEF, args)
+                
         return
 
     def __str__(self):
         return 'Create MEF file for a coadded TILE'
 
 # In case we want to run it as multi-process -- not really necessary because of IO penalty
-# def runMakeMEF(args):
-#     filenames,outname,clobber,extnames = args
-#     """
-#     Simple call despyfits.makeMEF
-#     """
-#     # Get the start time
-#     t0 = time.time()
-#     despyfits.makeMEF(filenames=filenames,outname=outname,clobber=clobber,extnames=extnames)
-#     print "# Done in %s\n" % elapsed_time(t0)
-#     return
-
+def runMakeMEF(args):
+    """
+    Simple call despyfits.makeMEF passing a tuple, instead of kwargs to be compatible with multiprocess
+    """
+    filenames,outname,clobber,extnames = args
+    despyfits.makeMEF(filenames=filenames,outname=outname,clobber=clobber,extnames=extnames)
+    return
+ 
 if __name__ == '__main__':
     from mojo.utils import main_runner
     job = main_runner.run_as_main(Job)
