@@ -1,0 +1,40 @@
+# defines my environment
+<<include ../michaelgraber_cfg.des>>
+
+<<include ../modulewcl/modnamepat.wcl>>
+<<include ../modulewcl/01-query_tileinfo.wcl>>
+
+#<<include destest_computingsite.des>>       
+
+tilename = DESXXXYYY
+
+project = MHG
+target_site = destest_computingsite
+
+reqnum = 0001
+jira_id = ME-TEST # example 
+label = query_tileinfo,test 
+
+pipeline = me # used in desstat output 
+pipeprod = Y2Nstack # eups meta package name
+pipever = 1.0.5+0  # eups meta package version
+ops_run_dir = ${project}/${pipeline}/${tilename}-r${reqnum}/p${attnum:2}
+unitname = ${tilename}
+
+blocklist = uptime
+
+<block>
+    <uptime>
+        modulelist = uptime 
+    </uptime>
+</block>
+
+<module>
+    <uptime>
+        wrappername = generic.py
+        modnamepat=${modnamepat_tile_generic}
+        <exec_1>
+            execname = uptime
+        </exec_1>
+    </uptime>
+</module>
