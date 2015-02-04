@@ -1,0 +1,14 @@
+
+1) source eeups setup script in /eeups/eups ..
+
+2) setup -v SNePipeline 1.0.8+0
+
+3) cd to /home/mgraber/svn/multiepoch/trunk/wcl/submitwcl
+
+4) descheck.py multiepoch.des
+
+5) dessubmit multiepoch.des 
+
+6) check with desstat
+
+7) 
