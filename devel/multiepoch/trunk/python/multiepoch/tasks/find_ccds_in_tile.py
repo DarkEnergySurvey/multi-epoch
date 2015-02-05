@@ -196,21 +196,39 @@ class Job(BaseJob):
                                  help="Name of the output JSON association file where we will store the cccds information for coadd")
         plot_outname  = CUnicode(None, help="Output file name for plot, in case we want to plot",)
 
+
     def run(self):
 
-        
         # Check for the db_handle
         self.ctx = utils.check_dbh(self.ctx)
 
         # Call the query built function
         print "# Getting CCD images within the tile definition"
-        self.get_CCDS(**self.ctx.get_kwargs_dict())
+        self.ctx.CCDS = self.get_CCDS_from_db(**self.input.as_dict())
+
+        # Get the root paths
+        self.ctx.root_archive = self.get_root_archive(archive_name=self.input.archive_name)
+        self.ctx.root_https = self.get_root_https(archive_name=self.input.archive_name)
 
         # Now we get the locations
-        self.get_fitsfile_locations()
+        self.ctx.assoc = self.get_fitsfile_locations()
+
+        # if Job is run as script
+        if self.ctx.mojo_execution_mode == 'run as script':
+
+            # FELIPE: We need to decide whether want to write the assoc file
+            # as json or space-separated ascii file.
+            self.write_assoc_file(ctx.assoc_file)
+            self.write_assoc_json(ctx.assoc_json)
+
+            # do we plot as well?
+            if self.input.plot_outname:
+                from multiepoch.tasks.plot_ccd_corners_destile import Job as plot_job
+                plot = plot_job(ctx=self.ctx)
+                plot()
         
 
-    def get_CCDS(self,**kwargs): 
+    def get_CCDS_from_db(self, **kwargs): 
 
         '''
         Get the database query that returns the ccds and store them in a numpy
@@ -230,18 +248,17 @@ class Job(BaseJob):
         tagname       = kwargs.get('tagname',       'Y2T1_FIRSTCUT')
         exec_name     = kwargs.get('exec_name',     'immask')
 
-
         # Create the tile_edges tuple structure
-        self.ctx.tile_edges = (
+        tile_edges = (
             self.ctx.tileinfo['RACMIN'], self.ctx.tileinfo['RACMAX'],
             self.ctx.tileinfo['DECCMIN'],self.ctx.tileinfo['DECCMAX']
             )
 
         corners_and = [
-                "((image.RAC1 BETWEEN %.10f AND %.10f) AND (image.DECC1 BETWEEN %.10f AND %.10f))\n" % self.ctx.tile_edges,
-                "((image.RAC2 BETWEEN %.10f AND %.10f) AND (image.DECC2 BETWEEN %.10f AND %.10f))\n" % self.ctx.tile_edges,
-                "((image.RAC3 BETWEEN %.10f AND %.10f) AND (image.DECC3 BETWEEN %.10f AND %.10f))\n" % self.ctx.tile_edges,
-                "((image.RAC4 BETWEEN %.10f AND %.10f) AND (image.DECC4 BETWEEN %.10f AND %.10f))\n" % self.ctx.tile_edges,
+                "((image.RAC1 BETWEEN %.10f AND %.10f) AND (image.DECC1 BETWEEN %.10f AND %.10f))\n" % tile_edges,
+                "((image.RAC2 BETWEEN %.10f AND %.10f) AND (image.DECC2 BETWEEN %.10f AND %.10f))\n" % tile_edges,
+                "((image.RAC3 BETWEEN %.10f AND %.10f) AND (image.DECC3 BETWEEN %.10f AND %.10f))\n" % tile_edges,
+                "((image.RAC4 BETWEEN %.10f AND %.10f) AND (image.DECC4 BETWEEN %.10f AND %.10f))\n" % tile_edges,
                 ]
 
         query = QUERY.format(
@@ -254,56 +271,45 @@ class Job(BaseJob):
 
         print "# Will execute the query:\n%s\n" %  query
         # Get the ccd images that are part of the DESTILE
-        #self.ctx.CCDS = despyastro.genutil.query2dict_of_columns(query,dbhandle=self.ctx.dbh,array=True)
+        CCDS = despyastro.genutil.query2rec(query,dbhandle=self.ctx.dbh)
         t0 = time.time()
-        self.ctx.CCDS = despyastro.genutil.query2rec(query,dbhandle=self.ctx.dbh)
         print "# Query time: %s" % elapsed_time(t0)
-        print "# Nelem %s" % len(self.ctx.CCDS['FILENAME'])
-        return 
+        print "# Nelem %s" % len(CCDS['FILENAME'])
+        return CCDS 
 
 
     def get_fitsfile_locations(self):
 
         """ Find the location of the files in the des archive and https urls"""
 
-        # Get all of the relevant kwargs
-        kwargs = self.ctx.get_kwargs_dict()
-        archive_name = kwargs.pop('archive_name', 'desar2home') # or get?
-
         # Number of images/filenames
         Nimages = len(self.ctx.CCDS['FILENAME'])
 
-        # 1. Figure out the archive root and root_http variables, it returns
-        # self.ctx.root_archive and self.ctx.root_https
-        self.get_root_archive(archive_name)
-
-
-        # 2. Construct an new dictionary that will store the
+        # 1. Construct an new dictionary that will store the
         # information required to associate files for co-addition
-        self.ctx.assoc = {}
-        self.ctx.assoc['MAG_ZERO'] = self.ctx.CCDS['MAG_ZERO']
-        self.ctx.assoc['BAND']     = self.ctx.CCDS['BAND']
-        self.ctx.assoc['FILENAME'] = self.ctx.CCDS['FILENAME']
+        assoc = {}
+        assoc['MAG_ZERO'] = self.ctx.CCDS['MAG_ZERO']
+        assoc['BAND']     = self.ctx.CCDS['BAND']
+        assoc['FILENAME'] = self.ctx.CCDS['FILENAME']
 
-        self.ctx.assoc['FILEPATH'] = npadd(self.ctx.CCDS['PATH'],"/")
-        self.ctx.assoc['FILEPATH'] = npadd(self.ctx.assoc['FILEPATH'],self.ctx.CCDS['FILENAME'])
+        assoc['FILEPATH'] = npadd(self.ctx.CCDS['PATH'],"/")
+        assoc['FILEPATH'] = npadd(assoc['FILEPATH'],self.ctx.CCDS['FILENAME'])
 
-        # 3. Create the archive locations for each file
+        # 2. Create the archive locations for each file
         path = [self.ctx.root_archive+"/"]*Nimages
-        self.ctx.assoc['FILEPATH_ARCHIVE'] = npadd(path,self.ctx.assoc['FILEPATH'])
+        assoc['FILEPATH_ARCHIVE'] = npadd(path, assoc['FILEPATH'])
 
-        # 4. Create the https locations for each file
+        # 3. Create the https locations for each file
         path = [self.ctx.root_https+"/"]*Nimages
-        self.ctx.assoc['FILEPATH_HTTPS']   = npadd(path,self.ctx.assoc['FILEPATH'])
+        assoc['FILEPATH_HTTPS']   = npadd(path, assoc['FILEPATH'])
         
-        return
+        return assoc
 
-    def get_root_archive(self,archive_name='desar2home'):
+    def get_root_archive(self, archive_name='desar2home'):
 
         """
-        Get the root-archive  and root_https fron the database
+        Get the root-archive fron the database
         """
-
         cur = self.ctx.dbh.cursor()
         
         # root_archive
@@ -311,18 +317,26 @@ class Job(BaseJob):
         print "# Getting the archive root name for section: %s" % archive_name
         print "# Will execute the SQL query:\n********\n** %s\n********" % query
         cur.execute(query)
-        self.ctx.root_archive = cur.fetchone()[0]
-        print "# root_archive: %s" % self.ctx.root_archive
+        root_archive = cur.fetchone()[0]
+        print "# root_archive: %s" % root_archive
 
+        return root_archive
+
+    def get_root_https(self, archive_name='desar2home'):
+
+        """
+        Get the root_https fron the database
+        """
+        cur = self.ctx.dbh.cursor()
         # root_https
         query = "select val from ops_archive_val where name='%s' and key='root_https'" % archive_name
         print "# Getting root_https for section: %s" % archive_name
         print "# Will execute the SQL query:\n********\n** %s\n********" % query
         cur.execute(query)
-        self.ctx.root_https = cur.fetchone()[0]
-        print "# root_https:   %s" % self.ctx.root_https
+        root_https = cur.fetchone()[0]
+        print "# root_https:   %s" % root_https
         cur.close()
-        return
+        return root_https
 
 
     def write_assoc_file(self,assoc_file,names=['FILEPATH_ARCHIVE','FILENAME','BAND','MAG_ZERO']):
@@ -359,40 +373,5 @@ class Job(BaseJob):
 
 
 if __name__ == "__main__":
-
-    # 0. take care of the sys arguments
-    import sys
-    args = sys.argv[1:]
-    # 1. read the input arguments into the job input
-    inp = Job.Input()
-    # 2. load a context
-    ctx = ContextProvider.create_ctx(**inp.parse_arguments(args))
-    # 3. set the pipeline execution mode
-    ctx['mojo_execution_mode'] = 'job as script'
-    # 4. create an empty JobOperator with context
-    from mojo import job_operator
-    jo = job_operator.JobOperator(**ctx)
-    # 5. run the job
-    job_instance = jo.run_job(Job)
-    # 6. dump the context if json_dump
-    if jo.ctx.get('json_dump_file', ''):
-        jo.json_dump_ctx()
-
-    # 7 - Custom step, write the files as column-separated 
-    # FELIPE: We need to decide whether want to write the assoc file
-    # as json or space-separated ascii file.
-    job_instance.write_assoc_file(ctx.assoc_file)
-    job_instance.write_assoc_json(ctx.assoc_json)
-
-    # 8 - Custom step, in Case we want to plot the overlapping CCDs
-    if ctx.plot_outname:
-        print "# Will plot overlapping tiles"
-        from multiepoch.tasks.plot_ccd_corners_destile import Job as plot_job
-        plot = plot_job(ctx=jo.ctx)
-        plot()
-
-    # ALTERNATIVELY the following code does exactly the same as the above
-    '''
     from mojo.utils import main_runner
-    job = main_runner.run_as_main(Job)
-    '''
+    _ = main_runner.run_as_main(Job)
