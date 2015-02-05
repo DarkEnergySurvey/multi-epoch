@@ -26,11 +26,9 @@ class Job(BaseJob):
     """ Stiff call for the multi-epoch pipeline
     Inputs:
     - self.ctx.comb_sci
-    
     Outputs:
     - self.ctx.color_tile
     """
-
 
     class Input(IO):
 
@@ -50,12 +48,8 @@ class Job(BaseJob):
         basename              = CUnicode("",help="Base Name for coadd fits files in the shape: COADD_BASENAME_$BAND.fits")
         stiff_execution_mode  = CUnicode("tofile",help="Stiff excution mode",
                                          argparse={'choices': ('tofile','dryrun','execute')})
-
-#       stiff_parameters = List([],help="A list of parameters to pass to Stiff",
-#                               argparse={'nargs':'+',})
-        
-        stiff_parameters = Dict({},help="A list of parameters to pass to Stiff",
-                                argparse={'nargs':'+',})
+        stiff_parameters      = Dict({},help="A list of parameters to pass to Stiff",
+                                     argparse={'nargs':'+',})
         
         def _validate_conditional(self):
             # if in job standalone mode json
@@ -67,31 +61,24 @@ class Job(BaseJob):
             return utils.arglist2dict(v, separator='=')
 
 
-    def run(self):
+    def prewash(self):
 
-
-        # 0. Pre-wash of inputs  ------------------------------------------------
-        # WE WILL TRY TO MOVE THIS TO Input()
-        # Make the list of extra command-line args into a dictionary
-        if self.ctx.mojo_execution_mode == 'job as script':
-            if self.input.stiff_parameters:
-                self.ctx.stiff_parameters = utils.arglist2dict(self.input.stiff_parameters,separator='=')
-            else:
-                self.ctx.stiff_parameters = {}
+        """ Pre-wash of inputs, some of these are only needed when run as script"""
 
         # Re-cast the ctx.assoc as dictionary of arrays instead of lists
         self.ctx.assoc  = utils.dict2arrays(self.ctx.assoc)
-        # Make sure we set up the output dir
-        self.ctx = contextDefs.set_tile_directory(self.ctx)
-        
-        # 1. set up names -----------------------------------------------------
         # Get the BANDs information in the context if they are not present
         self.ctx = contextDefs.set_BANDS(self.ctx)
-        
+        # Make sure we set up the output dir
+        self.ctx = contextDefs.set_tile_directory(self.ctx)
         # Get the output names for SWarp
         self.ctx = contextDefs.set_SWarp_output_names(self.ctx)
-
         
+    def run(self):
+
+        # Prepare the context
+        self.prewash()
+
         # 1. Set the output name of the color tiff file
         color_tile =  self.ctx.get('color_tile',"%s.tiff" %  self.ctx.basename)
 
