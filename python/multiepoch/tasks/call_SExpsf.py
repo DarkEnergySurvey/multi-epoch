@@ -48,7 +48,7 @@ class Job(BaseJob):
         basename               = CUnicode("",help="Base Name for coadd fits files in the shape: COADD_BASENAME_$BAND.fits")
         SExpsf_execution_mode  = CUnicode("tofile",help="SEx for psfex excution mode",
                                           argparse={'choices': ('tofile','dryrun','execute')})
-        SExpsf_parameters       = List([],help="A list of parameters to pass to SExtractor",
+        SExpsf_parameters       = Dict({},help="A list of parameters to pass to SExtractor",
                                        argparse={'nargs':'+',})
         MP_SEx        = CInt(1,help="run using multi-process, 0=automatic, 1=single-process [default]")
 
@@ -57,19 +57,15 @@ class Job(BaseJob):
             if self.mojo_execution_mode == 'job as script' and self.basename == "":
                 mess = 'If job is run standalone basename cannot be ""'
                 raise IO_ValidationError(mess)
-            
-    def run(self):
+
+        def _argparse_postproc_SExpsf_parameters(self, v):
+            return utils.arglist2dict(v, separator='=')
 
 
-        # 0. Pre-wash of inputs  ------------------------------------------------
-        # WE WILL TRY TO MOVE THIS TO Input()
-        # Make the list of extra command-line args into a dictionary
-        if self.ctx.mojo_execution_mode == 'job as script':
-            if self.input.SExpsf_parameters:
-                self.ctx.SExpsf_parameters = utils.arglist2dict(self.input.SExpsf_parameters,separator='=')
-            else:
-                self.ctx.SExpsf_parameters = {}
+    def prewash(self):
 
+        """ Pre-wash of inputs, some of these are only needed when run as script"""
+        
         # Re-cast the ctx.assoc as dictionary of arrays instead of lists
         self.ctx.assoc  = utils.dict2arrays(self.ctx.assoc)
         # Make sure we set up the output dir
@@ -81,7 +77,13 @@ class Job(BaseJob):
         self.ctx = contextDefs.set_SWarp_output_names(self.ctx)
         # 1c. Get the outnames for the catalogs
         self.ctx = contextDefs.setCatNames(self.ctx)
-        # ---------------------------------------------------------
+        
+        
+    def run(self):
+        
+        # Prepare the context
+        self.prewash()
+        
         # 1. get the update SEx parameters for psf --
         SExpsf_parameters = self.ctx.get('SExpsf_parameters', {})
 

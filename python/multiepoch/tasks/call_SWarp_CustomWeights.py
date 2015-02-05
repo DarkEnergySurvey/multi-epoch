@@ -45,7 +45,6 @@ class Job(BaseJob):
         tile_geom_input_file = CUnicode('',help='The json file with the tile information',
                                         input_file=True,
                                         argparse={ 'argtype': 'positional', })
-
         ######################
         # Optional arguments
         detecBANDS       = List(DETEC_BANDS_DEFAULT, help="List of bands used to build the Detection Image")
@@ -54,7 +53,7 @@ class Job(BaseJob):
         basename         = CUnicode("",help="Base Name for coadd fits files in the shape: COADD_BASENAME_$BAND.fits")
         swarp_execution_mode  = CUnicode("tofile",help="SWarp excution mode",
                                           argparse={'choices': ('tofile','dryrun','execute')})
-        swarp_parameters = List([],help="A list of parameters to pass to SWarp",
+        swarp_parameters = Dict({},help="A list of parameters to pass to SWarp",
                                 argparse={'nargs':'+',})
 
         def _validate_conditional(self):
@@ -63,16 +62,12 @@ class Job(BaseJob):
                 mess = 'If job is run standalone basename cannot be ""'
                 raise IO_ValidationError(mess)
 
-    def run(self):
-        
-        # 0. Pre-wash of inputs  ------------------------------------------------
-        # WE WILL TRY TO MOVE THIS TO Input()
-        # Make the list of extra command-line args into a dictionary
-        if self.ctx.mojo_execution_mode == 'job as script':
-            if self.input.swarp_parameters:
-                self.ctx.swarp_parameters = utils.arglist2dict(self.input.swarp_parameters,separator='=')
-            else:
-                self.ctx.swarp_parameters = {}
+        def _argparse_postproc_swarp_parameters(self, v):
+            return utils.arglist2dict(v, separator='=')
+
+    def prewash(self):
+
+        """ Pre-wash of inputs, some of these are only needed when run as script"""
 
         # Re-construct the names for the custom weights in case not present
         if not self.ctx.assoc.get('FILEPATH_LOCAL_WGT'): 
@@ -81,15 +76,18 @@ class Job(BaseJob):
                                                                                       self.ctx.weight_extension)
         # Re-cast the ctx.assoc as dictionary of arrays instead of lists
         self.ctx.assoc  = utils.dict2arrays(self.ctx.assoc)
-        # Make sure we set up the output dir
-        self.ctx = contextDefs.set_tile_directory(self.ctx)
-        
-        # 1. set up names -----------------------------------------------------
         # Get the BANDs information in the context if they are not present
         self.ctx = contextDefs.set_BANDS(self.ctx)
-
+        # Make sure we set up the output dir
+        self.ctx = contextDefs.set_tile_directory(self.ctx)
         # Get the output names for SWarp
         self.ctx = contextDefs.set_SWarp_output_names(self.ctx)
+
+
+    def run(self):
+
+        # Prepare the context
+        self.prewash()
         
         # Gets swarp_scilist, swarp_wgtlist, swarp_flxlist, 
         (swarp_scilist, swarp_wgtlist, swarp_swglist, swarp_flxlist) = self.get_swarp_input_lists()
