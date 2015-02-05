@@ -71,12 +71,15 @@ class Job(BaseJob):
         self.ctx = contextDefs.set_BANDS(self.ctx)
         # Make sure we set up the output dir
         self.ctx = contextDefs.set_tile_directory(self.ctx)
-        # Get the output names for SWarp
+        # 1. Set up names
+        # 1a. Get the BANDs information in the context if they are not present
+        self.ctx = contextDefs.set_BANDS(self.ctx)
+        # 1b. Get the output names for SWarp
         self.ctx = contextDefs.set_SWarp_output_names(self.ctx)
         
     def run(self):
 
-        # Prepare the context
+        # 0. Prepare the context
         self.prewash()
 
         # 1. Set the output name of the color tiff file

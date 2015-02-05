@@ -61,17 +61,13 @@ class Job(BaseJob):
                 mess = 'If job is run standalone basename cannot be ""'
                 raise IO_ValidationError(mess)
 
+        def _argparse_postproc_psfex_parameters(self, v):
+            return utils.arglist2dict(v, separator='=')
+        
 
-    def run(self):
+    def prewash(self):
 
-        # 0. Pre-wash of inputs  ------------------------------------------------
-        # WE WILL TRY TO MOVE THIS TO Input()
-        # Make the list of extra command-line args into a dictionary
-        if self.ctx.mojo_execution_mode == 'job as script':
-            if self.input.psfex_parameters:
-                self.ctx.psfex_parameters = utils.arglist2dict(self.input.psfex_parameters,separator='=')
-            else:
-                self.ctx.psfex_parameters = {}
+        """ Pre-wash of inputs, some of these are only needed when run as script"""
 
         # Re-cast the ctx.assoc as dictionary of arrays instead of lists
         self.ctx.assoc  = utils.dict2arrays(self.ctx.assoc)
@@ -84,8 +80,13 @@ class Job(BaseJob):
         self.ctx = contextDefs.set_SWarp_output_names(self.ctx)
         # 1c. Get the outnames for the catalogs
         self.ctx = contextDefs.setCatNames(self.ctx)
-        # ---------------------------------------------------------
 
+
+    def run(self):
+
+        # 0. Prepare the context
+        self.prewash()
+        
         # 1. get the update SEx parameters for psf --
         psfex_parameters = self.ctx.get('psfex_parameters', {})
 

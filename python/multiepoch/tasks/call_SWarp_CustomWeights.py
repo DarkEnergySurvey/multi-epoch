@@ -86,7 +86,7 @@ class Job(BaseJob):
 
     def run(self):
 
-        # Prepare the context
+        # 0. Prepare the context
         self.prewash()
         
         # Gets swarp_scilist, swarp_wgtlist, swarp_flxlist, 
