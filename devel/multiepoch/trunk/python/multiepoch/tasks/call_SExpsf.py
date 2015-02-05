@@ -81,7 +81,7 @@ class Job(BaseJob):
         
     def run(self):
         
-        # Prepare the context
+        # 0. Prepare the context
         self.prewash()
         
         # 1. get the update SEx parameters for psf --

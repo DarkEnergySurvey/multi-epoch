@@ -56,9 +56,10 @@ class Job(BaseJob):
                 mess = 'If job is run standalone basename cannot be ""'
                 raise IO_ValidationError(mess)
 
-    def run(self):
+    def prewash(self):
 
-        # 0. Pre-wash of inputs  ------------------------------------------------
+        """ Pre-wash of inputs, some of these are only needed when run as script"""
+        
         # Re-cast the ctx.assoc as dictionary of arrays instead of lists
         self.ctx.assoc  = utils.dict2arrays(self.ctx.assoc)
         # Make sure we set up the output dir
@@ -70,8 +71,12 @@ class Job(BaseJob):
         self.ctx = contextDefs.set_SWarp_output_names(self.ctx)
         # 1c. Get the outnames for the catalogs
         self.ctx = contextDefs.setCatNames(self.ctx)
-        # ---------------------------------------------------------
 
+    def run(self):
+
+        # Prepare the context
+        self.prewash()
+        
         t0 = time.time()
         self.create_MEFs(self.ctx.clobber_MEF)
         print "# MEFs Creation Total time: %s" % elapsed_time(t0)
