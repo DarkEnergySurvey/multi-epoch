@@ -20,6 +20,7 @@
         </file>
         <exec_1>
             execname = query_tileinfo.py 
+	    cmd_hyphen = alldouble
             #used = file.raw, file.xtalkcoeff,file.hupdate
             was_generated_by = file.json_geom
             #ancestry = file.raw:file.red_xtalked, file.xtalkcoeff:file.red_xtalked,file.hupdate:file.red_xtalked
