@@ -114,7 +114,11 @@ class Job(BaseJob):
         # Make a dictionary/header for the all columns from COADDTILE table
         self.ctx.tileinfo = dict(zip(desc, line))
         print "# Done in %s" % elapsed_time(t0)
-        
+
+        # if Job is run as script, we write the json file
+        if self.ctx.mojo_execution_mode == 'run as script':
+            print "# Writing ouput to: %s" % job.input.json_tileinfo_file
+            self.write_ctx_to_json(self.input.json_tileinfo_file, vars_list=['tileinfo', 'tilename'])
 
     def get_query(self, **kwargs):
 
@@ -132,7 +136,7 @@ class Job(BaseJob):
 
         if not tablename or not tilename:
             raise ValueError('ERROR: tablename and tilename need to be provided as kwargs')
-
+        
         query_string = QUERY.format(tablename=tablename, tilename=tilename)
         return query_string
 
@@ -142,6 +146,4 @@ class Job(BaseJob):
 
 if __name__ == '__main__':
     from mojo.utils import main_runner
-    job = main_runner.run_as_main(Job)
-    print "# Writing ouput to: %s" % job.input.json_tileinfo_file
-    job.write_ctx_to_json(job.input.json_tileinfo_file, vars_list=['tileinfo', 'tilename'])
+    _ = main_runner.run_as_main(Job)
