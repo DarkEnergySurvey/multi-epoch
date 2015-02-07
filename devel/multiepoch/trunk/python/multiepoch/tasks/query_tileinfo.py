@@ -15,20 +15,21 @@ from traitlets import Unicode, Bool, Float, Int, CUnicode, CBool, CFloat, CInt, 
 from mojo.jobs.base_job import BaseJob, IO, IO_ValidationError
 from mojo.context import ContextProvider
 import multiepoch.utils as utils
+import multiepoch.querylibs as querylibs
 import time
 from despymisc.miscutils import elapsed_time
     
 
-QUERY = '''
-    SELECT PIXELSCALE, NAXIS1, NAXIS2,
-    RA, DEC,
-    RAC1, RAC2, RAC3, RAC4,
-    DECC1, DECC2, DECC3, DECC4,
-    RACMIN,RACMAX,DECCMIN,DECCMAX,
-    CROSSRAZERO
-    FROM {tablename}
-    WHERE tilename='{tilename}'
-    '''
+#QUERY = '''
+#    SELECT PIXELSCALE, NAXIS1, NAXIS2,
+#    RA, DEC,
+#    RAC1, RAC2, RAC3, RAC4,
+#    DECC1, DECC2, DECC3, DECC4,
+#    RACMIN,RACMAX,DECCMIN,DECCMAX,
+#    CROSSRAZERO
+#    FROM {tablename}
+#    WHERE tilename='{tilename}'
+#   '''
 
 class Job(BaseJob):
 
@@ -98,6 +99,9 @@ class Job(BaseJob):
 
     def run(self):
 
+        # Get the query string
+        query_geom = querylibs.get_geom_query(**self.input.as_dict())
+
         # Check that we have a database handle
         self.ctx = utils.check_dbh(self.ctx)
 
@@ -105,7 +109,7 @@ class Job(BaseJob):
         t0 = time.time()
         print "# Getting geometry information for tile:%s" % self.ctx.tilename
         cur = self.ctx.dbh.cursor()
-        cur.execute(self.get_query(**self.input.as_dict()))
+        cur.execute(query_geom)
         desc = [d[0] for d in cur.description]
         # cols description
         line = cur.fetchone()
@@ -116,29 +120,28 @@ class Job(BaseJob):
         print "# Done in %s" % elapsed_time(t0)
 
         # if Job is run as script, we write the json file
-        if self.ctx.mojo_execution_mode == 'run as script':
-            print "# Writing ouput to: %s" % job.input.json_tileinfo_file
+        if self.ctx.mojo_execution_mode == 'job as script':
+            print "# Writing ouput to: %s" % self.input.json_tileinfo_file
             self.write_ctx_to_json(self.input.json_tileinfo_file, vars_list=['tileinfo', 'tilename'])
 
-    def get_query(self, **kwargs):
-
-        '''
-        Get the database query that returns DES tile information.
-
-        kwargs
-        ``````
-            - tablename
-            - tilename
-        '''
-
-        tablename = kwargs.get('coaddtile_table', None)
-        tilename  = kwargs.get('tilename', None)
-
-        if not tablename or not tilename:
-            raise ValueError('ERROR: tablename and tilename need to be provided as kwargs')
-        
-        query_string = QUERY.format(tablename=tablename, tilename=tilename)
-        return query_string
+    # def get_query(self, **kwargs):
+    #
+    #     '''
+    #     Get the database query that returns DES tile information.
+    #
+    #     kwargs
+    #     ``````
+    #         - tablename
+    #         - tilename
+    #     '''
+    #     tablename = kwargs.get('coaddtile_table', None)
+    #     tilename  = kwargs.get('tilename', None)
+    #
+    #     if not tablename or not tilename:
+    #         raise ValueError('ERROR: tablename and tilename need to be provided as kwargs')
+    #
+    #     query_string = QUERY.format(tablename=tablename, tilename=tilename)
+    #     return query_string
 
 
     def __str__(self):

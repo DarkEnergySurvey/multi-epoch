@@ -134,8 +134,7 @@ class Job(BaseJob):
     Writes as OUTPUT to context (ctx):
     ``````````````````````````````````
     - CCDS
-    - ccdinfo
-
+    - assoc
     '''
     
     class Input(IO):
@@ -194,8 +193,10 @@ class Job(BaseJob):
                                  help="Name of the output ASCII association file where we will store the cccds information for coadd")
         assoc_json    = CUnicode(None, 
                                  help="Name of the output JSON association file where we will store the cccds information for coadd")
-        plot_outname  = CUnicode(None, help="Output file name for plot, in case we want to plot",)
-
+        plot_outname   = CUnicode(None, help="Output file name for plot, in case we want to plot",)
+        
+        filepath_local = CUnicode(None,
+                                  help="The local filepath where the input fits files (will) live")
 
     def run(self):
 
@@ -208,21 +209,28 @@ class Job(BaseJob):
 
         # Get the root paths
         self.ctx.root_archive = self.get_root_archive(archive_name=self.input.archive_name)
-        self.ctx.root_https = self.get_root_https(archive_name=self.input.archive_name)
+        self.ctx.root_https   = self.get_root_https(archive_name=self.input.archive_name)
 
         # Now we get the locations
-        self.ctx.assoc = self.get_fitsfile_locations()
+        self.ctx.assoc = self.get_fitsfile_locations(filepath_local=self.ctx.filepath_local)
 
         # if Job is run as script
-        if self.ctx.mojo_execution_mode == 'run as script':
+        if self.ctx.mojo_execution_mode == 'job as script':
 
+            print "# Will write out the assoc file"
             # FELIPE: We need to decide whether want to write the assoc file
             # as json or space-separated ascii file.
-            self.write_assoc_file(ctx.assoc_file)
-            self.write_assoc_json(ctx.assoc_json)
 
+            if self.ctx.filepath_local:
+                names=['FILEPATH_LOCAL','FILENAME','BAND','MAG_ZERO']
+            else:
+                names=['FILEPATH_ARCHIVE','FILENAME','BAND','MAG_ZERO']
+            
+            self.write_assoc_file(self.ctx.assoc_file,names=names)
+            self.write_assoc_json(self.ctx.assoc_json,names=names)
+            
             # do we plot as well?
-            if self.input.plot_outname:
+            if self.ctx.plot_outname:
                 from multiepoch.tasks.plot_ccd_corners_destile import Job as plot_job
                 plot = plot_job(ctx=self.ctx)
                 plot()
@@ -278,7 +286,7 @@ class Job(BaseJob):
         return CCDS 
 
 
-    def get_fitsfile_locations(self):
+    def get_fitsfile_locations(self,filepath_local=None):
 
         """ Find the location of the files in the des archive and https urls"""
 
@@ -302,6 +310,12 @@ class Job(BaseJob):
         # 3. Create the https locations for each file
         path = [self.ctx.root_https+"/"]*Nimages
         assoc['FILEPATH_HTTPS']   = npadd(path, assoc['FILEPATH'])
+
+        # 4. in case we provide a filepath_local
+        if filepath_local:
+            print "# Setting FILEPATH_LOCAL to: %s" % filepath_local
+            path = [filepath_local+"/"]*Nimages
+            assoc['FILEPATH_LOCAL']   = npadd(path, assoc['FILEPATH'])
         
         return assoc
 
@@ -374,4 +388,4 @@ class Job(BaseJob):
 
 if __name__ == "__main__":
     from mojo.utils import main_runner
-    _ = main_runner.run_as_main(Job)
+    job = main_runner.run_as_main(Job)
