@@ -4,7 +4,6 @@
         #wrapperloop = exposurename
         modnamepat=${modnamepat_tile_generic}
         #loopobj = file.raw
-
         <file>
             <json_geom>
                 filetype = config 
