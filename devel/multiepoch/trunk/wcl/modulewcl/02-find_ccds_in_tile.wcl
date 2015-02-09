@@ -39,7 +39,7 @@
                 # optional arguments
                 assoc_json = ${file.json_assoc.fullname}
                 # do not interface the following optional inputs now ..
-                db_section = ${db_section}
+                #db_section = ${db_section}
                 #coaddtile_table = ${coaddtile_table}
             </cmdline>
         </exec_1>
