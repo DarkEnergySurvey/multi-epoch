@@ -189,14 +189,28 @@ class Job(BaseJob):
                                  help="TAGNAME for images in the database",)
         exec_name     = CUnicode('immask',
                                  help="EXEC_NAME for images in the database",)
-        assoc_file    = CUnicode(None, 
+        assoc_file    = CUnicode("", 
                                  help="Name of the output ASCII association file where we will store the cccds information for coadd")
-        assoc_json    = CUnicode(None, 
+        assoc_json    = CUnicode("", 
                                  help="Name of the output JSON association file where we will store the cccds information for coadd")
         plot_outname   = CUnicode(None, help="Output file name for plot, in case we want to plot",)
         
         filepath_local = CUnicode(None,
                                   help="The local filepath where the input fits files (will) live")
+
+        def _validate_conditional(self):
+
+            #  We will need one or ther other, but not both.
+            # Check for valid output assoc_json
+            if self.mojo_execution_mode == 'job as script' and self.assoc_json == "":
+                mess = 'If job is run standalone assoc_json cannot be ""'
+                raise IO_ValidationError(mess)
+
+            # Check for valid output assoc_file
+            if self.mojo_execution_mode == 'job as script' and self.assoc_file == "":
+                mess = 'If job is run standalone assoc_file cannot be ""'
+                raise IO_ValidationError(mess)
+
 
     def run(self):
 
