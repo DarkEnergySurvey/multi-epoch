@@ -35,7 +35,7 @@ local_filepath = /work/devel/felipe/LOCAL_DESAR
 </job_environment>
 
 #blocklist = uptime
-blocklist = query_tileinfo, find_ccds_in_tile
+blocklist = query_tileinfo, find_ccds_in_tile, make_SWarp_weights
 
 #<block>
 #    <uptime>
@@ -52,6 +52,10 @@ blocklist = query_tileinfo, find_ccds_in_tile
     <find_ccds_in_tile>
         modulelist = find_ccds_in_tile 
     </find_ccds_in_tile>
+
+    <make_SWarp_weights>
+        modulelist = make_SWarp_weights 
+    </make_SWarp_weights>
 </block>
 
 
