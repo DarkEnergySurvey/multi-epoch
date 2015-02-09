@@ -2,30 +2,40 @@
     <find_ccds_in_tile>
         wrappername = generic.py
         modnamepat=${modnamepat_tile_generic}
-
         <file>
             <json_geom>
                 filetype = config 
                 filepat = tile_generic
-		flabel = geom
+		        flabel = geom
                 fsuffix = json
                 dirpat = me 
                 ops_enddir = aux
                 rundir = aux
                 # bring file back home?
-		savefiles = true
+		        savefiles = true
             </json_geom>
             <json_assoc>
                 filetype = config 
                 filepat = tile_generic
-		flabel = assoc 
+		        flabel = assoc 
                 fsuffix = json
                 dirpat = me 
                 ops_enddir = aux
                 rundir = aux
                 # bring file back home?
-		savefiles = true
+		        savefiles = true
             </json_assoc>
+            <file_assoc>
+                filetype = config 
+                filepat = tile_generic
+		        flabel = assoc 
+                fsuffix = dat 
+                dirpat = me 
+                ops_enddir = aux
+                rundir = aux
+                # bring file back home?
+		        savefies = true
+            </file_assoc>
         </file>
         <exec_1>
             execname = find_ccds_in_tile.py 
@@ -38,8 +48,10 @@
                 _01_json_geom = ${file.json_geom.fullname}
                 # optional arguments
                 assoc_json = ${file.json_assoc.fullname}
+                assoc_file = ${file.file_assoc.fullname}
                 # do not interface the following optional inputs now ..
-                #db_section = ${db_section}
+                db_section = ${db_section}
+                filepath_local = ${filepath_local}
                 #coaddtile_table = ${coaddtile_table}
             </cmdline>
         </exec_1>
