@@ -49,10 +49,8 @@
                 # optional arguments
                 assoc_json = ${file.json_assoc.fullname}
                 assoc_file = ${file.file_assoc.fullname}
-                # do not interface the following optional inputs now ..
                 db_section = ${database_section}
-                filepath_local = ${filepath_local}
-                #coaddtile_table = ${coaddtile_table}
+                filepath_local = ${local_filepath}
             </cmdline>
         </exec_1>
     </find_ccds_in_tile>

@@ -24,7 +24,7 @@ ops_run_dir = ${project}/${pipeline}/${tilename}-r${reqnum}/p${attnum:2}
 unitname = ${tilename}
 
 database_section = db-destest
-filepath_local = /work/devel/felipe/LOCAL_DESAR
+local_filepath = /work/devel/felipe/LOCAL_DESAR
 #blocklist = query_tileinfo
 
 # because we start a python on the remote site with user
