@@ -9,7 +9,7 @@
 
 tilename = DES2246-4457
 
-project = felipe
+project = FM
 target_site = destest_computingsite
 
 reqnum = 0001
