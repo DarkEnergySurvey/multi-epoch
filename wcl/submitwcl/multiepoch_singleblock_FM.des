@@ -9,7 +9,7 @@
 
 tilename = DES2246-4457
 
-project = FM
+project = felipe
 target_site = destest_computingsite
 
 reqnum = 0001
@@ -19,7 +19,6 @@ label = query_tileinfo,test
 pipeline = me # used in desstat output 
 pipeprod = Y2ME # eups meta package name
 pipever = 1.0+3E # eups meta package version
-#pipever = 0.1beta+0E 
 ops_run_dir = ${project}/${pipeline}/${tilename}-r${reqnum}/p${attnum:2}
 unitname = ${tilename}
 
