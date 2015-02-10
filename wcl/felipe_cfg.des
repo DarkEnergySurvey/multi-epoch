@@ -5,6 +5,7 @@ create_junk_tarball = true
 submit_des_services = /home/felipe/.desservices.ini
 submit_des_db_section = db-destest
 #target_des_services = /home/felipe/.desservices.ini
+# This "secret" directory needs to be owner by "nobody"
 target_des_services = /cluster_scratch/users/felipe/secret/.desservices.ini
 target_des_db_section = db-destest
 

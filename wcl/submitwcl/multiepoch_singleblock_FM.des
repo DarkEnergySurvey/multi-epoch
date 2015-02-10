@@ -4,6 +4,7 @@
 <<include ../modulewcl/modnamepat.wcl>>
 <<include ../modulewcl/01-query_tileinfo.wcl>>
 <<include ../modulewcl/02-find_ccds_in_tile.wcl>>
+<<include ../modulewcl/03-make_SWarp_weights.wcl>> 
 
 #<<include destest_computingsite.des>>       
 
@@ -12,7 +13,7 @@ tilename = DES2246-4457
 project = FM
 target_site = destest_computingsite
 
-reqnum = 0001
+reqnum = 0002
 jira_id = ME-TEST # example 
 label = query_tileinfo,test 
 
@@ -36,7 +37,7 @@ blocklist = multiepoch
 
 <block>
     <multiepoch>
-	modulelist = query_tileinfo, find_ccds_in_tile
+	modulelist = query_tileinfo, find_ccds_in_tile, make_SWarp_weights
     </multiepoch>
 </block>
 
