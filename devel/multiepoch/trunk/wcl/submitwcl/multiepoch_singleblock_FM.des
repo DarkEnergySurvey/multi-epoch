@@ -4,7 +4,7 @@
 <<include ../modulewcl/modnamepat.wcl>>
 <<include ../modulewcl/01-query_tileinfo.wcl>>
 <<include ../modulewcl/02-find_ccds_in_tile.wcl>>
-<<include ../modulewcl/03-make_SWarp_weights.wcl>> 
+<<include ../modulewcl/03-make_swarp_weights.wcl>> 
 
 #<<include destest_computingsite.des>>       
 
@@ -37,7 +37,7 @@ blocklist = multiepoch
 
 <block>
     <multiepoch>
-	modulelist = query_tileinfo, find_ccds_in_tile, make_SWarp_weights
+	modulelist = query_tileinfo, find_ccds_in_tile, make_swarp_weights
     </multiepoch>
 </block>
 
