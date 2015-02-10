@@ -25,7 +25,6 @@ unitname = ${tilename}
 
 database_section = db-destest
 local_filepath = /work/devel/felipe/LOCAL_DESAR
-#blocklist = query_tileinfo
 
 # because we start a python on the remote site with user
 # nobody in this test setup. we need to trick the system
@@ -36,10 +35,8 @@ local_filepath = /work/devel/felipe/LOCAL_DESAR
 
 blocklist = multiepoch
 
-
 <block>
     <multiepoch>
-        #modulelist = query_tileinfo, find_ccds_in_tile, make_SWarp_weights 
 	modulelist = query_tileinfo, find_ccds_in_tile
     </multiepoch>
 </block>

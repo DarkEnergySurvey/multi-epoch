@@ -23,7 +23,8 @@ transfer_stats = filemgmt.transfer_stats_db.TransferStatsDB
 transfer_semname = filetrans
 
 use_qcf = False
-use_db_out = True
+#use_db_out = True
+use_db_out = False
 use_db_in = True
 
 
