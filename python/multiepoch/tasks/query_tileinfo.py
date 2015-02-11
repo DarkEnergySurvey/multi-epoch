@@ -20,17 +20,6 @@ import time
 from despymisc.miscutils import elapsed_time
     
 
-#QUERY = '''
-#    SELECT PIXELSCALE, NAXIS1, NAXIS2,
-#    RA, DEC,
-#    RAC1, RAC2, RAC3, RAC4,
-#    DECC1, DECC2, DECC3, DECC4,
-#    RACMIN,RACMAX,DECCMIN,DECCMAX,
-#    CROSSRAZERO
-#    FROM {tablename}
-#    WHERE tilename='{tilename}'
-#   '''
-
 class Job(BaseJob):
 
     '''
@@ -123,26 +112,6 @@ class Job(BaseJob):
         if self.ctx.mojo_execution_mode == 'job as script':
             print "# Writing ouput to: %s" % self.input.json_tileinfo_file
             self.write_ctx_to_json(self.input.json_tileinfo_file, vars_list=['tileinfo', 'tilename'])
-
-    # def get_query(self, **kwargs):
-    #
-    #     '''
-    #     Get the database query that returns DES tile information.
-    #
-    #     kwargs
-    #     ``````
-    #         - tablename
-    #         - tilename
-    #     '''
-    #     tablename = kwargs.get('coaddtile_table', None)
-    #     tilename  = kwargs.get('tilename', None)
-    #
-    #     if not tablename or not tilename:
-    #         raise ValueError('ERROR: tablename and tilename need to be provided as kwargs')
-    #
-    #     query_string = QUERY.format(tablename=tablename, tilename=tilename)
-    #     return query_string
-
 
     def __str__(self):
         return 'query tileinfo' 

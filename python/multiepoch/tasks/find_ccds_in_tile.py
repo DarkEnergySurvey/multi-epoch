@@ -13,6 +13,7 @@ from mojo.context import ContextProvider
 # Mutiepoch loads
 import multiepoch.utils as utils
 import multiepoch.contextDefs as contextDefs
+import multiepoch.querylibs as querylibs
 
 from despyastro import tableio
 from despymisc.miscutils import elapsed_time
@@ -84,34 +85,6 @@ TILE_DECCMAX = man(DEC Corners[1,4])
 Author: Felipe Menanteau, NCSA, Nov 2014.
 
 """
-
-
-# THE QUERY TEMPLATE THAT IS RUN TO GET THE CCDs
-# -----------------------------------------------------------------------------
-#
-
-QUERY = """
-     SELECT
-         {select_extras}
-         file_archive_info.FILENAME,file_archive_info.PATH, image.BAND,
-         image.RAC1,  image.RAC2,  image.RAC3,  image.RAC4,
-         image.DECC1, image.DECC2, image.DECC3, image.DECC4
-     FROM
-         file_archive_info, wgb, image, ops_proctag,
-         {from_extras} 
-     WHERE
-         file_archive_info.FILENAME  = image.FILENAME AND
-         file_archive_info.FILENAME  = wgb.FILENAME  AND
-         image.FILETYPE  = 'red' AND
-         wgb.FILETYPE    = 'red' AND
-         wgb.EXEC_NAME   = '{exec_name}' AND
-         wgb.REQNUM      = ops_proctag.REQNUM AND
-         wgb.UNITNAME    = ops_proctag.UNITNAME AND
-         wgb.ATTNUM      = ops_proctag.ATTNUM AND
-         ops_proctag.TAG = '{tagname}'
-      AND
-         {and_extras} 
-         """
 
 # DEFAULT PARAMETER VALUES -- Change from felipe.XXXXX --> XXXXX
 # -----------------------------------------------------------------------------
@@ -217,9 +190,16 @@ class Job(BaseJob):
         # Check for the db_handle
         self.ctx = utils.check_dbh(self.ctx)
 
+        # Create the tile_edges tuple structure
+        tile_edges = (self.ctx.tileinfo['RACMIN'], self.ctx.tileinfo['RACMAX'],
+                       self.ctx.tileinfo['DECCMIN'],self.ctx.tileinfo['DECCMAX'])
+        # Get the query string back
+        print "# Building the query to find the CCDS"
+        query = querylibs.get_ccds_query(tile_edges, **self.input.as_dict())
+        
         # Call the query built function
         print "# Getting CCD images within the tile definition"
-        self.ctx.CCDS = self.get_CCDS_from_db(**self.input.as_dict())
+        self.ctx.CCDS = self.get_CCDS_from_db(query)
 
         # Get the root paths
         self.ctx.root_archive = self.get_root_archive(archive_name=self.input.archive_name)
@@ -250,47 +230,12 @@ class Job(BaseJob):
                 plot()
         
 
-    def get_CCDS_from_db(self, **kwargs): 
+    def get_CCDS_from_db(self, query): 
 
         '''
-        Get the database query that returns the ccds and store them in a numpy
+        Execute the database query that returns the ccds and store them in a numpy
         record array
-
-        kwargs
-        ``````
-            - exec_name
-            - tagname
-            - select_extras
-            - and_extras
-            - from_extras
         '''
-        select_extras = kwargs.get('select_extras', SELECT_EXTRAS)
-        and_extras    = kwargs.get('and_extras',    AND_EXTRAS)
-        from_extras   = kwargs.get('from_extras',   FROM_EXTRAS)
-        tagname       = kwargs.get('tagname',       'Y2T1_FIRSTCUT')
-        exec_name     = kwargs.get('exec_name',     'immask')
-
-        # Create the tile_edges tuple structure
-        tile_edges = (
-            self.ctx.tileinfo['RACMIN'], self.ctx.tileinfo['RACMAX'],
-            self.ctx.tileinfo['DECCMIN'],self.ctx.tileinfo['DECCMAX']
-            )
-
-        corners_and = [
-                "((image.RAC1 BETWEEN %.10f AND %.10f) AND (image.DECC1 BETWEEN %.10f AND %.10f))\n" % tile_edges,
-                "((image.RAC2 BETWEEN %.10f AND %.10f) AND (image.DECC2 BETWEEN %.10f AND %.10f))\n" % tile_edges,
-                "((image.RAC3 BETWEEN %.10f AND %.10f) AND (image.DECC3 BETWEEN %.10f AND %.10f))\n" % tile_edges,
-                "((image.RAC4 BETWEEN %.10f AND %.10f) AND (image.DECC4 BETWEEN %.10f AND %.10f))\n" % tile_edges,
-                ]
-
-        query = QUERY.format(
-                tagname       = tagname,
-                exec_name     = exec_name,
-                select_extras = select_extras,
-                from_extras   = from_extras,
-                and_extras    = and_extras + ' AND\n (' + ' OR '.join(corners_and) + ')',
-                )
-
         print "# Will execute the query:\n%s\n" %  query
         # Get the ccd images that are part of the DESTILE
         CCDS = despyastro.genutil.query2rec(query,dbhandle=self.ctx.dbh)
