@@ -5,6 +5,7 @@
 <<include ../modulewcl/01-query_tileinfo.wcl>>
 <<include ../modulewcl/02-find_ccds_in_tile.wcl>>
 <<include ../modulewcl/03-make_swarp_weights.wcl>> 
+<<include ../modulewcl/04-call_swarp_weights.wcl>>
 
 #<<include destest_computingsite.des>>       
 
