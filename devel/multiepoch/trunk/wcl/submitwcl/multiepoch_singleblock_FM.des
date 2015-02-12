@@ -39,7 +39,7 @@ blocklist = multiepoch
 <block>
     <multiepoch>
 #        modulelist = query_tileinfo, find_ccds_in_tile, make_swarp_weights, call_swarp_weights
-	modulelist = query_tileinfo, find_ccds_in_tile,	call_swarp_weights
+	modulelist = query_tileinfo, find_ccds_in_tile,	call_swarp_customweights
     </multiepoch>
 </block>
 

@@ -25,7 +25,7 @@
                 # positional arguments with _num_blabla
                 _01_json_assoc = ${file.json_assoc.fullname}
                 # optional arguments
-		basename = coadd/${modnamepat_tile_generic}
+		basename = ${tile_generic}
                 weight_extension = _wgt
 		swarp_execution_mode = tofile
 		magbase = 30.0
