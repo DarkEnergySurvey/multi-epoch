@@ -1,5 +1,5 @@
 <module>
-    <call_swarp_weights>
+    <call_swarp_customweights>
         wrappername = generic.py
         modnamepat=${modnamepat_tile_generic}
         <file>
@@ -32,5 +32,5 @@
 		swarp_parameters = NTHREADS=8 
             </cmdline>
         </exec_1>
-    </call_swarp_weights>
+    </call_swarp_customweights>
 </module>
