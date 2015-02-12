@@ -5,6 +5,8 @@ information as gathered by the multiepoch pipeline over multiple queries to the
 wcl based production framework.
 '''
 
+import processingfw.pfwfilelist as filelistutils
+
 from traitlets import Unicode, Bool, Float, Int, CUnicode, CBool, CFloat,\
         CInt, Instance
 from mojo.jobs.base_job import BaseJob, IO, IO_ValidationError
@@ -71,4 +73,6 @@ if __name__ == '__main__':
     from mojo.utils import main_runner
     job = main_runner.run_as_main(Job)
     assoc_list = job.get_assoc_list_of_dicts()
-    print assoc_list
+    qoutfile = job.input.qoutfile
+    lines = filelistutils.convert_single_files_to_lines(assoc_list)
+    filelistutils.output_lines(qoutfile, lines, outtype='wcl')
