@@ -90,6 +90,7 @@ class Job(BaseJob):
 
         # Get the query string
         query_geom = querylibs.get_geom_query(**self.input.as_dict())
+        query_geom = QUERY.format(**self.input.as_dict())
 
         # Check that we have a database handle
         self.ctx = utils.check_dbh(self.ctx)
