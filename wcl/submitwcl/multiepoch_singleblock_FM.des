@@ -27,6 +27,8 @@ unitname = ${tilename}
 database_section = db-destest
 local_filepath = /work/devel/felipe/LOCAL_DESAR
 
+swarpbasename = ${tilename}-r${reqnum}/p${attnum:2}
+
 # because we start a python on the remote site with user
 # nobody in this test setup. we need to trick the system
 # to look for the python eggs somewhere else.
