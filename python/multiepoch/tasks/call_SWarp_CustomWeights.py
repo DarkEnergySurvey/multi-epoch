@@ -262,7 +262,7 @@ class Job(BaseJob):
 
         Inputs: (active can be passed as kwargs)
         - detectBANDS, from kwrgs or: ['r','i','z']
-        - tilename: self.ctx.tilename
+        - basename: (aka tilename)
         - magbase: from kwargs (or 30)
 
         Inputs (passive passed as ctx)
