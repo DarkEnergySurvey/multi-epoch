@@ -20,7 +20,6 @@ des_http_section = file-http
 # comment out submit_run_dir if want to have submit side in same directory as submit wcl
 #submit_run_dir = /cluster_scratch/refact/dessub/submit/${ops_run_dir}
 
-
 reqnum = 0002
 jira_id = ME-TEST # example 
 label = query_tileinfo,test 
