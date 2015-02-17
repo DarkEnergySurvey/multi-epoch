@@ -20,6 +20,7 @@ use_qcf    = False
 #target_des_services = /cluster_scratch/users/felipe/secret/.desservices.ini
 ##-----------------------------------------------------------------------------
 
+# This is usually defined in the submit wcl
 des_http_section = file-http
 home_archive = prodbeta
 target_site = descmp4
@@ -27,10 +28,10 @@ target_site = descmp4
 submit_files_mvmt = filemgmt.job_mvmt_http.JobArchiveHttp
 
 # no target archive
-use_target_archive_input = never   # never, job
-use_target_archive_output = never  # wrapper, job, never
-use_home_archive_input = wrapper # 
-use_home_archive_output = job # wrapper, job, block, run, never
+use_target_archive_input  = never   # never, job
+use_target_archive_output = never   # wrapper, job, never
+use_home_archive_input    = wrapper # 
+use_home_archive_output   = job     # wrapper, job, block, run, never
 
 transfer_stats = filemgmt.transfer_stats_db.TransferStatsDB
 transfer_semname = filetrans
