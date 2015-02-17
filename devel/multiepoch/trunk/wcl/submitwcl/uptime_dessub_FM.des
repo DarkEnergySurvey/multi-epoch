@@ -13,12 +13,14 @@ pipeline = me # used in desstat output
 pipeprod = Y2ME # eups meta package name
 pipever  = 1.0+3E # eups meta package version
 
+tilename = DES2246-4457
+reqnum = 0002
+jira_id = ME-TEST # example 
+
+
 ops_run_dir = ${project}/${pipeline}/${tilename}-r${reqnum}/p${attnum:2}
 unitname = ${tilename}
 
-reqnum = 0002
-jira_id = ME-TEST # example 
-#label = query_tileinfo,test 
 
 
 blocklist = uptime
