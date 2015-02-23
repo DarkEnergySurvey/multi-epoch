@@ -76,7 +76,8 @@ class Job(BaseJob):
         #if not self.ctx.assoc.get('FILEPATH_LOCAL_WGT'): 
         #    print "# Re-consrtuncting FILEPATH_LOCAL_WGT to ctx.assoc"
         #    self.ctx.assoc['FILEPATH_LOCAL_WGT'] = contextDefs.get_local_weight_names(self.ctx.assoc['FILEPATH_LOCAL'],
-                                                                                      self.ctx.weight_extension)
+        #                                                                             self.ctx.weight_extension)
+
         # Re-cast the ctx.assoc as dictionary of arrays instead of lists
         self.ctx.assoc  = utils.dict2arrays(self.ctx.assoc)
         # Get the BANDs information in the context if they are not present
@@ -93,12 +94,12 @@ class Job(BaseJob):
         self.prewash()
         
         # Gets swarp_scilist, swarp_wgtlist, swarp_flxlist, 
-        (swarp_scilist, swarp_wgtlist, swarp_swglist, swarp_flxlist) = self.get_swarp_input_lists()
+        (swarp_scilist, swarp_wgtlist, swarp_flxlist) = self.get_swarp_input_lists()
 
         # 2. get the updated SWarp parameters and the full command list of SWarp calls --
         swarp_parameters = self.ctx.get('swarp_parameters', {})
-        cmd_list_sci, cmd_list_wgt = self.get_swarp_cmd_list(swarp_scilist, swarp_wgtlist, swarp_swglist, swarp_flxlist,
-                                                             self.ctx.comb_sci, self.ctx.comb_wgt, self.ctx.comb_sci_tmp, self.ctx.comb_wgt_tmp,
+        cmd_list = self.get_swarp_cmd_list(swarp_scilist, swarp_wgtlist, swarp_flxlist,
+                                                             self.ctx.comb_sci, self.ctx.comb_wgt,
                                                              swarp_parameters=swarp_parameters)
 
         # 3. check execution mode and tofile/dryrun/execute commands accordingly --------------
@@ -194,11 +195,11 @@ class Job(BaseJob):
         pars["IMAGEOUT_NAME"]  = "%s" % comb_sci[BAND]
         pars["WEIGHTOUT_NAME"] = "%s" % comb_wgt[BAND]
 
-        swarp_cmd_sci[BAND] = [SWARP_EXE, ]
-        swarp_cmd_sci[BAND].append("%s" % " ".join(swarp_scilist[BAND]))
-        swarp_cmd_sci[BAND].append("-c %s" % swarp_conf)
+        swarp_cmd[BAND] = [SWARP_EXE, ]
+        swarp_cmd[BAND].append("%s" % " ".join(swarp_scilist[BAND]))
+        swarp_cmd[BAND].append("-c %s" % swarp_conf)
         for param,value in pars.items():
-            swarp_cmd_sci[BAND].append("-%s %s" % (param,value))
+            swarp_cmd[BAND].append("-%s %s" % (param,value))
 
         return swarp_cmd
 
