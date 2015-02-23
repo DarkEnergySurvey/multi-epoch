@@ -15,6 +15,7 @@ from traitlets import Unicode, Bool, Float, Int, CUnicode, CBool, CFloat,\
 from mojo.jobs.base_job import BaseJob, IO, IO_ValidationError
 
 import multiepoch.utils as utils
+from multiepoch.querylibs import get_tileinfo_from_db, get_CCDS_from_db
 import multiepoch.contextDefs as contextDefs
 
 npadd = numpy.core.defchararray.add
@@ -77,6 +78,7 @@ class Job(BaseJob):
 
     # THE QUERIES
     # -------------------------------------------------------------------------
+    """ 
 
     # The query template used to get the geometry of the tile
     QUERY_GEOM = '''
@@ -91,7 +93,7 @@ class Job(BaseJob):
                 '''
 
     # The query template to get the the CCDs
-    QUERY_CCDS = """
+    QUERY_CCDS = ''' 
          SELECT
              {select_extras}
              file_archive_info.FILENAME,file_archive_info.PATH, image.BAND,
@@ -109,10 +111,10 @@ class Job(BaseJob):
              wgb.REQNUM      = ops_proctag.REQNUM AND
              wgb.UNITNAME    = ops_proctag.UNITNAME AND
              wgb.ATTNUM      = ops_proctag.ATTNUM AND
-             ops_proctag.TAG = '{tagname}'
-          AND
+             ops_proctag.TAG = '{tagname}' AND
              {and_extras} 
-             """
+         ''' 
+    """
         
 
     # RUN 
@@ -129,14 +131,18 @@ class Job(BaseJob):
         t0 = time.time()
         # get_tileinfo_from_db gets all the the arguments needed directly out
         # of self.input and the dbh out of the ctx
-        self.ctx.tileinfo = self.get_tileinfo_from_db(**self.input.as_dict())
+        self.ctx.tileinfo = get_tileinfo_from_db(self.ctx.dbh,
+                **self.input.as_dict())
         print "# Done in %s" % elapsed_time(t0)
         t1 = time.time()
 
         # CCD INFORMATION -----------------------------------------------------
 
         print "# Getting CCD images within the tile definition"
-        self.ctx.CCDS = self.get_CCDS_from_db(**self.input.as_dict())
+        tile_edges = (self.ctx.tileinfo['RACMIN'], self.ctx.tileinfo['RACMAX'],
+                       self.ctx.tileinfo['DECCMIN'],self.ctx.tileinfo['DECCMAX'])
+        self.ctx.CCDS = get_CCDS_from_db(self.ctx.dbh, tile_edges,
+                **self.input.as_dict())
         print "# Query time: %s" % elapsed_time(t1)
         print "# Nelem %s" % len(self.ctx.CCDS['FILENAME'])
 
@@ -155,54 +161,6 @@ class Job(BaseJob):
 
     # UTILITIES 
     # -------------------------------------------------------------------------
-
-    def get_tileinfo_from_db(self, **kwargs):
-        query_geom = self.QUERY_GEOM.format(**kwargs)
-        print "# Getting geometry information for tile:%s" % kwargs.get('tilename')
-        cur = self.ctx.dbh.cursor()
-        cur.execute(query_geom)
-        desc = [d[0] for d in cur.description]
-        # cols description
-        line = cur.fetchone()
-        cur.close()
-        # Make a dictionary/header for all the columns from COADDTILE table
-        tileinfo = dict(zip(desc, line))
-        return tileinfo
-
-    def get_CCDS_from_db(self, **kwargs): 
-        '''
-        Execute the database query that returns the ccds and store them in a numpy
-        record array
-        '''
-        # Get the completed query string 
-        ccd_query = self.get_ccds_query(**kwargs)
-        print "# Will execute the query:\n%s\n" %  ccd_query
-        # Get the ccd images that are part of the DESTILE
-        CCDS = despyastro.genutil.query2rec(ccd_query, dbhandle=self.ctx.dbh)
-        return CCDS 
-
-    def get_ccds_query(self, **kwargs):
-        '''
-        Get the database query that returns the ccds 
-        kwargs: exec_name, tagname, select_extras, and_extras, from_extras
-        '''
-        print "# Building the query to find the CCDS"
-        tile_edges = (self.ctx.tileinfo['RACMIN'], self.ctx.tileinfo['RACMAX'],
-                       self.ctx.tileinfo['DECCMIN'],self.ctx.tileinfo['DECCMAX'])
-        corners_and = [
-            "((image.RAC1 BETWEEN %.10f AND %.10f) AND (image.DECC1 BETWEEN %.10f AND %.10f))\n" % tile_edges,
-            "((image.RAC2 BETWEEN %.10f AND %.10f) AND (image.DECC2 BETWEEN %.10f AND %.10f))\n" % tile_edges,
-            "((image.RAC3 BETWEEN %.10f AND %.10f) AND (image.DECC3 BETWEEN %.10f AND %.10f))\n" % tile_edges,
-            "((image.RAC4 BETWEEN %.10f AND %.10f) AND (image.DECC4 BETWEEN %.10f AND %.10f))\n" % tile_edges,
-            ]
-        query = self.QUERY_CCDS.format(
-            tagname       = kwargs.get('tagname',       'Y2T1_FIRSTCUT'),
-            exec_name     = kwargs.get('exec_name',     'immask'),
-            select_extras = kwargs.get('select_extras'),
-            from_extras   = kwargs.get('from_extras'),
-            and_extras    = kwargs.get('and_extras')+  ' AND\n (' + ' OR '.join(corners_and) + ')',
-            )
-        return query
 
     def get_fitsfile_locations(self,filepath_local=None):
         """ Find the location of the files in the des archive and https urls"""

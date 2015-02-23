@@ -1,25 +1,25 @@
 """ Set of common query tasks for the multi-epoch pipeline """
 
+import despyastro
 
-# --------------------------------------------------------
+
+# QUERIES
+# -----------------------------------------------------------------------------
+
 # The query template used to get the geometry of the tile
-# --------------------------------------------------------
 QUERY_GEOM = '''
-            SELECT PIXELSCALE, NAXIS1, NAXIS2,
-            RA, DEC,
-            RAC1, RAC2, RAC3, RAC4,
-            DECC1, DECC2, DECC3, DECC4,
-            RACMIN,RACMAX,DECCMIN,DECCMAX,
-            CROSSRAZERO
-            FROM {tablename}
-            WHERE tilename='{tilename}'
+    SELECT PIXELSCALE, NAXIS1, NAXIS2,
+        RA, DEC,
+        RAC1, RAC2, RAC3, RAC4,
+        DECC1, DECC2, DECC3, DECC4,
+        RACMIN,RACMAX,DECCMIN,DECCMAX,
+        CROSSRAZERO
+    FROM {coaddtile_table}
+    WHERE tilename='{tilename}'
             '''
 
-
-# ------------------------------------------------
-# The query template to get the the CCDs
-# ------------------------------------------------
-QUERY_CCDS = """
+# The query template used to get the the CCDs
+QUERY_CCDS = ''' 
      SELECT
          {select_extras}
          file_archive_info.FILENAME,file_archive_info.PATH, image.BAND,
@@ -37,65 +37,59 @@ QUERY_CCDS = """
          wgb.REQNUM      = ops_proctag.REQNUM AND
          wgb.UNITNAME    = ops_proctag.UNITNAME AND
          wgb.ATTNUM      = ops_proctag.ATTNUM AND
-         ops_proctag.TAG = '{tagname}'
-      AND
+         ops_proctag.TAG = '{tagname}' AND
          {and_extras} 
-         """
-def get_geom_query(**kwargs):
-    
+     '''
+     
+        
+
+# QUERY FUNCTIONS
+# -----------------------------------------------------------------------------
+
+def get_tileinfo_from_db(dbh, **kwargs):
+    ''' Execute database query to get geometry inforation for a tile.
     '''
-    Get the database query that returns DES tile information.
-    
-    kwargs
-    ``````
-     - tablename
-     - tilename
-    '''
-    
-    tablename = kwargs.get('coaddtile_table', None)
-    tilename  = kwargs.get('tilename', None)
-    
-    if not tablename or not tilename:
-        raise ValueError('ERROR: tablename and tilename need to be provided as kwargs')
-    
-    query_string = QUERY_GEOM.format(tablename=tablename, tilename=tilename)
-    return query_string
+
+    query_geom = QUERY_GEOM.format(**kwargs)
+    print "# Getting geometry information for tile:%s" % kwargs.get('tilename')
+    cur = dbh.cursor()
+    cur.execute(query_geom)
+    desc = [d[0] for d in cur.description]
+    # cols description
+    line = cur.fetchone()
+    cur.close()
+    # Make a dictionary/header for all the columns from COADDTILE table
+    tileinfo = dict(zip(desc, line))
+
+    return tileinfo
 
 
-def get_ccds_query(tile_edges, **kwargs):
+# -----------------------------------------------------------------------------
 
+def get_CCDS_from_db(dbh, tile_edges, **kwargs): 
     '''
-    Get the database query that returns the ccds and store them in a numpy
+    Execute the database query that returns the ccds and store them in a numpy
     record array
-    
-    kwargs
-    ``````
-     - exec_name
-     - tagname
-     - select_extras
-     - and_extras
-     - from_extras
+    kwargs: exec_name, tagname, select_extras, and_extras, from_extras
     '''
-    
-    select_extras = kwargs.get('select_extras')
-    and_extras    = kwargs.get('and_extras')
-    from_extras   = kwargs.get('from_extras')
-    tagname       = kwargs.get('tagname',       'Y2T1_FIRSTCUT')
-    exec_name     = kwargs.get('exec_name',     'immask')
-    
+
+    print "# Building the query to find the CCDS"
     corners_and = [
         "((image.RAC1 BETWEEN %.10f AND %.10f) AND (image.DECC1 BETWEEN %.10f AND %.10f))\n" % tile_edges,
         "((image.RAC2 BETWEEN %.10f AND %.10f) AND (image.DECC2 BETWEEN %.10f AND %.10f))\n" % tile_edges,
         "((image.RAC3 BETWEEN %.10f AND %.10f) AND (image.DECC3 BETWEEN %.10f AND %.10f))\n" % tile_edges,
         "((image.RAC4 BETWEEN %.10f AND %.10f) AND (image.DECC4 BETWEEN %.10f AND %.10f))\n" % tile_edges,
         ]
-    
-    query = QUERY_CCDS.format(
-        tagname       = tagname,
-        exec_name     = exec_name,
-        select_extras = select_extras,
-        from_extras   = from_extras,
-        and_extras    = and_extras + ' AND\n (' + ' OR '.join(corners_and) + ')',
+    ccd_query = QUERY_CCDS.format(
+        tagname       = kwargs.get('tagname',       'Y2T1_FIRSTCUT'),
+        exec_name     = kwargs.get('exec_name',     'immask'),
+        select_extras = kwargs.get('select_extras'),
+        from_extras   = kwargs.get('from_extras'),
+        and_extras    = kwargs.get('and_extras')+  ' AND\n (' + ' OR '.join(corners_and) + ')',
         )
 
-    return query
+    print "# Will execute the query:\n%s\n" %  ccd_query
+    # Get the ccd images that are part of the DESTILE
+    CCDS = despyastro.genutil.query2rec(ccd_query, dbhandle=dbh)
+
+    return CCDS 
