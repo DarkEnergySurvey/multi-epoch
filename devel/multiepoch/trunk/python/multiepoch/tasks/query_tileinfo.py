@@ -88,25 +88,13 @@ class Job(BaseJob):
 
     def run(self):
 
-        # Get the query string
-        query_geom = querylibs.get_geom_query(**self.input.as_dict())
-        query_geom = QUERY.format(**self.input.as_dict())
-
         # Check that we have a database handle
         self.ctx = utils.check_dbh(self.ctx)
 
-        # We execute the query
-        t0 = time.time()
-        print "# Getting geometry information for tile:%s" % self.ctx.tilename
-        cur = self.ctx.dbh.cursor()
-        cur.execute(query_geom)
-        desc = [d[0] for d in cur.description]
-        # cols description
-        line = cur.fetchone()
-        cur.close()
-
         # Make a dictionary/header for the all columns from COADDTILE table
-        self.ctx.tileinfo = dict(zip(desc, line))
+        t0 = time.time()
+        self.ctx.tileinfo = querylibs.get_tileinfo_from_db(self.ctx.dbh,
+                **self.input.as_dict())
         print "# Done in %s" % elapsed_time(t0)
 
         # if Job is run as script, we write the json file

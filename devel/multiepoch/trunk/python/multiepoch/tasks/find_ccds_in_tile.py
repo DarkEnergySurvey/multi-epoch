@@ -190,16 +190,11 @@ class Job(BaseJob):
         # Check for the db_handle
         self.ctx = utils.check_dbh(self.ctx)
 
-        # Create the tile_edges tuple structure
+        # Create the tile_edges tuple structure and query the database
         tile_edges = (self.ctx.tileinfo['RACMIN'], self.ctx.tileinfo['RACMAX'],
                        self.ctx.tileinfo['DECCMIN'],self.ctx.tileinfo['DECCMAX'])
-        # Get the query string back
-        print "# Building the query to find the CCDS"
-        query = querylibs.get_ccds_query(tile_edges, **self.input.as_dict())
-        
-        # Call the query built function
-        print "# Getting CCD images within the tile definition"
-        self.ctx.CCDS = self.get_CCDS_from_db(query)
+        self.ctx.CCDS = querylibs.get_CCDS_from_db(self.ctx.dbh, tile_edges,
+                **self.input.as_dict())
 
         # Get the root paths
         self.ctx.root_archive = self.get_root_archive(archive_name=self.input.archive_name)
