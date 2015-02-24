@@ -108,9 +108,9 @@ class Job(BaseJob):
             self.writeCall(cmd_list)
                     
         elif execution_mode == 'dryrun':
-            print "# For now we only print the commands (dry-run)"
+            self.logger.info("# For now we only print the commands (dry-run)")
             for band in self.ctx.dBANDS:
-                print ' '.join(cmd_list[band])
+                self.logger.info(' '.join(cmd_list[band]))
 
         elif execution_mode == 'execute':
             self.runSWarp(cmd_list)
@@ -123,7 +123,7 @@ class Job(BaseJob):
         bkline  = self.ctx.get('breakline',BKLINE)
         # The file where we'll write the commands
         cmdfile = self.ctx.get('cmdfile', "%s_call_swarp.cmd" % self.ctx.basename)
-        print "# Will write SWarp call to: %s" % cmdfile
+        self.logger.info("# Will write SWarp call to: %s" % cmdfile)
         with open(cmdfile, 'w') as fid:
             for band in self.ctx.dBANDS:
                 fid.write(bkline.join(cmd_list[band])+'\n')
@@ -135,21 +135,21 @@ class Job(BaseJob):
         #logfile = self.ctx.get('swarp_logfile', "%s_swarp.log" % self.ctx.basename)
         logfile = self.ctx.get('swarp_logfile', os.path.join(self.ctx.logdir,"%s_swarp.log" % self.ctx.filepattern))
         log = open(logfile,"w")
-        print "# Will proceed to run the SWarp calls now:"
-        print "# Will write to logfile: %s" % logfile
+        self.logger.info("# Will proceed to run the SWarp calls now:")
+        self.logger.info("# Will write to logfile: %s" % logfile)
         t0 = time.time()
 
         for band in self.ctx.dBANDS:
             t1 = time.time()
             cmd  = ' '.join(cmd_list[band])
-            print "# Executing SWarp SCI for tile:%s, BAND:%s" % (self.ctx.tilename,band)
-            print "# %s " % cmd
+            self.logger.info("# Executing SWarp SCI for tile:%s, BAND:%s" % (self.ctx.tilename,band))
+            self.logger.info("# %s " % cmd)
             status = subprocess.call(cmd,shell=True,stdout=log, stderr=log)
             if status > 0:
                 raise RuntimeError("\n***\nERROR while running SWarp, check logfile: %s\n***" % logfile)
-            print "# Done in %s\n" % elapsed_time(t1)
+            self.logger.info("# Done in %s\n" % elapsed_time(t1))
 
-        print "# Total SWarp time %s" % elapsed_time(t0)
+        self.logger.info("# Total SWarp time %s" % elapsed_time(t0))
         log.write("# Total SWarp time %s\n" % elapsed_time(t0))
         log.close()
         return
@@ -243,13 +243,13 @@ class Job(BaseJob):
          - comb_sci_tmp and comb_wgt_tmp
         """
 
-        print "# Setting names for SWarp calls"
+        self.logger.info("# Setting names for SWarp calls")
 
         # Extract the relevant kwargs
         # FELIPE -- CLEAN UP, this should not be run as kwargs anymore now that we have Input(IO)
-        detecBANDS = kwargs.get('detecBANDS',self.ctx.detecBANDS) # The band to consider for the detection image
-        magbase    = kwargs.get('magbase',self.ctx.magbase) # The magbase for flxscale, FLXSCALE = 10**(0.4*(magbase-zp))
-        tilename   = kwargs.get('tilename',self.ctx.tilename)
+        detecBANDS = kwargs.get('detecBANDS',self.input.detecBANDS) # The band to consider for the detection image
+        magbase    = kwargs.get('magbase',self.input.magbase) # The magbase for flxscale, FLXSCALE = 10**(0.4*(magbase-zp))
+        tilename   = kwargs.get('tilename',self.input.tilename)
         # --------------------------
 
         # output variables
@@ -266,7 +266,7 @@ class Job(BaseJob):
         # Loop over filters
         for BAND in self.ctx.BANDS:
 
-            print "# Examining BAND: %s" % BAND
+            self.logger.info("# Examining BAND: %s" % BAND)
             # Relevant indices per band
             idx = numpy.where(self.ctx.assoc['BAND'] == BAND)[0]
             # 1. SWarp inputs dats
@@ -284,7 +284,7 @@ class Job(BaseJob):
             # In case we want to put the in aux
             auxdir = os.path.join(self.ctx.basedir,"aux")
             if not os.path.exists(auxdir):
-                print "# Creating directory: %s" % auxdir
+                self.logger.info("# Creating directory: %s" % auxdir)
                 os.makedirs(auxdir)
                                   
             filepattern = self.ctx.filepattern
@@ -294,10 +294,10 @@ class Job(BaseJob):
             swarp_flxlist[BAND] = os.path.join(self.ctx.basedir,"aux","%s_%s_flx.list" % (filepattern,BAND))
 
             # 3. Put them into the files
-            print "# Writing science files for tile:%s band:%s on:%s" % (self.ctx.tilename,BAND,swarp_scilist[BAND])
+            self.logger.info("# Writing science files for tile:%s band:%s on:%s" % (self.ctx.tilename,BAND,swarp_scilist[BAND]))
             tableio.put_data(swarp_scilist[BAND],(swarp_inputs[BAND],),format="%s[0]")
 
-            print "# Writing weight files for tile: %s band:%s on:%s" % (self.ctx.tilename,BAND,swarp_wgtlist[BAND])
+            self.logger.info("# Writing weight files for tile: %s band:%s on:%s" % (self.ctx.tilename,BAND,swarp_wgtlist[BAND]))
             tableio.put_data(swarp_wgtlist[BAND],(swarp_inputs[BAND],),format="%s[2]")
 
             # NOT NEEDED
@@ -305,7 +305,7 @@ class Job(BaseJob):
             #tableio.put_data(swarp_swglist[BAND],(swarp_weights[BAND],),format="%s")
 
             flxscale = 10.0**(0.4*(magbase - swarp_magzero[BAND]))
-            print "# Writing fluxscale values for tile: %s band:%s on:%s" % (self.ctx.tilename,BAND,swarp_flxlist[BAND])
+            self.logger.info("# Writing fluxscale values for tile: %s band:%s on:%s" % (self.ctx.tilename,BAND,swarp_flxlist[BAND]))
             tableio.put_data(swarp_flxlist[BAND],(flxscale,),format="%s")
 
 
@@ -316,7 +316,7 @@ class Job(BaseJob):
         swarp_wgtlist[BAND] = [self.ctx.comb_wgt[band] for band in useBANDS] # old: extract_from_keys(comb_wgt, useBANDS).values()
         #swarp_swglist[BAND] = [self.ctx.comb_wgt_tmp[band] for band in useBANDS] # NOT NEEDED
 
-        print "# Names for SWarp input/output are set"
+        self.logger.info("# Names for SWarp input/output are set")
         return swarp_scilist, swarp_wgtlist, swarp_flxlist 
 
     def __str__(self):
