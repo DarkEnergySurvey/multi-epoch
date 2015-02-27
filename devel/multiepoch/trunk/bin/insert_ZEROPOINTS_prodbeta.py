@@ -316,5 +316,14 @@ if __name__ == "__main__":
     # ---------- ----------
     #  1007	    5
     #  1155	    1
-    insertZEROPOINTS(tablename='felipe.extraZEROPOINT',reqnum=1007,attnum=5,clobber=True)
-    insertZEROPOINTS(tablename='felipe.extraZEROPOINT',reqnum=1155,attnum=1,clobber=False) # no-clobber
+    # On the new destest
+    #
+    # REQNUM     ATTNUM
+    # ---------- ----------
+    # 1413       02
+    # 1417       02
+    # 1417       03
+
+    insertZEROPOINTS(tablename='felipe.extraZEROPOINT',reqnum=1413,attnum=2,clobber=True)
+    insertZEROPOINTS(tablename='felipe.extraZEROPOINT',reqnum=1417,attnum=2,clobber=False)# no-clobber table
+    insertZEROPOINTS(tablename='felipe.extraZEROPOINT',reqnum=1417,attnum=3,clobber=False)# no-clobber table
