@@ -194,8 +194,7 @@ class Job(BaseJob):
         # Create the tile_edges tuple structure and query the database
         tile_edges = (self.ctx.tileinfo['RACMIN'], self.ctx.tileinfo['RACMAX'],
                        self.ctx.tileinfo['DECCMIN'],self.ctx.tileinfo['DECCMAX'])
-        self.ctx.CCDS = querylibs.get_CCDS_from_db(self.ctx.dbh, tile_edges,
-                **self.input.as_dict())
+        self.ctx.CCDS = querylibs.get_CCDS_from_db(self.ctx.dbh, tile_edges,**self.input.as_dict())
 
         # Get the root paths
         self.ctx.root_archive = self.get_root_archive(archive_name=self.input.archive_name)
@@ -205,7 +204,7 @@ class Job(BaseJob):
         self.ctx.root_https   = self.get_root_http(archive_name=self.input.archive_name)
 
         # Now we get the locations
-        self.ctx.assoc = self.get_fitsfile_locations(filepath_local=self.ctx.filepath_local)
+        self.ctx.assoc = self.get_fitsfile_locations(filepath_local=self.input.filepath_local)
 
         # if Job is run as script
         if self.ctx.mojo_execution_mode == 'job as script':

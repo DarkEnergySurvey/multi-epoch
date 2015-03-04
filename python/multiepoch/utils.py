@@ -14,7 +14,7 @@ def check_dbh(ctx):
     
     if 'dbh' not in ctx:
         try:
-            db_section = ctx.get('db_section','db-desoper')
+            db_section = ctx.get('db_section')
             print "# Creating db-handle to section: %s" % db_section
             ctx.dbh = desdbi.DesDbi(section=db_section)
         except:
