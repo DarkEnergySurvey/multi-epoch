@@ -40,7 +40,7 @@ class Job(BaseJob):
 
         # if we have local files, then we'll skip the rest
         if self.ctx.LOCALFILES:
-            self.ctx.FILEPATH_LOCAL = self.ctx.FILEPATH_ARCHIVE
+            self.ctx.asssoc['FILEPATH_LOCAL'] = self.ctx.assoc['FILEPATH_ARCHIVE']
             print "# All files are local -- inside the DESAR cluster"
             return
 
@@ -51,31 +51,31 @@ class Job(BaseJob):
         utils.create_local_archive(self.ctx.local_archive)
 
         # Transfer the files
-        self.transfer_files(clobber,local_archive,section=http_section)
+        self.transfer_files(clobber,section=http_section)
 
         return
     
     def define_localnames(self, local_archive):
 
-        Nfiles = len(self.ctx.FILEPATH_HTTPS)
-        self.ctx.FILEPATH_LOCAL = []
+        Nfiles = len(self.ctx.assoc['FILEPATH_HTTPS'])
+        self.ctx.assoc['FILEPATH_LOCAL'] = []
         for k in range(Nfiles):
             # Get the remote and local names
-            url       = self.ctx.FILEPATH_HTTPS[k]
-            localfile = os.path.join(local_archive,self.ctx.FILEPATH[k])
-            self.ctx.FILEPATH_LOCAL.append(localfile)
+            url       = self.ctx.assoc['FILEPATH_HTTPS'][k]
+            localfile = os.path.join(local_archive,self.ctx.assoc['FILEPATH'][k])
+            self.ctx.assoc['FILEPATH_LOCAL'].append(localfile)
         return
 
     def transfer_files(self,clobber,section):
 
         """ Transfer the files """
-    
+
         # Now get the files via http
-        Nfiles = len(self.ctx.FILEPATH_HTTPS)
+        Nfiles = len(self.ctx.assoc['FILEPATH_HTTPS'])
         for k in range(Nfiles):
             
-            url       = self.ctx.FILEPATH_HTTPS[k]
-            localfile = self.ctx.FILEPATH_LOCAL[k]
+            url       = self.ctx.assoc['FILEPATH_HTTPS'][k]
+            localfile = self.ctx.assoc['FILEPATH_LOCAL'][k]
 
             # Make sure the file does not already exists exits
             if not os.path.exists(localfile) or clobber:
@@ -94,7 +94,7 @@ class Job(BaseJob):
 
         # Make it a np-char array
         print "\n#\n"
-        self.ctx.FILEPATH_LOCAL = numpy.array(self.ctx.FILEPATH_LOCAL)
+        self.ctx.assoc['FILEPATH_LOCAL'] = numpy.array(self.ctx.assoc['FILEPATH_LOCAL'])
         return
         
 

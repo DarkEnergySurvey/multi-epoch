@@ -10,31 +10,26 @@ import os,sys
 import time
 from despymisc.miscutils import elapsed_time
 
+
 # Take time
 t0 = time.time()
 
 # 0. Initialize Job Operator
-jo  = job_operator.JobOperator()#'multiepoch.config_db-destest')
+jo  = job_operator.JobOperator(mojo_execution_mode='python')
 
 # 1.  Get the tile information from the table
-jo.run_job('multiepoch.tasks.query_tileinfo', tilename='DES2246-4457', coaddtile_table='felipe.coaddtile_new')
+jo.run_job('multiepoch.tasks.query_tileinfo', tilename='DES2246-4457', coaddtile_table='felipe.coaddtile_new',db_section='db-destest')
 
 # 2. Set up the output directory
 jo.run_job('multiepoch.tasks.set_tile_directory', outputpath=os.environ['HOME']+"/TILEBUILDER_TEST")
 
 # 3. Get the CCDs inside the tile
+# -------------------------------------------------
 SELECT_EXTRAS = "felipe.extraZEROPOINT.MAG_ZERO,"
 FROM_EXTRAS   = "felipe.extraZEROPOINT"
 AND_EXTRAS    = "felipe.extraZEROPOINT.FILENAME = image.FILENAME" 
-jo.run_job('multiepoch.tasks.find_ccds_in_tile',
-           select_extras = SELECT_EXTRAS,
-           from_extras = FROM_EXTRAS,
-           and_extras = AND_EXTRAS,
-           tagname='Y2T_FIRSTCUT',
-           exec_name='immask',
-           )
-
-exit()
+# -------------------------------------------------
+jo.run_job('multiepoch.tasks.find_ccds_in_tile',tagname='Y2T_FIRSTCUT',exec_name='immask')
 
 # 4a. Plot the corners -- all  bands (default)
 jo.run_job('multiepoch.tasks.plot_ccd_corners_destile')
@@ -43,13 +38,9 @@ jo.run_job('multiepoch.tasks.plot_ccd_corners_destile')
 #jo.run_job('multiepoch.tasks.plot_ccd_corners_destile', band='r')
 #jo.run_job('multiepoch.tasks.plot_ccd_corners_destile', band='i')
 
-# 5 Collect files for swarp
-# Now this is done by find_ccds_in_tile
-# jo.run_job('multiepoch.tasks.find_fitsfiles_location',archive_name='desar2home')
-
 # 6. Retrieve the files -- if remotely
 LOCAL_DESAR = os.path.join(os.environ['HOME'],'LOCAL_DESAR')
-jo.run_job('multiepoch.tasks.get_fitsfiles',local_archive=LOCAL_DESAR)
+jo.run_job('multiepoch.tasks.get_fitsfiles',local_archive=LOCAL_DESAR, http_section='file-http')
 
 # 7 Create custom weights for SWarp
 jo.run_job('multiepoch.tasks.make_SWarp_weights',clobber_weights=False, MP_weight=4)

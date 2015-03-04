@@ -9,7 +9,7 @@
 
  svn co $SVNROOT/multiepoch multiepoch
  setup -v -r ~/DESDM-code/devel/multiepoch/trunk
-#setup -v -r ~/DESDM-code/devel/mojo/trunk
+ setup -v -r ~/DESDM-Code/devel/despymisc/trunk/
 
 3) Now run the steps...
 
