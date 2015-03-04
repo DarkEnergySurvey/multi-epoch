@@ -14,7 +14,7 @@ from despymisc.miscutils import elapsed_time
 t0 = time.time()
 
 # 0. Initialize Job Operator
-jo  = job_operator.JobOperator('multiepoch.config_db-destest')
+jo  = job_operator.JobOperator()#'multiepoch.config_db-destest')
 
 # 1.  Get the tile information from the table
 jo.run_job('multiepoch.tasks.query_tileinfo', tilename='DES2246-4457', coaddtile_table='felipe.coaddtile_new')
@@ -30,9 +30,11 @@ jo.run_job('multiepoch.tasks.find_ccds_in_tile',
            select_extras = SELECT_EXTRAS,
            from_extras = FROM_EXTRAS,
            and_extras = AND_EXTRAS,
-           tagname='Y2T1_FIRSTCUT',
+           tagname='Y2T_FIRSTCUT',
            exec_name='immask',
            )
+
+exit()
 
 # 4a. Plot the corners -- all  bands (default)
 jo.run_job('multiepoch.tasks.plot_ccd_corners_destile')

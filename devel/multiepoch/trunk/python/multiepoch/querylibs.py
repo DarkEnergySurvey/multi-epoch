@@ -81,7 +81,7 @@ def get_CCDS_from_db(dbh, tile_edges, **kwargs):
         "((image.RAC4 BETWEEN %.10f AND %.10f) AND (image.DECC4 BETWEEN %.10f AND %.10f))\n" % tile_edges,
         ]
     ccd_query = QUERY_CCDS.format(
-        tagname       = kwargs.get('tagname',       'Y2T1_FIRSTCUT'),
+        tagname       = kwargs.get('tagname'),
         exec_name     = kwargs.get('exec_name',     'immask'),
         select_extras = kwargs.get('select_extras'),
         from_extras   = kwargs.get('from_extras'),

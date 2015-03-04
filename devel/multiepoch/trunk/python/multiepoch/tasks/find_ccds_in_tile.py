@@ -150,15 +150,16 @@ class Job(BaseJob):
         db_section    = CUnicode("db-destest",
                                  help="DataBase Section to connect", 
                                  argparse={'choices': ('db-desoper','db-destest', )} )
-        archive_name  = CUnicode("desar2home",
-                                 help="DataBase Archive Name section",)
+        archive_name  = CUnicode("prodbeta",
+                                 help="DataBase Archive Name section",
+                                 argparse={'choices': ('prodbeta','desar2home')} )
         select_extras = CUnicode(SELECT_EXTRAS,
                                  help="string with extra SELECT for query",)
         and_extras    = CUnicode(AND_EXTRAS,
                                  help="string with extra AND for query",)
         from_extras   = CUnicode(FROM_EXTRAS,
                                  help="string with extra FROM for query",)
-        tagname       = CUnicode('Y2T1_FIRSTCUT',
+        tagname       = CUnicode('Y2T_FIRSTCUT',
                                  help="TAGNAME for images in the database",)
         exec_name     = CUnicode('immask',
                                  help="EXEC_NAME for images in the database",)
@@ -198,7 +199,10 @@ class Job(BaseJob):
 
         # Get the root paths
         self.ctx.root_archive = self.get_root_archive(archive_name=self.input.archive_name)
-        self.ctx.root_https   = self.get_root_https(archive_name=self.input.archive_name)
+
+        # Hack to make it work until we populate root_https in destest
+        #self.ctx.root_https   = self.get_root_https(archive_name=self.input.archive_name)
+        self.ctx.root_https   = self.get_root_http(archive_name=self.input.archive_name)
 
         # Now we get the locations
         self.ctx.assoc = self.get_fitsfile_locations(filepath_local=self.ctx.filepath_local)
@@ -306,6 +310,21 @@ class Job(BaseJob):
         cur.close()
         return root_https
 
+    def get_root_http(self, archive_name='desar2home'):
+
+        """
+        Get the root_http  fron the database
+        """
+        cur = self.ctx.dbh.cursor()
+        # root_http 
+        query = "select val from ops_archive_val where name='%s' and key='root_http'" % archive_name
+        print "# Getting root_https for section: %s" % archive_name
+        print "# Will execute the SQL query:\n********\n** %s\n********" % query
+        cur.execute(query)
+        root_http  = cur.fetchone()[0]
+        print "# root_http:   %s" % root_http
+        cur.close()
+        return root_http
 
     def write_assoc_file(self,assoc_file,names=['FILEPATH_ARCHIVE','FILENAME','BAND','MAG_ZERO']):
 
