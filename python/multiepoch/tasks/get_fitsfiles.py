@@ -33,6 +33,7 @@ class Job(BaseJob):
         kwargs = self.ctx.get_kwargs_dict()
         local_archive = kwargs.get('local_archive', None)
         clobber       = kwargs.get('clobber', False)
+        http_section  = kwargs.get('http_section', 'http-desarchive')
         
         # Figure out if in the cosmology.illinois.edu cluster
         self.ctx.LOCALFILES = inDESARcluster()
@@ -50,7 +51,7 @@ class Job(BaseJob):
         utils.create_local_archive(self.ctx.local_archive)
 
         # Transfer the files
-        self.transfer_files(clobber,local_archive)
+        self.transfer_files(clobber,local_archive,section=http_section)
 
         return
     
@@ -65,7 +66,7 @@ class Job(BaseJob):
             self.ctx.FILEPATH_LOCAL.append(localfile)
         return
 
-    def transfer_files(self,clobber):
+    def transfer_files(self,clobber,section):
 
         """ Transfer the files """
     
@@ -86,7 +87,7 @@ class Job(BaseJob):
                 sys.stdout.write("\r# Getting:  %s (%s/%s)" % (url,k+1,Nfiles))
                 sys.stdout.flush()
                 # Get a file using the $HOME/.desservices.ini credentials
-                http_requests.download_file_des(url,localfile)
+                http_requests.download_file_des(url,localfile,section)
             else:
                 sys.stdout.write("\r# Skipping: %s (%s/%s) -- file exists" % (url,k+1,Nfiles))
                 sys.stdout.flush()
