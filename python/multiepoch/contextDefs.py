@@ -79,6 +79,35 @@ def set_BANDS(ctx,detname='det',detBANDS=[], force=False):
         print "# BANDs already setup -- Skipping"
     return ctx
 
+
+def get_BANDS(assoc, detname='det', logger=None):
+
+    import numpy
+
+    """
+    Generic function to set up the band from the context information
+    into the context in case they are missing. This function defines
+    how the BAND names are to be setup at every step into the context
+    in case they are not present
+    """
+    if logger: logger.info("# Extracting the BANDs information from assoc")
+    ctxext = {}
+    ctxext['BANDS'] = numpy.unique(assoc['BAND']) 
+    ctxext['NBANDS'] = len(ctxext['BANDS'])                  
+    # --------------
+    # MIGHT BE USEFUL IN CASE WE WANT TO  NAME THE Detection as 'det_riz'
+    # In case we want to store with the 'real bands' as a list to access later
+    # Figure out which bands to use that match the detecBANDS
+    #ctxext['useBANDS'] = list( set(ctxext['BANDS']) & set(ctxext['detecBANDS']) )
+    #print "# Will use %s bands for detection" % 'ctxext['useBANDS']
+    #detBAND ='det%s' % "".join(['useBANDS'])
+    # ---------------------
+    # The SWarp-combined detection image input and ouputs
+    ctxext['detBAND'] ='%s' % detname
+    ctxext['dBANDS'] = list(ctxext['BANDS']) + [ctxext['detBAND']]
+    return ctxext 
+
+
 def set_SWarp_output_names(ctx,detname='det',force=False):
 
     """ Add SWarp output names to the context in case they are not present """

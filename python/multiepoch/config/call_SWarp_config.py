@@ -13,15 +13,18 @@ from the same location or replace input file arguments with absolute paths to ru
 
 '''
 
+tilename = 'blabla'
+
 stdoutloglevel = 'INFO'
 
-assoc_file = 'testing/DES2246-4457_ccdinfo_local.json'
-tile_geom_input_file = 'testing/DES2246-4457_tileinfo.json'
+#tilename = 'DES2246-4457' 
 
-basename = 'blabla'
+assoc_file = '/Users/michael/coding/FHNW/des/svn/multiepoch/trunk/testing/DES2246-4457_ccdinfo_local.json'
+tile_geom_input_file = '/Users/michael/coding/FHNW/des/svn/multiepoch/trunk/testing/DES2246-4457_tileinfo.json'
 
 swarp_execution_mode = 'tofile'
 
 jobs = [
-        'multiepoch.tasks.call_SWarp',
+        #'multiepoch.tasks.query_database',
+        'multiepoch.tasks.call_SWarp_michael_dev',
         ]
