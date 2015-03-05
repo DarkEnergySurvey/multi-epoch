@@ -51,7 +51,7 @@ class Job(BaseJob):
         basename               = CUnicode("",help="Base Name for coadd fits files in the shape: COADD_BASENAME_$BAND.fits")
         SExDual_execution_mode = CUnicode("tofile",help="SExtractor Dual excution mode",
                                           argparse={'choices': ('tofile','dryrun','execute')})
-        SExDual_parameters     = List([],help="A list of parameters to pass to SExtractor",
+        SExDual_parameters     = Dict({},help="A list of parameters to pass to SExtractor",
                                        argparse={'nargs':'+',})
         MP_SEx        = CInt(1,help="run using multi-process, 0=automatic, 1=single-process [default]")
 

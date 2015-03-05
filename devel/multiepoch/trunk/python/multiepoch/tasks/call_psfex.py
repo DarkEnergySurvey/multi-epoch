@@ -53,7 +53,7 @@ class Job(BaseJob):
         basename               = CUnicode("",help="Base Name for coadd fits files in the shape: COADD_BASENAME_$BAND.fits")
         psfex_execution_mode  = CUnicode("tofile",help="psfex excution mode",
                                           argparse={'choices': ('tofile','dryrun','execute')})
-        psfex_parameters       = List([],help="A list of parameters to pass to SExtractor",
+        psfex_parameters       = Dict({},help="A list of parameters to pass to SExtractor",
                                        argparse={'nargs':'+',})
         def _validate_conditional(self):
             # if in job standalone mode json

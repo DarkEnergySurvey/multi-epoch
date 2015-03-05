@@ -66,22 +66,23 @@ stiff_params={
 #jo.run_job('multiepoch.tasks.call_Stiff',stiff_parameters=stiff_params, stiff_execution_mode='execute')
 jo.run_job('multiepoch.tasks.call_Stiff',stiff_parameters=stiff_params, stiff_execution_mode='dryrun')
 
+# Now this is done before each call by contextDefs.setCatNames
 # 10. Set up the catalogs names for SEx and psfex
-jo.run_job('multiepoch.tasks.set_catNames')
+#jo.run_job('multiepoch.tasks.set_catNames')
 
 # 11. make the SEx psf Call
-#jo.run_job('multiepoch.tasks.call_SExpsf',SExpsf_execution_mode='dryrun')
-jo.run_job('multiepoch.tasks.call_SExpsf',SExpsf_execution_mode='execute',MP_SEx=8)
+jo.run_job('multiepoch.tasks.call_SExpsf',SExpsf_execution_mode='dryrun')
+#jo.run_job('multiepoch.tasks.call_SExpsf',SExpsf_execution_mode='execute',MP_SEx=8)
 
 # 13. Run  psfex
-#jo.run_job('multiepoch.tasks.call_psfex',psfex_parameters={"NTHREADS"  :8,},psfex_execution_mode='dryrun')
-jo.run_job('multiepoch.tasks.call_psfex',psfex_parameters={"NTHREADS"  :8,},psfex_execution_mode='execute')
+jo.run_job('multiepoch.tasks.call_psfex',psfex_parameters={"NTHREADS"  :8,},psfex_execution_mode='dryrun')
+#jo.run_job('multiepoch.tasks.call_psfex',psfex_parameters={"NTHREADS"  :8,},psfex_execution_mode='execute')
 
 # 13. Run SExtractor un dual mode
-#jo.run_job('multiepoch.tasks.call_SExDual',SExDual_parameters={"MAG_ZEROPOINT":30,}, SExDual_execution_mode='dryrun',MP_SEx=8)
-jo.run_job('multiepoch.tasks.call_SExDual',SExDual_parameters={"MAG_ZEROPOINT":30,}, SExDual_execution_mode='execute',MP_SEx=8)
+jo.run_job('multiepoch.tasks.call_SExDual',SExDual_parameters={"MAG_ZEROPOINT":30,}, SExDual_execution_mode='dryrun',MP_SEx=8)
+#jo.run_job('multiepoch.tasks.call_SExDual',SExDual_parameters={"MAG_ZEROPOINT":30,}, SExDual_execution_mode='execute',MP_SEx=8)
 
 # 14. Create the MEF fits files in the formar we like
-jo.run_job('multiepoch.tasks.make_MEFs',clobber_MEF=False)
+#jo.run_job('multiepoch.tasks.make_MEFs',clobber_MEF=False)
 
 print "# Grand Total time: %s" % elapsed_time(t0)
