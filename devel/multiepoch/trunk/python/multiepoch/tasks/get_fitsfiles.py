@@ -125,9 +125,3 @@ def inDESARcluster(domain_name='cosmology.illinois.edu'):
 
     return LOCAL
 
-#def create_local_archive(local_archive):
-#    """ Creates the local cache for the desar archive """
-#    if not os.path.exists(local_archive):
-#        print "# Will create LOCAL ARCHIVE at %s" % local_archive
-#        os.mkdir(local_archive)
-#    return

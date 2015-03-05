@@ -55,16 +55,16 @@ swarp_params={
 #jo.run_job('multiepoch.tasks.call_SWarp',swarp_parameters=swarp_params, DETEC_COMBINE_TYPE="CHI-MEAN",swarp_execution_mode='dryrun')
 
 # 8b. The Custom call with custom weights 
-jo.run_job('multiepoch.tasks.call_SWarp_CustomWeights',swarp_parameters=swarp_params, DETEC_COMBINE_TYPE="CHI-MEAN",swarp_execution_mode='execute')
-#jo.run_job('multiepoch.tasks.call_SWarp_CustomWeights',swarp_parameters=swarp_params, DETEC_COMBINE_TYPE="CHI-MEAN",swarp_execution_mode='dryrun')
+#jo.run_job('multiepoch.tasks.call_SWarp_CustomWeights',swarp_parameters=swarp_params, DETEC_COMBINE_TYPE="CHI-MEAN",swarp_execution_mode='execute')
+jo.run_job('multiepoch.tasks.call_SWarp_CustomWeights',swarp_parameters=swarp_params, DETEC_COMBINE_TYPE="CHI-MEAN",swarp_execution_mode='dryrun')
 
 # 9. Create the color images using stiff
 stiff_params={
     "NTHREADS"  :8,
     "COPYRIGHT" : "NCSA/DESDM",
     "WRITE_XML" : "N"}
-jo.run_job('multiepoch.tasks.call_Stiff',stiff_parameters=stiff_params, stiff_execution_mode='execute')
-#jo.run_job('multiepoch.tasks.call_Stiff',stiff_parameters=stiff_params, stiff_execution_mode='dryrun')
+#jo.run_job('multiepoch.tasks.call_Stiff',stiff_parameters=stiff_params, stiff_execution_mode='execute')
+jo.run_job('multiepoch.tasks.call_Stiff',stiff_parameters=stiff_params, stiff_execution_mode='dryrun')
 
 # 10. Set up the catalogs names for SEx and psfex
 jo.run_job('multiepoch.tasks.set_catNames')
@@ -73,16 +73,15 @@ jo.run_job('multiepoch.tasks.set_catNames')
 #jo.run_job('multiepoch.tasks.call_SExpsf',SExpsf_execution_mode='dryrun')
 jo.run_job('multiepoch.tasks.call_SExpsf',SExpsf_execution_mode='execute',MP_SEx=8)
 
-# ---- Up to here ----
-# 11. Run  psfex
+# 13. Run  psfex
 #jo.run_job('multiepoch.tasks.call_psfex',psfex_parameters={"NTHREADS"  :8,},psfex_execution_mode='dryrun')
 jo.run_job('multiepoch.tasks.call_psfex',psfex_parameters={"NTHREADS"  :8,},psfex_execution_mode='execute')
 
-# 12. Run SExtractor un dual mode
+# 13. Run SExtractor un dual mode
 #jo.run_job('multiepoch.tasks.call_SExDual',SExDual_parameters={"MAG_ZEROPOINT":30,}, SExDual_execution_mode='dryrun',MP_SEx=8)
 jo.run_job('multiepoch.tasks.call_SExDual',SExDual_parameters={"MAG_ZEROPOINT":30,}, SExDual_execution_mode='execute',MP_SEx=8)
 
-# 13. Create the MEF fits files in the formar we like
+# 14. Create the MEF fits files in the formar we like
 jo.run_job('multiepoch.tasks.make_MEFs',clobber_MEF=False)
 
 print "# Grand Total time: %s" % elapsed_time(t0)

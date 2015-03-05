@@ -253,12 +253,13 @@ class Job(BaseJob):
         # 1. Construct an new dictionary that will store the
         # information required to associate files for co-addition
         assoc = {}
-        assoc['MAG_ZERO'] = self.ctx.CCDS['MAG_ZERO']
-        assoc['BAND']     = self.ctx.CCDS['BAND']
-        assoc['FILENAME'] = self.ctx.CCDS['FILENAME']
-
-        assoc['FILEPATH'] = npadd(self.ctx.CCDS['PATH'],"/")
-        assoc['FILEPATH'] = npadd(assoc['FILEPATH'],self.ctx.CCDS['FILENAME'])
+        assoc['MAG_ZERO']    = self.ctx.CCDS['MAG_ZERO']
+        assoc['BAND']        = self.ctx.CCDS['BAND']
+        assoc['FILENAME']    = self.ctx.CCDS['FILENAME']
+        assoc['COMPRESSION'] = self.ctx.CCDS['COMPRESSION']
+        assoc['FILEPATH']    = npadd(self.ctx.CCDS['PATH'],"/")
+        assoc['FILEPATH']    = npadd(assoc['FILEPATH'],self.ctx.CCDS['FILENAME'])
+        assoc['FILEPATH']    = npadd(assoc['FILEPATH'],assoc['COMPRESSION'])
 
         # 2. Create the archive locations for each file
         path = [self.ctx.root_archive+"/"]*Nimages
