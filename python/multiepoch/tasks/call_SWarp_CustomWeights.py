@@ -70,7 +70,7 @@ class Job(BaseJob):
         """ Pre-wash of inputs, some of these are only needed when run as script"""
 
         # Re-construct the names for the custom weights in case not present
-        if not self.ctx.assoc.get('FILEPATH_LOCAL_WGT'): 
+        if 'FILEPATH_LOCAL_WGT' not in self.ctx.assoc.keys():
             print "# Re-consrtuncting FILEPATH_LOCAL_WGT to ctx.assoc"
             self.ctx.assoc['FILEPATH_LOCAL_WGT'] = contextDefs.get_local_weight_names(self.ctx.assoc['FILEPATH_LOCAL'],
                                                                                       self.ctx.weight_extension)
@@ -279,9 +279,9 @@ class Job(BaseJob):
 
         # Extract the relevant kwargs
         # FELIPE -- CLEAN UP, this should not be run as kwargs anymore now that we have Input(IO)
-        detecBANDS = kwargs.get('detecBANDS',self.ctx.detecBANDS) # The band to consider for the detection image
-        magbase    = kwargs.get('magbase',self.ctx.magbase) # The magbase for flxscale, FLXSCALE = 10**(0.4*(magbase-zp))
-        tilename   = kwargs.get('tilename',self.ctx.tilename)
+        detecBANDS = kwargs.get('detecBANDS',self.input.detecBANDS) # The band to consider for the detection image
+        magbase    = kwargs.get('magbase',self.input.magbase) # The magbase for flxscale, FLXSCALE = 10**(0.4*(magbase-zp))
+        tilename   = kwargs.get('tilename',self.input.tilename)
         # --------------------------
 
         # output variables

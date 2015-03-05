@@ -22,7 +22,9 @@ QUERY_GEOM = '''
 QUERY_CCDS = ''' 
      SELECT
          {select_extras}
-         file_archive_info.FILENAME,file_archive_info.PATH, image.BAND,
+         file_archive_info.FILENAME,file_archive_info.COMPRESSION,
+         file_archive_info.PATH,
+         image.BAND,
          image.RAC1,  image.RAC2,  image.RAC3,  image.RAC4,
          image.DECC1, image.DECC2, image.DECC3, image.DECC4
      FROM
@@ -42,7 +44,6 @@ QUERY_CCDS = '''
      '''
      
         
-
 # QUERY FUNCTIONS
 # -----------------------------------------------------------------------------
 
@@ -67,6 +68,9 @@ def get_tileinfo_from_db(dbh, **kwargs):
 # -----------------------------------------------------------------------------
 
 def get_CCDS_from_db(dbh, tile_edges, **kwargs): 
+
+    import numpy
+    
     '''
     Execute the database query that returns the ccds and store them in a numpy
     record array
@@ -91,5 +95,9 @@ def get_CCDS_from_db(dbh, tile_edges, **kwargs):
     print "# Will execute the query:\n%s\n" %  ccd_query
     # Get the ccd images that are part of the DESTILE
     CCDS = despyastro.genutil.query2rec(ccd_query, dbhandle=dbh)
+
+    # Fix 'COMPRESSION' from None --> '' if present
+    if 'COMPRESSION' in CCDS.dtype.names:
+        CCDS['COMPRESSION'] = numpy.where(CCDS['COMPRESSION'],CCDS['COMPRESSION'],'')
 
     return CCDS 

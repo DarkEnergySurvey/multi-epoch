@@ -151,3 +151,12 @@ def setCatNames(ctx,detname='det',force=False):
         print "# Catalogs output names already in the context -- Skipping"
 
     return ctx
+
+
+def create_local_archive(local_archive):
+    import os
+    """ Creates the local cache for the desar archive """
+    if not os.path.exists(local_archive):
+        print "# Will create LOCAL ARCHIVE at %s" % local_archive
+        os.mkdir(local_archive)
+    return

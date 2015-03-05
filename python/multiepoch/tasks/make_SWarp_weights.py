@@ -76,9 +76,9 @@ class Job(BaseJob):
         t0 = time.time()
 
         # Get the relevant context variables
-        clobber = self.ctx.clobber_weights
-        wgt_ext = self.ctx.weight_extension
-        MP      = self.ctx.MP_weight
+        clobber = self.input.clobber_weights
+        wgt_ext = self.input.weight_extension
+        MP      = self.input.MP_weight
 
         # ONLY if NOT in script mode we create the directory -- if it doesn't exist, 
         if self.ctx.mojo_execution_mode != "job as script":
