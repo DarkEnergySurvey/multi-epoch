@@ -10,6 +10,8 @@ import os,sys
 import time
 from despymisc.miscutils import elapsed_time
 
+#MODE = 'dryrun'
+MODE = 'tofile'
 
 # Take time
 t0 = time.time()
@@ -40,7 +42,7 @@ jo.run_job('multiepoch.tasks.plot_ccd_corners_destile')
 
 # 6. Retrieve the files -- if remotely
 LOCAL_DESAR = os.path.join(os.environ['HOME'],'LOCAL_DESAR')
-jo.run_job('multiepoch.tasks.get_fitsfiles',local_archive=LOCAL_DESAR, http_section='file-http')
+jo.run_job('multiepoch.tasks.get_fitsfiles',local_archive=LOCAL_DESAR, http_section='http-desarchive')
 
 # 7 Create custom weights for SWarp
 jo.run_job('multiepoch.tasks.make_SWarp_weights',clobber_weights=False, MP_weight=4)

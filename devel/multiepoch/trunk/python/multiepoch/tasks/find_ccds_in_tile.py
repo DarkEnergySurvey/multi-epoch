@@ -198,10 +198,9 @@ class Job(BaseJob):
 
         # Get the root paths
         self.ctx.root_archive = self.get_root_archive(archive_name=self.input.archive_name)
-
-        # Hack to make it work until we populate root_https in destest
-        #self.ctx.root_https   = self.get_root_https(archive_name=self.input.archive_name)
-        self.ctx.root_https   = self.get_root_http(archive_name=self.input.archive_name)
+        self.ctx.root_https   = self.get_root_https(archive_name=self.input.archive_name)
+        # In case we want root_http (DESDM framework)
+        #self.ctx.root_https   = self.get_root_http(archive_name=self.input.archive_name)
 
         # Now we get the locations
         self.ctx.assoc = self.get_fitsfile_locations(filepath_local=self.input.filepath_local)
@@ -301,6 +300,8 @@ class Job(BaseJob):
         """
         cur = self.ctx.dbh.cursor()
         # root_https
+        # to add it:
+        # insert into ops_archive_val (name, key, val) values ('prodbeta', 'root_https', 'https://desar2.cosmology.illinois.edu/DESFiles/Prodbeta/archive');
         query = "select val from ops_archive_val where name='%s' and key='root_https'" % archive_name
         print "# Getting root_https for section: %s" % archive_name
         print "# Will execute the SQL query:\n********\n** %s\n********" % query
