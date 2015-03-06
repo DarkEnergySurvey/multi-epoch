@@ -50,7 +50,7 @@ if __name__ == '__main__':
     from despydb import desdbi
     import despyastro
     import argparse
-    parser = argparse.ArgumentParser(description="Finds the inputs for a TILENAME and TAG in the Old Schema\n")
+    parser = argparse.ArgumentParser(description="Finds the inputs for a TILENAME and TAG in the Old Schema\nfind_exposuresintile.py DES2354+0043")
     # The positional arguments
     parser.add_argument("tilename", action="store",default=None,
                         help="Name of the TILENAME")
