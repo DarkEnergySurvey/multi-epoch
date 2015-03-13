@@ -11,25 +11,18 @@
 
 tilename = DES2246-4457
 
-# General configuration
 project = FM
-target_site = descmp4
-#target_site = destest_computingsite
-home_archive = prodbeta
-des_http_section = file-http
-
-# comment out submit_run_dir if want to have submit side in same directory as submit wcl
-submit_run_dir = /cluster_scratch/refact/dessub/submit/${ops_run_dir}
+target_site = destest_computingsite
 
 reqnum = 0002
 jira_id = ME-TEST # example 
 label = query_tileinfo,test 
 
-pipeline    = me # used in desstat output 
-pipeprod    = Y2ME # eups meta package name
-pipever     = 1.0+3E # eups meta package version
+pipeline = me # used in desstat output 
+pipeprod = Y2ME # eups meta package name
+pipever = 1.0+3E # eups meta package version
 ops_run_dir = ${project}/${pipeline}/${tilename}-r${reqnum}/p${attnum:2}
-unitname    = ${tilename}
+unitname = ${tilename}
 
 database_section = db-destest
 local_filepath = /work/devel/felipe/LOCAL_DESAR
@@ -48,8 +41,7 @@ blocklist = multiepoch
 <block>
     <multiepoch>
 #        modulelist = query_tileinfo, find_ccds_in_tile, make_swarp_weights, call_swarp_weights
-#	modulelist = query_tileinfo, find_ccds_in_tile,	call_swarp_customweights
-	modulelist = query_tileinfo, find_ccds_in_tile
+	modulelist = query_tileinfo, find_ccds_in_tile,	call_swarp_customweights
     </multiepoch>
 </block>
 

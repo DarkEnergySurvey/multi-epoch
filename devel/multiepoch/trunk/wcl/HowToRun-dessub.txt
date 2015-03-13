@@ -5,8 +5,8 @@
 
 3) cd to multiepoch/trunk/wcl/submitwcl
 
-4) descheck.py multiepoch.des
+4) descheck.py uptime_dessub_FM.des
 
-5) dessubmit multiepoch.des 
+5) dessubmit uptime_dessub_FM.des
 
 6) check with desstat
