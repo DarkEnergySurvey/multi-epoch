@@ -9,9 +9,10 @@
 
 #<<include destest_computingsite.des>>       
 
+# General configuration
 tilename = DES2246-4457
 
-# General configuration
+# Project definition and target site
 project = FM
 target_site = descmp4
 #target_site = destest_computingsite

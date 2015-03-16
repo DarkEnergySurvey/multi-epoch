@@ -9,10 +9,14 @@
 
 #<<include destest_computingsite.des>>       
 
+# General conf
 tilename = DES2246-4457
 
+# Project and comp-site
 project = FM
-target_site = destest_computingsite
+des_http_section = file-http
+home_archive = prodbeta
+target_site = descmp4
 
 reqnum = 0002
 jira_id = ME-TEST # example 
