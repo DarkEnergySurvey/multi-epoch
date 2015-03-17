@@ -51,6 +51,8 @@
                 assoc_file = ${file.file_assoc.fullname}
                 db_section = ${database_section}
                 filepath_local = ${local_filepath}
+		tagname        = ${firstcut_tag}
+		archive_name   = ${home_archive}
             </cmdline>
         </exec_1>
     </find_ccds_in_tile>
