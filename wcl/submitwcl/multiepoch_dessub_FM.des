@@ -9,14 +9,21 @@
 
 #<<include destest_computingsite.des>>       
 
-# General conf
-tilename = DES2246-4457
+# General multiepoch conf
+tilename         = DES2246-4457
+database_section = db-destest
+local_filepath   = /work/devel/felipe/LOCAL_DESAR
+swarpbasename    = ${tilename}-r${reqnum}/p${attnum:2}
+firstcut_tag     = Y2T_FIRSTCUT
 
+
+# This is usually defined in the submit wcl
 # Project and comp-site
-project = FM
+project          = FM
 des_http_section = file-http
-home_archive = prodbeta
-target_site = descmp4
+home_archive     = prodbeta
+target_site      = descmp4
+submit_files_mvmt = filemgmt.job_mvmt_http.JobArchiveHttp
 
 reqnum = 0002
 jira_id = ME-TEST # example 
@@ -28,16 +35,12 @@ pipever = 1.0+3E # eups meta package version
 ops_run_dir = ${project}/${pipeline}/${tilename}-r${reqnum}/p${attnum:2}
 unitname = ${tilename}
 
-database_section = db-destest
-local_filepath = /work/devel/felipe/LOCAL_DESAR
-
-swarpbasename = ${tilename}-r${reqnum}/p${attnum:2}
 
 # because we start a python on the remote site with user
 # nobody in this test setup. we need to trick the system
 # to look for the python eggs somewhere else.
 <job_environment>
-   PYTHON_EGG_CACHE =  /cluster_scratch/users/felipe/secret
+   PYTHON_EGG_CACHE =  /cluster_scratch/users/felipe/eggs
 </job_environment>
 
 blocklist = multiepoch
@@ -45,7 +48,8 @@ blocklist = multiepoch
 <block>
     <multiepoch>
 #        modulelist = query_tileinfo, find_ccds_in_tile, make_swarp_weights, call_swarp_weights
-	modulelist = query_tileinfo, find_ccds_in_tile,	call_swarp_customweights
+#	modulelist = query_tileinfo, find_ccds_in_tile,	call_swarp_customweights
+	modulelist = query_tileinfo, find_ccds_in_tile
     </multiepoch>
 </block>
 

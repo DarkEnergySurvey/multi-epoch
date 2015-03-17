@@ -8,7 +8,7 @@ target_des_db_section = db-destest
 submit_des_services   = /home/felipe/.desservices.ini
 target_des_services   = /home/felipe/.desservices.ini
 
-when_to_email = block # Never, Run, Block
+when_to_email = Block # Never, Run, Block
 create_junk_tarball = true
 
 use_db_out = True
@@ -21,11 +21,10 @@ use_qcf    = False
 ##-----------------------------------------------------------------------------
 
 # This is usually defined in the submit wcl
-des_http_section = file-http
-home_archive = prodbeta
-target_site = descmp4
-
-submit_files_mvmt = filemgmt.job_mvmt_http.JobArchiveHttp
+#des_http_section = file-http
+#home_archive = prodbeta
+#target_site = descmp4
+#submit_files_mvmt = filemgmt.job_mvmt_http.JobArchiveHttp
 
 # no target archive
 use_target_archive_input  = never   # never, job
