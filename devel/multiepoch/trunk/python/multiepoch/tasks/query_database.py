@@ -18,6 +18,8 @@ import multiepoch.utils as utils
 from multiepoch.querylibs import get_tileinfo_from_db, get_CCDS_from_db
 import multiepoch.contextDefs as contextDefs
 
+from multiepoch.tasks.find_ccds_in_tile import Job as CCDJob
+
 npadd = numpy.core.defchararray.add
 
 
@@ -139,8 +141,7 @@ class Job(BaseJob):
         # CCD INFORMATION -----------------------------------------------------
 
         print "# Getting CCD images within the tile definition"
-        tile_edges = (self.ctx.tileinfo['RACMIN'], self.ctx.tileinfo['RACMAX'],
-                       self.ctx.tileinfo['DECCMIN'],self.ctx.tileinfo['DECCMAX'])
+        tile_edges = CCDJob.get_tile_edges(self.ctx.tileinfo)
         self.ctx.CCDS = get_CCDS_from_db(self.ctx.dbh, tile_edges,
                 **self.input.as_dict())
         print "# Query time: %s" % elapsed_time(t1)
@@ -149,75 +150,18 @@ class Job(BaseJob):
         #  FILE INFORMATION ---------------------------------------------------
 
         # Get the root paths
-        self.ctx.root_archive = self.get_root_archive(
+        self.ctx.root_archive = CCDJob.get_root_archive(self.ctx.dbh,
                                     archive_name=self.input.archive_name)
-        self.ctx.root_https   = self.get_root_https(
+        self.ctx.root_https   = CCDJob.get_root_https(self.ctx.dbh,
                                     archive_name=self.input.archive_name)
 
         # Now we get the locations
-        self.ctx.assoc = self.get_fitsfile_locations(
+        self.ctx.assoc = CCDJob.get_fitsfile_locations(self.ctx,
                                     filepath_local=self.ctx.filepath_local)
 
 
     # UTILITIES 
     # -------------------------------------------------------------------------
-
-    def get_fitsfile_locations(self,filepath_local=None):
-        """ Find the location of the files in the des archive and https urls"""
-
-        # Number of images/filenames
-        Nimages = len(self.ctx.CCDS['FILENAME'])
-
-        # 1. Construct an new dictionary that will store the
-        # information required to associate files for co-addition
-        assoc = {}
-        assoc['MAG_ZERO'] = self.ctx.CCDS['MAG_ZERO']
-        assoc['BAND']     = self.ctx.CCDS['BAND']
-        assoc['FILENAME'] = self.ctx.CCDS['FILENAME']
-
-        assoc['FILEPATH'] = npadd(self.ctx.CCDS['PATH'],"/")
-        assoc['FILEPATH'] = npadd(assoc['FILEPATH'],self.ctx.CCDS['FILENAME'])
-
-        # 2. Create the archive locations for each file
-        path = [self.ctx.root_archive+"/"]*Nimages
-        assoc['FILEPATH_ARCHIVE'] = npadd(path, assoc['FILEPATH'])
-
-        # 3. Create the https locations for each file
-        path = [self.ctx.root_https+"/"]*Nimages
-        assoc['FILEPATH_HTTPS']   = npadd(path, assoc['FILEPATH'])
-
-        # 4. in case we provide a filepath_local
-        if filepath_local:
-            print "# Setting FILEPATH_LOCAL to: %s" % filepath_local
-            path = [filepath_local+"/"]*Nimages
-            assoc['FILEPATH_LOCAL']   = npadd(path, assoc['FILEPATH'])
-
-        return assoc
-
-    def get_root_archive(self, archive_name='desar2home'):
-        """ Get the root-archive fron the database """
-        cur = self.ctx.dbh.cursor()
-        # root_archive
-        query = "SELECT root FROM ops_archive WHERE name='%s'" % archive_name
-        print "# Getting the archive root name for section: %s" % archive_name
-        print "# Will execute the SQL query:\n********\n** %s\n********" % query
-        cur.execute(query)
-        root_archive = cur.fetchone()[0]
-        print "# root_archive: %s" % root_archive
-        return root_archive
-
-    def get_root_https(self, archive_name='desar2home'):
-        """ Get the root_https fron the database """
-        cur = self.ctx.dbh.cursor()
-        # root_https
-        query = "SELECT val FROM ops_archive_val WHERE name='%s' and key='root_https'" % archive_name
-        print "# Getting root_https for section: %s" % archive_name
-        print "# Will execute the SQL query:\n********\n** %s\n********" % query
-        cur.execute(query)
-        root_https = cur.fetchone()[0]
-        print "# root_https:   %s" % root_https
-        cur.close()
-        return root_https
 
     def write_assoc_json(self,assoc_jsonfile,names=['FILEPATH_ARCHIVE','FILENAME','BAND','MAG_ZERO']):
         print "# Writing CCDS information to: %s" % assoc_jsonfile
