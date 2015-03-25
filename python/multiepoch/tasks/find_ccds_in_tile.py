@@ -192,15 +192,14 @@ class Job(BaseJob):
         self.ctx = utils.check_dbh(self.ctx)
 
         # Create the tile_edges tuple structure and query the database
-        tile_edges = (self.ctx.tileinfo['RACMIN'], self.ctx.tileinfo['RACMAX'],
-                       self.ctx.tileinfo['DECCMIN'],self.ctx.tileinfo['DECCMAX'])
-        self.ctx.CCDS = querylibs.get_CCDS_from_db(self.ctx.dbh, tile_edges,**self.input.as_dict())
+        tile_edges = self.get_tile_edges(self.ctx.tileinfo)
+        self.ctx.CCDS = querylibs.get_CCDS_from_db(self.ctx.dbh, tile_edges, **self.input.as_dict())
 
         # Get the root paths
-        self.ctx.root_archive = self.get_root_archive(archive_name=self.input.archive_name)
-        self.ctx.root_https   = self.get_root_https(archive_name=self.input.archive_name)
+        self.ctx.root_archive = self.get_root_archive(self.ctx.dbh, archive_name=self.input.archive_name)
+        self.ctx.root_https   = self.get_root_https(self.ctx.dbh, archive_name=self.input.archive_name)
         # In case we want root_http (DESDM framework)
-        #self.ctx.root_https   = self.get_root_http(archive_name=self.input.archive_name)
+        #self.ctx.root_https   = self.get_root_http(self.ctx.dbh, archive_name=self.input.archive_name)
 
         # Now we get the locations
         self.ctx.assoc = self.get_fitsfile_locations(filepath_local=self.input.filepath_local)
@@ -225,47 +224,33 @@ class Job(BaseJob):
                 from multiepoch.tasks.plot_ccd_corners_destile import Job as plot_job
                 plot = plot_job(ctx=self.ctx)
                 plot()
-        
-
-    def get_CCDS_from_db(self, query): 
-
-        '''
-        Execute the database query that returns the ccds and store them in a numpy
-        record array
-        '''
-        print "# Will execute the query:\n%s\n" %  query
-        # Get the ccd images that are part of the DESTILE
-        CCDS = despyastro.genutil.query2rec(query,dbhandle=self.ctx.dbh)
-        t0 = time.time()
-        print "# Query time: %s" % elapsed_time(t0)
-        print "# Nelem %s" % len(CCDS['FILENAME'])
-        return CCDS 
 
 
-    def get_fitsfile_locations(self,filepath_local=None):
+    @staticmethod
+    def get_fitsfile_locations(ctx, filepath_local=None):
 
         """ Find the location of the files in the des archive and https urls"""
 
         # Number of images/filenames
-        Nimages = len(self.ctx.CCDS['FILENAME'])
+        Nimages = len(ctx.CCDS['FILENAME'])
 
         # 1. Construct an new dictionary that will store the
         # information required to associate files for co-addition
         assoc = {}
-        assoc['MAG_ZERO']    = self.ctx.CCDS['MAG_ZERO']
-        assoc['BAND']        = self.ctx.CCDS['BAND']
-        assoc['FILENAME']    = self.ctx.CCDS['FILENAME']
-        assoc['COMPRESSION'] = self.ctx.CCDS['COMPRESSION']
-        assoc['FILEPATH']    = npadd(self.ctx.CCDS['PATH'],"/")
-        assoc['FILEPATH']    = npadd(assoc['FILEPATH'],self.ctx.CCDS['FILENAME'])
+        assoc['MAG_ZERO']    = ctx.CCDS['MAG_ZERO']
+        assoc['BAND']        = ctx.CCDS['BAND']
+        assoc['FILENAME']    = ctx.CCDS['FILENAME']
+        assoc['COMPRESSION'] = ctx.CCDS['COMPRESSION']
+        assoc['FILEPATH']    = npadd(ctx.CCDS['PATH'],"/")
+        assoc['FILEPATH']    = npadd(assoc['FILEPATH'],ctx.CCDS['FILENAME'])
         assoc['FILEPATH']    = npadd(assoc['FILEPATH'],assoc['COMPRESSION'])
 
         # 2. Create the archive locations for each file
-        path = [self.ctx.root_archive+"/"]*Nimages
+        path = [ctx.root_archive+"/"]*Nimages
         assoc['FILEPATH_ARCHIVE'] = npadd(path, assoc['FILEPATH'])
 
         # 3. Create the https locations for each file
-        path = [self.ctx.root_https+"/"]*Nimages
+        path = [ctx.root_https+"/"]*Nimages
         assoc['FILEPATH_HTTPS']   = npadd(path, assoc['FILEPATH'])
 
         # 4. in case we provide a filepath_local
@@ -276,12 +261,19 @@ class Job(BaseJob):
         
         return assoc
 
-    def get_root_archive(self, archive_name='desar2home'):
+    @staticmethod
+    def get_tile_edges(tileinfo):
+        tile_edges = (tileinfo['RACMIN'], tileinfo['RACMAX'],
+                tileinfo['DECCMIN'], tileinfo['DECCMAX'])
+        return tile_edges
+
+    @staticmethod
+    def get_root_archive(dbh, archive_name='desar2home'):
 
         """
         Get the root-archive fron the database
         """
-        cur = self.ctx.dbh.cursor()
+        cur = dbh.cursor()
         
         # root_archive
         query = "select root from ops_archive where name='%s'" % archive_name
@@ -293,12 +285,13 @@ class Job(BaseJob):
 
         return root_archive
 
-    def get_root_https(self, archive_name='desar2home'):
+    @staticmethod
+    def get_root_https(dbh, archive_name='desar2home'):
 
         """
         Get the root_https fron the database
         """
-        cur = self.ctx.dbh.cursor()
+        cur = dbh.cursor()
         # root_https
         # to add it:
         # insert into ops_archive_val (name, key, val) values ('prodbeta', 'root_https', 'https://desar2.cosmology.illinois.edu/DESFiles/Prodbeta/archive');
@@ -311,12 +304,13 @@ class Job(BaseJob):
         cur.close()
         return root_https
 
-    def get_root_http(self, archive_name='desar2home'):
+    @staticmethod
+    def get_root_http(dbh, archive_name='desar2home'):
 
         """
         Get the root_http  fron the database
         """
-        cur = self.ctx.dbh.cursor()
+        cur = dbh.cursor()
         # root_http 
         query = "select val from ops_archive_val where name='%s' and key='root_http'" % archive_name
         print "# Getting root_https for section: %s" % archive_name
@@ -327,7 +321,8 @@ class Job(BaseJob):
         cur.close()
         return root_http
 
-    def write_assoc_file(self,assoc_file,names=['FILEPATH_ARCHIVE','FILENAME','BAND','MAG_ZERO']):
+
+    def write_assoc_file(self, assoc_file,names=['FILEPATH_ARCHIVE','FILENAME','BAND','MAG_ZERO']):
 
         variables = []
         for name in names:
@@ -341,7 +336,7 @@ class Job(BaseJob):
         return
 
 
-    def write_assoc_json(self,assoc_jsonfile,names=['FILEPATH_ARCHIVE','FILENAME','BAND','MAG_ZERO']):
+    def write_assoc_json(self, assoc_jsonfile,names=['FILEPATH_ARCHIVE','FILENAME','BAND','MAG_ZERO']):
 
         print "# Writing CCDS information to: %s" % assoc_jsonfile
         dict_assoc = {}
