@@ -29,12 +29,26 @@ jo.run_job('multiepoch.tasks.set_tile_directory', outputpath=os.environ['HOME']+
 # -------------------------------------------------
 SELECT_EXTRAS = "felipe.extraZEROPOINT.MAG_ZERO,"
 FROM_EXTRAS   = "felipe.extraZEROPOINT"
-AND_EXTRAS    = "felipe.extraZEROPOINT.FILENAME = image.FILENAME" 
+AND_EXTRAS    = "felipe.extraZEROPOINT.FILENAME = image.FILENAME"
+
+# To select a subset
+SELECT_EXTRAS = "felipe.extraZEROPOINT.MAG_ZERO,"
+FROM_EXTRAS   = "felipe.extraZEROPOINT, felipe.TAGS"
+AND_EXTRAS    = """felipe.extraZEROPOINT.FILENAME = image.FILENAME
+and felipe.TAGS.FILENAME = image.FILENAME
+and felipe.TAGS.TAG = 'DES2246-4457_RAN1'"""
+
 # -------------------------------------------------
-jo.run_job('multiepoch.tasks.find_ccds_in_tile',tagname='Y2T_FIRSTCUT',exec_name='immask')
+jo.run_job('multiepoch.tasks.find_ccds_in_tile',
+           tagname='Y2T_FIRSTCUT',
+           exec_name='immask',
+           and_extras=AND_EXTRAS,
+           from_extras=FROM_EXTRAS)
 
 # 4a. Plot the corners -- all  bands (default)
 jo.run_job('multiepoch.tasks.plot_ccd_corners_destile')
+
+exit()
 
 # 4b. Plot the corners -- single band
 #jo.run_job('multiepoch.tasks.plot_ccd_corners_destile', band='r')
