@@ -72,6 +72,28 @@ def arglist2dict(inputlist,separator='='):
     return dict( [ inputlist[index].split(separator) for index, item in enumerate(inputlist) ] )
 
 
+def inDESARcluster(domain_name='cosmology.illinois.edu'):
+
+    """ Figure out if we are in the cosmology.illinois.edu cluster """
+    
+    uname    = os.uname()[0]
+    hostname = os.uname()[1]
+    mach     = os.uname()[4]
+    
+    pattern = r"%s$" % domain_name
+        
+    if re.search(pattern, hostname) and uname == 'Linux':
+        LOCAL = True
+        print "# Found hostname: %s, running:%s" % (hostname,uname)
+        print "# In %s cluster -- will NOT transfer files" % domain_name
+    else:
+        LOCAL = False
+        print "# Found hostname: %s, running:%s" % (hostname,uname)
+        print "# NOT in %s cluster -- will try to transfer files" % domain_name
+
+    return LOCAL
+
+
 """
 A collection of utilities to call subprocess from multiprocess in python.
 F. Menanteau, NCSA, Dec 2014
