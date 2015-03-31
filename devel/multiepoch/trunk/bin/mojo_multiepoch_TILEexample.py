@@ -49,7 +49,6 @@ jo.run_job('multiepoch.tasks.find_ccds_in_tile',
 
 # 4a. Plot the corners -- all  bands (default)
 jo.run_job('multiepoch.tasks.plot_ccd_corners_destile')
-exit()
 
 # 4b. Plot the corners -- single band
 #jo.run_job('multiepoch.tasks.plot_ccd_corners_destile', band='r')
