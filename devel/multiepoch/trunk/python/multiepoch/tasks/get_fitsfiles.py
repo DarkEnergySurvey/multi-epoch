@@ -36,11 +36,11 @@ class Job(BaseJob):
         http_section  = kwargs.get('http_section', 'http-desarchive')
         
         # Figure out if in the cosmology.illinois.edu cluster
-        self.ctx.LOCALFILES = inDESARcluster()
+        self.ctx.LOCALFILES = utils.inDESARcluster()
 
         # if we have local files, then we'll skip the rest
         if self.ctx.LOCALFILES:
-            self.ctx.asssoc['FILEPATH_LOCAL'] = self.ctx.assoc['FILEPATH_ARCHIVE']
+            self.ctx.assoc['FILEPATH_LOCAL'] = self.ctx.assoc['FILEPATH_ARCHIVE']
             print "# All files are local -- inside the DESAR cluster"
             return
 
@@ -104,24 +104,4 @@ class Job(BaseJob):
         return 'Transfer the fits files'
 
 
-def inDESARcluster(domain_name='cosmology.illinois.edu'):
-
-    """ Figure out if we are in the cosmology.illinois.edu cluster """
-    
-    uname    = os.uname()[0]
-    hostname = os.uname()[1]
-    mach     = os.uname()[4]
-    
-    pattern = r"%s$" % domain_name
-        
-    if re.search(pattern, hostname) and uname == 'Linux':
-        LOCAL = True
-        print "# Found hostname: %s, running:%s" % (hostname,uname)
-        print "# In %s cluster -- will NOT transfer files" % domain_name
-    else:
-        LOCAL = False
-        print "# Found hostname: %s, running:%s" % (hostname,uname)
-        print "# NOT in %s cluster -- will try to transfer files" % domain_name
-
-    return LOCAL
 

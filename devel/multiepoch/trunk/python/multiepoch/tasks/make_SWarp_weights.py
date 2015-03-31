@@ -35,6 +35,7 @@ import multiprocessing
 import multiepoch.utils as utils
 import multiepoch.contextDefs as contextDefs
 from multiepoch.DESfits import DESFITS
+npadd = numpy.core.defchararray.add
 
 class Job(BaseJob):
 
@@ -105,8 +106,18 @@ class Job(BaseJob):
         """
 
         Nfiles = len(self.ctx.assoc['FILEPATH_LOCAL'])
+
+        # Figure out if in the cosmology.illinois.edu cluster
+        self.ctx.LOCALFILES = utils.inDESARcluster()
+
         # Get the weight names
-        self.ctx.assoc['FILEPATH_LOCAL_WGT'] = contextDefs.get_local_weight_names(self.ctx.assoc['FILEPATH_LOCAL'],wgt_ext)
+        if self.ctx.LOCALFILES:
+
+            filepaths = npadd(self.ctx.local_archive,self.ctx.assoc['FILENAME'])
+            self.ctx.assoc['FILEPATH_LOCAL_WGT'] = contextDefs.get_local_weight_names(filepaths,wgt_ext)
+        else:
+            self.ctx.assoc['FILEPATH_LOCAL_WGT'] = contextDefs.get_local_weight_names(self.ctx.assoc['FILEPATH_LOCAL'],wgt_ext)
+
         # A shortcut
         filepath_local = self.ctx.assoc['FILEPATH_LOCAL']
 
