@@ -22,6 +22,10 @@ SELECT_EXTRAS = "felipe.extraZEROPOINT.MAG_ZERO,"
 FROM_EXTRAS   = "felipe.extraZEROPOINT"
 AND_EXTRAS    = "felipe.extraZEROPOINT.FILENAME = image.FILENAME" 
 
+def get_expnames(ccdlist):
+    expnames = [ccd[0:9] for ccd in ccdlist]
+    expnames = numpy.array(expnames)
+    return numpy.unique(expnames)
 
 def createTAGtable(dbh, tablename,clobber=False):
     
@@ -96,7 +100,7 @@ def checkTABLENAMEexists(dbh,tablename):
     return table_exists
 
 
-def insertTAG(tilename,myTAG,tablename='felipe.tags',clobber=False,db_section='db-destest'):
+def insertTAG(tilename,myTAG,tablename='felipe.tags',clobber=False,db_section='db-destest',SELECT_BY="EXPOSURES",NEXP=4):
 
     options = {
         'tilename'   : tilename,
@@ -131,29 +135,41 @@ def insertTAG(tilename,myTAG,tablename='felipe.tags',clobber=False,db_section='d
     BANDS  = numpy.unique(CCDS['BAND'])
     cur = dbh.cursor()
     cols = "FILENAME,BAND,TAG"
-    createTAGtable(dbh, tablename,clobber=False)
+    createTAGtable(dbh, tablename,clobber=clobber)
 
     for BAND in BANDS:
         idx = numpy.where(CCDS['BAND'] == BAND)[0]
         filenames = CCDS['FILENAME'][idx]
         NCCDs = len(filenames)
         print "# Found %s CCDimages for filter %s overlaping " % (NCCDs, BAND)
-        print "# Will select %s randomly and insert to %s" % (Nmedian[BAND],tablename)
-        filenames_sel = numpy.random.choice(filenames,Nmedian[BAND],replace=False)
+
+        # Decide on the selection method
+        if SELECT_BY == "EXPOSURES":
+            print "# Will select %s EXPOSURES randomly and insert to %s" % (NEXP,tablename)
+            # Get the unique exposure names for that filter
+            expnames     = get_expnames(CCDS['FILENAME'][idx])
+            expnames_sel = numpy.random.choice(expnames,NEXP,replace=False)
+            k = numpy.array( [fname[0:9] in expnames_sel for fname in filenames])
+            filenames_sel = filenames[k==True]
+        elif SELECT_BY == "CCDS":
+            print "# Will select %s CCDS randomly and insert to %s" % (Nmedian[BAND],tablename)
+            filenames_sel = numpy.random.choice(filenames,Nmedian[BAND],replace=False)
+        else:
+            exit("ERROR: No selection method")
+
         # Now we insert
         for fname in filenames_sel:
             values = (fname,BAND,myTAG)
             insert_cmd = "INSERT INTO %s (%s) VALUES %s" % (tablename,cols,values)
             cur.execute(insert_cmd)
+
     cur.close()
     dbh.commit()
-    print "# Done inserting ...\n"
+    print "# Done inserting Random TAGS...\n"
 
 if __name__ == "__main__":
 
-    insertTAG('DES2246-4457',myTAG='DES2246-4457_RAN', tablename='felipe.tags',clobber=True)
-    insertTAG('DES2246-4457',myTAG='DES2246-4457_RAN1',tablename='felipe.tags',clobber=False)
-    insertTAG('DES2246-4457',myTAG='DES2246-4457_RAN2',tablename='felipe.tags',clobber=False)
-    insertTAG('DES2246-4457',myTAG='DES2246-4457_RAN3',tablename='felipe.tags',clobber=False)
+    insertTAG('DES2246-4457',myTAG='DES2246-4457_RAN_CCD', tablename='felipe.tags',clobber=True,  SELECT_BY="CCDS")
+    insertTAG('DES2246-4457',myTAG='DES2246-4457_RAN_EXP', tablename='felipe.tags',clobber=False, SELECT_BY="EXPOSURES")
     
     

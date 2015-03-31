@@ -202,7 +202,7 @@ class Job(BaseJob):
         #self.ctx.root_https   = self.get_root_http(self.ctx.dbh, archive_name=self.input.archive_name)
 
         # Now we get the locations
-        self.ctx.assoc = self.get_fitsfile_locations(filepath_local=self.input.filepath_local)
+        self.ctx.assoc = self.get_fitsfile_locations(self.ctx,filepath_local=self.input.filepath_local)
 
         # if Job is run as script
         if self.ctx.mojo_execution_mode == 'job as script':
