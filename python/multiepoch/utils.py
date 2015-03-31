@@ -74,7 +74,7 @@ def arglist2dict(inputlist,separator='='):
 
 def inDESARcluster(domain_name='cosmology.illinois.edu'):
 
-    import os
+    import os,re
     """ Figure out if we are in the cosmology.illinois.edu cluster """
     
     uname    = os.uname()[0]
