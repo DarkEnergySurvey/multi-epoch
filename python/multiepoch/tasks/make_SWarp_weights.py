@@ -70,6 +70,8 @@ class Job(BaseJob):
         clobber_weights  = Bool(False, help="Cloober the existing custom weight files")
         weight_extension = CUnicode('_wgt',help="Weight extension to add to custom weight files")
         MP_weight        = CInt(1,help="run using multi-process, 0=automatic, 1=single-process [default]")
+        weights_execution_mode  = CUnicode("tofile",help="Weights excution mode",
+                                           argparse={'choices': ('tofile','dryrun','execute')})
 
     def run(self):
 
@@ -88,6 +90,7 @@ class Job(BaseJob):
 
         # Create the weights
         self.create_weights_for_SWarp(clobber,wgt_ext, MP)
+
         print "# Weights created on: %s" % elapsed_time(t0)
         return
 
@@ -136,17 +139,20 @@ class Job(BaseJob):
         # Set up the names and get the args for the actual call
         args = self.set_weight_names_and_args(wgt_ext,clobber)
 
+        execute_mode = self.input.weight_execution_mode
+
+
         # Figure out NP to use, 0=automatic
         NP = utils.get_NP(MP) 
 
         # Get ready to run if applicable
         N = len(args)
-        if N > 0 and NP!=1:
+        if N > 0 and NP!=1 and execute_mode == 'execute':
             print "# Will create weights multi-process using %s processor(s)" % NP
             pool = multiprocessing.Pool(processes=NP)
             pool.map(modify_weight, args)
             
-        elif N > 0:
+        elif N > 0 and execute_mode == 'execute':
             print "# Will create weights single-process"
             for k in range(N):
                 sys.stdout.write("\r# Making Weight:  %s (%s/%s)\n" % (args[k][1],k+1,N))
@@ -156,9 +162,8 @@ class Job(BaseJob):
 
         print "\n#\n"
 
-        # Pass them up as array as an np-char array
-        #self.ctx.FILEPATH_LOCAL_WGT = numpy.array(self.ctx.FILEPATH_LOCAL_WGT)
-        self.ctx.assoc['FILEPATH_LOCAL_WGT'] = numpy.array(self.ctx.assoc['FILEPATH_LOCAL_WGT'])
+        ## Pass them up as array as an np-char array
+        #self.ctx.assoc['FILEPATH_LOCAL_WGT'] = numpy.array(self.ctx.assoc['FILEPATH_LOCAL_WGT'])
         return
         
     def __str__(self):
