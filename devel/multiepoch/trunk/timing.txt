@@ -1,0 +1,4 @@
+# cmp4 threaded
+# MEFs Creation Total time: 0m 12.70s
+# Grand Total time: 277m 35.07s
+
