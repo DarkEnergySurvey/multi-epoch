@@ -89,12 +89,12 @@ if __name__ == '__main__':
         "WRITE_XML" : "N"}
     jo.run_job('multiepoch.tasks.call_Stiff',stiff_parameters=stiff_params, stiff_execution_mode=args.runmode)
     # 10. make the SEx psf Call
-    jo.run_job('multiepoch.tasks.call_SExpsf',SExpsf_execution_mode=RUNMODE,MP_SEx=args.ncpu)
+    jo.run_job('multiepoch.tasks.call_SExpsf',SExpsf_execution_mode=args.runmode,MP_SEx=args.ncpu)
     # 11. Run  psfex
     jo.run_job('multiepoch.tasks.call_psfex',psfex_parameters={"NTHREADS": args.nthreads,},psfex_execution_mode=args.runmode)
     # 12. Run SExtractor un dual mode
-    jo.run_job('multiepoch.tasks.call_SExDual',SExDual_parameters={"MAG_ZEROPOINT":30,}, SExDual_execution_mode=RUNMODE,MP_SEx=args.ncpu)
+    jo.run_job('multiepoch.tasks.call_SExDual',SExDual_parameters={"MAG_ZEROPOINT":30,}, SExDual_execution_mode=args.runmode,MP_SEx=args.ncpu)
     # 13. Create the MEF fits files in the formar we like
-    if RUNMODE == 'execute':
+    if args.runmode == 'execute':
         jo.run_job('multiepoch.tasks.make_MEFs',clobber_MEF=False)
     print "# Grand Total time: %s" % elapsed_time(t0)
