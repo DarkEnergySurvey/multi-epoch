@@ -74,7 +74,7 @@ if __name__ == '__main__':
     # 6. Retrieve the files -- if remotely
     jo.run_job('multiepoch.tasks.get_fitsfiles',local_archive=args.local_desar, http_section='http-desarchive')
     # 7 Create custom weights for SWarp
-    jo.run_job('multiepoch.tasks.make_SWarp_weights',clobber_weights=False, MP_weight=args.ncpu, weight_execution_mode=args.runmode)
+    jo.run_job('multiepoch.tasks.make_SWarp_weights',clobber_weights=False, MP_weight=args.ncpu, weights_execution_mode=args.runmode)
     # 8. The Custom call with custom weights 
     # Prepare call to SWarp
     swarp_params={

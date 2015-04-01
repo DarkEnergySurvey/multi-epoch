@@ -71,13 +71,12 @@ class Job(BaseJob):
         clobber_weights  = Bool(False, help="Cloober the existing custom weight files")
         weight_extension = CUnicode('_wgt',help="Weight extension to add to custom weight files")
         MP_weight        = CInt(1,help="run using multi-process, 0=automatic, 1=single-process [default]")
-        weights_execution_mode  = CUnicode("tofile",help="Weights excution mode",
+        weights_execution_mode  = CUnicode("dryrun",help="Weights excution mode",
                                            argparse={'choices': ('tofile','dryrun','execute')})
 
     def run(self):
 
         t0 = time.time()
-
         # Get the relevant context variables
         clobber = self.input.clobber_weights
         wgt_ext = self.input.weight_extension
@@ -146,10 +145,10 @@ class Job(BaseJob):
 
         """ Run the custom weight files"""
 
+        execute_mode = self.input.weights_execution_mode
+        
         # Set up the names and get the args for the actual call
         args = self.set_weight_names_and_args(wgt_ext,clobber)
-
-        execute_mode = self.input.weight_execution_mode
 
 
         # Figure out NP to use, 0=automatic
@@ -224,22 +223,28 @@ def read_ascii_to_dict(filename,sep=' '):
 
 
 
-if __name__ == "__main__":
 
-    # 0. take care of the sys arguments
-    import sys
-    args = sys.argv[1:]
-    # 1. read the input arguments into the job input
-    inp = Job.Input()
-    # 2. load a context
-    ctx = ContextProvider.create_ctx(**inp.parse_arguments(args))
-    # 3. set the pipeline execution mode
-    ctx['mojo_execution_mode'] = 'job as script'
-    # 4. create an empty JobOperator with context
-    from mojo import job_operator
-    jo = job_operator.JobOperator(**ctx)
-    # 5. run the job
-    job_instance = jo.run_job(Job)
-    # 6. dump the context if json_dump
-    if jo.ctx.get('json_dump_file', ''):
-        jo.json_dump_ctx()
+if __name__ == "__main__":
+    from mojo.utils import main_runner
+    job = main_runner.run_as_main(Job)
+
+
+# if __name__ == "__main__":
+
+#     # 0. take care of the sys arguments
+#     import sys
+#     args = sys.argv[1:]
+#     # 1. read the input arguments into the job input
+#     inp = Job.Input()
+#     # 2. load a context
+#     ctx = ContextProvider.create_ctx(**inp.parse_arguments(args))
+#     # 3. set the pipeline execution mode
+#     ctx['mojo_execution_mode'] = 'job as script'
+#     # 4. create an empty JobOperator with context
+#     from mojo import job_operator
+#     jo = job_operator.JobOperator(**ctx)
+#     # 5. run the job
+#     job_instance = jo.run_job(Job)
+#     # 6. dump the context if json_dump
+#     if jo.ctx.get('json_dump_file', ''):
+#         jo.json_dump_ctx()
