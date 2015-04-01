@@ -148,12 +148,12 @@ def insertTAG(tilename,myTAG,tablename='felipe.tags',clobber=False,db_section='d
             print "# Will select %s EXPOSURES randomly and insert to %s" % (NEXP,tablename)
             # Get the unique exposure names for that filter
             expnames     = get_expnames(CCDS['FILENAME'][idx])
-            expnames_sel = numpy.random.choice(expnames,NEXP,replace=False)
+            expnames_sel = numpy.random.choice(expnames,min(NEXP,len(expnames)),replace=False)
             k = numpy.array( [fname[0:9] in expnames_sel for fname in filenames])
             filenames_sel = filenames[k==True]
         elif SELECT_BY == "CCDS":
             print "# Will select %s CCDS randomly and insert to %s" % (Nmedian[BAND],tablename)
-            filenames_sel = numpy.random.choice(filenames,Nmedian[BAND],replace=False)
+            filenames_sel = numpy.random.choice(filenames,min(Nmedian[BAND],NCCDs),replace=False)
         else:
             exit("ERROR: No selection method")
 
@@ -169,7 +169,32 @@ def insertTAG(tilename,myTAG,tablename='felipe.tags',clobber=False,db_section='d
 
 if __name__ == "__main__":
 
+
     insertTAG('DES2246-4457',myTAG='DES2246-4457_RAN_CCD', tablename='felipe.tags',clobber=True,  SELECT_BY="CCDS")
     insertTAG('DES2246-4457',myTAG='DES2246-4457_RAN_EXP', tablename='felipe.tags',clobber=False, SELECT_BY="EXPOSURES")
+
+
+    tiles_RXJ2248 = ['DES2251-4331',
+                     'DES2251-4414',
+                     'DES2254-4457',
+                     'DES2247-4331',
+                     'DES2247-4414',
+                     'DES2246-4457',
+                     'DES2250-4457']
     
+    tiles_ElGordo = ['DES0105-4831',
+                     'DES0059-4957',
+                     'DES0103-4957',
+                     'DES0058-4914',
+                     'DES0102-4914',
+                     'DES0106-4914',
+                     'DES0101-4831']
+    
+
+    for tilename in tiles_RXJ2248+tiles_ElGordo:
+
+        print " # Creating TAGS for %s" % tilename
+        insertTAG(tilename,myTAG='%s_RAN_CCD' % tilename, tablename='felipe.tags',clobber=True,  SELECT_BY="CCDS")
+        insertTAG(tilename,myTAG='%s_RAN_EXP' % tilename, tablename='felipe.tags',clobber=False, SELECT_BY="EXPOSURES")
+
     
