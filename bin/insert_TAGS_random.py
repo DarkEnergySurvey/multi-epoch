@@ -179,7 +179,7 @@ if __name__ == "__main__":
                      'DES2254-4457',
                      'DES2247-4331',
                      'DES2247-4414',
-                     'DES2246-4457',
+                     #'DES2246-4457',
                      'DES2250-4457']
     
     tiles_ElGordo = ['DES0105-4831',
@@ -194,7 +194,7 @@ if __name__ == "__main__":
     for tilename in tiles_RXJ2248+tiles_ElGordo:
 
         print " # Creating TAGS for %s" % tilename
-        insertTAG(tilename,myTAG='%s_RAN_CCD' % tilename, tablename='felipe.tags',clobber=True,  SELECT_BY="CCDS")
+        insertTAG(tilename,myTAG='%s_RAN_CCD' % tilename, tablename='felipe.tags',clobber=False,  SELECT_BY="CCDS")
         insertTAG(tilename,myTAG='%s_RAN_EXP' % tilename, tablename='felipe.tags',clobber=False, SELECT_BY="EXPOSURES")
 
     
