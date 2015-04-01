@@ -21,7 +21,7 @@ from mojo.jobs.base_job import BaseJob
 import os
 import sys
 import re
-from despymisc  import http_requests
+from despymisc import http_requests
 import numpy
 import multiepoch.utils as utils
 
