@@ -4,7 +4,7 @@ setupRequired(mojo       0.2.2+1)
 # DESDM python
 setupRequired(despydb    2.0.0+2)
 setupRequired(despyastro 0.3.0+3) 
-setupRequired(despymisc  0.2.2+1) 
+setupRequired(despymisc  0.2.3+0) 
 setupRequired(despyfits  0.1.2+1) 
 
 # Python core
