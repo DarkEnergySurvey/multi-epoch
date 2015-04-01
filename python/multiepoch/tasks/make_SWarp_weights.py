@@ -112,8 +112,7 @@ class Job(BaseJob):
 
         # Get the weight names
         if self.ctx.LOCALFILES:
-
-            filepaths = npadd(self.ctx.local_archive,self.ctx.assoc['FILENAME'])
+            filepaths = npadd(self.ctx.local_archive+"/",self.ctx.assoc['FILENAME'])
             self.ctx.assoc['FILEPATH_LOCAL_WGT'] = contextDefs.get_local_weight_names(filepaths,wgt_ext)
         else:
             self.ctx.assoc['FILEPATH_LOCAL_WGT'] = contextDefs.get_local_weight_names(self.ctx.assoc['FILEPATH_LOCAL'],wgt_ext)
