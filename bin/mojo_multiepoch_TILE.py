@@ -49,7 +49,7 @@ if __name__ == '__main__':
     # 1.  Get the tile information from the table
     jo.run_job('multiepoch.tasks.query_tileinfo', tilename=args.tilename, coaddtile_table=args.coaddtile_table,db_section=args.db_section)
     # 2. Set up the output directory
-    jo.run_job('multiepoch.tasks.set_tile_directory', outputpath=os.environ['HOME']+"/TILEBUILDER_TEST")
+    jo.run_job('multiepoch.tasks.set_tile_directory', outputpath=args.outputpath)
     # 3. Get the CCDs inside the tile
     # ---------------------------------------------------------------------
     # These are default extras for the full depth sample for SVA1
