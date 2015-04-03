@@ -7,8 +7,15 @@ How to Run
 Assuming you have a proper installation (through eups) of the multiepoch
 package with all its dependencies and you executed
 
+```
 $ setup multiepoch
+```
+or 
+```
+$ setup -r -v .
+```
 
+from the multiepoch trunk directory after svn checkout
 then you can run the entire pipeline from anywhere by executing
 
 $ mojo run_config multiepoch.config.me_full_config
@@ -28,6 +35,8 @@ $ mojo run_config my_python_package.my_pipeline_config
 tilename = 'DES2246-4457' 
 
 EXECUTION_MODE = 'dryrun' # alternatively : 'tofile', 'execute'
+NTHREADS = 8
+NCPU = 6
 
 jobs = [
         'multiepoch.tasks.query_tileinfo',
@@ -71,11 +80,11 @@ http_section = 'http-desarchive'
 
 # make_SWarp_weights >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 clobber_weights = False
-MP_weight = 4
+MP_weight = NCPU
 
 # call_SWarp_CustomWeights >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 swarp_parameters = {
-    "NTHREADS"     :8,
+    "NTHREADS"     : NTHREADS,
     "COMBINE_TYPE" : "AVERAGE",    
     "PIXEL_SCALE"  : 0.263,
     }
@@ -84,7 +93,7 @@ swarp_execution_mode = EXECUTION_MODE
 
 # call_Stiff >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 stiff_params = {
-    "NTHREADS"  :8,
+    "NTHREADS"  : NTHREADS,
     "COPYRIGHT" : "NCSA/DESDM",
     "WRITE_XML" : "N",
     }
@@ -95,7 +104,7 @@ SExpsf_execution_mode = EXECUTION_MODE
 
 # call_psfex >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 psfex_parameters = {
-    "NTHREADS"  :8,
+    "NTHREADS"  : NTHREADS,
     }
 psfex_execution_mode = EXECUTION_MODE
 
@@ -104,11 +113,11 @@ SExDual_parameters = {
     "MAG_ZEROPOINT":30,
     }
 SExDual_execution_mode = EXECUTION_MODE
-MP_SEx=8
+MP_SEx = NCPU
 
 
 # LOGGING
 # -----------------------------------------------------------------------------
 stdoutloglevel = 'INFO'
 fileloglevel = 'INFO'
-logfile = 'multiepoch.log'
+logfile = os.path.join(os.environ['HOME'], 'multiepoch.log')
