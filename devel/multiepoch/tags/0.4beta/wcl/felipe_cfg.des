@@ -1,0 +1,59 @@
+operator = felipe
+email = felipe@illinois.edu
+
+submit_des_services = /home/felipe/.desservices.ini
+submit_des_db_section = db-destest
+target_des_db_section = db-destest
+
+submit_des_services   = /home/felipe/.desservices.ini
+target_des_services   = /home/felipe/.desservices.ini
+
+when_to_email = Block # Never, Run, Block
+create_junk_tarball = true
+
+use_db_out = True
+use_db_in  = True
+use_qcf    = False
+
+## ----- Hack for "nobody" runnning -------------------------------------------
+# This "secret" directory needs to be owner by "nobody"
+#target_des_services = /cluster_scratch/users/felipe/secret/.desservices.ini
+##-----------------------------------------------------------------------------
+
+# This is usually defined in the submit wcl
+#des_http_section = file-http
+#home_archive = prodbeta
+#target_site = descmp4
+#submit_files_mvmt = filemgmt.job_mvmt_http.JobArchiveHttp
+
+# no target archive
+use_target_archive_input  = never   # never, job
+use_target_archive_output = never   # wrapper, job, never
+use_home_archive_input    = wrapper # 
+use_home_archive_output   = job     # wrapper, job, block, run, never
+
+transfer_stats = filemgmt.transfer_stats_db.TransferStatsDB
+transfer_semname = filetrans
+
+
+<site>
+    <destest_computingsite>
+        name = destest_computingsite
+        gridtype = condor
+        batchtype = glidein
+        uiddomain = destest.cosmology.illinois.edu
+        setupeups = /work/apps/RHEL6/dist/eups/desdm_eups_setup.sh
+        jobroot = /cluster_scratch/users/felipe/test
+    </destest_computingsite>
+</site>
+
+<job_file_mvmt>
+    <destest_computingsite>
+        <desar2home>
+            <no_archive>
+                mvmtclass = filemgmt.job_mvmt_http.JobArchiveHttp
+            </no_archive>
+        </desar2home>
+        job_file_mvmtname = destest_computingsite
+    </destest_computingsite>
+</job_file_mvmt>

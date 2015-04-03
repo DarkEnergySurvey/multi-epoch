@@ -1,0 +1,56 @@
+# defines my environment
+<<include ../felipe_cfg.des>>
+
+<<include ../modulewcl/modnamepat.wcl>>
+<<include ../modulewcl/01-query_tileinfo.wcl>>
+<<include ../modulewcl/02-find_ccds_in_tile.wcl>>
+<<include ../modulewcl/03-make_swarp_weights.wcl>> 
+<<include ../modulewcl/04-call_swarp_customweights.wcl>>
+
+#<<include destest_computingsite.des>>       
+
+# General configuration
+tilename = DES2246-4457
+
+# Project definition and target site
+project = FM
+target_site = descmp4
+#target_site = destest_computingsite
+home_archive = prodbeta
+des_http_section = file-http
+
+# comment out submit_run_dir if want to have submit side in same directory as submit wcl
+submit_run_dir = /cluster_scratch/refact/dessub/submit/${ops_run_dir}
+
+reqnum = 0002
+jira_id = ME-TEST # example 
+label = query_tileinfo,test 
+
+pipeline    = me # used in desstat output 
+pipeprod    = Y2ME # eups meta package name
+pipever     = 1.0+3E # eups meta package version
+ops_run_dir = ${project}/${pipeline}/${tilename}-r${reqnum}/p${attnum:2}
+unitname    = ${tilename}
+
+database_section = db-destest
+local_filepath = /work/devel/felipe/LOCAL_DESAR
+
+swarpbasename = ${tilename}-r${reqnum}/p${attnum:2}
+
+# because we start a python on the remote site with user
+# nobody in this test setup. we need to trick the system
+# to look for the python eggs somewhere else.
+<job_environment>
+   PYTHON_EGG_CACHE =  /cluster_scratch/users/felipe/secret
+</job_environment>
+
+blocklist = multiepoch
+
+<block>
+    <multiepoch>
+#        modulelist = query_tileinfo, find_ccds_in_tile, make_swarp_weights, call_swarp_weights
+#	modulelist = query_tileinfo, find_ccds_in_tile,	call_swarp_customweights
+	modulelist = query_tileinfo, find_ccds_in_tile
+    </multiepoch>
+</block>
+

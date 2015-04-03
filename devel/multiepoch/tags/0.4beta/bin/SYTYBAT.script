@@ -1,0 +1,113 @@
+#! /bin/csh -f 
+
+echo "So You Think You Built a Tile?"
+
+set tmp=$$tmp
+set odir=$1
+set tile=$2
+
+set odir=test_y1a1_1
+set tile=DES2009-5831
+#set rtag=Y1T16_FINALCUT
+set ra=302.343273
+set dec=-58.522222
+
+#set rebuild_det="yes"
+set rebuild_det="no"
+set rebuild_detpsf="yes"
+#set rebuild_detpsf="no"
+
+#
+# Build a detection image:
+#
+
+set tdir=$odir/coadd
+
+    if ((! -e $odir/coadd/$tile'_det.fits')||($rebuild_det == "yes")) then
+       echo -n "Running SWARP to build DET image: "
+       date
+       swarp  $odir/coadd/$tile'_z.fits[0]',$odir/coadd/$tile'_i.fits[0]',$odir/coadd/$tile'_r.fits[0]' \
+            -c $DES_HOME/etc/default.swarp -IMAGEOUT_NAME $tmp.fits  -RESAMPLE N \
+            -COMBINE Y -COMBINE_TYPE CHI-MEAN -SUBTRACT_BACK N  -DELETE_TMPFILES Y -WEIGHT_TYPE MAP_WEIGHT \
+            -WEIGHT_IMAGE $odir/coadd/$tile'_z.fits[1]',$odir/coadd/$tile'_i.fits[1]',$odir/coadd/$tile'_r.fits[1]' \
+            -IMAGE_SIZE 10000,10000 -PIXELSCALE_TYPE MANUAL -PIXEL_SCALE 0.263  -CENTER_TYPE MANUAL \
+            -CENTER $ra,$dec  -HEADER_ONLY N  -WRITE_XML Y  -XML_NAME $odir/coadd/$tile'_det_swarp.xml' >& $odir/coadd/log.swarp_det
+
+       echo -n "Running FITSCOMBINE on DET image pieces: "
+       date
+       fitscombine $tmp.fits coadd.weight.fits $odir/coadd/$tile'_det.fits' -cleanup -verbose 3 >& $odir/coadd/log.fitscombine_det
+    endif
+
+# PSF for detection image:
+
+    if ((! -e $odir/coadd/$tile'_det_psfcat.fits')||($rebuild_det == "yes")) then
+       echo -n "Cataloging DET image for PSFEX: "
+       date
+       sex $odir/coadd/$tile'_det.fits[0]' -c $DES_HOME/etc/default.sex \
+           -CATALOG_NAME $odir/coadd/$tile'_det_psfcat.fits' -CATALOG_TYPE FITS_LDAC \
+           -WEIGHT_TYPE MAP_WEIGHT -WEIGHT_IMAGE $odir/coadd/$tile'_det.fits[1]' \
+           -PARAMETERS_NAME $DES_HOME/etc/sex.param_psfex -FILTER_NAME $DES_HOME/etc/sex.conv \
+           -STARNNW_NAME $DES_HOME/etc/sex.nnw -SATUR_LEVEL 65000 -DETECT_MINAREA 3 >& $odir/coadd/log.sexpsf_det
+    endif
+
+    if ((! -e $odir/coadd/$tile'_det_psfcat.psf')||($rebuild_detpsf == "yes")) then
+       echo -n "Running PSFEX on DET image catalog: "
+       date
+       psfex $odir/coadd/$tile'_det_psfcat.fits'  -c $DES_HOME/etc/default.psfex \
+             -WRITE_XML Y -XML_NAME $odir/coadd/$tile'_det_psfex.xml' >& $odir/coadd/log.psfex_det
+
+       if (-e proto_DES2009-5831_det_psfcat.fits) /bin/mv proto_DES2009-5831_det_psfcat.fits $odir/coadd/.
+       if (-e resi_DES2009-5831_det_psfcat.fits ) /bin/mv resi_DES2009-5831_det_psfcat.fits $odir/coadd/. 
+       if (-e samp_DES2009-5831_det_psfcat.fits ) /bin/mv samp_DES2009-5831_det_psfcat.fits $odir/coadd/. 
+       if (-e snap_DES2009-5831_det_psfcat.fits ) /bin/mv snap_DES2009-5831_det_psfcat.fits $odir/coadd/. 
+       if (-e chi_DES2009-5831_det_psfcat.fits  ) /bin/mv chi_DES2009-5831_det_psfcat.fits $odir/coadd/. 
+    endif
+
+
+    echo -n "Cataloging COADD images for PSFEX: "
+    date
+    foreach band ( g r i z Y )
+       sex $odir/coadd/$tile'_'$band.fits'[0]' -c $DES_HOME/etc/default.sex \
+           -CATALOG_NAME $odir/coadd/$tile'_'$band'_psfcat.fits' -CATALOG_TYPE FITS_LDAC \
+           -WEIGHT_TYPE MAP_WEIGHT -WEIGHT_IMAGE $odir/coadd/$tile'_'$band.fits'[1]' \
+           -PARAMETERS_NAME $DES_HOME/etc/sex.param_psfex -FILTER_NAME $DES_HOME/etc/sex.conv \
+           -STARNNW_NAME $DES_HOME/etc/sex.nnw -SATUR_LEVEL 65000 -DETECT_MINAREA 3  >& $odir/coadd/log.sexpsf_$band &
+    end
+    wait
+
+    echo -n "Running PSFex for COADD images: "
+    date
+    foreach band ( g r i z Y )
+       psfex $odir/coadd/$tile'_'$band'_psfcat.fits' -c $DES_HOME/etc/default.psfex  \
+            -WRITE_XML Y -XML_NAME $odir/coadd/$tile'_'$band'_psfex.xml' >& $odir/coadd/log.psfex_$band &
+    end
+    wait
+
+
+    echo -n "Cataloging COADD images with model fitting: "
+    date
+    foreach band ( g r i z Y )
+       sex  $odir/coadd/$tile'_det.fits[0]',$odir/coadd/$tile'_'$band.fits'[0]' \
+            -c $DES_HOME/etc/sex.config  -FILTER_NAME $DES_HOME/etc/sex.conv \
+            -STARNNW_NAME $DES_HOME/etc/sex.nnw  -PARAMETERS_NAME $DES_HOME/etc/sex.param_coadd \
+            -CATALOG_TYPE FITS_1.0 -CATALOG_NAME $odir/coadd/$tile'_'$band'_cat.fits' \
+            -WEIGHT_TYPE MAP_WEIGHT -WEIGHT_IMAGE $odir/coadd/$tile'_det.fits[1]',$odir/coadd/$tile'_'$band.fits'[1]' \
+            -MEMORY_BUFSIZE 2048  -MAG_ZEROPOINT 30.0000 -PSF_NAME $odir/coadd/$tile'_det_psfcat.psf',$odir/coadd/$tile'_'$band'_psfcat.psf' \
+            -CHECKIMAGE_TYPE SEGMENTATION -CHECKIMAGE_NAME $odir/coadd/$tile'_'$band'_seg.fits' \
+            -DETECT_THRESH 1.5 -DEBLEND_MINCONT 0.001 -PARAMETERS_NAME $DES_HOME/etc/sex.param_diskonly  -VERBOSE_TYPE NORMAL >& $odir/coadd/log.sexcat_$band &
+    end
+    wait
+    echo -n "Finished: "
+    date
+
+
+
+
+
+
+
+
+
+
+
+
