@@ -29,6 +29,8 @@ path, edit it and run your pipeline specification by executing
 $ mojo run_config my_python_package.my_pipeline_config 
 '''
 
+import os
+
 # TOP LEVEL CONFIGURATION
 # -----------------------------------------------------------------------------
 
