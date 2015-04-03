@@ -35,8 +35,7 @@ $ mojo run_config my_python_package.my_pipeline_config
 tilename = 'DES2246-4457' 
 
 EXECUTION_MODE = 'dryrun' # alternatively : 'tofile', 'execute'
-NTHREADS = 8
-NCPU = 6
+
 
 jobs = [
         'multiepoch.tasks.query_tileinfo',
@@ -45,16 +44,23 @@ jobs = [
         # alternatively to running the 3 tasks you can also run the single job
         # below
         #'multiepoch.tasks.query_database',
-        'multiepoch.tasks.call_SWarp_michael_dev',
         'multiepoch.tasks.plot_ccd_corners_destile',
         'multiepoch.tasks.get_fitsfiles',
-        'multiepoch.tasks.make_SWarp_weights',
-        'multiepoch.tasks.call_SWarp_CustomWeights',
-        'multiepoch.tasks.call_Stiff',
-        'multiepoch.tasks.call_SExpsf',
-        'multiepoch.tasks.call_psfex',
-        'multiepoch.tasks.call_SExDual',
+#       'multiepoch.tasks.make_SWarp_weights',
+#       'multiepoch.tasks.call_SWarp_CustomWeights',
+#       'multiepoch.tasks.call_Stiff',
+#       'multiepoch.tasks.call_SExpsf',
+#       'multiepoch.tasks.call_psfex',
+#       'multiepoch.tasks.call_SExDual',
         ]
+
+
+NTHREADS = 8
+NCPU = 6
+
+DATA_PATH = os.path.join(os.environ['HOME'], 'desdm', 'MULTIEPOCH_DATA') 
+
+
 
 
 # JOB SPECIFIC CONFIGURATION
@@ -65,7 +71,8 @@ coaddtile_table = 'felipe.coaddtile_new'
 db_section = 'db-destest'
 
 # set_tile_directory >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-outputpath = os.environ['HOME']+"/TILEBUILDER_TEST"
+# outputpath = os.environ['HOME']+"/TILEBUILDER"
+local_archive = os.path.join(DATA_PATH, 'TILEBUILDER_DESDM')
 
 # find_ccds_in_tile >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 tagname = 'Y2T_FIRSTCUT'
@@ -75,7 +82,7 @@ exec_name = 'immask'
 # no extra config
 
 # get_fitsfiles >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-local_archive = os.path.join(os.environ['HOME'],'LOCAL_DESAR')
+local_archive = os.path.join(DATA_PATH, 'LOCAL_DESAR')
 http_section = 'http-desarchive'
 
 # make_SWarp_weights >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
