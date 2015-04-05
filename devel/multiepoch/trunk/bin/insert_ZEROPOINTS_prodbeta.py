@@ -137,9 +137,11 @@ def createZEROPOINTtable(tablename,section,clobber=False):
             cur.execute(comment % tablename)
 
     # Grand permission
-    grant = "grant select on %s to des_reader" % tablename.split(".")[1]
-    print "# Granting permission: %s\n" % grant
-    cur.execute(grant)
+    roles = ['DES_READER','PROD_ROLE','PROD_READER_ROLE']
+    for role in roles:
+        grant = "grant select on %s to %s" % (tablename.split(".")[1],role)
+        print "# Granting permission: %s\n" % grant
+        cur.execute(grant)
     dbh.commit()
     cur.close()
     return
