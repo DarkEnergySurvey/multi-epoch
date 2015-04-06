@@ -15,10 +15,14 @@ def check_dbh(ctx):
     if 'dbh' not in ctx:
         try:
             db_section = ctx.get('db_section')
+            desservicesfile = ctx.get('desservicesfile',
+                    os.path.join(os.environ['HOME'], '.desservices.in'))
             print "# Creating db-handle to section: %s" % db_section
-            ctx.dbh = desdbi.DesDbi(section=db_section)
+            ctx.dbh = desdbi.DesDbi(desservicesfile, section=db_section)
         except:
-            raise ValueError('ERROR: Database handler could not be provided for context.')
+            # you want to see the true cause of the error here
+            raise
+            #raise ValueError('ERROR: Database handler could not be provided for context.')
     else:
         print "# Will recycle existing db-handle"
     return ctx
