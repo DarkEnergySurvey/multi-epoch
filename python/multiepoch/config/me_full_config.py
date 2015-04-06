@@ -34,7 +34,32 @@ import os
 # TOP LEVEL CONFIGURATION
 # -----------------------------------------------------------------------------
 
-tilename = 'DES2246-4457' 
+tilename = 'DES2246-4457'
+
+'''
+
+available tiles for testing.
+felipe, april 4, 2015
+
+tiles_RXJ2248 = ['DES2251-4331',
+                    'DES2251-4414',
+                    'DES2254-4457',
+                    'DES2247-4331',
+                    'DES2247-4414',
+                    'DES2246-4457',
+                    'DES2250-4457']
+
+tiles_ElGordo = ['DES0105-4831',
+                    'DES0059-4957',
+                    'DES0103-4957',
+                    'DES0058-4914',
+                    'DES0102-4914',
+                    'DES0106-4914',
+                    'DES0101-4831']
+
+'''
+
+
 
 EXECUTION_MODE = 'dryrun' # alternatively : 'tofile', 'execute'
 
@@ -58,7 +83,7 @@ jobs = [
 
 
 NTHREADS = 8
-NCPU = 6
+NCPU = 8
 
 DATA_PATH = os.path.join(os.environ['HOME'], 'desdm', 'MULTIEPOCH_DATA') 
 
