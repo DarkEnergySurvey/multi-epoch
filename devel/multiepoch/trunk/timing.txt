@@ -2,3 +2,7 @@
 # MEFs Creation Total time: 0m 12.70s
 # Grand Total time: 277m 35.07s
 
+# cmp1 8-cores
+# MEFs Creation Total time: 0m 42.14s
+# Grand Total time: 678m 50.93s
+
