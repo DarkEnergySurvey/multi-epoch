@@ -1,8 +1,7 @@
 # defines my environment
 <<include ../felipe_cfg.des>>
-
 # Custom compute site definitions
-<<include ../custom_computingsite.des>>       
+<<include ../custom_computesites.wcl>>       
 
 # Compute site etc
 project = FM
@@ -17,7 +16,7 @@ firstcut_tag     = Y2T_FIRSTCUT
 ncores           = 8
 exec_mode        = tofile
 #exec_mode        = execute
-outdir           = /work/devel/felipe/TILEBUILDER-CMP4-N8
+outdir           = ./TILEBUILDER-CMP4-N8
 local_archive    = /work/devel/felipe/LOCAL_DESAR_CMP4
 
 # Run config
