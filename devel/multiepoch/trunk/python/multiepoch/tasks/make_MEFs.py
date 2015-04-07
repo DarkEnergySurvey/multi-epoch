@@ -82,6 +82,18 @@ class Job(BaseJob):
         print "# MEFs Creation Total time: %s" % elapsed_time(t0)
         return
 
+    def clean_up_SWarp(self,execute=False):
+
+        for BAND in self.ctx.dBANDS:
+
+            print "Cleaning up %s" % self.ctx.comb_sci[BAND]
+            print "Cleaning up %s" % self.ctx.comb_wgt[BAND]
+            print "Cleaning up %s" % self.ctx.comb_sci_tmp[BAND]
+            print "Cleaning up %s" % self.ctx.comb_wgt_tmp[BAND]
+
+        return
+            
+
     def create_MEFs(self,clobber,extnames=['SCI','WGT']):
 
         """ Create the MEF files using despyfits"""
