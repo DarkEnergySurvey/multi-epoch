@@ -20,12 +20,6 @@ use_qcf    = False
 #target_des_services = /cluster_scratch/users/felipe/secret/.desservices.ini
 ##-----------------------------------------------------------------------------
 
-# This is usually defined in the submit wcl
-#des_http_section = file-http
-#home_archive = prodbeta
-#target_site = descmp4
-#submit_files_mvmt = filemgmt.job_mvmt_http.JobArchiveHttp
-
 # no target archive
 use_target_archive_input  = never   # never, job
 use_target_archive_output = never   # wrapper, job, never
@@ -36,49 +30,3 @@ transfer_stats = filemgmt.transfer_stats_db.TransferStatsDB
 transfer_semname = filetrans
 
 
-# NOTE: Every "custom" <site> here needs to have a matching site under
-#  the <job_file_mvmt> section.
-
-<site>
-    <destest_computingsite>
-        name = destest_computingsite
-        gridtype = condor
-        batchtype = glidein
-        uiddomain = destest.cosmology.illinois.edu
-        setupeups = /work/apps/RHEL6/dist/eups/desdm_eups_setup.sh
-        jobroot = /cluster_scratch/users/felipe/test
-    </destest_computingsite>
-
-    <descmp4felipe>
-        name     = descmp4felipe
-        gridtype = condor
-        batchtype = glidein
-        uiddomain = cosmology.illinois.edu
-        setupeups = /work/apps/RHEL6/dev/eups/desdm_eups_setup.sh
-        jobroot = /cluster_scratch/refact/descmp4felipe/jobroot
-    </descmp4felipe>
-</site>
-
-
-<job_file_mvmt>
-
-    <destest_computingsite>
-        <desar2home>
-            <no_archive>
-                mvmtclass = filemgmt.job_mvmt_http.JobArchiveHttp
-            </no_archive>
-        </desar2home>
-        job_file_mvmtname = destest_computingsite
-    </destest_computingsite>
-
-
-    <descmp4felipe>
-        <prodbeta>
-            <no_archive>
-                mvmtclass = filemgmt.job_mvmt_http.JobArchiveHttp
-            </no_archive>
-        </prodbeta>
-        job_file_mvmtname = descmp4felipe
-    </descmp4felipe>
-
-</job_file_mvmt>

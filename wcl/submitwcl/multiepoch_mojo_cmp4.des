@@ -1,20 +1,11 @@
 # defines my environment
 <<include ../felipe_cfg.des>>
 
+# Custom compute site definitions
+<<include ../custom_computingsite.des>>       
+
 # Compute site etc
 project = FM
-
-<site>
-    <destest_computingsite>
-        name = destest_computingsite
-        gridtype = condor
-        batchtype = glidein
-        uiddomain = destest.cosmology.illinois.edu
-        setupeups = /work/apps/RHEL6/dist/eups/desdm_eups_setup.sh
-        jobroot = /cluster_scratch/users/mgraber/test
-    </destest_computingsite>
-</site>
-
 target_site = descmp4felipe
 home_archive = prodbeta
 des_http_section = file-http
@@ -51,27 +42,6 @@ unitname = ${tilename}
 </job_environment>
 
 
-# ## uptime test
-# blocklist = uptime
-
-# <block>
-#     <uptime>
-# 	modulelist = uptime 
-#     </uptime>
-# </block>
-
-
-# # dummy uptime module
-# <module>
-#     <uptime>
-#         wrappername = generic.py
-#         #modnamepat=${modnamepat_tile_generic}
-#         <exec_1>
-#             execname = uptime
-#         </exec_1>
-#     </uptime>
-# </module>
-
 blocklist = multiepoch
 
 
@@ -107,4 +77,26 @@ blocklist = multiepoch
 
     </me_mojo_tile>
 </module>
+
+# ## uptime test
+# blocklist = uptime
+
+# <block>
+#     <uptime>
+# 	modulelist = uptime 
+#     </uptime>
+# </block>
+
+
+# # dummy uptime module
+# <module>
+#     <uptime>
+#         wrappername = generic.py
+#         #modnamepat=${modnamepat_tile_generic}
+#         <exec_1>
+#             execname = uptime
+#         </exec_1>
+#     </uptime>
+# </module>
+
 
