@@ -26,7 +26,8 @@ use_target_archive_output = never   # wrapper, job, never
 use_home_archive_input    = wrapper # 
 use_home_archive_output   = job     # wrapper, job, block, run, never
 
-transfer_stats = filemgmt.transfer_stats_db.TransferStatsDB
-transfer_semname = filetrans
+submit_files_mvmt = filemgmt.job_mvmt_local.JobArchiveLocal
+transfer_stats    = filemgmt.transfer_stats_db.TransferStatsDB
+transfer_semname  = filetrans
 
 
