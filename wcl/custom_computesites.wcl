@@ -12,10 +12,12 @@
     </destest_computingsite>
 
     <descmp4felipe>
-        name     = descmp4felipe
-        gridtype = condor
-        batchtype = glidein
-        uiddomain = cosmology.illinois.edu
+        name      = descmp4felipe
+        sitename  = descmp4felipe
+        gridtype  = condor
+        dynslots  = true
+        batchtype = local
+        loginhost = descmp4.cosmology.illinois.edu
         setupeups = /work/apps/RHEL6/dev/eups/desdm_eups_setup.sh
         jobroot = /cluster_scratch/refact/descmp4felipe/jobroot
     </descmp4felipe>

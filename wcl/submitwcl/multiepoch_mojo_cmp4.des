@@ -15,8 +15,8 @@ tilename         = DES2246-4457
 database_section = db-destest
 firstcut_tag     = Y2T_FIRSTCUT
 ncores           = 8
-#exec_mode        = tofile
-exec_mode        = execute
+exec_mode        = tofile
+#exec_mode        = execute
 outdir           = /work/devel/felipe/TILEBUILDER-CMP4-N8
 local_archive    = /work/devel/felipe/LOCAL_DESAR_CMP4
 
@@ -77,26 +77,4 @@ blocklist = multiepoch
 
     </me_mojo_tile>
 </module>
-
-# ## uptime test
-# blocklist = uptime
-
-# <block>
-#     <uptime>
-# 	modulelist = uptime 
-#     </uptime>
-# </block>
-
-
-# # dummy uptime module
-# <module>
-#     <uptime>
-#         wrappername = generic.py
-#         #modnamepat=${modnamepat_tile_generic}
-#         <exec_1>
-#             execname = uptime
-#         </exec_1>
-#     </uptime>
-# </module>
-
 
