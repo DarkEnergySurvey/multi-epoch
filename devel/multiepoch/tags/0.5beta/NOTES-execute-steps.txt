@@ -1,0 +1,50 @@
+1) In cosmology, make sure that you point to the DEV section of EUPS
+
+ unsetenv EUPS_DIR
+ unsetenv EUPS_PATH
+ echo "Setting up DEV RLE6"
+ source /work/apps/RHEL6/dev/eups/desdm_eups_setup.csh (or sh if bash)
+
+2) Check-out and EUPS setup the multiepoch pipeline from SVN 
+
+ svn co $SVNROOT/multiepoch multiepoch
+ setup -v -r ~/DESDM-code/devel/multiepoch/trunk
+ setup -v -r ~/DESDM-Code/devel/despymisc/trunk/
+
+3) Now run the steps...
+
+ 3.1) Get the tile information
+ query_tileinfo.py DES2246-4457 --json_tileinfo_file DES2246-4457_tileinfo.json
+
+ 3.2) Get the CCDs needed for a tile
+ find_ccds_in_tile.py DES2246-4457_tileinfo.json --db_section db-destest --assoc_file DES2246-4457_ccdinfo.assoc --assoc_json DES2246-4457_ccdinfo.json --plot_outname DES2246-4457_overlap.pdf 
+
+ (by hand modify the DES2246-4457_ccdinfo.assoc --> DES2246-4457_ccdinfo_local.assoc with the local paths and FILEPATH_ARCHIVE-> FILEPATH_LOCAL)
+ (by hand modify the DES2246-4457_ccdinfo.json  --> DES2246-4457_ccdinfo_local.json  with the local paths and FILEPATH_ARCHIVE-> FILEPATH_LOCAL)
+
+ # With filepath_local
+ find_ccds_in_tile.py DES2246-4457_tileinfo.json --db_section db-destest --assoc_file DES2246-4457_ccdinfo_localtest.assoc --assoc_json DES2246-4457_ccdinfo_localtest.json --filepath_local /work/devel/felipe/LOCAL_DESAR --plot_outname DES2246-4457_overlap.pdf 
+
+ 3.3) Now we are ready to create the custom weights
+ make_SWarp_weights.py DES2246-4457_ccdinfo_local.json     --MP_weight 4 --weight_extension _wgt
+ make_SWarp_weights.py DES2246-4457_ccdinfo_localtest.json --MP_weight 4 --weight_extension _wgt
+
+ 3.4)  Make the SWArp call to coadd the images
+ call_SWarp_CustomWeights.py DES2246-4457_ccdinfo_local.json DES2246-4457_tileinfo.json --basename ~/TILEBUILDER_TEST/DES2246-4457_r01 --swarp_execution_mode tofile --swarp_parameters NTHREADS=8 COMBINE_TYPE=MEAN COPY_KEYWORDS=OBJECT,EXPTIME 
+
+ 3.5) Create the color tiff image using Stiff
+ call_Stiff.py DES2246-4457_ccdinfo_local.json --basename ~/TILEBUILDER_TEST/DES2246-4457_r01 --stiff_execution_mode tofile --stiff_parameters NTHREADS=8
+
+ 3.6) Make call for SEx for psf
+ call_SExpsf.py DES2246-4457_ccdinfo_local.json --basename ~/TILEBUILDER_TEST/DES2246-4457_r01 --SExpsf_execution_mode execute --MP_SEx 6 --SExpsf_parameters DETECT_MINAREA=9
+
+ 3.7) Now we call psfex
+ call_psfex.py DES2246-4457_ccdinfo_local.json --basename ~/TILEBUILDER_TEST/DES2246-4457_r01 --psfex_execution_mode tofile 
+ call_psfex.py DES2246-4457_ccdinfo_local.json --basename ~/TILEBUILDER_TEST/DES2246-4457_r01 --psfex_execution_mode execute --psfex_parameters NTHREADS=8
+
+ 3.8) SEx Dual
+ call_SExDual.py DES2246-4457_ccdinfo_local.json --basename ~/TILEBUILDER_TEST/DES2246-4457_r01 --SExDual_execution_mode tofile --MP_SEx 6 --SExDual_parameters DETECT_MINAREA=9 DETECT_THRESH=1.2
+ call_SExDual.py DES2246-4457_ccdinfo_local.json --basename ~/TILEBUILDER_TEST/DES2246-4457_r01 --SExDual_execution_mode tofile --MP_SEx 6 --SExDual_parameters DETECT_MINAREA=9 DETECT_THRESH=1.2
+
+ 3.9) Make MEFs file of SWarp images
+ make_MEFs.py DES2246-4457_ccdinfo_local.json --basename ~/TILEBUILDER_TEST/DES2246-4457_r01
