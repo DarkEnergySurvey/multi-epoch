@@ -47,8 +47,11 @@ class Job(BaseJob):
                               input_file=True,
                               argparse={ 'argtype': 'positional', })
         # Optional Arguments
-        basename    = CUnicode("",help="Base Name for coadd fits files in the shape: COADD_BASENAME_$BAND.fits")
-        clobber_MEF = Bool(False, help="Cloober the existing MEF fits")
+        basename     = CUnicode("",help="Base Name for coadd fits files in the shape: COADD_BASENAME_$BAND.fits")
+        clobber_MEF  = Bool(False, help="Cloober the existing MEF fits")
+        cleanupSWarp = Bool(False, help="Clean-up SWarp files")
+        MEF_execution_mode  = CUnicode("tofile",help="excution mode",
+                                       argparse={'choices': ('tofile','dryrun','execute')})
 
         def _validate_conditional(self):
             # if in job standalone mode json
@@ -79,17 +82,29 @@ class Job(BaseJob):
         
         t0 = time.time()
         self.create_MEFs(self.ctx.clobber_MEF)
+
+        if self.input.cleanupSWarp:
+            self.cleanup_SWarpFiles(execute=True)
+            
         print "# MEFs Creation Total time: %s" % elapsed_time(t0)
         return
 
-    def clean_up_SWarp(self,execute=False):
+    def cleanup_SWarpFiles(self,execute=False):
 
         for BAND in self.ctx.dBANDS:
 
-            print "Cleaning up %s" % self.ctx.comb_sci[BAND]
-            print "Cleaning up %s" % self.ctx.comb_wgt[BAND]
-            print "Cleaning up %s" % self.ctx.comb_sci_tmp[BAND]
-            print "Cleaning up %s" % self.ctx.comb_wgt_tmp[BAND]
+            SWarpfiles = [self.ctx.comb_sci[BAND],
+                          self.ctx.comb_wgt[BAND],
+                          self.ctx.comb_sci_tmp[BAND],
+                          self.ctx.comb_wgt_tmp[BAND]]
+
+            for sfile in SWarpfiles:
+                print "# Cleaning up %s" % sfile
+                if execute:
+                    try:
+                        os.remove(sfile)
+                    except:
+                        print "# Warning: cannot remove %s" % sfile
 
         return
             
@@ -98,6 +113,9 @@ class Job(BaseJob):
 
         """ Create the MEF files using despyfits"""
         
+        # check execution mode and write/print/execute commands accordingly --------------
+        execution_mode = self.ctx.get('MEF_execution_mode')
+
         for BAND in self.ctx.dBANDS:
 
             # Inputs
@@ -108,11 +126,16 @@ class Job(BaseJob):
 
             # Call it
             t0 = time.time()
-            print "# Making MEF file for BAND:%s --> %s" % (BAND,outname)
 
             # FELIPE: We need to modify the return of despyfits.makeMEF
             # to WARN and not quit with error when the file exists
-            despyfits.makeMEF(filenames=filenames,outname=outname,clobber=clobber,extnames=extnames)
+            if execution_mode == 'execute':
+                print "# Making MEF file for BAND:%s --> %s" % (BAND,outname)
+                despyfits.makeMEF(filenames=filenames,outname=outname,clobber=clobber,extnames=extnames)
+            elif execution_mode == 'dryrun' or execution_mode == 'tofile':
+                print "# Making MEF file for BAND:%s --> %s" % (BAND,outname)
+            else:
+                raise ValueError('Execution mode %s not implemented.' % execution_mode)
             print "# Done in %s\n" % elapsed_time(t0)
 
         return

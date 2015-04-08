@@ -12,6 +12,14 @@ from despymisc.miscutils import elapsed_time
 
 def cmdline():
 
+    try:
+        LOCAL_DESAR = os.path.join(os.environ['HOME'],'LOCAL_DESAR')
+        TILEBUILDER = os.path.join(os.environ['HOME'],'TILEBUILDER_DESDM')
+    except:
+        print "# Warning $HOME is not defined, will use ./ instead"
+        LOCAL_DESAR = './LOCAL_DESAR'
+        TILEBUILDER = './TILEBUILDER_DESDM'
+
     import argparse
     parser = argparse.ArgumentParser(description="Runs the DESDM multi-epoch pipeline")
     # The positional arguments
@@ -31,10 +39,13 @@ def cmdline():
                         help="Number of cpu to use in muti-process mode")
     parser.add_argument("--coaddtile_table", action="store",default='felipe.coaddtile_new',
                         help="Name of the table with coaddtile geometry")
-    parser.add_argument("--local_desar", action="store",default=os.path.join(os.environ['HOME'],'LOCAL_DESAR'),
+    parser.add_argument("--local_desar", action="store", default=LOCAL_DESAR,
                         help="Name of LOCAL_DESAR repository (i.e. $HOME/LOCAL_DESAR)")
-    parser.add_argument("--outputpath", action="store",default=os.path.join(os.environ['HOME'],'TILEBUILDER_DESDM'),
+    parser.add_argument("--outputpath", action="store",default=TILEBUILDER,
                         help="Path where we will write the outputs (i.e. $HOME/DESDM_TILEBUILDER)")
+    parser.add_argument("--cleanup", action="store_true",default=False,
+                        help="Clean up SWarp and psfcat fits files?")
+
     args = parser.parse_args()
     return args
     
@@ -91,10 +102,9 @@ if __name__ == '__main__':
     # 10. make the SEx psf Call
     jo.run_job('multiepoch.tasks.call_SExpsf',SExpsf_execution_mode=args.runmode,MP_SEx=args.ncpu)
     # 11. Run  psfex
-    jo.run_job('multiepoch.tasks.call_psfex',psfex_parameters={"NTHREADS": args.nthreads,},psfex_execution_mode=args.runmode)
+    jo.run_job('multiepoch.tasks.call_psfex',psfex_parameters={"NTHREADS": args.nthreads,},psfex_execution_mode=args.runmode,cleanupPSFcats=args.cleanup)
     # 12. Run SExtractor un dual mode
     jo.run_job('multiepoch.tasks.call_SExDual',SExDual_parameters={"MAG_ZEROPOINT":30,}, SExDual_execution_mode=args.runmode,MP_SEx=args.ncpu)
     # 13. Create the MEF fits files in the formar we like
-    if args.runmode == 'execute':
-        jo.run_job('multiepoch.tasks.make_MEFs',clobber_MEF=False)
+    jo.run_job('multiepoch.tasks.make_MEFs',clobber_MEF=False,MEF_execution_mode=args.runmode,cleanupSWarp=args.cleanup)
     print "# Grand Total time: %s" % elapsed_time(t0)
