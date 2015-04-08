@@ -14,8 +14,8 @@ tilename         = DES2246-4457
 database_section = db-destest
 firstcut_tag     = Y2T_FIRSTCUT
 ncores           = 8
-exec_mode        = tofile
-#exec_mode        = execute
+#exec_mode        = tofile
+exec_mode        = execute
 outdir           = ./TILEBUILDER-CMP4-N8
 local_archive    = /work/devel/felipe/LOCAL_DESAR_CMP4
 clean            = "True"
@@ -71,7 +71,7 @@ blocklist = multiepoch
 		outputpath = ${outdir}
                 db_section = ${database_section}
                 local_desar= ${local_archive}
-                clean_up   = ''
+                cleanup 
             </cmdline>
 
         </exec_1>
