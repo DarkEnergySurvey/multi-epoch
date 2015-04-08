@@ -55,6 +55,8 @@ class Job(BaseJob):
                                           argparse={'choices': ('tofile','dryrun','execute')})
         psfex_parameters       = Dict({},help="A list of parameters to pass to SExtractor",
                                        argparse={'nargs':'+',})
+        cleanupPSFcats         = Bool(False, help="Clean-up PSFcat.fits files")
+
         def _validate_conditional(self):
             # if in job standalone mode json
             if self.mojo_execution_mode == 'job as script' and self.basename == "":
@@ -94,19 +96,24 @@ class Job(BaseJob):
         cmd_list = self.get_psfex_cmd_list(psfex_parameters=psfex_parameters)
 
         # 3. check execution mode and write/print/execute commands accordingly --------------
-        executione_mode = self.ctx.get('psfex_execution_mode', 'tofile')
-        if executione_mode == 'tofile':
+        execution_mode = self.ctx.get('psfex_execution_mode', 'tofile')
+        if execution_mode == 'tofile':
             self.writeCall(cmd_list)
 
-        elif executione_mode == 'dryrun':
+        elif execution_mode == 'dryrun':
             print "# For now we only print the commands (dry-run)"
             for band in self.ctx.dBANDS:
                 print ' '.join(cmd_list[band])
 
-        elif executione_mode == 'execute':
+        elif execution_mode == 'execute':
             self.runpsfex(cmd_list)
         else:
-            raise ValueError('Execution mode %s not implemented.' % executione_mode)
+            raise ValueError('Execution mode %s not implemented.' % execution_mode)
+
+        # 4. Clean up psfcat files
+        if self.input.cleanupPSFcats:
+            self.cleanup_PSFcats(execute=True)
+
         return
 
     def writeCall(self,cmd_list):
@@ -181,6 +188,19 @@ class Job(BaseJob):
             psfex_cmd[BAND] = cmd
 
         return psfex_cmd
+
+
+    def cleanup_PSFcats(self,execute=False):
+
+        for BAND in self.ctx.dBANDS:
+            print "# Cleaning up %s" % self.ctx.psfcat[BAND]
+            if execute:
+                try:
+                    os.remove(self.ctx.psfcat[BAND])
+                except:
+                    print "# Warning: cannot remove %s" % self.ctx.psfcat[BAND]
+        return
+
 
     def __str__(self):
         return 'Creates the psfex call for multi-epoch pipeline'

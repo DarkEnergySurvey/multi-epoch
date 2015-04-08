@@ -9,14 +9,14 @@ Felipe Menanteau, NCSA Jan 2015.
 def check_dbh(ctx):
 
     from despydb import desdbi
+    import os
 
     """ Check if we have a valid database handle (dbh)"""
     
     if 'dbh' not in ctx:
         try:
             db_section = ctx.get('db_section')
-            desservicesfile = ctx.get('desservicesfile',
-                    os.path.join(os.environ['HOME'], '.desservices.in'))
+            desservicesfile = ctx.get('desservicesfile',os.path.join(os.environ['HOME'], '.desservices.ini'))
             print "# Creating db-handle to section: %s" % db_section
             ctx.dbh = desdbi.DesDbi(desservicesfile, section=db_section)
         except:
