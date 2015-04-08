@@ -18,6 +18,7 @@ exec_mode        = tofile
 #exec_mode        = execute
 outdir           = ./TILEBUILDER-CMP4-N8
 local_archive    = /work/devel/felipe/LOCAL_DESAR_CMP4
+clean            = "True"
 
 # Run config
 reqnum = 0002
@@ -27,7 +28,7 @@ label = query_tileinfo,test
 # Pipeline confin
 pipeline = me # used in desstat output 
 pipeprod = Y2ME # eups meta package name
-pipever = 1.0+5E # eups meta package version
+pipever = 1.0+6E # eups meta package version
 
 ops_run_dir = ${project}/${pipeline}/${tilename}-r${reqnum}/p${attnum:2}
 unitname = ${tilename}
@@ -70,6 +71,7 @@ blocklist = multiepoch
 		outputpath = ${outdir}
                 db_section = ${database_section}
                 local_desar= ${local_archive}
+                clean_up   = ''
             </cmdline>
 
         </exec_1>
