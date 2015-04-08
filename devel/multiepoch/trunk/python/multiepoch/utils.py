@@ -16,9 +16,13 @@ def check_dbh(ctx):
     if 'dbh' not in ctx:
         try:
             db_section = ctx.get('db_section')
-            desservicesfile = ctx.get('desservicesfile',os.path.join(os.environ['HOME'], '.desservices.ini'))
             print "# Creating db-handle to section: %s" % db_section
-            ctx.dbh = desdbi.DesDbi(desservicesfile, section=db_section)
+            try:
+                desservicesfile = ctx.get('desservicesfile',os.path.join(os.environ['HOME'], '.desservices.ini'))
+                ctx.dbh = desdbi.DesDbi(desservicesfile, section=db_section)
+            except:
+                print "# Cannot find des service file -- will try none"
+                ctx.dbh = desdbi.DesDbi(section=db_section)
         except:
             # you want to see the true cause of the error here
             raise
