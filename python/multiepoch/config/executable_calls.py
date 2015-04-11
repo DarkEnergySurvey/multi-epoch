@@ -39,7 +39,7 @@ tilename = 'DES2246-4457'
 # WARNING !!
 # we need to load tileinfo and tilename from a ctx dump
 # have a look at the dbquery_filetransfer.py config to see how to produce it!
-DATA_PATH = os.path.join(os.environ['HOME'], 'desdm', 'MULTIEPOCH_DATA') 
+DATA_PATH = os.path.join(os.environ['HOME'], 'DESDM', 'MULTIEPOCH_DATA') 
 json_load_file = os.path.join(DATA_PATH, 'CTXDUMP',
         tilename+'_tilename_tileinfo.json')
 

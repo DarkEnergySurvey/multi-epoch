@@ -71,7 +71,7 @@ jobs = [
         #'multiepoch.tasks.get_fitsfiles',
         ]
 
-DATA_PATH = os.path.join(os.environ['HOME'], 'desdm', 'MULTIEPOCH_DATA') 
+DATA_PATH = os.path.join(os.environ['HOME'], 'DESDM', 'MULTIEPOCH_DATA') 
 
 json_dump_file = os.path.join(DATA_PATH, 'CTXDUMP',
         tilename+'_tilename_tileinfo.json')
