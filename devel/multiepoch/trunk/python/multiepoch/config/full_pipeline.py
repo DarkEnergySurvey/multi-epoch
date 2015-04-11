@@ -85,7 +85,7 @@ jobs = [
 NTHREADS = 8
 NCPU = 8
 
-DATA_PATH = os.path.join(os.environ['HOME'], 'desdm', 'MULTIEPOCH_DATA') 
+DATA_PATH = os.path.join(os.environ['HOME'], 'DESDM', 'MULTIEPOCH_DATA') 
 
 
 
