@@ -71,8 +71,8 @@ jobs = [
         # alternatively to running the 3 tasks you can also run the single job
         # below
         #'multiepoch.tasks.query_database',
-        'multiepoch.tasks.plot_ccd_corners_destile',
-        'multiepoch.tasks.get_fitsfiles',
+#       'multiepoch.tasks.plot_ccd_corners_destile',
+#       'multiepoch.tasks.get_fitsfiles',
 #       'multiepoch.tasks.make_SWarp_weights',
 #       'multiepoch.tasks.call_SWarp_CustomWeights',
 #       'multiepoch.tasks.call_Stiff',
@@ -98,8 +98,7 @@ coaddtile_table = 'felipe.coaddtile_new'
 db_section = 'db-destest'
 
 # set_tile_directory >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-# outputpath = os.environ['HOME']+"/TILEBUILDER"
-local_archive = os.path.join(DATA_PATH, 'TILEBUILDER_DESDM')
+outputpath = os.path.joint(DATA_PATH, "TILEBUILDER")
 
 # find_ccds_in_tile >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 tagname = 'Y2T_FIRSTCUT'
