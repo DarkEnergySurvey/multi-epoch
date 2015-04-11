@@ -204,6 +204,15 @@ class Job(BaseJob):
         # Now we get the locations
         self.ctx.assoc = self.get_fitsfile_locations(self.ctx,filepath_local=self.input.filepath_local)
 
+        # MICHAEL
+########if self.ctx.filepath_local:
+########    names=['FILEPATH_LOCAL','FILENAME','BAND','MAG_ZERO']
+########else:
+########    names=['FILEPATH_ARCHIVE','FILENAME','BAND','MAG_ZERO',]
+########
+########self.ctx.assoc = { name: assoc[name].tolist() for name in names }
+
+
         # if Job is run as script
         if self.ctx.mojo_execution_mode == 'job as script':
 

@@ -4,8 +4,12 @@ Plot the CCDs overlaping the DESTILENAME using subplots or single BAND
 
 from mojo.jobs.base_job import BaseJob
 
+import matplotlib
+matplotlib.use('Agg')
+
 from matplotlib import pyplot as plt
 from matplotlib.patches import Polygon
+
 import math
 import numpy
 import os
