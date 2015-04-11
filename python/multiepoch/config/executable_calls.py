@@ -43,20 +43,26 @@ DATA_PATH = os.path.join(os.environ['HOME'], 'DESDM', 'MULTIEPOCH_DATA')
 json_load_file = os.path.join(DATA_PATH, 'CTXDUMP',
         tilename+'_tilename_tileinfo.json')
 
-EXECUTION_MODE = 'dryrun' # alternatively : 'tofile', 'execute'
+EXECUTION_MODE = 'execute' # alternatively : 'tofile', 'execute', 'dryrun'
 
 jobs = [
         'multiepoch.tasks.make_SWarp_weights',
-        'multiepoch.tasks.call_SWarp_CustomWeights',
-        'multiepoch.tasks.call_Stiff',
-        'multiepoch.tasks.call_SExpsf',
-        'multiepoch.tasks.call_psfex',
-        'multiepoch.tasks.call_SExDual',
+#       'multiepoch.tasks.call_SWarp_CustomWeights',
+#       'multiepoch.tasks.call_Stiff',
+#       'multiepoch.tasks.call_SExpsf',
+#       'multiepoch.tasks.call_psfex',
+#       'multiepoch.tasks.call_SExDual',
         ]
 
 
 NTHREADS = 8
 NCPU = 8
+
+
+# IMPORTS 
+# -----------------------------------------------------------------------------
+from .dbquery_filetransfer import local_archive, outputpath
+
 
 
 # JOB SPECIFIC CONFIGURATION

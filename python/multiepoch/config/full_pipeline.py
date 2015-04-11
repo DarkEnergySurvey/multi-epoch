@@ -95,10 +95,12 @@ DATA_PATH = os.path.join(os.environ['HOME'], 'DESDM', 'MULTIEPOCH_DATA')
 
 # query_tileinfo >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 coaddtile_table = 'felipe.coaddtile_new'
+#desservicesfile = os.path.join(os.environ['HOME'], '.desservices.ini')
 db_section = 'db-destest'
 
 # set_tile_directory >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-outputpath = os.path.joint(DATA_PATH, "TILEBUILDER")
+#outputpath = os.path.joint(DATA_PATH, "TILEBUILDER")
+local_archive = os.path.join(DATA_PATH, 'TILEBUILDER_DESDM')
 
 # find_ccds_in_tile >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 tagname = 'Y2T_FIRSTCUT'

@@ -75,7 +75,7 @@ DATA_PATH = os.path.join(os.environ['HOME'], 'DESDM', 'MULTIEPOCH_DATA')
 
 json_dump_file = os.path.join(DATA_PATH, 'CTXDUMP',
         tilename+'_tilename_tileinfo.json')
-dump_var_list = ['tilename', 'tileinfo',]
+dump_var_list = ['tilename', 'tileinfo', 'assoc',]
 
 
 
@@ -88,7 +88,7 @@ coaddtile_table = 'felipe.coaddtile_new'
 db_section = 'db-destest'
 
 # set_tile_directory >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-outputpath = os.path.joint(DATA_PATH, "TILEBUILDER")
+outputpath = os.path.join(DATA_PATH, "TILEBUILDER")
 
 # find_ccds_in_tile >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 tagname = 'Y2T_FIRSTCUT'
@@ -99,6 +99,8 @@ exec_name = 'immask'
 
 # get_fitsfiles >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 local_archive = os.path.join(DATA_PATH, 'LOCAL_DESAR')
+# FIXME !!
+filepath_local = local_archive 
 http_section = 'http-desarchive'
 
 # LOGGING

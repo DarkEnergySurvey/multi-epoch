@@ -5,6 +5,8 @@ Felipe Menanteau, NCSA Jan 2015.
 
 """
 
+import os
+
 # Check if database handle is in the context
 def check_dbh(ctx):
 
