@@ -1,6 +1,9 @@
 '''
-A mojo configuration to run the database queries and the filetransfer if
-necessary.
+A mojo configuration for the
+
+MULTIEPOCH PIPELINE
+
+to run the database queries and the filetransfer if necessary.
 
 
 How to Run
@@ -17,17 +20,18 @@ $ setup -r -v .
 ```
 
 from the multiepoch trunk directory after svn checkout
-then you can run the entire pipeline from anywhere by executing
+then you can run this pipeline from anywhere by executing
 
 $ mojo run_config multiepoch.config.dbquery_filetransfer
 
 Any of the parameters specified in this config file can be overwritten from
-the command line call using the --ARGUMENTNAME=ARGUMENTVALUE syntax.
+the command line call using the --ARGUMENTNAME ARGUMENTVALUE syntax.
 
-You can also copy this configuration file into any python package on the python
-path, edit it and run your pipeline specification by executing
+You can also copy or import this configuration file into any python package on
+the python path, edit it and run your pipeline specification by executing
 
 $ mojo run_config my_python_package.my_pipeline_config 
+
 '''
 
 import os
@@ -61,22 +65,37 @@ tiles_ElGordo = ['DES0105-4831',
 '''
 
 jobs = [
+        #'multiepoch.tasks.setup_paths',
         'multiepoch.tasks.query_tileinfo',
-        'multiepoch.tasks.set_tile_directory',
+        #'multiepoch.tasks.set_tile_directory',
         'multiepoch.tasks.find_ccds_in_tile',
         # alternatively to running the 3 tasks you can also run the single job
         # below
-        #'multiepoch.tasks.query_database',
+#       'multiepoch.tasks.query_database',
         'multiepoch.tasks.plot_ccd_corners_destile',
-        #'multiepoch.tasks.get_fitsfiles',
+        'multiepoch.tasks.get_fitsfiles',
         ]
 
-DATA_PATH = os.path.join(os.environ['HOME'], 'DESDM', 'MULTIEPOCH_DATA') 
 
-json_dump_file = os.path.join(DATA_PATH, 'CTXDUMP',
-        tilename+'_tilename_tileinfo.json')
-dump_var_list = ['tilename', 'tileinfo', 'assoc',]
+# SETTING UP THE PATHS
+# -----------------------------------------------------------------------------
 
+# for default standalone applications we define one writeable root directory
+# this directory can be set to be the users home dir, nothing will directly be
+# written into here but into subdirectories herein only ..
+# in docker containers you will want to have this directory be a mounted volume
+MULTIEPOCH_ROOT = os.path.abspath('/MULTIEPOCH_ROOT')
+
+LOCAL_ARCHIVE = os.path.join(MULTIEPOCH_ROOT, 'LOCAL_DESAR')
+outputpath = os.path.join(MULTIEPOCH_ROOT, 'TILEBUILDER') 
+
+# the directory where ultimately all output will end up
+tiledir = os.path.join(outputpath, tilename)
+
+# at the end of a run of this task we persist some of the ctx to be able to
+# reuse the generated information in later executable runs
+#json_dump_file = os.path.join(tiledir, tilename+'_tilename_tileinfo.json')
+#dump_var_list = ['tilename', 'tileinfo', 'assoc',]
 
 
 
@@ -86,9 +105,10 @@ dump_var_list = ['tilename', 'tileinfo', 'assoc',]
 # query_tileinfo >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 coaddtile_table = 'felipe.coaddtile_new'
 db_section = 'db-destest'
+desservicesfile = '/MULTIEPOCH_ROOT/.desservices.ini'
 
 # set_tile_directory >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-outputpath = os.path.join(DATA_PATH, "TILEBUILDER")
+# -
 
 # find_ccds_in_tile >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 tagname = 'Y2T_FIRSTCUT'
@@ -98,13 +118,14 @@ exec_name = 'immask'
 # no extra config
 
 # get_fitsfiles >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-local_archive = os.path.join(DATA_PATH, 'LOCAL_DESAR')
+local_archive = LOCAL_ARCHIVE 
 # FIXME !!
-filepath_local = local_archive 
+filepath_local = LOCAL_ARCHIVE 
 http_section = 'http-desarchive'
+
 
 # LOGGING
 # -----------------------------------------------------------------------------
 stdoutloglevel = 'DEBUG'
 fileloglevel = 'DEBUG'
-logfile = os.path.join(DATA_PATH, 'LOG', tilename+'.log')
+logfile = os.path.join(tiledir, tilename+'_dbquery_filetransfer.log')
