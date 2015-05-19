@@ -41,13 +41,13 @@ class Job(BaseJob):
 
 
     class Input(IO):
-
-        """Create Custom inputs Weights for SWarp"""
+        """ Create Custom inputs Weights for SWarp
+        """
     
         # Required inputs to run the job (in ctx, after loading files)
         # because we set the argparse keyword to False they are not interfaced
         # to the command line parser
-        assoc = Dict(None,help="The Dictionary containing the association file",
+        assoc = Dict(None,help="The Dictionary containing the association information.",
                      argparse=False)
 
         assoc_file = CUnicode('',help="Input association file with CCDs information",
@@ -58,6 +58,7 @@ class Job(BaseJob):
                 # argument when using the parser
                 argparse={ 'argtype': 'positional', })
 
+        # TODO : see below
         # MICHAEL: This does not work
         #def _read_assoc_file(self):
         #
@@ -68,115 +69,79 @@ class Job(BaseJob):
         #    return mydict
 
         # Optional inputs -- postional arguments
-        clobber_weights  = Bool(False, help="Cloober the existing custom weight files")
-        weight_extension = CUnicode('_wgt',help="Weight extension to add to custom weight files")
-        MP_weight        = CInt(1,help="run using multi-process, 0=automatic, 1=single-process [default]")
+        clobber_weights  = Bool(False, help="Cloober the existing custom weight files.")
+        weight_extension = CUnicode('_wgt', help=("Weight extension to add to "
+                                                    "custom weight file names."))
+        MP_weight        = CInt(1, help = ("Run using multi-process, "
+                                            "0=automatic, 1=single-process [default]"))
+
+        # TODO : execution_mode has not effect yet ..
         weights_execution_mode  = CUnicode("dryrun",help="Weights excution mode",
-                                           argparse={'choices': ('tofile','dryrun','execute')})
+                                       argparse={'choices': ('tofile','dryrun','execute')})
+        weights_archive = Unicode(None, help='The path to the weights archive.')
+
 
     def run(self):
 
-        t0 = time.time()
-        # Get the relevant context variables
-        clobber = self.input.clobber_weights
-        wgt_ext = self.input.weight_extension
-        MP      = self.input.MP_weight
+        # 1. DEFINE WEIGHT FILE NAMES (done in place here)
+        self.ctx.assoc['FILEPATH_LOCAL_WGT'] = [
+                os.path.join(self.input.weights_archive,
+                    self.ctx.CCDS[idx]['PATH'],
+                    self.ctx.CCDS[idx]['FILENAME'].replace('.fits',
+                        '{we}.fits'.format(we=self.input.weight_extension))
+                    ) 
+                for idx in range(len(self.ctx.assoc['FILENAME']))
+                ]
+        # now make sure all paths exist
+        for wgt_path in self.ctx.assoc['FILEPATH_LOCAL_WGT']:
+            if not os.path.exists(os.path.split(wgt_path)[0]):
+                os.makedirs(os.path.split(wgt_path)[0])
 
-        # ONLY if NOT in script mode we create the directory -- if it doesn't exist, 
-        if self.ctx.mojo_execution_mode != "job as script":
-            contextDefs.create_local_archive(self.ctx.local_archive)
-        else:
-            print "# Skipping local_archive creation: mode:%s" % self.ctx.mojo_execution_mode
-
-        # Create the weights
-        self.create_weights_for_SWarp(clobber,wgt_ext, MP)
-
-        print "# Weights created on: %s" % elapsed_time(t0)
-        return
-
-
-    # MODIFY to use utils. get_local_weight_names(filepath_local,wgt_ext) instead
-    def set_weight_names_and_args(self,wgt_ext,clobber):
-
-        """ Set up the names for the weights and the args for the
-        calls, we need the weight names to be defined when running as
-        a library. When run as a script, they will be re-constructed
-        from the wgt_ext used.
-        """
-
-        Nfiles = len(self.ctx.assoc['FILEPATH_LOCAL'])
-
-        # Figure out if in the cosmology.illinois.edu cluster
-        self.ctx.LOCALFILES = utils.inDESARcluster()
-
-        # Get the weight names
-        if self.ctx.LOCALFILES:
-            filepaths = npadd(self.ctx.local_archive+"/",self.ctx.assoc['FILENAME'])
-            self.ctx.assoc['FILEPATH_LOCAL_WGT'] = contextDefs.get_local_weight_names(filepaths,wgt_ext)
-        else:
-            self.ctx.assoc['FILEPATH_LOCAL_WGT'] = contextDefs.get_local_weight_names(self.ctx.assoc['FILEPATH_LOCAL'],wgt_ext)
-
-        # A shortcut
-        filepath_local = self.ctx.assoc['FILEPATH_LOCAL']
-
-        # Define the wgt local filename
-        args = []
-        for k in range(Nfiles):
-            basename  = filepath_local[k].split(".fits")[0] 
-            extension = filepath_local[k].split(".fits")[1:]
-            local_wgt = self.ctx.assoc['FILEPATH_LOCAL_WGT'][k]
-            local_sci = self.ctx.assoc['FILEPATH_LOCAL'][k]
-            self.ctx.assoc['FILEPATH_LOCAL_WGT'].append(local_wgt) 
-
-            # Make sure the file does not already exists exits
-            if not os.path.exists(local_wgt) or clobber:
-                # Create the inputs args for later call
-                args.append( (local_sci,local_wgt,clobber))
+        # 2. FIGURE OUT WHICH WEIGHT FILES NEED TO BE CREATED
+        to_create = []
+        for idx, weight_file in enumerate(self.ctx.assoc['FILEPATH_LOCAL_WGT']):
+            if os.path.exists(weight_file) and not self.input.clobber_weights:
+                self.logger.debug('Skipping creation of %s, exists already.' % weight_file)
             else:
-                sys.stdout.write("\r# Skipping: %s (%s/%s) -- file exists" % (local_wgt,k+1,Nfiles))
-                sys.stdout.flush()
-        print "\n#"
+                to_create.append(( self.ctx.assoc['FILEPATH_LOCAL'][idx],
+                    weight_file, self.input.clobber_weights,))
 
-        # Pass them up as arrays instead of lists
-        self.ctx.assoc['FILEPATH_LOCAL_WGT'] = numpy.array(self.ctx.assoc['FILEPATH_LOCAL_WGT'])
-        return args
+        # 3. CREATE THE NECESSARY WEIGHT FILES
+        self.create_weights_for_SWarp(to_create, MP=self.input.MP_weight)
 
-    def create_weights_for_SWarp(self,clobber,wgt_ext, MP=1):
+        # CLEANUP
+        # we prefer it to be a numpy array
+        self.ctx.assoc['FILEPATH_LOCAL_WGT'] = numpy.array(
+                self.ctx.assoc['FILEPATH_LOCAL_WGT'])
 
-        """ Run the custom weight files"""
 
-        execute_mode = self.input.weights_execution_mode
+    def create_weights_for_SWarp(self, to_create, MP=1):
+        """ Create the custom weight files
+        """
+        execution_mode = self.input.weights_execution_mode
         
-        # Set up the names and get the args for the actual call
-        args = self.set_weight_names_and_args(wgt_ext,clobber)
-
-
         # Figure out NP to use, 0=automatic
         NP = utils.get_NP(MP) 
 
         # Get ready to run if applicable
-        N = len(args)
-        if N > 0 and NP!=1 and execute_mode == 'execute':
-            print "# Will create weights multi-process using %s processor(s)" % NP
+        N = len(to_create)
+        if N > 0 and NP!=1 and execution_mode == 'execute':
+            self.logger.info("Will create weights multi-process using %s processor(s)" % NP)
             pool = multiprocessing.Pool(processes=NP)
-            pool.map(modify_weight, args)
+            pool.map(modify_weight, to_create)
             
-        elif N > 0 and execute_mode == 'execute':
-            print "# Will create weights single-process"
+        elif N > 0 and execution_mode == 'execute':
+            self.logger.info("Will create weights single-process")
             for k in range(N):
-                sys.stdout.write("\r# Making Weight:  %s (%s/%s)\n" % (args[k][1],k+1,N))
-                modify_weight(args[k])
+                self.logger.info("Making Weight:  %s (%s/%s)" % (to_create[k][1],k+1,N))
+                modify_weight(to_create[k])
         else:
-            print "# No Weights to be created"
+            self.logger.info("No Weights to be created")
 
-        print "\n#\n"
 
-        ## Pass them up as array as an np-char array
-        #self.ctx.assoc['FILEPATH_LOCAL_WGT'] = numpy.array(self.ctx.assoc['FILEPATH_LOCAL_WGT'])
-        return
-        
     def __str__(self):
         return 'Create Custom inputs Weights for SWarp'
+
 
 
 
@@ -223,28 +188,6 @@ def read_ascii_to_dict(filename,sep=' '):
 
 
 
-
 if __name__ == "__main__":
     from mojo.utils import main_runner
     job = main_runner.run_as_main(Job)
-
-
-# if __name__ == "__main__":
-
-#     # 0. take care of the sys arguments
-#     import sys
-#     args = sys.argv[1:]
-#     # 1. read the input arguments into the job input
-#     inp = Job.Input()
-#     # 2. load a context
-#     ctx = ContextProvider.create_ctx(**inp.parse_arguments(args))
-#     # 3. set the pipeline execution mode
-#     ctx['mojo_execution_mode'] = 'job as script'
-#     # 4. create an empty JobOperator with context
-#     from mojo import job_operator
-#     jo = job_operator.JobOperator(**ctx)
-#     # 5. run the job
-#     job_instance = jo.run_job(Job)
-#     # 6. dump the context if json_dump
-#     if jo.ctx.get('json_dump_file', ''):
-#         jo.json_dump_ctx()

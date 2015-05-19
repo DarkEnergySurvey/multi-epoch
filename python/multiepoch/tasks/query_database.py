@@ -26,6 +26,8 @@ npadd = numpy.core.defchararray.add
 class Job(BaseJob):
 
     '''
+
+
     '''
 
     class Input(IO):
@@ -78,47 +80,6 @@ class Job(BaseJob):
 
 
 
-    # THE QUERIES
-    # -------------------------------------------------------------------------
-    """ 
-
-    # The query template used to get the geometry of the tile
-    QUERY_GEOM = '''
-                SELECT PIXELSCALE, NAXIS1, NAXIS2,
-                RA, DEC,
-                RAC1, RAC2, RAC3, RAC4,
-                DECC1, DECC2, DECC3, DECC4,
-                RACMIN,RACMAX,DECCMIN,DECCMAX,
-                CROSSRAZERO
-                FROM {coaddtile_table}
-                WHERE tilename='{tilename}'
-                '''
-
-    # The query template to get the the CCDs
-    QUERY_CCDS = ''' 
-         SELECT
-             {select_extras}
-             file_archive_info.FILENAME,file_archive_info.PATH, image.BAND,
-             image.RAC1,  image.RAC2,  image.RAC3,  image.RAC4,
-             image.DECC1, image.DECC2, image.DECC3, image.DECC4
-         FROM
-             file_archive_info, wgb, image, ops_proctag,
-             {from_extras} 
-         WHERE
-             file_archive_info.FILENAME  = image.FILENAME AND
-             file_archive_info.FILENAME  = wgb.FILENAME  AND
-             image.FILETYPE  = 'red' AND
-             wgb.FILETYPE    = 'red' AND
-             wgb.EXEC_NAME   = '{exec_name}' AND
-             wgb.REQNUM      = ops_proctag.REQNUM AND
-             wgb.UNITNAME    = ops_proctag.UNITNAME AND
-             wgb.ATTNUM      = ops_proctag.ATTNUM AND
-             ops_proctag.TAG = '{tagname}' AND
-             {and_extras} 
-         ''' 
-    """
-        
-
     # RUN 
     # -------------------------------------------------------------------------
 
@@ -163,7 +124,8 @@ class Job(BaseJob):
     # UTILITIES 
     # -------------------------------------------------------------------------
 
-    def write_assoc_json(self,assoc_jsonfile,names=['FILEPATH_ARCHIVE','FILENAME','BAND','MAG_ZERO']):
+    def write_assoc_json(self, assoc_jsonfile,
+            names=['FILEPATH_ARCHIVE','FILENAME','BAND','MAG_ZERO']):
         print "# Writing CCDS information to: %s" % assoc_jsonfile
         dict_assoc = {}
         for name in names:
