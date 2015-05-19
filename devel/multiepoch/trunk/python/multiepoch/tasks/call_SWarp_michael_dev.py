@@ -6,17 +6,15 @@ import numpy
 import subprocess
 import time
 
-# Mojo imports
-from mojo.jobs.base_job import BaseJob
-from traitlets import Unicode, Bool, Float, Int, CUnicode, CBool, CFloat, CInt, Instance, Dict, List, Integer
+from traitlets import Unicode, CUnicode, CFloat, Dict, List
 from mojo.jobs.base_job import BaseJob, IO, IO_ValidationError
-from mojo.context import ContextProvider
-from mojo.utils import directory_handler
 
 from despyastro import tableio
 from despymisc.miscutils import elapsed_time
+
 import multiepoch.utils as utils
 import multiepoch.contextDefs as contextDefs
+from multiepoch.output_handler import get_tiledir_handler, me_filename
 
 
 # JOB CONFIGURATION 
@@ -37,12 +35,13 @@ SWG_TYPE = 'swg'
 FITS_EXT = 'fits'
 LIST_EXT = 'list'
 
-LOGDIRKEY = 'log'
 AUXDIRKEY = 'aux'
 
 def get_filename(base, band, ftype, ext):
     ''' A swarp filename is constructed with a unique and uniform pattern '''
-    return FILENAMEPATTERN.format(base=base, band=band, ftype=ftype, ext=ext)
+    return me_filename(base=base, band=band, ftype=ftype, ext=ext)
+
+
 
 # JOB
 # -----------------------------------------------------------------------------
@@ -66,8 +65,9 @@ class Job(BaseJob):
         # 2. Geometry and tilename
         tileinfo = Dict(None, help="The json file with the tile information",
                         argparse=False)
-        tilename = Unicode(None, help="The Name of the Tile Name to query",
+        tilename = Unicode(None, help="The name of the tile.",
                            argparse=False)
+        tiledir = CUnicode(None, help='The output directory for this tile.')
 
         tile_geom_input_file = CUnicode('',
                 help='The json file with the tile information',
@@ -83,10 +83,6 @@ class Job(BaseJob):
                 help="A list of parameters to pass to SWarp",
                 argparse={'nargs':'+',})
 
-        root_output_path = CUnicode(os.path.join(os.environ['HOME'],
-            'TILEBUILDER'), help='The root output directory')
-        logdir = CUnicode(LOGDIRKEY, help='Name of log directory.')
-        auxdir = CUnicode(AUXDIRKEY, help='Name of aux directory.') 
 
         swarp_execution_mode = CUnicode("tofile",
                 help="SWarp excution mode",
@@ -101,25 +97,20 @@ class Job(BaseJob):
 
     def run(self):
 
-        # 0. run preparation
+        # 0. preparation
         # ---------------------------------------------------------------------
         # Re-cast the ctx.assoc as dictionary of arrays instead of lists
         self.ctx.assoc  = utils.dict2arrays(self.ctx.assoc)
         # add implicit information given in the assoc file directly to the ctx
         self.ctx.update(contextDefs.get_BANDS(self.ctx.assoc, detname='det',
             logger=self.logger))
-        # figure out outputpath systematics, and set them up!
-        # FIXME !! root_output_path should maybe directly be dir incl tilename??
-        self.dh = directory_handler.DirectoryHandler(
-                [os.path.join(self.input.root_output_path, self.input.tilename), ],
-                subdirs={LOGDIRKEY: self.input.logdir,
-                    AUXDIRKEY: self.input.auxdir, },
-                logger=self.logger)
+        # set up the directory handler
+        self.dh = get_tiledir_handler(self.input.tiledir)
 
         # 1. write the swarp input lists
         # ---------------------------------------------------------------------
         # we construct the file names by function and can easily reconstruct
-        # the on the fly and do not need to return them here ..
+        # them on the fly and do not need to return them here ..
         # --> the input list files are written to the AUX directory
         self.write_input_list_files()
 
@@ -127,7 +118,7 @@ class Job(BaseJob):
         # ---------------------------------------------------------------------
         cmd_list = self.get_swarp_cmd_list()
 
-        # 3. execute cmd_list accoring to execution_mode 
+        # 3. execute cmd_list according to execution_mode 
         # ---------------------------------------------------------------------
         execution_mode = self.ctx.swarp_execution_mode
         if execution_mode == 'tofile':
@@ -205,8 +196,8 @@ class Job(BaseJob):
     # -------------------------------------------------------------------------
 
     def get_swarp_cmd_list(self):
-
-        """ Build the SWarp call for a given TILENAME"""
+        """ Build the SWarp call for a given tile.
+        """
 
         self.logger.info('# assembling commands for swarp call')
 
@@ -214,6 +205,7 @@ class Job(BaseJob):
         pars = self.get_swarp_parameter_set(**self.input.swarp_parameters)
 
         # The default swarp configuration file
+        # FIXME : this only works in the eeups context where MULTIEPOCH_DIR is set ..
         swarp_conf = os.path.join(os.environ['MULTIEPOCH_DIR'],'etc','default.swarp')
 
         swarp_cmd = {} # To create the science image we'll keep
@@ -280,6 +272,7 @@ class Job(BaseJob):
         swarp_parameters.update(kwargs)
 
         return swarp_parameters
+
 
     # 'EXECUTION' FUNCTIONS
     # -------------------------------------------------------------------------
