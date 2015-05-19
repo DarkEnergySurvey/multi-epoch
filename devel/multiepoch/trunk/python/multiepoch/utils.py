@@ -8,7 +8,7 @@ Felipe Menanteau, NCSA Jan 2015.
 import os
 
 # Check if database handle is in the context
-def check_dbh(ctx):
+def check_dbh(ctx, logger=None):
 
     from despydb import desdbi
     import os
@@ -18,19 +18,27 @@ def check_dbh(ctx):
     if 'dbh' not in ctx:
         try:
             db_section = ctx.get('db_section')
-            print "# Creating db-handle to section: %s" % db_section
+            mess = "Creating db-handle to section: %s" % db_section
+            if logger: logger.info(mess)
+            else: print mess
             try:
-                desservicesfile = ctx.get('desservicesfile',os.path.join(os.environ['HOME'], '.desservices.ini'))
+                desservicesfile = ctx.get(
+                        'desservicesfile',
+                        os.path.join(os.environ['HOME'],
+                            '.desservices.ini')
+                        )
                 ctx.dbh = desdbi.DesDbi(desservicesfile, section=db_section)
             except:
-                print "# Cannot find des service file -- will try none"
+                mess = "Cannot find des service file -- will try none"
+                if logger: logger.warning(mess)
+                else: print mess
                 ctx.dbh = desdbi.DesDbi(section=db_section)
         except:
-            # you want to see the true cause of the error here
             raise
-            #raise ValueError('ERROR: Database handler could not be provided for context.')
     else:
-        print "# Will recycle existing db-handle"
+        mess = "Will recycle existing db-handle"
+        if logger: logger.debug(mess)
+        else: print mess
     return ctx
 
 
@@ -95,12 +103,12 @@ def inDESARcluster(domain_name='cosmology.illinois.edu'):
         
     if re.search(pattern, hostname) and uname == 'Linux':
         LOCAL = True
-        print "# Found hostname: %s, running:%s" % (hostname,uname)
-        print "# In %s cluster -- will NOT transfer files" % domain_name
+        print "# Found hostname: %s, running:%s --> in %s cluster." %\
+                (hostname, uname, domain_name)
     else:
         LOCAL = False
-        print "# Found hostname: %s, running:%s" % (hostname,uname)
-        print "# NOT in %s cluster -- will try to transfer files" % domain_name
+        print "# Found hostname: %s, running:%s --> NOT in %s cluster." %\
+                (hostname, uname, domain_name)
 
     return LOCAL
 
