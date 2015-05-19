@@ -31,8 +31,9 @@ def set_tile_directory(ctx,outputpath='./TILEBUILDER'):
 
     return ctx
 
-def get_local_weight_names(filepath_local,wgt_ext):
 
+# TODO : remove, ie deprecated
+def get_local_weight_names(filepath_local, wgt_ext):
     """
     A common method to define the local weight names based on
     FILEPATH_LOCAL and wgt_ext
@@ -43,9 +44,11 @@ def get_local_weight_names(filepath_local,wgt_ext):
     for k in range(Nfiles):
         basename  = filepath_local[k].split(".fits")[0] 
         extension = filepath_local[k].split(".fits")[1:]
-        local_wgt = "%s%s.fits" % (basename,wgt_ext)
+        local_wgt = "%s%s.fits" % (basename, wgt_ext)
         filepath_local_wgt.append(local_wgt)
+
     return filepath_local_wgt
+
 
 def set_BANDS(ctx,detname='det',detBANDS=[], force=False):
 
