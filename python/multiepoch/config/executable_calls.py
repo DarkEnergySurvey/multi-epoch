@@ -1,5 +1,9 @@
 '''
-A mojo configuration to run all executable calls.
+A mojo configuration for the
+
+MULTIEPOCH PIPELINE
+
+to run the database queries and the filetransfer if necessary.
 
 
 How to Run
@@ -16,17 +20,18 @@ $ setup -r -v .
 ```
 
 from the multiepoch trunk directory after svn checkout
-then you can run the entire pipeline from anywhere by executing
+then you can run this pipeline from anywhere by executing
 
-$ mojo run_config multiepoch.config.me_full_config
+$ mojo run_config multiepoch.config.executable_calls
 
 Any of the parameters specified in this config file can be overwritten from
-the command line call using the --ARGUMENTNAME=ARGUMENTVALUE syntax.
+the command line call using the --ARGUMENTNAME ARGUMENTVALUE syntax.
 
-You can also copy this configuration file into any python package on the python
-path, edit it and run your pipeline specification by executing
+You can also copy or import this configuration file into any python package on
+the python path, edit it and run your pipeline specification by executing
 
 $ mojo run_config my_python_package.my_pipeline_config 
+
 '''
 
 import os
