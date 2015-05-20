@@ -215,7 +215,7 @@ class Job(BaseJob):
 
         # Create the tile_edges tuple structure and query the database
         tile_edges = self.get_tile_edges(self.ctx.tileinfo)
-        CCDS = Job.get_CCDS_from_db(self.ctx.dbh,
+        self.ctx.CCDS = Job.get_CCDS_from_db(self.ctx.dbh,
                 tile_edges, logger=self.logger, **self.input.as_dict())
 
         # Get the cosmology archive root path in case there is no local_archive
@@ -231,11 +231,12 @@ class Job(BaseJob):
 
         # Now we get the locations, ie the association information
         self.ctx.assoc = self.get_fitsfile_locations(
-                CCDS, self.ctx.local_archive, self.ctx.root_https,
+                self.ctx.CCDS, self.ctx.local_archive, self.ctx.root_https,
                 logger=self.logger)
 
-        # keep CCDS as list of dicts
-        self.ctx.CCDS = [dict(zip(CCDS.dtype.names, ccd)) for ccd  in CCDS]
+        # TODO : keep CCDS as list of dicts -> like that we could keep CCDS in
+        # a dumped ctx
+        #self.ctx.CCDS = [dict(zip(CCDS.dtype.names, ccd)) for ccd  in CCDS]
 
 #       if self.ctx.filepath_local:
 #           names=['FILEPATH_LOCAL','FILENAME','BAND','MAG_ZERO']
