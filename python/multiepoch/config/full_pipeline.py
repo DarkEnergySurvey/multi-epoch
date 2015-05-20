@@ -65,9 +65,7 @@ tiles_ElGordo = ['DES0105-4831',
 '''
 
 jobs = [
-        #'multiepoch.tasks.setup_paths',
         'multiepoch.tasks.query_tileinfo',
-        #'multiepoch.tasks.set_tile_directory',
         'multiepoch.tasks.find_ccds_in_tile',
 
 #       'multiepoch.tasks.plot_ccd_corners_destile',
@@ -75,6 +73,7 @@ jobs = [
         'multiepoch.tasks.get_fitsfiles',
 
         'multiepoch.tasks.make_SWarp_weights',
+        'multiepoch.tasks.call_SWarp_michael_dev',
 #       'multiepoch.tasks.call_SWarp_CustomWeights',
 #       'multiepoch.tasks.call_Stiff',
 #       'multiepoch.tasks.call_SExpsf',
