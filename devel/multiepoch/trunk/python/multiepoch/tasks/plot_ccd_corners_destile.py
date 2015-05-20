@@ -15,7 +15,7 @@ from matplotlib.patches import Polygon
 from traitlets import Dict, Instance, CUnicode, Unicode
 from mojo.jobs import base_job 
 
-from multiepoch import output_handler
+from multiepoch import file_handler as fh
 
 
 D2R = math.pi/180. # degrees to radians shorthand
@@ -57,8 +57,8 @@ class Job(base_job.BaseJob):
         else:
             figure = self.plot_CCDcornersDESTILEsubplot(tile_racs, tile_deccs)
 
-        dh = output_handler.get_tiledir_handler(self.input.tiledir, logger=self.logger)
-        filepath = dh.place_file(output_handler.me_filename(
+        dh = fh.get_tiledir_handler(self.input.tiledir, logger=self.logger)
+        filepath = dh.place_file(fh._me_fn(
             base=self.input.tilename, band=self.input.plot_band,
             ftype='overlap', ext='pdf'))
 

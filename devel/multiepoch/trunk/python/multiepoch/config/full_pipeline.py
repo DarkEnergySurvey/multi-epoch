@@ -36,39 +36,19 @@ $ mojo run_config my_python_package.my_pipeline_config
 
 import os
 
+
 # TOP LEVEL CONFIGURATION
 # -----------------------------------------------------------------------------
 
 tilename = 'DES2246-4457'
 
-'''
-
-available tiles for testing.
-felipe, april 4, 2015
-
-tiles_RXJ2248 = ['DES2251-4331',
-                    'DES2251-4414',
-                    'DES2254-4457',
-                    'DES2247-4331',
-                    'DES2247-4414',
-                    'DES2246-4457',
-                    'DES2250-4457']
-
-tiles_ElGordo = ['DES0105-4831',
-                    'DES0059-4957',
-                    'DES0103-4957',
-                    'DES0058-4914',
-                    'DES0102-4914',
-                    'DES0106-4914',
-                    'DES0101-4831']
-
-'''
+EXECUTION_MODE = 'tofile'
 
 jobs = [
         'multiepoch.tasks.query_tileinfo',
         'multiepoch.tasks.find_ccds_in_tile',
 
-#       'multiepoch.tasks.plot_ccd_corners_destile',
+        'multiepoch.tasks.plot_ccd_corners_destile',
 
         'multiepoch.tasks.get_fitsfiles',
 
@@ -148,13 +128,21 @@ exec_name = 'immask'
 
 # get_fitsfiles >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 # FIXME !! what's filepath_local good for???
-filepath_local = local_archive 
 http_section = 'http-desarchive'
 
 # make_SWarp_weights >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 clobber_weights = False
 MP_weight = NCPU
 weights_execution_mode = 'execute'
+
+# call_SWarp >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+swarp_parameters = {
+    "NTHREADS"     : NTHREADS,
+    "COMBINE_TYPE" : "AVERAGE",    
+    "PIXEL_SCALE"  : 0.263,
+    }
+DETEC_COMBINE_TYPE = "CHI-MEAN"
+swarp_execution_mode = EXECUTION_MODE
 
 
 # LOGGING
