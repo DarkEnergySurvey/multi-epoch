@@ -78,11 +78,11 @@ def get_swarp_cmd_file(tiledir, tilename):
     # TODO : do we want this to be constructed the same way like the other
     # filenames
     filename = "%s_call_swarp.cmd" % tilename
-    return dh.place_file(filename)
+    return dh.place_file(filename, 'products')
 
 def get_swarp_log_file(tiledir, tilename):
     dh = get_tiledir_handler(tiledir)
     # TODO : do we want this to be constructed the same way like the other
     # filenames
     filename = "%s_swarp.log" % tilename
-    return dh.place_file(filename)
+    return dh.place_file(filename, 'log')
