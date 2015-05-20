@@ -14,33 +14,16 @@ from despymisc.miscutils import elapsed_time
 
 import multiepoch.utils as utils
 import multiepoch.contextDefs as contextDefs
-from multiepoch.output_handler import get_tiledir_handler, me_filename
+from multiepoch import file_handler as fh
 
 
 # JOB CONFIGURATION 
 # -----------------------------------------------------------------------------
+
 SWARP_EXE = 'swarp'
 DETEC_BANDS_DEFAULT = ['r', 'i', 'z']
 BKLINE = "\\\n"
 MAGBASE = 30.0
-
-# FILENAMES -------------------------------------------------------------------
-FILENAMEPATTERN = "{base}_{band}_{ftype}.{ext}"
-SCI_TYPE = 'sci'
-WGT_TYPE = 'wgt'
-FLX_TYPE = 'flx'
-MEF_TYPE = 'mef'
-SWG_TYPE = 'swg'
-
-FITS_EXT = 'fits'
-LIST_EXT = 'list'
-
-AUXDIRKEY = 'aux'
-
-def get_filename(base, band, ftype, ext):
-    ''' A swarp filename is constructed with a unique and uniform pattern '''
-    return me_filename(base=base, band=band, ftype=ftype, ext=ext)
-
 
 
 # JOB
@@ -49,11 +32,10 @@ def get_filename(base, band, ftype, ext):
 class Job(BaseJob):
 
     class Input(IO):
+        """ SWARP call for the multiepoch pipeline. """
+        
+        # Required inputs #####################################################
 
-        """ SWARP call for the multiepoch pipeline"""
-
-        ######################
-        # Required inputs
         # 1. Association file and assoc dictionary
         assoc = Dict(None,
                     help="The Dictionary containing the association file",
@@ -73,8 +55,7 @@ class Job(BaseJob):
                 help='The json file with the tile information',
                 input_file=True, argparse={ 'argtype': 'positional', })
         
-        ######################
-        # Optional arguments
+        # Optional arguments ##################################################
         detecBANDS = List(DETEC_BANDS_DEFAULT,
                 help="List of bands used to build the Detection Image")
         magbase = CFloat(MAGBASE,
@@ -82,8 +63,6 @@ class Job(BaseJob):
         swarp_parameters = Dict({},
                 help="A list of parameters to pass to SWarp",
                 argparse={'nargs':'+',})
-
-
         swarp_execution_mode = CUnicode("tofile",
                 help="SWarp excution mode",
                 argparse={'choices': ('tofile','dryrun','execute')})
@@ -104,8 +83,6 @@ class Job(BaseJob):
         # add implicit information given in the assoc file directly to the ctx
         self.ctx.update(contextDefs.get_BANDS(self.ctx.assoc, detname='det',
             logger=self.logger))
-        # set up the directory handler
-        self.dh = get_tiledir_handler(self.input.tiledir)
 
         # 1. write the swarp input lists
         # ---------------------------------------------------------------------
@@ -135,38 +112,6 @@ class Job(BaseJob):
             raise ValueError('Execution mode %s not implemented.' % execution_mode)
 
 
-    # FILENAMES (INCL. PATHS)
-    # -------------------------------------------------------------------------
-    # the following functions serve to uniformly define names in a single place
-
-    def get_sci_list_file(self, band):
-        # we could also make a distinction here .. !!
-        return self.dh.place_file(
-                    get_filename(self.input.tilename, band, SCI_TYPE, LIST_EXT),
-                    AUXDIRKEY) 
-
-    def get_sci_fits_file(self, band):
-        return self.dh.place_file(
-                    get_filename(self.input.tilename, band, SCI_TYPE, FITS_EXT))
-
-    def get_wgt_list_file(self, band):
-        return self.dh.place_file(
-                    get_filename(self.input.tilename, band, WGT_TYPE, LIST_EXT),
-                    AUXDIRKEY) 
-
-    def get_wgt_fits_file(self, band):
-        return self.dh.place_file(
-                    get_filename(self.input.tilename, band, WGT_TYPE, FITS_EXT))
-
-    def get_flx_list_file(self, band):
-        return self.dh.place_file(
-                    get_filename(self.input.tilename, band, FLX_TYPE, LIST_EXT),
-                    AUXDIRKEY) 
-
-    def get_cmd_file(self):
-        filename = "%s_call_swarp.cmd" % self.input.tilename
-        return self.dh.place_file(filename)
-
     # WRITE THE INPUT FILES
     # -------------------------------------------------------------------------
 
@@ -181,11 +126,15 @@ class Job(BaseJob):
             swarp_inputs  = self.ctx.assoc['FILEPATH_LOCAL'][idx]
             swarp_magzero = self.ctx.assoc['MAG_ZERO'][idx]
             # writing the lists to files
-            tableio.put_data(self.get_sci_list_file(BAND), (swarp_inputs,), format='%s[0]')
-            tableio.put_data(self.get_wgt_list_file(BAND), (swarp_inputs,), format='%s[2]')
-            tableio.put_data(self.get_flx_list_file(BAND),
-                    (self.flxscale(self.input.magbase, swarp_magzero),),
-                    format='%s')
+            tableio.put_data(
+                fh.get_sci_list_file(self.input.tiledir, self.input.tilename, BAND),
+                (swarp_inputs,), format='%s[0]')
+            tableio.put_data(
+                fh.get_wgt_list_file(self.input.tiledir, self.input.tilename, BAND),
+                (swarp_inputs,), format='%s[2]')
+            tableio.put_data(
+                fh.get_flx_list_file(self.input.tiledir, self.input.tilename, BAND),
+                (self.flxscale(self.input.magbase, swarp_magzero),), format='%s')
 
     @staticmethod
     def flxscale(magbase, swarp_magzero):
@@ -214,16 +163,21 @@ class Job(BaseJob):
         for BAND in self.ctx.BANDS:
 
             # General - BAND specific configurations
-            pars["FSCALE_DEFAULT"] = "@%s" % self.get_flx_list_file(BAND)
+            pars["FSCALE_DEFAULT"] = "@%s" % fh.get_flx_list_file(
+                    self.input.tiledir, self.input.tilename, BAND)
 
             # 1. The call 
             cmd = []
-            pars["WEIGHT_IMAGE"]   = "@%s" % self.get_wgt_list_file(BAND) # custom weights
-            pars["IMAGEOUT_NAME"]  = "%s" % self.get_sci_fits_file(BAND) 
-            pars["WEIGHTOUT_NAME"] = "%s" % self.get_wgt_fits_file(BAND)
+            pars["WEIGHT_IMAGE"]   = "@%s" % fh.get_wgt_list_file(
+                            self.input.tiledir, self.input.tilename, BAND)
+            pars["IMAGEOUT_NAME"]  = "%s" % fh.get_sci_fits_file(
+                            self.input.tiledir, self.input.tilename, BAND) 
+            pars["WEIGHTOUT_NAME"] = "%s" % fh.get_wgt_fits_file(
+                            self.input.tiledir, self.input.tilename, BAND)
             # Construct the call
             cmd.append(SWARP_EXE)
-            cmd.append("@%s" % self.get_sci_list_file(BAND))
+            cmd.append("@%s" % fh.get_sci_list_file(
+                            self.input.tiledir, self.input.tilename, BAND))
             cmd.append("-c %s" % swarp_conf)
             for param,value in pars.items():
                 cmd.append("-%s %s" % (param,value))
@@ -235,13 +189,17 @@ class Job(BaseJob):
         if "FSCALE_DEFAULT" in pars : del pars["FSCALE_DEFAULT"]
 
         useBANDS = list( set(self.ctx.BANDS) & set(self.input.detecBANDS) )
-        det_scilists = [self.get_sci_fits_file(band)for band in useBANDS]
-        det_wgtlists = [self.get_wgt_fits_file(band) for band in useBANDS]
+        det_scilists = [ fh.get_sci_fits_file(
+            self.input.tiledir, self.input.tilename, band) for band in useBANDS ]
+        det_wgtlists = [ fh.get_wgt_fits_file(
+            self.input.tiledir, self.input.tilename, band) for band in useBANDS ]
 
         # The call to get the detection image
         pars["WEIGHT_IMAGE"]   = "%s" % " ".join(det_wgtlists)
-        pars["IMAGEOUT_NAME"]  = "%s" % self.get_sci_fits_file(BAND) 
-        pars["WEIGHTOUT_NAME"] = "%s" % self.get_wgt_fits_file(BAND) 
+        pars["IMAGEOUT_NAME"]  = "%s" % fh.get_sci_fits_file(
+                self.input.tiledir, self.input.tilename, BAND) 
+        pars["WEIGHTOUT_NAME"] = "%s" % fh.get_wgt_fits_file(
+                self.input.tiledir, self.input.tilename, BAND) 
 
         swarp_cmd[BAND] = [SWARP_EXE, ]
         swarp_cmd[BAND].append("%s" % " ".join(det_scilists))
@@ -279,8 +237,9 @@ class Job(BaseJob):
 
     def writeCall(self, cmd_list):
         bkline  = self.ctx.get('breakline', BKLINE)
-        self.logger.info("# Will write SWarp call to: %s" % self.get_cmd_file())
-        with open(self.get_cmd_file(), 'w') as fid:
+        cmdfile = fh.get_swarp_cmd_file(self.input.tiledir, self.input.tilename)
+        self.logger.info("# Will write SWarp call to: %s" % cmdfile)
+        with open(cmdfile, 'w') as fid:
             for band in self.ctx.dBANDS:
                 fid.write(bkline.join(cmd_list[band])+'\n')
                 fid.write('\n\n')
@@ -289,7 +248,7 @@ class Job(BaseJob):
     def runSWarp(self, cmd_list):
 
         # FIXME :: logfile path via dh !!
-        logfile = self.ctx.get('swarp_logfile', os.path.join(self.ctx.logdir,"%s_swarp.log" % self.ctx.filepattern))
+        logfile = fh.get_swarp_log_file(self.input.tiledir, self.input.tilename)
         log = open(logfile,"w")
         self.logger.info("# Will proceed to run the SWarp calls now:")
         self.logger.info("# Will write to logfile: %s" % logfile)
