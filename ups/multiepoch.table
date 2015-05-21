@@ -1,5 +1,5 @@
 # Mojo
-setupRequired(mojo       0.2.2+1)
+setupRequired(mojo       0.2.3+0)
 
 # DESDM python
 setupRequired(despydb    2.0.0+2)
