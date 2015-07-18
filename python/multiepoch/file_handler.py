@@ -86,3 +86,10 @@ def get_swarp_log_file(tiledir, tilename):
     # filenames
     filename = "%s_swarp.log" % tilename
     return dh.place_file(filename, 'log')
+
+def get_ccd_plot_file(tiledir, tilename):
+    dh = get_tiledir_handler(tiledir)
+    # TODO : do we want this to be constructed the same way like the other
+    # filenames
+    filename = "%s_overlap.pdf" % tilename
+    return dh.place_file(filename, 'aux')

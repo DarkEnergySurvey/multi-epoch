@@ -189,7 +189,7 @@ class Job(BaseJob):
         assoc_json    = CUnicode("", help=("Name of the output JSON association "
                                     "file where we will store the cccds "
                                     "information for coadd"))
-        plot_outname  = CUnicode(None, help=("Output file name for plot, in "
+        plot_outname  = CUnicode('', help=("Output file name for plot, in "
                                         "case we want to plot"))
         local_archive = CUnicode('', help=("The local filepath where the input "
                                         "fits files (will) live"))

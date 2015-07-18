@@ -11,20 +11,36 @@ import time
 from despymisc.miscutils import elapsed_time
 
 def cmdline():
-
-    try:
-        LOCAL_DESAR = os.path.join(os.environ['HOME'],'LOCAL_DESAR')
-        TILEBUILDER = os.path.join(os.environ['HOME'],'TILEBUILDER_DESDM')
-    except:
+    
+    # SETTING UP THE PATHS
+    # -----------------------------------------------------------------------------
+    # The only REQUIRED PIPELINE PARAMETERS are:
+    #  local_archive
+    #  weights_archive 
+    #  tiledir
+    # and they have to be set to run the pipeline. They CAN BE SET INDEPENDENTLY.
+    #
+    # MULTIEPOCH_ROOT and outputpath are simply supportive,
+    # non-required organisational variables.
+    # ------------------------------------------------------------------------
+    if os.environ.get('MULTIEPOCH_ROOT'):
+        MULTIEPOCH_ROOT = os.environ['MULTIEPOCH_ROOT']
+    elif os.environ.get('HOME'):
+        MULTIEPOCH_ROOT = os.path.join(os.environ['HOME'],'MULTIEPOCH_ROOT')
+    else:
         print "# Warning $HOME is not defined, will use ./ instead"
-        LOCAL_DESAR = './LOCAL_DESAR'
-        TILEBUILDER = './TILEBUILDER_DESDM'
+        MULTIEPOCH_ROOT = os.path.abspath('/MULTIEPOCH_ROOT')
+
+    outputpath      = os.path.join(MULTIEPOCH_ROOT, 'TILEBUILDER') 
+    local_archive   = os.path.join(MULTIEPOCH_ROOT, 'LOCAL_ARCHIVE')
+    local_weights   = os.path.join(MULTIEPOCH_ROOT, 'LOCAL_WEIGHTS')
 
     import argparse
     parser = argparse.ArgumentParser(description="Runs the DESDM multi-epoch pipeline")
     # The positional arguments
     parser.add_argument("tilename", action="store",default=None,
                         help="Name of the TILENAME")
+
     parser.add_argument("--db_section", action="store", default='db-destest',choices=['db-desoper','db-destest'],
                         help="DB Section to query")
     parser.add_argument("--tagname", action="store", default='Y2T_FIRSTCUT',
@@ -39,14 +55,25 @@ def cmdline():
                         help="Number of cpu to use in muti-process mode")
     parser.add_argument("--coaddtile_table", action="store",default='felipe.coaddtile_new',
                         help="Name of the table with coaddtile geometry")
-    parser.add_argument("--local_desar", action="store", default=LOCAL_DESAR,
-                        help="Name of LOCAL_DESAR repository (i.e. $HOME/LOCAL_DESAR)")
-    parser.add_argument("--outputpath", action="store",default=TILEBUILDER,
-                        help="Path where we will write the outputs (i.e. $HOME/DESDM_TILEBUILDER)")
+
+    # PATH SETUP 
+    parser.add_argument("--local_archive", action="store", default=local_archive,
+                        help="Name of local archive repository [default: $MULTIEPOCH_ROOT/LOCAL_ARCHIVE]")
+    parser.add_argument("--local_weights", action="store", default=local_weights,
+                        help="Name of local archive repository [default: $MULTIEPOCH_ROOT/LOCAL_WEIGHTS]")
+    parser.add_argument("--outputpath", action="store",default=outputpath,
+                        help="Path where we will write the outputs [default: $MULTIEPOCH_ROOT/TILEBUILDER]")
+    parser.add_argument("--tiledir", action="store",default=None,
+                        help="Path where we will write the outputs, overides --outputpath (i.e. $MULTIEPOCH_ROOT/TILEBUILDER/tilename)")
+
     parser.add_argument("--cleanup", action="store_true",default=False,
                         help="Clean up SWarp and psfcat fits files?")
-
     args = parser.parse_args()
+
+    # Setup tiledir if not setup
+    if not args.tiledir:
+        args.tiledir = os.path.join(args.outputpath, args.tilename)
+
     return args
     
 if __name__ == '__main__':
@@ -56,12 +83,15 @@ if __name__ == '__main__':
     # Take time
     t0 = time.time()
     # 0. Initialize Job Operator
-    jo  = job_operator.JobOperator(mojo_execution_mode='python')
+    jo  = job_operator.JobOperator(mojo_execution_mode='python',
+                                   stdoutloglevel = 'DEBUG',
+                                   fileloglevel = 'DEBUG',
+                                   #logfile = os.path.join(tiledir, tilename+'_full_pipeline.log')
+                                   )
     # 1.  Get the tile information from the table
     jo.run_job('multiepoch.tasks.query_tileinfo', tilename=args.tilename, coaddtile_table=args.coaddtile_table,db_section=args.db_section)
-    # 2. Set up the output directory
-    jo.run_job('multiepoch.tasks.set_tile_directory', outputpath=args.outputpath)
-    # 3. Get the CCDs inside the tile
+
+    # 2. Get the CCDs inside the tile
     # ---------------------------------------------------------------------
     # These are default extras for the full depth sample for SVA1
     # SELECT_EXTRAS = "felipe.extraZEROPOINT.MAG_ZERO,"
@@ -80,10 +110,12 @@ if __name__ == '__main__':
                exec_name=args.exec_name,
                and_extras=AND_EXTRAS,
                from_extras=FROM_EXTRAS)
-    # 4a. Plot the corners -- all  bands (default)
-    jo.run_job('multiepoch.tasks.plot_ccd_corners_destile')
-    # 6. Retrieve the files -- if remotely
-    jo.run_job('multiepoch.tasks.get_fitsfiles',local_archive=args.local_desar, http_section='http-desarchive')
+
+    # 3. Plot the corners -- all  bands (default)
+    jo.run_job('multiepoch.tasks.plot_ccd_corners_destile',tiledir=args.tiledir,plot_outname='poto.pdf')
+    # 4. Retrieve the files -- if remotely
+    jo.run_job('multiepoch.tasks.get_fitsfiles',local_archive=args.local_archive, http_section='http-desarchive')
+    exit()
     # 7 Create custom weights for SWarp
     jo.run_job('multiepoch.tasks.make_SWarp_weights',clobber_weights=False, MP_weight=args.ncpu, weights_execution_mode=args.runmode)
     # 8. The Custom call with custom weights 
