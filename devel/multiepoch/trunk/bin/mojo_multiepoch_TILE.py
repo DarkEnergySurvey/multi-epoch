@@ -41,6 +41,7 @@ def cmdline():
     parser.add_argument("tilename", action="store",default=None,
                         help="Name of the TILENAME")
 
+    # Optional arguments
     parser.add_argument("--db_section", action="store", default='db-destest',choices=['db-desoper','db-destest'],
                         help="DB Section to query")
     parser.add_argument("--tagname", action="store", default='Y2T_FIRSTCUT',
@@ -55,8 +56,10 @@ def cmdline():
                         help="Number of cpu to use in muti-process mode")
     parser.add_argument("--coaddtile_table", action="store",default='felipe.coaddtile_new',
                         help="Name of the table with coaddtile geometry")
+    parser.add_argument("--cleanup", action="store_true",default=False,
+                        help="Clean up SWarp and psfcat fits files?")
 
-    # PATH SETUP 
+    # Optional path-related arguments
     parser.add_argument("--local_archive", action="store", default=local_archive,
                         help="Name of local archive repository [default: $MULTIEPOCH_ROOT/LOCAL_ARCHIVE]")
     parser.add_argument("--local_weights", action="store", default=local_weights,
@@ -66,11 +69,9 @@ def cmdline():
     parser.add_argument("--tiledir", action="store",default=None,
                         help="Path where we will write the outputs, overides --outputpath (i.e. $MULTIEPOCH_ROOT/TILEBUILDER/tilename)")
 
-    parser.add_argument("--cleanup", action="store_true",default=False,
-                        help="Clean up SWarp and psfcat fits files?")
     args = parser.parse_args()
 
-    # Setup tiledir if not setup
+    # Setup args.tiledir if not setup by command-line
     if not args.tiledir:
         args.tiledir = os.path.join(args.outputpath, args.tilename)
 
@@ -90,7 +91,6 @@ if __name__ == '__main__':
                                    )
     # 1.  Get the tile information from the table
     jo.run_job('multiepoch.tasks.query_tileinfo', tilename=args.tilename, coaddtile_table=args.coaddtile_table,db_section=args.db_section)
-
     # 2. Get the CCDs inside the tile
     # ---------------------------------------------------------------------
     # These are default extras for the full depth sample for SVA1
