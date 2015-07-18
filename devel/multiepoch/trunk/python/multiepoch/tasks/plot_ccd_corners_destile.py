@@ -26,8 +26,9 @@ class Job(base_job.BaseJob):
 
     class Input(base_job.IO):
 
+        # Positional arguments --- must be provided, either by the context or the command-line
         tilename = Unicode(None, help='The name of the tile being plotted.')
-        tiledir = Unicode(None, help='The tile output directory.')
+        tiledir  = Unicode(None, help='The tile output directory.')
         tileinfo = Dict(None, help="The tileinfo dictionary", argparse=False)
 
         # we initialize an empty recarray here to not get a comparison warning
@@ -36,12 +37,11 @@ class Job(base_job.BaseJob):
         CCDS = Instance(numpy.core.records.recarray, ([], 'int'), 
                 help='The CCDS we want to plot.')
 
-        plot_band = Unicode('', help='Plot single band only.')
-        plot_outname = CUnicode('ccd_corners.pdf', help="Output file name for plot")
-
+        plot_band    = Unicode('', help='Plot single band only.')
+        plot_outname = CUnicode(None, help="Output file name for plot")
 
     def run(self):
-
+        
         # Re-pack the tile corners
         tile_racs  = numpy.array([
             self.input.tileinfo['RAC1'], self.input.tileinfo['RAC2'],
@@ -51,20 +51,21 @@ class Job(base_job.BaseJob):
             self.input.tileinfo['DECC1'], self.input.tileinfo['DECC2'],
             self.input.tileinfo['DECC3'], self.input.tileinfo['DECC4']
             ])
-        
+
+        # Bands we want to plot (single or multiple)
         if self.input.plot_band:
             figure = self.plot_CCDcornersDESTILEsingle(tile_racs, tile_deccs, self.input.plot_band)
         else:
             figure = self.plot_CCDcornersDESTILEsubplot(tile_racs, tile_deccs)
 
-        dh = fh.get_tiledir_handler(self.input.tiledir, logger=self.logger)
-        filepath = dh.place_file(fh._me_fn(
-            base=self.input.tilename, band=self.input.plot_band,
-            ftype='overlap', ext='pdf'))
-
+        # FileName of the plot
+        if self.input.plot_outname:
+            filepath = self.input.plot_outname
+        else:
+            # Use file-handler to set the name
+            filepath = fh.get_ccd_plot_file(self.input.tiledir, self.input.tilename)
         figure.savefig(filepath)
         self.logger.info("Wrote: %s" % filepath)
-    
 
     def plot_CCDcornersDESTILEsubplot(self, tile_racs, tile_deccs, **kwargs):
         """ Plot the CCDs overlaping the DESTILENAME using subplots """
@@ -139,6 +140,7 @@ class Job(base_job.BaseJob):
             ax.set_aspect(subplot_aspect)
             kplot = kplot + 1
 
+        self.ctx.BANDS = BANDS
         fig.set_tight_layout(True) # This avoids backend warnings.
         return fig
 

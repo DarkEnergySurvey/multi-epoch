@@ -11,7 +11,7 @@ QUERY_TILE_RUNS = '''
     '''
 
 QUERY_INPUT_FOR_RUN = '''
-        SELECT id,exposurename,nite,band
+        SELECT id,exposurename,expnum, nite,band
         FROM exposure
         WHERE id in (
             SELECT exposureid

@@ -76,7 +76,8 @@ jobs = [
 # In docker containers you will want to have this directory to be a mounted
 # volume.
 # Required permissions for the executing user: writing
-MULTIEPOCH_ROOT = os.path.abspath('/MULTIEPOCH_ROOT')
+#MULTIEPOCH_ROOT = os.path.abspath('/MULTIEPOCH_ROOT')
+MULTIEPOCH_ROOT = os.path.join(os.environ['HOME'],'MULTIEPOCH_ROOT')
 
 # local_archive :: REQUIRED PIPELINE PARAMETER !!
 # The path where your input archive images are located: Either they are already
