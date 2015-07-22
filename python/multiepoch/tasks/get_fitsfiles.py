@@ -87,12 +87,12 @@ class Job(base_job.BaseJob):
                 if not os.path.exists(dirname):
                     os.makedirs(dirname)
                     
-                sys.stdout.write("\r# Getting:  %s (%s/%s)" % (url,k+1,Nfiles))
+                self.logger.info("Getting:  %s (%s/%s)" % (url,k+1,Nfiles))
                 sys.stdout.flush()
                 # Get a file using the $HOME/.desservices.ini credentials
                 http_requests.download_file_des(url,localfile,section)
             else:
-                self.logger.debug("\rSkipping: %s (%s/%s) -- file exists" % (url,k+1,Nfiles))
+                self.logger.info("Skipping: %s (%s/%s) -- file exists" % (url,k+1,Nfiles))
 
         # Make it a np-char array
         self.ctx.assoc['FILEPATH_LOCAL'] = numpy.array(self.ctx.assoc['FILEPATH_LOCAL'])

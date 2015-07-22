@@ -78,20 +78,14 @@ class Job(BaseJob):
         # TODO : execution_mode has not effect yet ..
         weights_execution_mode  = CUnicode("dryrun",help="Weights excution mode",
                                        argparse={'choices': ('tofile','dryrun','execute')})
-        weights_archive = Unicode(None, help='The path to the weights archive.')
+        local_weights = Unicode(None, help='The path to the weights archive.')
 
 
     def run(self):
 
-        # 1. DEFINE WEIGHT FILE NAMES (done in place here)
-        self.ctx.assoc['FILEPATH_LOCAL_WGT'] = [
-                os.path.join(self.input.weights_archive,
-                    self.ctx.CCDS[idx]['PATH'],
-                    self.ctx.CCDS[idx]['FILENAME'].replace('.fits',
-                        '{we}.fits'.format(we=self.input.weight_extension))
-                    ) 
-                for idx in range(len(self.ctx.assoc['FILENAME']))
-                ]
+        # 1. Define weight names using function in contextDefs
+        self.ctx.assoc['FILEPATH_LOCAL_WGT'] = contextDefs.define_weight_names(self.ctx)
+
         # now make sure all paths exist
         for wgt_path in self.ctx.assoc['FILEPATH_LOCAL_WGT']:
             if not os.path.exists(os.path.split(wgt_path)[0]):
