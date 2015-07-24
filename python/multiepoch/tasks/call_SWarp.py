@@ -64,7 +64,7 @@ class Job(BaseJob):
         """ Pre-wash of inputs, some of these are only needed when run as script"""
 
         # Re-construct the names for the custom weights in case not present
-        if 'FILEPATH_LOCAL_WGT' not in self.ctx.assoc.keys():
+        if 'FILEPATH_LOCAL_WGT' not in self.ctx.assoc.keys() and self.input.custom_weights:
             print "# Re-consrtuncting FILEPATH_LOCAL_WGT to ctx.assoc"
             self.ctx.assoc['FILEPATH_LOCAL_WGT'] = contextDefs.define_weight_names(self.ctx)
 
@@ -85,23 +85,39 @@ class Job(BaseJob):
         # --> the input list files are written to the AUX directory
         self.write_swarp_input_list_files()
 
-        # 2. get the command list 
+        # 2. get the command list for the two cases
         # ---------------------------------------------------------------------
-        cmd_list = self.get_swarp_cmd_list()
+        if self.input.custom_weights:
+            cmd_list_sci = self.get_swarp_cmd_list(type='sci')
+            cmd_list_wgt = self.get_swarp_cmd_list(type='wgt')
+        else:
+            cmd_list = self.get_swarp_cmd_list()
         
         # 3. execute cmd_list according to execution_mode 
         # ---------------------------------------------------------------------
-        execution_mode = self.ctx.swarp_execution_mode
+        execution_mode = self.input.swarp_execution_mode
         if execution_mode == 'tofile':
-            self.writeCall(cmd_list)
+            if self.input.custom_weights:
+                self.writeCall(cmd_list_sci,mode='a')
+                self.writeCall(cmd_list_wgt,mode='a')
+            else:
+                self.writeCall(cmd_list)
                     
         elif execution_mode == 'dryrun':
             self.logger.info("# For now we only print the commands (dry-run)")
             for band in self.ctx.dBANDS:
-                self.logger.info(' '.join(cmd_list[band]))
+                if self.input.custom_weights:
+                    self.logger.info(' '.join(cmd_list_sci[band]))
+                    self.logger.info(' '.join(cmd_list_wgt[band]))
+                else:
+                    self.logger.info(' '.join(cmd_list[band]))
 
         elif execution_mode == 'execute':
-            self.runSWarp(cmd_list)
+            if self.input.custom_weights:
+                self.runSWarp(cmd_list_sci)
+                self.runSWarp(cmd_list_wgt)
+            else:
+                self.runSWarp(cmd_list)
         else:
             raise ValueError('Execution mode %s not implemented.' % execution_mode)
 
@@ -117,31 +133,22 @@ class Job(BaseJob):
         for BAND in self.ctx.BANDS:
             # extracting the list
             idx = numpy.where(self.ctx.assoc['BAND'] == BAND)[0]
-            swarp_inputs  = self.ctx.assoc['FILEPATH_LOCAL'][idx]
-            swarp_weights = self.ctx.assoc['FILEPATH_LOCAL_WGT'][idx]
             magzero       = self.ctx.assoc['MAG_ZERO'][idx]
+            swarp_inputs  = self.ctx.assoc['FILEPATH_LOCAL'][idx]
             flxscale      = 10.0**(0.4*(self.input.magbase - magzero))
 
-            # Been explicit for ease to read
-            #sci_list_file = fh.get_sci_list_file(self.input.tiledir, self.input.tilename, BAND)
-            #wgt_list_file = fh.get_wgt_list_file(self.input.tiledir, self.input.tilename, BAND)
-            #swg_list_file = fh.get_swg_list_file(self.input.tiledir, self.input.tilename, BAND)
-            #flx_list_file = fh.get_flx_list_file(self.input.tiledir, self.input.tilename, BAND)
-            
             # writing the lists to files using tableio.put_data()
             tableio.put_data(fh.get_sci_list_file(self.input.tiledir, self.input.tilename, BAND),(swarp_inputs,),  format='%s[0]')
             tableio.put_data(fh.get_wgt_list_file(self.input.tiledir, self.input.tilename, BAND),(swarp_inputs,),  format='%s[2]')
             tableio.put_data(fh.get_flx_list_file(self.input.tiledir, self.input.tilename, BAND),(flxscale,), format='%s')
             if self.input.custom_weights:
+                swarp_weights = self.ctx.assoc['FILEPATH_LOCAL_WGT'][idx]
                 tableio.put_data(fh.get_swg_list_file(self.input.tiledir, self.input.tilename, BAND),(swarp_weights,), format='%s')
-
-
         return
-    
 
     # ASSEMBLE THE COMMANDS
     # -------------------------------------------------------------------------
-    def get_swarp_cmd_list(self):
+    def get_swarp_cmd_list(self,type=None):
         """
         Build the SWarp call for a given tile.
         """
@@ -151,7 +158,7 @@ class Job(BaseJob):
         tilename = self.input.tilename
         BAND     = self.ctx.detBAND # short cut
 
-        self.logger.info('# assembling commands for swarp call')
+        self.logger.info('# assembling commands for SWarp call')
 
         # The SWarp options that stay the same for all tiles
         pars = self.get_swarp_parameter_set(**self.input.swarp_parameters)
@@ -164,16 +171,27 @@ class Job(BaseJob):
 
         # Loop over all filters
         for BAND in self.ctx.BANDS:
+
             
             # FSCALE_DEFAULT is the same for two swarp calls
             pars["FSCALE_DEFAULT"] = "@%s" % fh.get_flx_list_file(tiledir,tilename, BAND)
 
-            # 1. The First SWarp call for the Science image
-            cmd = []
-            pars["WEIGHT_IMAGE"]   = "@%s" % fh.get_wgt_list_file(tiledir,tilename, BAND)
-            pars["IMAGEOUT_NAME"]  = "%s"  % fh.get_sci_fits_file(tiledir,tilename, BAND) 
-            pars["WEIGHTOUT_NAME"] = "%s"  % fh.get_wgt_fits_file(tiledir,tilename, BAND)
+            # 1. The First SWarp call for the Science image -- depending on the mode
+            if type=='sci': # Create science image using custom weight -- keep SCI, trash WGT
+                pars["IMAGEOUT_NAME"]  = "%s"  % fh.get_sci_fits_file(tiledir,tilename, BAND) # sci.fits
+                pars["WEIGHTOUT_NAME"] = "%s"  % fh.get_WGT_fits_file(tiledir,tilename, BAND, type='tmp_wgt') # wgt_tmp.fits
+                pars["WEIGHT_IMAGE"]   = "@%s" % fh.get_swg_list_file(tiledir,tilename, BAND) # swg.list
+            elif type=='wgt': # Create science image using normal weight -- trash SCI, keep WGT
+                pars["IMAGEOUT_NAME"]  = "%s"  % fh.get_SCI_fits_file(tiledir,tilename, BAND, type='tmp_sci')  # tmp_sci.fits
+                pars["WEIGHTOUT_NAME"] = "%s"  % fh.get_wgt_fits_file(tiledir,tilename, BAND) # wgt.fits
+                pars["WEIGHT_IMAGE"]   = "@%s" % fh.get_wgt_list_file(tiledir,tilename, BAND) # wgt.list
+            else:
+                pars["IMAGEOUT_NAME"]  = "%s"  % fh.get_sci_fits_file(tiledir,tilename, BAND) 
+                pars["WEIGHTOUT_NAME"] = "%s"  % fh.get_wgt_fits_file(tiledir,tilename, BAND)
+                pars["WEIGHT_IMAGE"]   = "@%s" % fh.get_wgt_list_file(tiledir,tilename, BAND)
+
             # Construct the call
+            cmd = []
             cmd.append(SWARP_EXE)
             cmd.append("@%s" % fh.get_sci_list_file(tiledir,tilename, BAND))
             cmd.append("-c %s" % swarp_conf)
@@ -225,13 +243,13 @@ class Job(BaseJob):
     # 'EXECUTION' FUNCTIONS
     # -------------------------------------------------------------------------
 
-    def writeCall(self,cmd_list):
+    def writeCall(self,cmd_list,mode='w'):
 
         bkline  = self.ctx.get('breakline',BKLINE)
         # The file where we'll write the commands
         cmdfile = fh.get_swarp_cmd_file(self.input.tiledir, self.input.tilename)
         self.logger.info("# Will write SWarp call to: %s" % cmdfile)
-        with open(cmdfile, 'w') as fid:
+        with open(cmdfile, mode) as fid:
             for band in self.ctx.dBANDS:
                 fid.write(bkline.join(cmd_list[band])+'\n')
                 fid.write('\n\n')

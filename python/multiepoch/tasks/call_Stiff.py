@@ -15,6 +15,7 @@ from despymisc.miscutils import elapsed_time
 # Multi-epoch
 import multiepoch.utils as utils
 import multiepoch.contextDefs as contextDefs
+from multiepoch import file_handler as fh
 
 # JOB INTERNAL CONFIGURATION
 STIFF_EXE = 'stiff'
@@ -22,12 +23,8 @@ BKLINE = "\\\n"
 
 class Job(BaseJob):
 
-
-    """ Stiff call for the multi-epoch pipeline
-    Inputs:
-    - self.ctx.comb_sci
-    Outputs:
-    - self.ctx.color_tile
+    """
+    Stiff call for the multi-epoch pipeline
     """
 
     class Input(IO):
@@ -52,10 +49,7 @@ class Job(BaseJob):
                                      argparse={'nargs':'+',})
         
         def _validate_conditional(self):
-            # if in job standalone mode json
-            if self.mojo_execution_mode == 'job as script' and self.basename == "":
-                mess = 'If job is run standalone basename cannot be ""'
-                raise IO_ValidationError(mess)
+            pass
 
         def _argparse_postproc_stiff_parameters(self, v):
             return utils.arglist2dict(v, separator='=')
@@ -64,94 +58,87 @@ class Job(BaseJob):
     def prewash(self):
 
         """ Pre-wash of inputs, some of these are only needed when run as script"""
-
         # Re-cast the ctx.assoc as dictionary of arrays instead of lists
         self.ctx.assoc  = utils.dict2arrays(self.ctx.assoc)
         # Get the BANDs information in the context if they are not present
-        self.ctx = contextDefs.set_BANDS(self.ctx)
-        # Make sure we set up the output dir
-        self.ctx = contextDefs.set_tile_directory(self.ctx)
-        # 1. Set up names
-        # 1a. Get the BANDs information in the context if they are not present
-        self.ctx = contextDefs.set_BANDS(self.ctx)
-        # 1b. Get the output names for SWarp
-        self.ctx = contextDefs.set_SWarp_output_names(self.ctx)
-        
+        self.ctx.update(contextDefs.get_BANDS(self.ctx.assoc, detname='det',logger=self.logger))
+
     def run(self):
 
         # 0. Prepare the context
         self.prewash()
 
-        # 1. Set the output name of the color tiff file
-        color_tile =  self.ctx.get('color_tile',"%s.tiff" %  self.ctx.basename)
-
         # 2. get the update stiff parameters  --
         stiff_parameters = self.ctx.get('stiff_parameters', {})
-        cmd_list = self.get_stiff_cmd_list(color_tile,stiff_parameters=stiff_parameters)  
+        cmd_list = self.get_stiff_cmd_list()
         
         # 3. check execution mode and write/print/execute commands accordingly --------------
-        execution_mode = self.ctx.stiff_execution_mode
+        execution_mode = self.input.stiff_execution_mode
 
         if execution_mode == 'tofile':
             bkline  = self.ctx.get('breakline',BKLINE)
             # The file where we'll write the commands
-            cmdfile = self.ctx.get('cmdfile', "%s_call_stiff.cmd" % self.ctx.basename)
-            print "# Will write stiff call to: %s" % cmdfile
+            cmdfile = fh.get_stiff_cmd_file(self.input.tiledir, self.input.tilename)
+            self.logger.info("# Will write stiff call to: %s" % cmdfile)
             with open(cmdfile, 'w') as fid:
                 fid.write(bkline.join(cmd_list)+'\n')
                 fid.write('\n')
 
         elif execution_mode == 'dryrun':
-            print "# For now we only print the commands (dry-run)"
-            print ' '.join(cmd_list)
+           self.logger.info("# For now we only print the commands (dry-run)")
+           self.logger.info(' '.join(cmd_list))
 
         elif execution_mode == 'execute':
-            logfile = self.ctx.get('swarp_logfile', os.path.join(self.ctx.logdir,"%s_swarp.log" % self.ctx.filepattern))
+            logfile = fh.get_swarp_log_file(self.input.tiledir, self.input.tilename)
             log = open(logfile,"w")
-            print "# Will proceed to run the stiff call now:"
-            print "# Will write to logfile: %s" % logfile
+            self.logger.info("# Will proceed to run the stiff call now:")
+            self.logger.info("# Will write to logfile: %s" % logfile)
             t0 = time.time()
             cmd  = ' '.join(cmd_list)
-            print "# Executing stiff for tile:%s " % self.ctx.filepattern
-            print "# %s " % cmd
+            self.logger.info("# Executing stiff for tile:%s " % self.input.tilename)
+            self.logger.info("# %s " % cmd)
             status = subprocess.call(cmd,shell=True,stdout=log, stderr=log)
             if status > 0:
-                sys.exit("***\nERROR while running Stiff, check logfile: %s\n***" % logfile)
-            print "# Total stiff time %s" % elapsed_time(t0)
+                raise ValueError(" ERROR while running Stiff, check logfile: %s " % logfile)
+            self.logger.info("# Total stiff time %s" % elapsed_time(t0))
         else:
             raise ValueError('Execution mode %s not implemented.' % execution_mode)
         return
 
 
-    def get_stiff_parameter_set(self,color_tile,**kwargs):
+    def get_stiff_parameter_set(self,**kwargs):
 
         """
         Set the Stiff default options and have the options to
         overwrite them with kwargs to this function.
         """
-
         stiff_parameters = {
-            "OUTFILE_NAME"     : color_tile,
             "COMPRESSION_TYPE" : "JPEG",
-            }
+            "NTHREADS"         : 1,
+            "COPYRIGHT"        : "NCSA/DESDM",
+            "WRITE_XML"        : "N",
+        }
 
         stiff_parameters.update(kwargs)
         return stiff_parameters
 
-    def get_stiff_cmd_list(self,color_tile,stiff_parameters={}):
+    def get_stiff_cmd_list(self):
 
         """ Make a color tiff of the TILENAME using stiff"""
 
+        self.logger.info("# assembling commands for Stiff call")
+        
         if self.ctx.NBANDS < 3:
-            print "# WARINING: Not enough filters to create color image"
-            print "# WARINING: No color images will be created"
+            self.logger.info("# WARINING: Not enough filters to create color image")
+            self.logger.info("# WARINING: No color images will be created")
             return 
         
+        # The update parameters set
+        pars = self.get_stiff_parameter_set(**self.input.stiff_parameters)
+        # Set the output name of the color tiff file
+        pars["OUTFILE_NAME"] = fh.get_color_file(self.input.tiledir, self.input.tilename)
         # The default stiff configuration file
         stiff_conf = os.path.join(os.environ['MULTIEPOCH_DIR'],'etc','default.stiff')
-
-        # The update parameters set
-        pars = self.get_stiff_parameter_set(color_tile,**stiff_parameters)
         
         # Define the color filter sets we'd like to use, by priority depending on what BANDS will be combined
         cset1 = ['i','r','g']
@@ -167,13 +154,14 @@ class Job(BaseJob):
                 CSET = color_set
 
         if not CSET:
-            print "# WARNING: Could not find a suitable filter set for color image"
+            self.logger.info("# WARNING: Could not find a suitable filter set for color image")
             return 
         
         cmd_list = []
         cmd_list.append("%s" % STIFF_EXE)
         for BAND in CSET:
-            cmd_list.append( "%s" % self.ctx.comb_sci[BAND])
+            sci_fits = fh.get_sci_fits_file(self.input.tiledir,self.input.tilename,BAND)
+            cmd_list.append( "%s" % sci_fits)
 
         cmd_list.append("-c %s" % stiff_conf)
         for param,value in pars.items():

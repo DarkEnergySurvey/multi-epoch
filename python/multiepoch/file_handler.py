@@ -48,6 +48,7 @@ def _me_fn(**kwargs):
 
 # FILENAME GENERATOR FUNCTIONS
 
+# Science list and fits file
 def get_sci_list_file(tiledir, tilename, band):
     dh = get_tiledir_handler(tiledir)
     fnkwargs = {'base':tilename, 'band':band, 'ftype':SCI_TYPE, 'ext':LIST_EXT}
@@ -58,6 +59,7 @@ def get_sci_fits_file(tiledir, tilename, band):
     fnkwargs = {'base':tilename, 'band':band, 'ftype':SCI_TYPE, 'ext':FITS_EXT}
     return dh.place_file(_me_fn(**fnkwargs), 'products')
 
+# Weights list and fits file
 def get_wgt_list_file(tiledir, tilename, band):
     dh = get_tiledir_handler(tiledir)
     fnkwargs = {'base':tilename, 'band':band, 'ftype':WGT_TYPE, 'ext':LIST_EXT}
@@ -68,17 +70,49 @@ def get_wgt_fits_file(tiledir, tilename, band):
     fnkwargs = {'base':tilename, 'band':band, 'ftype':WGT_TYPE, 'ext':FITS_EXT}
     return dh.place_file(_me_fn(**fnkwargs), 'products')
 
+# Custom weights list and files
+def get_swg_list_file(tiledir, tilename, band):
+    dh = get_tiledir_handler(tiledir)
+    fnkwargs = {'base':tilename, 'band':band, 'ftype':SWG_TYPE, 'ext':LIST_EXT}
+    return dh.place_file(_me_fn(**fnkwargs), 'aux')
+
+def get_swg_fits_file(tiledir, tilename, band):
+    dh = get_tiledir_handler(tiledir)
+    fnkwargs = {'base':tilename, 'band':band, 'ftype':SWG_TYPE, 'ext':FITS_EXT}
+    return dh.place_file(_me_fn(**fnkwargs), 'products')
+
+# File with fluxes for SWarp
 def get_flx_list_file(tiledir, tilename, band):
     dh = get_tiledir_handler(tiledir)
     fnkwargs = {'base':tilename, 'band':band, 'ftype':FLX_TYPE, 'ext':LIST_EXT}
     return dh.place_file(_me_fn(**fnkwargs), 'aux')
+
+#----------------------------------------------------------------------------
+# Special functions to name the output for the tiles with different type
+def get_WGT_fits_file(tiledir, tilename, band, type=WGT_TYPE):
+    dh = get_tiledir_handler(tiledir)
+    fnkwargs = {'base':tilename, 'band':band, 'ftype':type, 'ext':FITS_EXT}
+    return dh.place_file(_me_fn(**fnkwargs), 'products')
+
+def get_SCI_fits_file(tiledir, tilename, band, type=SCI_TYPE):
+    dh = get_tiledir_handler(tiledir)
+    fnkwargs = {'base':tilename, 'band':band, 'ftype':type, 'ext':FITS_EXT}
+    return dh.place_file(_me_fn(**fnkwargs), 'products')
+#----------------------------------------------------------------------------
 
 def get_swarp_cmd_file(tiledir, tilename):
     dh = get_tiledir_handler(tiledir)
     # TODO : do we want this to be constructed the same way like the other
     # filenames
     filename = "%s_call_swarp.cmd" % tilename
-    return dh.place_file(filename, 'products')
+    return dh.place_file(filename, 'aux')
+
+def get_stiff_cmd_file(tiledir, tilename):
+    dh = get_tiledir_handler(tiledir)
+    # TODO : do we want this to be constructed the same way like the other
+    # filenames
+    filename = "%s_call_stiff.cmd" % tilename
+    return dh.place_file(filename, 'aux')
 
 def get_swarp_log_file(tiledir, tilename):
     dh = get_tiledir_handler(tiledir)
@@ -87,9 +121,21 @@ def get_swarp_log_file(tiledir, tilename):
     filename = "%s_swarp.log" % tilename
     return dh.place_file(filename, 'log')
 
+def get_stiff_log_file(tiledir, tilename):
+    dh = get_tiledir_handler(tiledir)
+    # TODO : do we want this to be constructed the same way like the other
+    # filenames
+    filename = "%s_stiff.log" % tilename
+    return dh.place_file(filename, 'log')
+
 def get_ccd_plot_file(tiledir, tilename):
     dh = get_tiledir_handler(tiledir)
     # TODO : do we want this to be constructed the same way like the other
     # filenames
     filename = "%s_overlap.pdf" % tilename
     return dh.place_file(filename, 'aux')
+
+def get_color_file(tiledir, tilename):
+    dh = get_tiledir_handler(tiledir)
+    filename = "%s.tiff" % tilename
+    return dh.place_file(filename, 'products')

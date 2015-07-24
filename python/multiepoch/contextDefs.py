@@ -3,52 +3,27 @@
 Set of functions to add defintions to the context
 """
 
-def set_tile_directory(ctx,outputpath='./TILEBUILDER'):
 
-    """ Se the output directory for the TILE to be built"""
-
+def create_local_archive(local_archive):
     import os
+    """ Creates the local cache for the desar archive """
+    if not os.path.exists(local_archive):
+        print "# Will create LOCAL ARCHIVE at %s" % local_archive
+        os.mkdir(local_archive)
+    return
 
-    if ctx.get('basename'):
-        ctx.basedir = os.path.dirname(ctx.basename)
-    else:
-        ctx.basedir  = os.path.join(outputpath, ctx.tilename)
-        ctx.basename = os.path.join(ctx.basedir, ctx.tilename)
-
-    # In most cases filepattern == tilename
-    ctx.filepattern = os.path.basename(ctx.basename)
-
-    ctx.auxdir = os.path.join(ctx.basedir,"aux")
-    ctx.logdir = os.path.join(ctx.basedir,"log")
-    
-    # Make sure that the filepaths exists
-    if not os.path.exists(ctx.auxdir):
-        print "# Creating directory: %s" % ctx.auxdir
-        os.makedirs(ctx.auxdir)
-    if not os.path.exists(ctx.logdir):
-        print "# Creating directory: %s" % ctx.logdir
-        os.makedirs(ctx.logdir)
-
-    return ctx
-
-
-# TODO : remove, ie deprecated
-def get_local_weight_names(filepath_local, wgt_ext):
-    """
-    A common method to define the local weight names based on
-    FILEPATH_LOCAL and wgt_ext
-    """
-    Nfiles = len(filepath_local)
-    # Define the wgt local filenames
+def define_weight_names(ctx):
+    import os
+    """ A common method to define the weights names bases in the context"""
     filepath_local_wgt = []
-    for k in range(Nfiles):
-        basename  = filepath_local[k].split(".fits")[0] 
-        extension = filepath_local[k].split(".fits")[1:]
-        local_wgt = "%s%s.fits" % (basename, wgt_ext)
+    for idx in range(len(ctx.assoc['FILENAME'])):
+        local_wgt = os.path.join(ctx.local_weights,
+                                 ctx.CCDS[idx]['PATH'],
+                                 ctx.CCDS[idx]['FILENAME'].replace('.fits','{we}.fits'.format(we=ctx.weight_extension))
+                                 )
         filepath_local_wgt.append(local_wgt)
-
+        
     return filepath_local_wgt
-
 
 def set_BANDS(ctx,detname='det',detBANDS=[], force=False):
 
@@ -111,41 +86,71 @@ def get_BANDS(assoc, detname='det', logger=None):
     return ctxext 
 
 
-def set_SWarp_output_names(ctx,detname='det',force=False):
+# TODO : remove, ie deprecated
+def set_tile_directory(ctx,outputpath='./TILEBUILDER'):
 
-    """ Add SWarp output names to the context in case they are not present """
+    """ Se the output directory for the TILE to be built"""
 
+    import os
 
-    # Only add if not in context or forced
-    if not ctx.get('swarp_names') or force:
-
-        print "# Setting the SWarp output names to the context"
-
-        # Make sure that bands have been set
-        ctx = set_BANDS(ctx,detname)
-
-        # SWarp outputs per filer
-        ctx.comb_sci      = {} # SWarp coadded science images
-        ctx.comb_wgt      = {} # SWarp coadded weight images
-        ctx.comb_sci_tmp  = {} # SWarp coadded temporary science images  -- to be removed later
-        ctx.comb_wgt_tmp  = {} # SWarp coadded custom weight images -- to be removed
-        ctx.comb_MEF      = {} # SWarp coadded MEF files with SCI/WGT
-
-        # Loop over bands
-        for BAND in ctx.dBANDS:
-            # SWarp outputs names
-            ctx.comb_sci[BAND]     = "%s_%s_sci.fits"     %  (ctx.basename, BAND)
-            ctx.comb_wgt[BAND]     = "%s_%s_wgt.fits"     %  (ctx.basename, BAND)
-            # temporary files need for dual-run -- to be removed
-            ctx.comb_sci_tmp[BAND] = "%s_%s_sci_tmp.fits" %  (ctx.basename, BAND)
-            ctx.comb_wgt_tmp[BAND] = "%s_%s_wgt_tmp.fits" %  (ctx.basename, BAND)
-            ctx.comb_MEF[BAND]     = "%s_%s.fits" %  (ctx.basename, BAND)
-
-        ctx.swarp_names = True
+    if ctx.get('basename'):
+        ctx.basedir = os.path.dirname(ctx.basename)
     else:
-        print "# SWarp output names already in the context -- Skipping"
+        ctx.basedir  = os.path.join(outputpath, ctx.tilename)
+        ctx.basename = os.path.join(ctx.basedir, ctx.tilename)
+
+    # In most cases filepattern == tilename
+    ctx.filepattern = os.path.basename(ctx.basename)
+
+    ctx.auxdir = os.path.join(ctx.basedir,"aux")
+    ctx.logdir = os.path.join(ctx.basedir,"log")
+    
+    # Make sure that the filepaths exists
+    if not os.path.exists(ctx.auxdir):
+        print "# Creating directory: %s" % ctx.auxdir
+        os.makedirs(ctx.auxdir)
+    if not os.path.exists(ctx.logdir):
+        print "# Creating directory: %s" % ctx.logdir
+        os.makedirs(ctx.logdir)
 
     return ctx
+
+
+# def set_SWarp_output_names(ctx,detname='det',force=False):
+#
+#     """ Add SWarp output names to the context in case they are not present """
+#
+#
+#     # Only add if not in context or forced
+#     if not ctx.get('swarp_names') or force:
+#
+#         print "# Setting the SWarp output names to the context"
+#
+#         # Make sure that bands have been set
+#         ctx = set_BANDS(ctx,detname)
+#
+#         # SWarp outputs per filer
+#         ctx.comb_sci      = {} # SWarp coadded science images
+#         ctx.comb_wgt      = {} # SWarp coadded weight images
+#         ctx.comb_sci_tmp  = {} # SWarp coadded temporary science images  -- to be removed later
+#         ctx.comb_wgt_tmp  = {} # SWarp coadded custom weight images -- to be removed
+#         ctx.comb_MEF      = {} # SWarp coadded MEF files with SCI/WGT
+#
+#         # Loop over bands
+#         for BAND in ctx.dBANDS:
+#             # SWarp outputs names
+#             ctx.comb_sci[BAND]     = "%s_%s_sci.fits"     %  (ctx.basename, BAND)
+#             ctx.comb_wgt[BAND]     = "%s_%s_wgt.fits"     %  (ctx.basename, BAND)
+#             # temporary files need for dual-run -- to be removed
+#             ctx.comb_sci_tmp[BAND] = "%s_%s_sci_tmp.fits" %  (ctx.basename, BAND)
+#             ctx.comb_wgt_tmp[BAND] = "%s_%s_wgt_tmp.fits" %  (ctx.basename, BAND)
+#             ctx.comb_MEF[BAND]     = "%s_%s.fits" %  (ctx.basename, BAND)
+#
+#         ctx.swarp_names = True
+#     else:
+#         print "# SWarp output names already in the context -- Skipping"
+#
+#     return ctx
 
 
 def setCatNames(ctx,detname='det',force=False):
@@ -185,10 +190,3 @@ def setCatNames(ctx,detname='det',force=False):
     return ctx
 
 
-def create_local_archive(local_archive):
-    import os
-    """ Creates the local cache for the desar archive """
-    if not os.path.exists(local_archive):
-        print "# Will create LOCAL ARCHIVE at %s" % local_archive
-        os.mkdir(local_archive)
-    return
