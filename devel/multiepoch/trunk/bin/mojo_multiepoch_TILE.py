@@ -58,7 +58,10 @@ def cmdline():
                         help="Name of the table with coaddtile geometry")
     parser.add_argument("--cleanup", action="store_true",default=False,
                         help="Clean up SWarp and psfcat fits files?")
-
+    parser.add_argument("--keep", action="store_true",default=False,
+                        help="Keep SWarp and psfcat fits files?")
+    parser.add_argument("--custom_weights", action="store_true",default=False,
+                        help="Use custom weights for SWarp coaddition")
     # Optional path-related arguments
     parser.add_argument("--local_archive", action="store", default=local_archive,
                         help="Name of local archive repository [default: $MULTIEPOCH_ROOT/LOCAL_ARCHIVE]")
@@ -70,6 +73,10 @@ def cmdline():
                         help="Path where we will write the outputs, overides --outputpath (i.e. $MULTIEPOCH_ROOT/TILEBUILDER/tilename)")
 
     args = parser.parse_args()
+
+    # Sanity check
+    if (args.cleanup is True) and (args.keep is True):
+        sys.exit("ERROR: clean=yes and keep=yes are in conflict")
 
     # Setup args.tiledir if not setup by command-line
     if not args.tiledir:
@@ -112,27 +119,32 @@ if __name__ == '__main__':
                from_extras=FROM_EXTRAS)
 
     # 3. Plot the corners -- all  bands (default)
-    jo.run_job('multiepoch.tasks.plot_ccd_corners_destile',tiledir=args.tiledir,plot_outname='poto.pdf')
+    jo.run_job('multiepoch.tasks.plot_ccd_corners_destile',tiledir=args.tiledir)
     # 4. Retrieve the files -- if remotely
     jo.run_job('multiepoch.tasks.get_fitsfiles',local_archive=args.local_archive, http_section='http-desarchive')
-    exit()
-    # 7 Create custom weights for SWarp
-    jo.run_job('multiepoch.tasks.make_SWarp_weights',clobber_weights=False, MP_weight=args.ncpu, weights_execution_mode=args.runmode)
-    # 8. The Custom call with custom weights 
+
+    # 5 Create custom weights for SWarp
+    if args.custom_weights:
+        jo.run_job('multiepoch.tasks.make_SWarp_weights',clobber_weights=False, MP_weight=args.ncpu, local_weights=args.local_weights,weights_execution_mode=args.runmode)
+    # 6. The SWarp call 
     # Prepare call to SWarp
     swarp_params={
         "NTHREADS"     : args.nthreads,
         "COMBINE_TYPE" : "AVERAGE",    
         "PIXEL_SCALE"  : 0.263}
-    jo.run_job('multiepoch.tasks.call_SWarp_CustomWeights',swarp_parameters=swarp_params, DETEC_COMBINE_TYPE="CHI-MEAN",swarp_execution_mode=args.runmode)
-    # 9. Create the color images using stiff
+    jo.run_job('multiepoch.tasks.call_SWarp',swarp_parameters=swarp_params, DETEC_COMBINE_TYPE="CHI-MEAN",
+               swarp_execution_mode=args.runmode,
+               custom_weights=args.custom_weights)
+    # 7. Create the color images using stiff
     stiff_params={
         "NTHREADS"  : args.nthreads,
-        "COPYRIGHT" : "NCSA/DESDM",
-        "WRITE_XML" : "N"}
+        }
     jo.run_job('multiepoch.tasks.call_Stiff',stiff_parameters=stiff_params, stiff_execution_mode=args.runmode)
-    # 10. make the SEx psf Call
+    # 8. make the SEx psf Call
     jo.run_job('multiepoch.tasks.call_SExpsf',SExpsf_execution_mode=args.runmode,MP_SEx=args.ncpu)
+    exit()
+
+
     # 11. Run  psfex
     jo.run_job('multiepoch.tasks.call_psfex',psfex_parameters={"NTHREADS": args.nthreads,},psfex_execution_mode=args.runmode,cleanupPSFcats=args.cleanup)
     # 12. Run SExtractor un dual mode

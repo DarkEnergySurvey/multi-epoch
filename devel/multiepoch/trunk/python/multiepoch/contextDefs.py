@@ -87,33 +87,33 @@ def get_BANDS(assoc, detname='det', logger=None):
 
 
 # TODO : remove, ie deprecated
-def set_tile_directory(ctx,outputpath='./TILEBUILDER'):
+# def set_tile_directory(ctx,outputpath='./TILEBUILDER'):
 
-    """ Se the output directory for the TILE to be built"""
+#     """ Se the output directory for the TILE to be built"""
 
-    import os
+#     import os
 
-    if ctx.get('basename'):
-        ctx.basedir = os.path.dirname(ctx.basename)
-    else:
-        ctx.basedir  = os.path.join(outputpath, ctx.tilename)
-        ctx.basename = os.path.join(ctx.basedir, ctx.tilename)
+#     if ctx.get('basename'):
+#         ctx.basedir = os.path.dirname(ctx.basename)
+#     else:
+#         ctx.basedir  = os.path.join(outputpath, ctx.tilename)
+#         ctx.basename = os.path.join(ctx.basedir, ctx.tilename)
 
-    # In most cases filepattern == tilename
-    ctx.filepattern = os.path.basename(ctx.basename)
+#     # In most cases filepattern == tilename
+#     ctx.filepattern = os.path.basename(ctx.basename)
 
-    ctx.auxdir = os.path.join(ctx.basedir,"aux")
-    ctx.logdir = os.path.join(ctx.basedir,"log")
+#     ctx.auxdir = os.path.join(ctx.basedir,"aux")
+#     ctx.logdir = os.path.join(ctx.basedir,"log")
     
-    # Make sure that the filepaths exists
-    if not os.path.exists(ctx.auxdir):
-        print "# Creating directory: %s" % ctx.auxdir
-        os.makedirs(ctx.auxdir)
-    if not os.path.exists(ctx.logdir):
-        print "# Creating directory: %s" % ctx.logdir
-        os.makedirs(ctx.logdir)
+#     # Make sure that the filepaths exists
+#     if not os.path.exists(ctx.auxdir):
+#         print "# Creating directory: %s" % ctx.auxdir
+#         os.makedirs(ctx.auxdir)
+#     if not os.path.exists(ctx.logdir):
+#         print "# Creating directory: %s" % ctx.logdir
+#         os.makedirs(ctx.logdir)
 
-    return ctx
+#     return ctx
 
 
 # def set_SWarp_output_names(ctx,detname='det',force=False):
@@ -153,40 +153,40 @@ def set_tile_directory(ctx,outputpath='./TILEBUILDER'):
 #     return ctx
 
 
-def setCatNames(ctx,detname='det',force=False):
+# def setCatNames(ctx,detname='det',force=False):
 
-    """ Set the names for input/ouput for psfex/Sextractor calls"""
+#     """ Set the names for input/ouput for psfex/Sextractor calls"""
 
-    # Only add if not in context or forced
-    if not ctx.get('cat_names') or force:
+#     # Only add if not in context or forced
+#     if not ctx.get('cat_names') or force:
 
-        print "# Setting the output names for SExPSF/psfex and SExDual and adding them to the context"
-        # Make sure that bands have been set
-        ctx = set_BANDS(ctx,detname)
+#         print "# Setting the output names for SExPSF/psfex and SExDual and adding them to the context"
+#         # Make sure that bands have been set
+#         ctx = set_BANDS(ctx,detname)
         
-        # SExPSF
-        ctx.psfcat = {}
-        ctx.psf    = {}
-        # PsfCall
-        ctx.psfexxml = {}
-        # SExDual
-        ctx.checkimage = {}
-        ctx.cat = {}
-        for BAND in ctx.dBANDS:
-            # SExPSF
-            ctx.psf[BAND]       = "%s_%s_psfcat.psf"  %  (ctx.basename, BAND)
-            ctx.psfcat[BAND]    = "%s_%s_psfcat.fits" %  (ctx.basename, BAND)
-            # psfex
-            ctx.psfexxml[BAND]  = "%s_%s_psfex.xml"   %  (ctx.basename, BAND)
-            # SExDual
-            ctx.cat[BAND]       = "%s_%s_cat.fits"    %  (ctx.basename, BAND)
-            ctx.checkimage[BAND]= "%s_%s_seg.fits"    %  (ctx.basename, BAND)
+#         # SExPSF
+#         ctx.psfcat = {}
+#         ctx.psf    = {}
+#         # PsfCall
+#         ctx.psfexxml = {}
+#         # SExDual
+#         ctx.checkimage = {}
+#         ctx.cat = {}
+#         for BAND in ctx.dBANDS:
+#             # SExPSF
+#             ctx.psf[BAND]       = "%s_%s_psfcat.psf"  %  (ctx.basename, BAND)
+#             ctx.psfcat[BAND]    = "%s_%s_psfcat.fits" %  (ctx.basename, BAND)
+#             # psfex
+#             ctx.psfexxml[BAND]  = "%s_%s_psfex.xml"   %  (ctx.basename, BAND)
+#             # SExDual
+#             ctx.cat[BAND]       = "%s_%s_cat.fits"    %  (ctx.basename, BAND)
+#             ctx.checkimage[BAND]= "%s_%s_seg.fits"    %  (ctx.basename, BAND)
 
-        print "# Done with Catalogs names"
-        ctx.cat_names = True
-    else:
-        print "# Catalogs output names already in the context -- Skipping"
+#         print "# Done with Catalogs names"
+#         ctx.cat_names = True
+#     else:
+#         print "# Catalogs output names already in the context -- Skipping"
 
-    return ctx
+#     return ctx
 
 
