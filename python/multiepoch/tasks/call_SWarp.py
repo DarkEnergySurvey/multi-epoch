@@ -160,7 +160,7 @@ class Job(BaseJob):
 
         self.logger.info('# assembling commands for SWarp call')
 
-        # The SWarp options that stay the same for all tiles
+        # Update and Set the SWarp options 
         pars = self.get_swarp_parameter_set(**self.input.swarp_parameters)
 
         # The default swarp configuration file
