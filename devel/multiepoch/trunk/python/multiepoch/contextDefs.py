@@ -92,16 +92,16 @@ def get_BANDS(assoc, detname='det', logger=None):
 
 
 # def setCatNames(ctx,detname='det',force=False):
-
+#
 #     """ Set the names for input/ouput for psfex/Sextractor calls"""
-
+#
 #     # Only add if not in context or forced
 #     if not ctx.get('cat_names') or force:
-
+#
 #         print "# Setting the output names for SExPSF/psfex and SExDual and adding them to the context"
 #         # Make sure that bands have been set
 #         ctx = set_BANDS(ctx,detname)
-        
+#       
 #         # SExPSF
 #         ctx.psfcat = {}
 #         ctx.psf    = {}
@@ -119,12 +119,12 @@ def get_BANDS(assoc, detname='det', logger=None):
 #             # SExDual
 #             ctx.cat[BAND]       = "%s_%s_cat.fits"    %  (ctx.basename, BAND)
 #             ctx.checkimage[BAND]= "%s_%s_seg.fits"    %  (ctx.basename, BAND)
-
+#
 #         print "# Done with Catalogs names"
 #         ctx.cat_names = True
 #     else:
 #         print "# Catalogs output names already in the context -- Skipping"
-
+#
 #     return ctx
 
 
