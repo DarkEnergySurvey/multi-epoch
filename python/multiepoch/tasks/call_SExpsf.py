@@ -26,11 +26,6 @@ class Job(BaseJob):
 
     """
     SExtractor call for psf creation
-
-    Inputs:
-    - self.ctx.comb_sci
-    Outputs:
-    - self.ctx.psfcat
     """
 
     class Input(IO):
@@ -45,7 +40,6 @@ class Job(BaseJob):
                               argparse={ 'argtype': 'positional', })
 
         # Optional Arguments
-        # 2. Geometry and tilename
         tilename = Unicode(None, help="The Name of the Tile Name to query",argparse=False)
         tiledir  = CUnicode(None, help='The output directory for this tile.')
         SExpsf_execution_mode  = CUnicode("tofile",help="SEx for psfex excution mode",
@@ -141,6 +135,7 @@ class Job(BaseJob):
                 cmds.append(' '.join(cmd_list[band]))
                 logfile = fh.get_sexpsf_log_file(self.input.tiledir, self.input.tilename,band)
                 logs.append(logfile)
+                self.logger.info("# Will write to logfile: %s" % logfile)
                 
             pool = multiprocessing.Pool(processes=NP)
             pool.map(utils.work_subprocess_logging, zip(cmds,logs))
@@ -178,7 +173,6 @@ class Job(BaseJob):
         # Sortcuts for less typing
         tiledir  = self.input.tiledir
         tilename = self.input.tilename
-        BAND     = self.ctx.detBAND # short cut
 
         self.logger.info('# assembling commands for SWarp call')
 
@@ -193,7 +187,7 @@ class Job(BaseJob):
         # Loop over all bands and Detection
         for BAND in self.ctx.dBANDS:
 
-            pars["WEIGHT_IMAGE"]  = "%s"  % fh.get_wgt_fits_file(tiledir,tilename, BAND)
+            pars["WEIGHT_IMAGE"]  = "%s" % fh.get_wgt_fits_file(tiledir,tilename, BAND)
             pars["CATALOG_NAME"] = "%s"  % fh.get_psfcat_file(tiledir,tilename, BAND)
 
             # Build the call

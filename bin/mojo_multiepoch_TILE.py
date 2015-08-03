@@ -98,6 +98,7 @@ if __name__ == '__main__':
                                    )
     # 1.  Get the tile information from the table
     jo.run_job('multiepoch.tasks.query_tileinfo', tilename=args.tilename, coaddtile_table=args.coaddtile_table,db_section=args.db_section)
+
     # 2. Get the CCDs inside the tile
     # ---------------------------------------------------------------------
     # These are default extras for the full depth sample for SVA1
@@ -120,14 +121,15 @@ if __name__ == '__main__':
 
     # 3. Plot the corners -- all  bands (default)
     jo.run_job('multiepoch.tasks.plot_ccd_corners_destile',tiledir=args.tiledir)
+
     # 4. Retrieve the files -- if remotely
     jo.run_job('multiepoch.tasks.get_fitsfiles',local_archive=args.local_archive, http_section='http-desarchive')
 
-    # 5 Create custom weights for SWarp
+    # 5 Create custom weights for SWarp (optional)
     if args.custom_weights:
         jo.run_job('multiepoch.tasks.make_SWarp_weights',clobber_weights=False, MP_weight=args.ncpu, local_weights=args.local_weights,weights_execution_mode=args.runmode)
+
     # 6. The SWarp call 
-    # Prepare call to SWarp
     swarp_params={
         "NTHREADS"     : args.nthreads,
         "COMBINE_TYPE" : "AVERAGE",    
@@ -135,20 +137,22 @@ if __name__ == '__main__':
     jo.run_job('multiepoch.tasks.call_SWarp',swarp_parameters=swarp_params, DETEC_COMBINE_TYPE="CHI-MEAN",
                swarp_execution_mode=args.runmode,
                custom_weights=args.custom_weights)
+
     # 7. Create the color images using stiff
     stiff_params={
         "NTHREADS"  : args.nthreads,
         }
     jo.run_job('multiepoch.tasks.call_Stiff',stiff_parameters=stiff_params, stiff_execution_mode=args.runmode)
+
     # 8. make the SEx psf Call
     jo.run_job('multiepoch.tasks.call_SExpsf',SExpsf_execution_mode=args.runmode,MP_SEx=args.ncpu)
-    exit()
 
-
-    # 11. Run  psfex
+    # 9. Run  psfex
     jo.run_job('multiepoch.tasks.call_psfex',psfex_parameters={"NTHREADS": args.nthreads,},psfex_execution_mode=args.runmode,cleanupPSFcats=args.cleanup)
-    # 12. Run SExtractor un dual mode
+
+    # 10. Run SExtractor un dual mode
     jo.run_job('multiepoch.tasks.call_SExDual',SExDual_parameters={"MAG_ZEROPOINT":30,}, SExDual_execution_mode=args.runmode,MP_SEx=args.ncpu)
-    # 13. Create the MEF fits files in the formar we like
+    
+    # 11. Create the MEF fits files in the formar we like
     jo.run_job('multiepoch.tasks.make_MEFs',clobber_MEF=False,MEF_execution_mode=args.runmode,cleanupSWarp=args.cleanup)
     print "# Grand Total time: %s" % elapsed_time(t0)

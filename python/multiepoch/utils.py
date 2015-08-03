@@ -133,8 +133,7 @@ def work_subprocess_logging(tup):
     """
     cmd,logfile = tup
     log = open(logfile,"w")
-    print "# Will write to logfile: %s" % logfile
-
+    #print "# Will write to logfile: %s" % logfile
     status = subprocess.call(cmd,shell=True ,stdout=log, stderr=log)
     if status > 0:
         raise RuntimeError("\n***\nERROR while running SExpsf, check logfile: %s\n***" % logfile)
