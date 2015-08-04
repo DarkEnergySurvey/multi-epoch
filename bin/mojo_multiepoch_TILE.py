@@ -139,9 +139,7 @@ if __name__ == '__main__':
                custom_weights=args.custom_weights)
 
     # 7. Create the color images using stiff
-    stiff_params={
-        "NTHREADS"  : args.nthreads,
-        }
+    stiff_params={"NTHREADS"  : args.nthreads,}
     jo.run_job('multiepoch.tasks.call_Stiff',stiff_parameters=stiff_params, stiff_execution_mode=args.runmode)
 
     # 8. make the SEx psf Call
