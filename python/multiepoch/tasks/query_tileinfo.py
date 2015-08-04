@@ -15,22 +15,10 @@ from traitlets import Unicode, Bool, Float, Int, CUnicode, CBool, CFloat, CInt, 
 from mojo.jobs.base_job import BaseJob, IO, IO_ValidationError
 from mojo.context import ContextProvider
 import multiepoch.utils as utils
+import multiepoch.querylibs as querylibs
 import time
 from despymisc.miscutils import elapsed_time
     
-
-# The query template used to get the geometry of the tile
-QUERY_GEOM = '''
-    SELECT PIXELSCALE, NAXIS1, NAXIS2,
-        RA, DEC,
-        RAC1, RAC2, RAC3, RAC4,
-        DECC1, DECC2, DECC3, DECC4,
-        RACMIN,RACMAX,DECCMIN,DECCMAX,
-        CROSSRAZERO
-    FROM {coaddtile_table}
-    WHERE tilename='{tilename}'
-            '''
-
 
 class Job(BaseJob):
 
@@ -89,8 +77,8 @@ class Job(BaseJob):
         # we set required to True because we need this if executed as
         # script, even though argument will be declared with -- and
         # only then we use the parser
-        coaddtile_table    = CUnicode("felipe.coaddtile_new", 
-                                      help="Database table with COADDTILE information",argparse=True)
+        coaddtile_table    = CUnicode("felipe.coaddtile_new", help="Database table with COADDTILE information",
+                                      argparse=True)
 
         # Logging -- might be factored out
         stdoutloglevel     = CUnicode('INFO', help="The level with which logging info is streamed to stdout",
@@ -111,44 +99,19 @@ class Job(BaseJob):
 
         # Make a dictionary/header for the all columns from COADDTILE table
         t0 = time.time()
-        self.ctx.tileinfo = Job.get_tileinfo_from_db(self.ctx.dbh,
-                logger=self.logger, **self.input.as_dict())
+        self.ctx.tileinfo = querylibs.get_tileinfo_from_db(self.ctx.dbh,logger=self.logger,
+                                                           **self.input.as_dict())
         self.logger.info("Query completed in %s" % elapsed_time(t0))
-
 
     def __str__(self):
         return 'query tileinfo' 
-
-
-    @staticmethod
-    def get_tileinfo_from_db(dbh, **kwargs):
-        ''' Execute database query to get geometry inforation for a tile.
-        '''
-
-        logger = kwargs.pop('logger', None)
-        query_geom = QUERY_GEOM.format(**kwargs)
-
-        mess = "Getting geometry information for tile:%s" % kwargs.get('tilename')
-        if logger: logger.info(mess)
-        else: print mess
-
-        cur = dbh.cursor()
-        cur.execute(query_geom)
-        desc = [d[0] for d in cur.description]
-        # cols description
-        line = cur.fetchone()
-        cur.close()
-        # Make a dictionary/header for all the columns from COADDTILE table
-        tileinfo = dict(zip(desc, line))
-
-        return tileinfo
-
 
 
 
 if __name__ == '__main__':
     from mojo.utils import main_runner
     job = main_runner.run_as_main(Job)
-    # writing some ctx variables to a json dump
-    job.write_ctx_to_json(job.input.json_tileinfo_file,
-            vars_list=['tileinfo', 'tilename'])
+    # if Job is run as script, we write the json file
+    job.logger.info("Writing ouput to: %s" % job.input.json_tileinfo_file)
+    job.write_ctx_to_json(job.input.json_tileinfo_file,vars_list=['tileinfo', 'tilename'])
+                          

@@ -38,7 +38,7 @@ class Job(base_job.BaseJob):
         clobber = Bool(False, help='clobber?') 
         local_archive = Unicode('', help='The path to the local des archive.')
         http_section = Unicode('http-desarchive',
-                help='The according section in the .desservices.ini file.')
+                               help='The according section in the .desservices.ini file.')
 
 
     def run(self):

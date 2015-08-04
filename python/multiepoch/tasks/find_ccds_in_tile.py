@@ -13,6 +13,7 @@ from mojo.context import ContextProvider
 # Mutiepoch loads
 import multiepoch.utils as utils
 import multiepoch.contextDefs as contextDefs
+import multiepoch.querylibs as querylibs
 
 from despyastro import tableio
 from despymisc.miscutils import elapsed_time
@@ -92,32 +93,6 @@ FROM_EXTRAS   = "felipe.extraZEROPOINT"
 AND_EXTRAS    = "felipe.extraZEROPOINT.FILENAME = image.FILENAME" 
 # -----------------------------------------------------------------------------
 
-# The QUERY template used to get the the CCDs
-QUERY_CCDS = ''' 
-     SELECT
-         {select_extras}
-         file_archive_info.FILENAME,file_archive_info.COMPRESSION,
-         file_archive_info.PATH,
-         image.BAND,
-         image.RAC1,  image.RAC2,  image.RAC3,  image.RAC4,
-         image.DECC1, image.DECC2, image.DECC3, image.DECC4
-     FROM
-         file_archive_info, wgb, image, ops_proctag,
-         {from_extras} 
-     WHERE
-         file_archive_info.FILENAME  = image.FILENAME AND
-         file_archive_info.FILENAME  = wgb.FILENAME  AND
-         image.FILETYPE  = 'red' AND
-         wgb.FILETYPE    = 'red' AND
-         wgb.EXEC_NAME   = '{exec_name}' AND
-         wgb.REQNUM      = ops_proctag.REQNUM AND
-         wgb.UNITNAME    = ops_proctag.UNITNAME AND
-         wgb.ATTNUM      = ops_proctag.ATTNUM AND
-         ops_proctag.TAG = '{tagname}' AND
-         {and_extras} 
-     '''
-
-
 class Job(BaseJob):
 
     '''
@@ -159,11 +134,9 @@ class Job(BaseJob):
 
         tile_geom_input_file = CUnicode('',
                 help='The json file with the tile information',
-                # declare this variable as input_file, this leads the content
-                # of the file to be loaded into the ctx at initialization
+                # declare this variable as input_file, this leads the content of the file to be loaded into the ctx at initialization
                 input_file=True,
-                # set argtype=positional !! to make this a required positional
-                # argument when using the parser
+                # set argtype=positional !! to make this a required positional argument when using the parser
                 argparse={ 'argtype': 'positional', })
 
         # Optional inputs, also when interfaced to argparse
@@ -200,35 +173,48 @@ class Job(BaseJob):
                 mess = 'If job is run standalone assoc_file cannot be ""'
                 raise IO_ValidationError(mess)
 
+            # Check for valid local_archive if not in the NCSA cosmology cluster
+            if not utils.inDESARcluster() and self.local_archive == '' and self.mojo_execution_mode == 'job as script':
+                mess = 'If not in cosmology cluster local_archive canot be ""'
+                raise IO_ValidationError(mess)
+
 
     def run(self):
 
+
+        # sort-cuts
+        LOG = self.logger
+
         # Check for the db_handle
-        self.ctx = utils.check_dbh(self.ctx, logger=self.logger)
+        self.ctx = utils.check_dbh(self.ctx, logger=LOG)
+        
+        DBH = self.ctx.dbh
 
         # Create the tile_edges tuple structure and query the database
         tile_edges = self.get_tile_edges(self.ctx.tileinfo)
+        self.ctx.CCDS = querylibs.get_CCDS_from_db(DBH, tile_edges,logger=LOG,**self.input.as_dict())
 
-        self.ctx.CCDS = Job.get_CCDS_from_db(self.ctx.dbh,
-                                             tile_edges,
-                                             logger=self.logger,
-                                             **self.input.as_dict())
+        # Get root_https from from the DB with a query
+        self.ctx.root_https   = self.get_root_https(DBH,logger=LOG, archive_name=self.input.archive_name)
 
-        # Get the cosmology archive root path in case there is no local_archive
-        # path defined
-        if self.ctx.local_archive == '':
-            self.ctx.local_archive = self.get_root_archive(self.ctx.dbh,
-                    logger=self.logger, archive_name=self.input.archive_name)
+        # get the cosmology archive root path in case there is no local_archive path defined
+        if utils.inDESARcluster(logger=LOG) and self.ctx.local_archive == '':
+            self.ctx.local_archive = self.get_root_archive(DBH,logger=LOG, archive_name=self.input.archive_name)
+        else:
+            print  self.ctx.local_archive
+        exit()
 
-        self.ctx.root_https   = self.get_root_https(self.ctx.dbh,
-                logger=self.logger, archive_name=self.input.archive_name)
         # In case we want root_http (DESDM framework)
-        #self.ctx.root_https   = self.get_root_http(self.ctx.dbh, archive_name=self.input.archive_name)
+        #self.ctx.root_https  = self.get_root_http(self.ctx.dbh, archive_name=self.input.archive_name)
 
         # Now we get the locations, ie the association information
+        self.ctx.assoc = self.get_fitsfile_locations(self.ctx,filepath_local=self.input.filepath_local)
+
         self.ctx.assoc = self.get_fitsfile_locations(
-                self.ctx.CCDS, self.ctx.local_archive, self.ctx.root_https,
+            self.ctx.CCDS, self.ctx.local_archive, self.ctx.root_https,
                 logger=self.logger)
+
+        print self.ctx.assoc
 
         # TODO : keep CCDS as list of dicts -> like that we could keep CCDS in
         # a dumped ctx
@@ -347,46 +333,6 @@ class Job(BaseJob):
         if logger: logger.info("root_http:   %s" % root_http)
         cur.close()
         return root_http
-
-
-    @staticmethod
-    def get_CCDS_from_db(dbh, tile_edges, **kwargs): 
-        '''
-        Execute the database query that returns the ccds and store them in a numpy
-        record array
-        kwargs: exec_name, tagname, select_extras, and_extras, from_extras
-        '''
-        logger = kwargs.pop('logger', None)
-
-        mess = "Running the query to find the CCDS"
-        if logger: logger.info(mess)
-        else: print mess
-
-        corners_and = [
-            "((image.RAC1 BETWEEN %.10f AND %.10f) AND (image.DECC1 BETWEEN %.10f AND %.10f))\n" % tile_edges,
-            "((image.RAC2 BETWEEN %.10f AND %.10f) AND (image.DECC2 BETWEEN %.10f AND %.10f))\n" % tile_edges,
-            "((image.RAC3 BETWEEN %.10f AND %.10f) AND (image.DECC3 BETWEEN %.10f AND %.10f))\n" % tile_edges,
-            "((image.RAC4 BETWEEN %.10f AND %.10f) AND (image.DECC4 BETWEEN %.10f AND %.10f))\n" % tile_edges,
-            ]
-        ccd_query = QUERY_CCDS.format(
-            tagname       = kwargs.get('tagname'),
-            exec_name     = kwargs.get('exec_name',     'immask'),
-            select_extras = kwargs.get('select_extras'),
-            from_extras   = kwargs.get('from_extras'),
-            and_extras    = kwargs.get('and_extras')+  ' AND\n (' + ' OR '.join(corners_and) + ')',
-            )
-
-        mess = "Will execute the query:\n%s\n" %  ccd_query
-        if logger: logger.debug(mess)
-        else: print mess
-        
-        # Get the ccd images that are part of the DESTILE
-        CCDS = despyastro.genutil.query2rec(ccd_query, dbhandle=dbh)
-
-        # Fix 'COMPRESSION' from None --> '' if present
-        if 'COMPRESSION' in CCDS.dtype.names:
-            CCDS['COMPRESSION'] = numpy.where(CCDS['COMPRESSION'],CCDS['COMPRESSION'],'')
-        return CCDS 
 
 
     # WRITE FILES

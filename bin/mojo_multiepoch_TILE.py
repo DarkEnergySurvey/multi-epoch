@@ -94,7 +94,7 @@ if __name__ == '__main__':
     jo  = job_operator.JobOperator(mojo_execution_mode='python',
                                    stdoutloglevel = 'DEBUG',
                                    fileloglevel = 'DEBUG',
-                                   #logfile = os.path.join(tiledir, tilename+'_full_pipeline.log')
+                                   logfile = os.path.join(args.tiledir, args.tilename+'_full_pipeline.log')
                                    )
     # 1.  Get the tile information from the table
     jo.run_job('multiepoch.tasks.query_tileinfo', tilename=args.tilename, coaddtile_table=args.coaddtile_table,db_section=args.db_section)
@@ -118,6 +118,7 @@ if __name__ == '__main__':
                exec_name=args.exec_name,
                and_extras=AND_EXTRAS,
                from_extras=FROM_EXTRAS)
+    exit()
 
     # 3. Plot the corners -- all  bands (default)
     jo.run_job('multiepoch.tasks.plot_ccd_corners_destile',tiledir=args.tiledir)
