@@ -53,13 +53,13 @@ jobs = [
         'multiepoch.tasks.get_fitsfiles',
 
         'multiepoch.tasks.make_SWarp_weights',
-        'multiepoch.tasks.call_SWarp_michael_dev',
-
-#       'multiepoch.tasks.call_SWarp_CustomWeights',
-#       'multiepoch.tasks.call_Stiff',
-#       'multiepoch.tasks.call_SExpsf',
-#       'multiepoch.tasks.call_psfex',
-#       'multiepoch.tasks.call_SExDual',
+        #'multiepoch.tasks.call_SWarp_michael_dev',
+        'multiepoch.tasks.call_SWarp_CustomWeights',
+        'multiepoch.tasks.call_Stiff',
+        'multiepoch.tasks.call_SExpsf',
+        'multiepoch.tasks.call_psfex',
+        'multiepoch.tasks.call_SExDual',
+        'multiepoch.tasks.make_MEFs',
         ]
 
 
@@ -90,7 +90,7 @@ local_archive = os.path.join(MULTIEPOCH_ROOT, 'LOCAL_DESAR')
 # and can be chosen to be the same as local_archive in case you would like your
 # weights files to end up in the 'archive'.
 # Required permissions for the executing user: writing
-weights_archive = os.path.join(MULTIEPOCH_ROOT, 'LOCAL_WEIGHTS')
+local_weight = os.path.join(MULTIEPOCH_ROOT, 'LOCAL_WEIGHTS')
 
 # outputpath :: not required organizational support variable
 # Required permissions for the executing user: writing
@@ -107,7 +107,6 @@ tiledir = os.path.join(outputpath, tilename)
 # -----------------------------------------------------------------------------
 NTHREADS = 8
 NCPU = 8
-
 
 # LOGGING
 # -----------------------------------------------------------------------------
