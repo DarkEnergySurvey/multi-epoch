@@ -175,19 +175,19 @@ class Job(BaseJob):
 
             # Check for valid local_archive if not in the NCSA cosmology cluster
             if not utils.inDESARcluster() and self.local_archive == '' and self.mojo_execution_mode == 'job as script':
-                mess = 'If not in cosmology cluster local_archive canot be ""'
+                mess = 'If not in cosmology cluster local_archive canot be empty [""]'
                 raise IO_ValidationError(mess)
 
 
     def run(self):
 
 
-        # sort-cuts
-        LOG = self.logger
 
         # Check for the db_handle
-        self.ctx = utils.check_dbh(self.ctx, logger=LOG)
+        self.ctx = utils.check_dbh(self.ctx, logger=self.logger)
         
+        # sort-cuts
+        LOG = self.logger
         DBH = self.ctx.dbh
 
         # Create the tile_edges tuple structure and query the database
@@ -196,29 +196,23 @@ class Job(BaseJob):
 
         # Get root_https from from the DB with a query
         self.ctx.root_https   = self.get_root_https(DBH,logger=LOG, archive_name=self.input.archive_name)
-
-        # get the cosmology archive root path in case there is no local_archive path defined
-        if utils.inDESARcluster(logger=LOG) and self.ctx.local_archive == '':
-            self.ctx.local_archive = self.get_root_archive(DBH,logger=LOG, archive_name=self.input.archive_name)
-        else:
-            print  self.ctx.local_archive
-        exit()
-
+        self.ctx.root_archive = self.get_root_archive(DBH,logger=LOG, archive_name=self.input.archive_name)
         # In case we want root_http (DESDM framework)
         #self.ctx.root_https  = self.get_root_http(self.ctx.dbh, archive_name=self.input.archive_name)
+            
+        # If in the cosmology archive local_archive=root path and local_archive not defined
+        if utils.inDESARcluster(logger=LOG) and self.ctx.local_archive == '':
+            self.logger.info("In cosmology cluster -- setting local_archive=%s" % self.ctx.root_archive)
+            self.ctx.local_archive = self.ctx.root_archive
+        else:
+            self.logger.info("Not In cosmology cluster -- setting local_archive=%s" % self.ctx.local_archive)
+
 
         # Now we get the locations, ie the association information
-        self.ctx.assoc = self.get_fitsfile_locations(self.ctx,filepath_local=self.input.filepath_local)
-
-        self.ctx.assoc = self.get_fitsfile_locations(
-            self.ctx.CCDS, self.ctx.local_archive, self.ctx.root_https,
-                logger=self.logger)
-
-        print self.ctx.assoc
-
-        # TODO : keep CCDS as list of dicts -> like that we could keep CCDS in
-        # a dumped ctx
-        #self.ctx.CCDS = [dict(zip(CCDS.dtype.names, ccd)) for ccd  in CCDS]
+        self.ctx.assoc = self.get_fitsfile_locations(self.ctx.CCDS,
+                                                     self.ctx.local_archive,
+                                                     self.ctx.root_https,
+                                                     logger=self.logger)
 
 #       if self.ctx.filepath_local:
 #           names=['FILEPATH_LOCAL','FILENAME','BAND','MAG_ZERO']
@@ -263,20 +257,12 @@ class Job(BaseJob):
 
         # 2. Create the archive locations for each file
         path = [local_archive+"/"]*Nimages
-        assoc['FILEPATH_ARCHIVE'] = npadd(path, assoc['FILEPATH'])
+        assoc['FILEPATH_LOCAL'] = npadd(path, assoc['FILEPATH'])
 
         # 3. Create the https locations for each file
         path = [root_https+"/"]*Nimages
         assoc['FILEPATH_HTTPS']   = npadd(path, assoc['FILEPATH'])
 
-# TODO : CLEANUP : remove if indeed not needed.
-#       # 4. in case we provide a filepath_local
-#       if filepath_local:
-#           if logger:
-#               logger.info("Setting FILEPATH_LOCAL to: %s" % filepath_local)
-#           path = [filepath_local+"/"]*Nimages
-#           assoc['FILEPATH_LOCAL']   = npadd(path, assoc['FILEPATH'])
-        
         return assoc
 
 
@@ -339,13 +325,13 @@ class Job(BaseJob):
     # -------------------------------------------------------------------------
 
     def write_assoc_file(self, assoc_file,
-            names=['FILEPATH_ARCHIVE','FILENAME','BAND','MAG_ZERO']):
+            names=['FILEPATH_LOCAL','BAND','MAG_ZERO']):
 
         variables = []
         for name in names:
             variables.append(self.ctx.assoc[name].tolist())
             
-        print "# Writing CCDS files information to: %s" % assoc_file
+        self.logger.info("Writing CCDS files information to: %s" % assoc_file)
         N = len(names)
         header =  "# " + "%s "*N % tuple(names)
         format =  "%-s "*N 
@@ -354,9 +340,9 @@ class Job(BaseJob):
 
 
     def write_assoc_json(self, assoc_jsonfile,
-            names=['FILEPATH_ARCHIVE','FILENAME','BAND','MAG_ZERO']):
+            names=['FILEPATH_LOCAL','BAND','MAG_ZERO']):
 
-        print "# Writing CCDS information to: %s" % assoc_jsonfile
+        self.logger.info("Writing CCDS information to: %s" % assoc_jsonfile)
         dict_assoc = {}
         for name in names:
             # Make them lists instead of rec arrays
@@ -377,24 +363,18 @@ if __name__ == "__main__":
     from mojo.utils import main_runner
     job = main_runner.run_as_main(Job)
 
-    '''
+    """
     if ran as script we directly write association info to files and also
     directly plot from here.
-
-    FIXME MICHAEL : NEEDS REFACTORING
-
-    print "# Will write out the assoc file"
-    # FELIPE: We need to decide whether want to write the assoc file
-    # as json or space-separated ascii file.
-
-    names=['FILEPATH_ARCHIVE','FILENAME','BAND','MAG_ZERO']
+    """
     
-    self.write_assoc_file(self.ctx.assoc_file,names=names)
-    self.write_assoc_json(self.ctx.assoc_json,names=names)
+    names=['FILEPATH_LOCAL','BAND','MAG_ZERO']
+    job.write_assoc_file(job.ctx.assoc_file,names=names)
+    job.write_assoc_json(job.ctx.assoc_json,names=names)
     
-    # do we plot as well?
-    if self.ctx.plot_outname:
-        from multiepoch.tasks.plot_ccd_corners_destile import Job as plot_job
-        plot = plot_job(ctx=self.ctx)
-        plot()
-    '''
+    ## do we plot as well?
+    #if self.ctx.plot_outname:
+    #    from multiepoch.tasks.plot_ccd_corners_destile import Job as plot_job
+    #    plot = plot_job(ctx=self.ctx)
+    #    plot()
+    #'''
