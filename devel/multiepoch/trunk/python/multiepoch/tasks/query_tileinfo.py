@@ -83,25 +83,28 @@ class Job(BaseJob):
         db_section         = CUnicode("db-destest", help="DataBase Section to connect",
                                       argparse={'choices': ('db-desoper','db-destest')} )
         json_tileinfo_file = CUnicode("",
-                                      help="Name of the output json file where we will\
-                                              store the tile information",
+                                      help="Name of the output json file where we will store the tile information",
                                       argparse={'required': True,})
         
         # we set required to True because we need this if executed as
         # script, even though argument will be declared with -- and
         # only then we use the parser
         coaddtile_table    = CUnicode("felipe.coaddtile_new", 
-                                      help="Database table with COADDTILE information",
-                                      argparse=True)
+                                      help="Database table with COADDTILE information",argparse=True)
 
+        # Logging -- might be factored out
+        stdoutloglevel     = CUnicode('INFO', help="The level with which logging info is streamed to stdout",
+                                      argparse={'choices': ('DEBUG','INFO','CRITICAL')} )
+        fileloglevel       = CUnicode('INFO', help="The level with which logging info is written to the logfile",
+                                      argparse={'choices': ('DEBUG','INFO','CRITICAL')} )
         def _validate_conditional(self):
             # if in job standalone mode json
             if self.mojo_execution_mode == 'job as script' and self.json_tileinfo_file == "":
                 mess = 'If job is run standalone json_tileinfo_file cannot be ""'
                 raise IO_ValidationError(mess)
-        
 
     def run(self):
+        
 
         # Check that we have a database handle
         self.ctx = utils.check_dbh(self.ctx, logger=self.logger)

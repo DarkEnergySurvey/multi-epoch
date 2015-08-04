@@ -167,32 +167,25 @@ class Job(BaseJob):
                 argparse={ 'argtype': 'positional', })
 
         # Optional inputs, also when interfaced to argparse
-        db_section    = CUnicode("db-destest",
-                                 help="DataBase Section to connect", 
+        db_section    = CUnicode("db-destest",help="DataBase Section to connect", 
                                  argparse={'choices': ('db-desoper','db-destest', )} )
-        archive_name  = CUnicode("prodbeta",
-                                 help="DataBase Archive Name section",
+        archive_name  = CUnicode("prodbeta",help="DataBase Archive Name section",
                                  argparse={'choices': ('prodbeta','desar2home')} )
-        select_extras = CUnicode(SELECT_EXTRAS,
-                                 help="string with extra SELECT for query",)
-        and_extras    = CUnicode(AND_EXTRAS,
-                                 help="string with extra AND for query",)
-        from_extras   = CUnicode(FROM_EXTRAS,
-                                 help="string with extra FROM for query",)
-        tagname       = CUnicode('Y2T_FIRSTCUT',
-                                 help="TAGNAME for images in the database",)
-        exec_name     = CUnicode('immask', help=("EXEC_NAME for images in the "
-                                            "database"))
-        assoc_file    = CUnicode("", help= ("Name of the output ASCII "
-                                    "association file where we will store the "
-                                    "cccds information for coadd"))
-        assoc_json    = CUnicode("", help=("Name of the output JSON association "
-                                    "file where we will store the cccds "
-                                    "information for coadd"))
-        plot_outname  = CUnicode('', help=("Output file name for plot, in "
-                                        "case we want to plot"))
-        local_archive = CUnicode('', help=("The local filepath where the input "
-                                        "fits files (will) live"))
+        select_extras = CUnicode(SELECT_EXTRAS,help="string with extra SELECT for query",)
+        and_extras    = CUnicode(AND_EXTRAS,help="string with extra AND for query",)
+        from_extras   = CUnicode(FROM_EXTRAS,help="string with extra FROM for query",)
+        tagname       = CUnicode('Y2T_FIRSTCUT',help="TAGNAME for images in the database",)
+        exec_name     = CUnicode('immask', help=("EXEC_NAME for images in the database"))
+        assoc_file    = CUnicode("", help= ("Name of the output ASCII association file where we will store the cccds information for coadd"))
+        assoc_json    = CUnicode("", help=("Name of the output JSON association file where we will store the cccds information for coadd"))
+        plot_outname  = CUnicode('', help=("Output file name for plot, in case we want to plot"))
+        local_archive = CUnicode('', help=("The local filepath where the input fits files (will) live"))
+
+        # Logging -- might be factored out
+        stdoutloglevel = CUnicode('INFO', help="The level with which logging info is streamed to stdout",
+                                  argparse={'choices': ('DEBUG','INFO','CRITICAL')} )
+        fileloglevel   = CUnicode('INFO', help="The level with which logging info is written to the logfile",
+                                  argparse={'choices': ('DEBUG','INFO','CRITICAL')} )
 
         def _validate_conditional(self):
 
@@ -215,8 +208,11 @@ class Job(BaseJob):
 
         # Create the tile_edges tuple structure and query the database
         tile_edges = self.get_tile_edges(self.ctx.tileinfo)
+
         self.ctx.CCDS = Job.get_CCDS_from_db(self.ctx.dbh,
-                tile_edges, logger=self.logger, **self.input.as_dict())
+                                             tile_edges,
+                                             logger=self.logger,
+                                             **self.input.as_dict())
 
         # Get the cosmology archive root path in case there is no local_archive
         # path defined
