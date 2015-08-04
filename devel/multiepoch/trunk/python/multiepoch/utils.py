@@ -22,11 +22,8 @@ def check_dbh(ctx, logger=None):
             if logger: logger.info(mess)
             else: print mess
             try:
-                desservicesfile = ctx.get(
-                        'desservicesfile',
-                        os.path.join(os.environ['HOME'],
-                            '.desservices.ini')
-                        )
+                desservicesfile = ctx.get('desservicesfile',
+                                          os.path.join(os.environ['HOME'],'.desservices.ini'))
                 ctx.dbh = desdbi.DesDbi(desservicesfile, section=db_section)
             except:
                 mess = "Cannot find des service file -- will try none"
@@ -59,12 +56,14 @@ def get_NP(MP):
         raise ValueError('MP is wrong type: %s, integer type' % MP)
     return NP
 
-def create_local_archive(local_archive):
+def create_local_archive(local_archive,logger=None):
     
     import os
     """ Creates the local cache directory for the desar archive data to be transfered"""
     if not os.path.exists(local_archive):
-        print "# Will create LOCAL ARCHIVE at %s" % local_archive
+        message = "Will create LOCAL ARCHIVE at %s" % local_archive
+        if logger: logger.info(message)
+        else: print message
         os.mkdir(local_archive)
     return
 
@@ -90,7 +89,7 @@ def arglist2dict(inputlist,separator='='):
     return dict( [ inputlist[index].split(separator) for index, item in enumerate(inputlist) ] )
 
 
-def inDESARcluster(domain_name='cosmology.illinois.edu'):
+def inDESARcluster(domain_name='cosmology.illinois.edu',logger=None):
 
     import os,re
     """ Figure out if we are in the cosmology.illinois.edu cluster """
@@ -103,12 +102,13 @@ def inDESARcluster(domain_name='cosmology.illinois.edu'):
         
     if re.search(pattern, hostname) and uname == 'Linux':
         LOCAL = True
-        print "# Found hostname: %s, running:%s --> in %s cluster." %\
-                (hostname, uname, domain_name)
+        message = "Found hostname: %s, running:%s --> in %s cluster." % (hostname, uname, domain_name)
     else:
         LOCAL = False
-        print "# Found hostname: %s, running:%s --> NOT in %s cluster." %\
-                (hostname, uname, domain_name)
+        message = "Found hostname: %s, running:%s --> NOT in %s cluster." % (hostname, uname, domain_name)
+                
+    if logger: logger.debug(message)
+    else: print message
 
     return LOCAL
 
