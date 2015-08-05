@@ -3,6 +3,9 @@
 Set of functions to add defintions to the context
 """
 
+import querylibs 
+import utils
+import os
 
 def create_local_archive(local_archive):
     import os
@@ -12,17 +15,42 @@ def create_local_archive(local_archive):
         os.mkdir(local_archive)
     return
 
+def define_https_names(ctx,logger=None):
+
+
+    """
+    Define FILEPATH_HTTPS using the information on FILEPATH_LOCAL and the context
+    """
+
+    if 'root_https' not in ctx.assoc.keys():
+        ctx = utils.check_dbh(ctx, logger=logger)
+        ctx.root_https = querylibs.get_root_https(ctx.dbh,logger=logger, archive_name=ctx.archive_name)
+
+    filepath_https = ctx.assoc['FILEPATH_LOCAL']
+    filepath_https = [f.replace(ctx.local_archive,'{path}'.format(path=ctx.root_https)) for f in filepath_https]
+
+    return filepath_https
+
 def define_weight_names(ctx):
-    import os
-    """ A common method to define the weights names bases in the context"""
-    filepath_local_wgt = []
-    for idx in range(len(ctx.assoc['FILENAME'])):
-        local_wgt = os.path.join(ctx.local_weights,
-                                 ctx.CCDS[idx]['PATH'],
-                                 ctx.CCDS[idx]['FILENAME'].replace('.fits','{we}.fits'.format(we=ctx.weight_extension))
-                                 )
-        filepath_local_wgt.append(local_wgt)
-    return filepath_local_wgt
+
+
+    """
+    A common method to define the weights names based in the
+    context using the information contained in assoc[FILEPATH_LOCAL]
+    """
+
+    # short-cuts for clarity
+    lo_ar = ctx.local_archive
+    lw_ar = ctx.local_weight_archive
+    we    = ctx.weight_extension
+    filepath_local_weight = ctx.assoc['FILEPATH_LOCAL']
+
+    # 1. replace local_archive --> local_weight_archive
+    filepath_local_weight = [f.replace(lo_ar,  '{lw}'.format(lw=lw_ar))   for f in filepath_local_weight]
+    # 2. replace  .fits --> _wgt.fits
+    filepath_local_weight = [f.replace('.fits','{we}.fits'.format(we=we)) for f in filepath_local_weight]
+
+    return filepath_local_weight
 
 def get_BANDS(assoc, detname='det', logger=None):
 

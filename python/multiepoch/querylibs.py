@@ -107,11 +107,68 @@ def get_CCDS_from_db(dbh, tile_edges, **kwargs):
     # Get the ccd images that are part of the DESTILE
     CCDS = despyastro.genutil.query2rec(ccd_query, dbhandle=dbh)
 
+    mess = "Found %s input images" %  len(CCDS)
+    if logger: logger.info(mess)
+    else: print mess
+
+
     # Here we fix 'COMPRESSION' from None --> '' if present
     if 'COMPRESSION' in CCDS.dtype.names:
         CCDS['COMPRESSION'] = numpy.where(CCDS['COMPRESSION'],CCDS['COMPRESSION'],'')
 
     return CCDS 
+
+
+# -------------------------------------------------------------------------
+# QUERY methods for root names -- available to all tasks
+# -------------------------------------------------------------------------
+def get_root_archive(dbh, archive_name='desar2home', logger=None):
+    """ Get the root-archive fron the database
+    """
+    cur = dbh.cursor()
+    # root_archive
+    query = "SELECT root FROM ops_archive WHERE name='%s'" % archive_name
+    if logger:
+        logger.debug("Getting the archive root name for section: %s" % archive_name)
+        logger.debug("Will execute the SQL query:\n********\n** %s\n********" % query)
+    cur.execute(query)
+    root_archive = cur.fetchone()[0]
+    if logger: logger.info("root_archive: %s" % root_archive)
+    return root_archive
+
+
+def get_root_https(dbh, archive_name='desar2home', logger=None):
+    """ Get the root_https fron the database
+    """
+    cur = dbh.cursor()
+    # root_https
+    # to add it:
+    # insert into ops_archive_val (name, key, val) values ('prodbeta', 'root_https', 'https://desar2.cosmology.illinois.edu/DESFiles/Prodbeta/archive');
+    query = "SELECT val FROM ops_archive_val WHERE name='%s' AND key='root_https'" % archive_name
+    if logger:
+        logger.debug("Getting root_https for section: %s" % archive_name)
+        logger.debug("Will execute the SQL query:\n********\n** %s\n********" % query)
+    cur.execute(query)
+    root_https = cur.fetchone()[0]
+    if logger: logger.info("root_https:   %s" % root_https)
+    cur.close()
+    return root_https
+
+
+def get_root_http(dbh, archive_name='desar2home', logger=None):
+    """ Get the root_http  fron the database
+    """
+    cur = dbh.cursor()
+    # root_http 
+    query = "SELECT val FROM ops_archive_val WHERE name='%s' AND key='root_http'" % archive_name
+    if logger:
+        logger.debug("Getting root_https for section: %s" % archive_name)
+        logger.debug("Will execute the SQL query:\n********\n** %s\n********" % query)
+    cur.execute(query)
+    root_http  = cur.fetchone()[0]
+    if logger: logger.info("root_http:   %s" % root_http)
+    cur.close()
+    return root_http
 
 # -----------------------------------------------------------------------------
 

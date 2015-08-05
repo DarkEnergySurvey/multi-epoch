@@ -47,16 +47,9 @@ class Job(BaseJob):
         # Required inputs to run the job (in ctx, after loading files)
         # because we set the argparse keyword to False they are not interfaced
         # to the command line parser
-        assoc = Dict(None,help="The Dictionary containing the association information.",
-                     argparse=False)
-
-        assoc_file = CUnicode('',help="Input association file with CCDs information",
-                # declare this variable as input_file, this leads the content
-                # of the file to be loaded into the ctx at initialization
-                input_file=True,
-                # set argtype=positional !! to make this a required positional
-                # argument when using the parser
-                argparse={ 'argtype': 'positional', })
+        assoc = Dict(None,help="The Dictionary containing the association information.",argparse=False)
+        assoc_file = CUnicode('',help="Input association file with CCDs information",input_file=True,
+                              argparse={ 'argtype': 'positional', })
 
         # TODO : see below
         # MICHAEL: This does not work
@@ -70,20 +63,27 @@ class Job(BaseJob):
 
         # Optional inputs -- postional arguments
         clobber_weights  = Bool(False, help="Cloober the existing custom weight files.")
-        weight_extension = CUnicode('_wgt', help=("Weight extension to add to "
-                                                    "custom weight file names."))
-        MP_weight        = CInt(1, help = ("Run using multi-process, "
-                                            "0=automatic, 1=single-process [default]"))
-
-        # TODO : execution_mode has not effect yet ..
+        weight_extension = CUnicode('_wgt', help=("Weight extension to add to custom weight file names."))
+        MP_weight        = CInt(1, help = ("Run using multi-process, 0=automatic, 1=single-process [default]"))
+        
+        local_archive        = CUnicode('', help=("The local filepath where the input fits files (will) live"))
+        local_weight_archive = CUnicode('', help='The path to the weights archive.')
         weights_execution_mode  = CUnicode("dryrun",help="Weights excution mode",
-                                       argparse={'choices': ('tofile','dryrun','execute')})
-        local_weights = Unicode(None, help='The path to the weights archive.')
+                                           argparse={'choices': ('tofile','dryrun','execute')})
+        # Logging -- might be factored out
+        stdoutloglevel = CUnicode('INFO', help="The level with which logging info is streamed to stdout",
+                                  argparse={'choices': ('DEBUG','INFO','CRITICAL')} )
+        fileloglevel   = CUnicode('INFO', help="The level with which logging info is written to the logfile",
+                                  argparse={'choices': ('DEBUG','INFO','CRITICAL')} )
+
+        def _validate_conditional(self):
+            pass
 
 
     def run(self):
 
         # 1. Define weight names using function in contextDefs
+        self.logger.info("Constructing assoc[FILEPATH_LOCAL_WTG] from assoc[FILEPATH_LOCAL]")
         self.ctx.assoc['FILEPATH_LOCAL_WGT'] = contextDefs.define_weight_names(self.ctx)
 
         # now make sure all paths exist
@@ -97,16 +97,14 @@ class Job(BaseJob):
             if os.path.exists(weight_file) and not self.input.clobber_weights:
                 self.logger.debug('Skipping creation of %s, exists already.' % weight_file)
             else:
-                to_create.append(( self.ctx.assoc['FILEPATH_LOCAL'][idx],
-                    weight_file, self.input.clobber_weights,))
+                t = (self.ctx.assoc['FILEPATH_LOCAL'][idx],weight_file,self.input.clobber_weights)
+                to_create.append(t)
 
         # 3. CREATE THE NECESSARY WEIGHT FILES
         self.create_weights_for_SWarp(to_create, MP=self.input.MP_weight)
 
-        # CLEANUP
         # we prefer it to be a numpy array
-        self.ctx.assoc['FILEPATH_LOCAL_WGT'] = numpy.array(
-                self.ctx.assoc['FILEPATH_LOCAL_WGT'])
+        self.ctx.assoc['FILEPATH_LOCAL_WGT'] = numpy.array(self.ctx.assoc['FILEPATH_LOCAL_WGT'])
 
 
     def create_weights_for_SWarp(self, to_create, MP=1):

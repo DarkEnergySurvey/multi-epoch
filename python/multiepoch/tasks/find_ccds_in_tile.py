@@ -3,6 +3,8 @@
 import json
 import numpy
 import time
+import os
+import pandas as pd
 import despyastro
 
 # Mojo imports
@@ -14,10 +16,6 @@ from mojo.context import ContextProvider
 import multiepoch.utils as utils
 import multiepoch.contextDefs as contextDefs
 import multiepoch.querylibs as querylibs
-
-from despyastro import tableio
-from despymisc.miscutils import elapsed_time
-npadd = numpy.core.defchararray.add
 
 """
 Finds all of the CCCs in the IMAGE table that fall inside the (RACMI,RACMAX)
@@ -115,10 +113,8 @@ class Job(BaseJob):
         # Required inputs to run the job (in ctx, after loading files)
         # because we set the argparse keyword to False they are not interfaced
         # to the command line parser
-        tileinfo = Dict(None, help="The tileinfo dictionary.",
-                        argparse=False)
-        tilename = Unicode(None, help="The name of the tile.",
-                           argparse=False)
+        tileinfo = Dict(None, help="The tileinfo dictionary.",argparse=False)
+        tilename = Unicode(None, help="The name of the tile.",argparse=False)
 
         # Required inputs when run as script
         #
@@ -132,8 +128,7 @@ class Job(BaseJob):
         #     do the stuff
         #     return a dict
 
-        tile_geom_input_file = CUnicode('',
-                help='The json file with the tile information',
+        tile_geom_input_file = CUnicode('',help='The json file with the tile information',
                 # declare this variable as input_file, this leads the content of the file to be loaded into the ctx at initialization
                 input_file=True,
                 # set argtype=positional !! to make this a required positional argument when using the parser
@@ -149,7 +144,7 @@ class Job(BaseJob):
         from_extras   = CUnicode(FROM_EXTRAS,help="string with extra FROM for query",)
         tagname       = CUnicode('Y2T_FIRSTCUT',help="TAGNAME for images in the database",)
         exec_name     = CUnicode('immask', help=("EXEC_NAME for images in the database"))
-        assoc_file    = CUnicode("", help= ("Name of the output ASCII association file where we will store the cccds information for coadd"))
+        assoc_file    = CUnicode("", help=("Name of the output ASCII association file where we will store the cccds information for coadd"))
         assoc_json    = CUnicode("", help=("Name of the output JSON association file where we will store the cccds information for coadd"))
         plot_outname  = CUnicode('', help=("Output file name for plot, in case we want to plot"))
         local_archive = CUnicode('', help=("The local filepath where the input fits files (will) live"))
@@ -164,9 +159,9 @@ class Job(BaseJob):
 
             #  We will need one or ther other, but not both.
             # Check for valid output assoc_json
-            if self.mojo_execution_mode == 'job as script' and self.assoc_json == "":
-                mess = 'If job is run standalone assoc_json cannot be ""'
-                raise IO_ValidationError(mess)
+            #if self.mojo_execution_mode == 'job as script' and self.assoc_json == "":
+            #    mess = 'If job is run standalone assoc_json cannot be ""'
+            #    raise IO_ValidationError(mess)
 
             # Check for valid output assoc_file
             if self.mojo_execution_mode == 'job as script' and self.assoc_file == "":
@@ -174,14 +169,18 @@ class Job(BaseJob):
                 raise IO_ValidationError(mess)
 
             # Check for valid local_archive if not in the NCSA cosmology cluster
-            if not utils.inDESARcluster() and self.local_archive == '' and self.mojo_execution_mode == 'job as script':
+            if not utils.inDESARcluster() and self.local_archive == '': 
                 mess = 'If not in cosmology cluster local_archive canot be empty [""]'
                 raise IO_ValidationError(mess)
 
+            #########################################
+            # REMOVE LATER
+            # FOR TESTING ON SHORTER DATASETS
+            self.from_extras = FROM_EXTRAS+", felipe.TAGS"
+            self.and_extras  = AND_EXTRAS +" and\nfelipe.TAGS.FILENAME = image.FILENAME and felipe.TAGS.TAG = '%s_RAN_EXP'" % self.tilename
+            #########################################
 
     def run(self):
-
-
 
         # Check for the db_handle
         self.ctx = utils.check_dbh(self.ctx, logger=self.logger)
@@ -195,17 +194,17 @@ class Job(BaseJob):
         self.ctx.CCDS = querylibs.get_CCDS_from_db(DBH, tile_edges,logger=LOG,**self.input.as_dict())
 
         # Get root_https from from the DB with a query
-        self.ctx.root_https   = self.get_root_https(DBH,logger=LOG, archive_name=self.input.archive_name)
-        self.ctx.root_archive = self.get_root_archive(DBH,logger=LOG, archive_name=self.input.archive_name)
+        self.ctx.root_https   = querylibs.get_root_https(DBH,logger=LOG, archive_name=self.input.archive_name)
+        self.ctx.root_archive = querylibs.get_root_archive(DBH,logger=LOG, archive_name=self.input.archive_name)
         # In case we want root_http (DESDM framework)
-        #self.ctx.root_https  = self.get_root_http(self.ctx.dbh, archive_name=self.input.archive_name)
+        #self.ctx.root_https  = querylibs.get_root_http(self.ctx.dbh, archive_name=self.input.archive_name)
             
         # If in the cosmology archive local_archive=root path and local_archive not defined
         if utils.inDESARcluster(logger=LOG) and self.ctx.local_archive == '':
             self.logger.info("In cosmology cluster -- setting local_archive=%s" % self.ctx.root_archive)
             self.ctx.local_archive = self.ctx.root_archive
         else:
-            self.logger.info("Not In cosmology cluster -- setting local_archive=%s" % self.ctx.local_archive)
+            self.logger.info("Not in cosmology cluster -- setting local_archive=%s" % self.ctx.local_archive)
 
 
         # Now we get the locations, ie the association information
@@ -213,14 +212,6 @@ class Job(BaseJob):
                                                      self.ctx.local_archive,
                                                      self.ctx.root_https,
                                                      logger=self.logger)
-
-#       if self.ctx.filepath_local:
-#           names=['FILEPATH_LOCAL','FILENAME','BAND','MAG_ZERO']
-#       else:
-#           names=['FILEPATH_ARCHIVE','FILENAME','BAND','MAG_ZERO',]
-#       
-#       self.ctx.assoc = { name: assoc[name].tolist() for name in names }
-
 
     # -------------------------------------------------------------------------
 
@@ -249,111 +240,42 @@ class Job(BaseJob):
         assoc['FILENAME']    = CCDS['FILENAME']
         assoc['COMPRESSION'] = CCDS['COMPRESSION']
 
-        # TODO : CLEANUP : is FILEPATH needed some other place or could it be
-        # removed?
-        assoc['FILEPATH']    = npadd(CCDS['PATH'], "/")
-        assoc['FILEPATH']    = npadd(assoc['FILEPATH'], CCDS['FILENAME'])
-        assoc['FILEPATH']    = npadd(assoc['FILEPATH'], assoc['COMPRESSION'])
+        # Filename with fz if exists
+        #assoc['FILENAME'] =  [CCDS['FILENAME'][k]+CCDS['COMPRESSION'][k] for k in range(Nimages)]
+
+        # In line loop creation
+        filepaths = [os.path.join(CCDS['PATH'][k],CCDS['FILENAME'][k]+CCDS['COMPRESSION'][k]) for k in range(Nimages)]
 
         # 2. Create the archive locations for each file
-        path = [local_archive+"/"]*Nimages
-        assoc['FILEPATH_LOCAL'] = npadd(path, assoc['FILEPATH'])
-
+        assoc['FILEPATH_LOCAL'] = numpy.array([os.path.join(local_archive,filepath) for filepath in filepaths])
+        
         # 3. Create the https locations for each file
-        path = [root_https+"/"]*Nimages
-        assoc['FILEPATH_HTTPS']   = npadd(path, assoc['FILEPATH'])
+        assoc['FILEPATH_HTTPS'] = numpy.array([os.path.join(root_https,filepath) for filepath in filepaths])
 
         return assoc
 
 
-    # QUERY methods
     # -------------------------------------------------------------------------
-
-    @staticmethod
-    def get_root_archive(dbh, archive_name='desar2home', logger=None):
-        """ Get the root-archive fron the database
-        """
-        cur = dbh.cursor()
-        # root_archive
-        query = "SELECT root FROM ops_archive WHERE name='%s'" % archive_name
-        if logger:
-            logger.debug("Getting the archive root name for section: %s" % archive_name)
-            logger.debug("Will execute the SQL query:\n********\n** %s\n********" % query)
-        cur.execute(query)
-        root_archive = cur.fetchone()[0]
-        if logger: logger.info("root_archive: %s" % root_archive)
-        return root_archive
-
-
-    @staticmethod
-    def get_root_https(dbh, archive_name='desar2home', logger=None):
-        """ Get the root_https fron the database
-        """
-        cur = dbh.cursor()
-        # root_https
-        # to add it:
-        # insert into ops_archive_val (name, key, val) values ('prodbeta', 'root_https', 'https://desar2.cosmology.illinois.edu/DESFiles/Prodbeta/archive');
-        query = "SELECT val FROM ops_archive_val WHERE name='%s' AND key='root_https'" % archive_name
-        if logger:
-            logger.debug("Getting root_https for section: %s" % archive_name)
-            logger.debug("Will execute the SQL query:\n********\n** %s\n********" % query)
-        cur.execute(query)
-        root_https = cur.fetchone()[0]
-        if logger: logger.info("root_https:   %s" % root_https)
-        cur.close()
-        return root_https
-
-
-    @staticmethod
-    def get_root_http(dbh, archive_name='desar2home', logger=None):
-        """ Get the root_http  fron the database
-        """
-        cur = dbh.cursor()
-        # root_http 
-        query = "SELECT val FROM ops_archive_val WHERE name='%s' AND key='root_http'" % archive_name
-        if logger:
-            logger.debug("Getting root_https for section: %s" % archive_name)
-            logger.debug("Will execute the SQL query:\n********\n** %s\n********" % query)
-        cur.execute(query)
-        root_http  = cur.fetchone()[0]
-        if logger: logger.info("root_http:   %s" % root_http)
-        cur.close()
-        return root_http
-
-
     # WRITE FILES
     # -------------------------------------------------------------------------
+    def write_assoc_pandas(self, assoc_file,names=['FILEPATH_LOCAL','BAND','MAG_ZERO'],sep=' '):
 
-    def write_assoc_file(self, assoc_file,
-            names=['FILEPATH_LOCAL','BAND','MAG_ZERO']):
-
-        variables = []
-        for name in names:
-            variables.append(self.ctx.assoc[name].tolist())
-            
         self.logger.info("Writing CCDS files information to: %s" % assoc_file)
-        N = len(names)
-        header =  "# " + "%s "*N % tuple(names)
-        format =  "%-s "*N 
-        tableio.put_data(assoc_file,tuple(variables), header=header, format=format)
+        variables = [self.ctx.assoc[name] for name in names]
+        df = pd.DataFrame(zip(*variables), columns=names)
+        df.to_csv(assoc_file,index=False,sep=sep)
         return
 
-
-    def write_assoc_json(self, assoc_jsonfile,
-            names=['FILEPATH_LOCAL','BAND','MAG_ZERO']):
+    def write_assoc_json(self, assoc_jsonfile,names=['FILEPATH_LOCAL','BAND','MAG_ZERO']):
 
         self.logger.info("Writing CCDS information to: %s" % assoc_jsonfile)
-        dict_assoc = {}
-        for name in names:
-            # Make them lists instead of rec arrays
-            dict_assoc[name] =  self.ctx.assoc[name].tolist()
+        dict_assoc = { name: self.ctx.assoc[name].tolist() for name in names }                         
         o = open(assoc_jsonfile,"w")
         # Put in the proper container
         jsondict = {'assoc': dict_assoc}
         o.write(json.dumps(jsondict,sort_keys=False,indent=4))
         o.close()
         return
-
 
     def __str__(self):
         return 'find ccds in tile'
@@ -369,12 +291,7 @@ if __name__ == "__main__":
     """
     
     names=['FILEPATH_LOCAL','BAND','MAG_ZERO']
-    job.write_assoc_file(job.ctx.assoc_file,names=names)
+    job.write_assoc_pandas(job.ctx.assoc_file,names=names)
     job.write_assoc_json(job.ctx.assoc_json,names=names)
-    
-    ## do we plot as well?
-    #if self.ctx.plot_outname:
-    #    from multiepoch.tasks.plot_ccd_corners_destile import Job as plot_job
-    #    plot = plot_job(ctx=self.ctx)
-    #    plot()
-    #'''
+
+

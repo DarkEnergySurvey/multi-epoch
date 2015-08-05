@@ -100,25 +100,10 @@ if __name__ == '__main__':
     jo.run_job('multiepoch.tasks.query_tileinfo', tilename=args.tilename, coaddtile_table=args.coaddtile_table,db_section=args.db_section)
 
     # 2. Get the CCDs inside the tile
-    # ---------------------------------------------------------------------
-    # These are default extras for the full depth sample for SVA1
-    # SELECT_EXTRAS = "felipe.extraZEROPOINT.MAG_ZERO,"
-    # FROM_EXTRAS   = "felipe.extraZEROPOINT"
-    # AND_EXTRAS    = "felipe.extraZEROPOINT.FILENAME = image.FILENAME"
-    #
-    # To select a subset of random CCDS based in on EXP (exposure) or CCD 
-    SELECT_EXTRAS = "felipe.extraZEROPOINT.MAG_ZERO,"
-    FROM_EXTRAS   = "felipe.extraZEROPOINT, felipe.TAGS"
-    AND_EXTRAS    = """felipe.extraZEROPOINT.FILENAME = image.FILENAME and
-    felipe.TAGS.FILENAME = image.FILENAME and
-    felipe.TAGS.TAG = '%s_RAN_EXP'""" % args.tilename
-    # -----------------------------------------------------------------
     jo.run_job('multiepoch.tasks.find_ccds_in_tile',
+               local_archive=args.local_archive,
                tagname=args.tagname,
-               exec_name=args.exec_name,
-               and_extras=AND_EXTRAS,
-               from_extras=FROM_EXTRAS)
-    exit()
+               exec_name=args.exec_name)
 
     # 3. Plot the corners -- all  bands (default)
     jo.run_job('multiepoch.tasks.plot_ccd_corners_destile',tiledir=args.tiledir)
