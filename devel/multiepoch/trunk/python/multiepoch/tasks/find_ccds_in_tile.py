@@ -1,22 +1,5 @@
 #!/usr/bin/env python
 
-import json
-import numpy
-import time
-import os
-import pandas as pd
-import despyastro
-
-# Mojo imports
-from mojo.jobs.base_job import BaseJob
-from traitlets import Unicode, Bool, Float, Int, CUnicode, CBool, CFloat, CInt, Instance, Dict
-from mojo.jobs.base_job import BaseJob, IO, IO_ValidationError
-from mojo.context import ContextProvider
-# Mutiepoch loads
-import multiepoch.utils as utils
-import multiepoch.contextDefs as contextDefs
-import multiepoch.querylibs as querylibs
-
 """
 Finds all of the CCCs in the IMAGE table that fall inside the (RACMI,RACMAX)
 and (DECCMIN,DECCMAX) of a DES tile with a given set of extras SQL and/or
@@ -84,12 +67,37 @@ Author: Felipe Menanteau, NCSA, Nov 2014.
 
 """
 
+import json
+import numpy
+import time
+import os
+import pandas as pd
+import despyastro
+
+# Mojo imports
+from mojo.jobs.base_job import BaseJob
+from traitlets import Unicode, Bool, Float, Int, CUnicode, CBool, CFloat, CInt, Instance, Dict
+from mojo.jobs.base_job import BaseJob, IO, IO_ValidationError
+from mojo.context import ContextProvider
+from mojo.utils import log
+
+# Mutiepoch loads
+import multiepoch.utils as utils
+import multiepoch.contextDefs as contextDefs
+import multiepoch.querylibs as querylibs
+
 # DEFAULT PARAMETER VALUES -- Change from felipe.XXXXX --> XXXXX
 # -----------------------------------------------------------------------------
 SELECT_EXTRAS = "felipe.extraZEROPOINT.MAG_ZERO,"
 FROM_EXTRAS   = "felipe.extraZEROPOINT"
 AND_EXTRAS    = "felipe.extraZEROPOINT.FILENAME = image.FILENAME" 
 # -----------------------------------------------------------------------------
+
+#import mojo
+#import mojo.utils 
+#mojo.utils.log.DEFAULT_CONSOLELOGLEVEL = 'INFO'
+#mojo.utils.log.DEFAULT_FILELOGLEVEL    = 'INFO'
+#print mojo.utils.log.DEFAULT_CONSOLELOGLEVEL 
 
 class Job(BaseJob):
 
@@ -105,11 +113,13 @@ class Job(BaseJob):
     ``````````````````````````````````
     - assoc
     '''
+
     
     class Input(IO):
 
+
         """Find the CCDs that fall inside a tile"""
-    
+
         # Required inputs to run the job (in ctx, after loading files)
         # because we set the argparse keyword to False they are not interfaced
         # to the command line parser
@@ -146,8 +156,8 @@ class Job(BaseJob):
         exec_name     = CUnicode('immask', help=("EXEC_NAME for images in the database"))
         assoc_file    = CUnicode("", help=("Name of the output ASCII association file where we will store the cccds information for coadd"))
         assoc_json    = CUnicode("", help=("Name of the output JSON association file where we will store the cccds information for coadd"))
-        plot_outname  = CUnicode('', help=("Output file name for plot, in case we want to plot"))
-        local_archive = CUnicode('', help=("The local filepath where the input fits files (will) live"))
+        plot_outname  = CUnicode("", help=("Output file name for plot, in case we want to plot"))
+        local_archive = CUnicode("", help=("The local filepath where the input fits files (will) live"))
 
         # Logging -- might be factored out
         stdoutloglevel = CUnicode('INFO', help="The level with which logging info is streamed to stdout",
@@ -169,8 +179,8 @@ class Job(BaseJob):
                 raise IO_ValidationError(mess)
 
             # Check for valid local_archive if not in the NCSA cosmology cluster
-            if not utils.inDESARcluster() and self.local_archive == '': 
-                mess = 'If not in cosmology cluster local_archive canot be empty [""]'
+            if not utils.inDESARcluster(logger=log.get_logger({})) and not self.local_archive: 
+                mess = 'If not in cosmology cluster local_archive cannot be empty [""]'
                 raise IO_ValidationError(mess)
 
             #########################################
@@ -181,7 +191,7 @@ class Job(BaseJob):
             #########################################
 
     def run(self):
-
+        
         # Check for the db_handle
         self.ctx = utils.check_dbh(self.ctx, logger=self.logger)
         

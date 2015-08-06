@@ -12,6 +12,7 @@ import os,sys
 from despymisc.miscutils import elapsed_time
 import despyfits
 import time
+import pandas as pd
 import multiprocessing
 
 import multiepoch.utils as utils
@@ -35,16 +36,27 @@ class Job(BaseJob):
         assoc_file = CUnicode('',help="Input association file with CCDs information",input_file=True,
                               argparse={ 'argtype': 'positional', })
         # Optional Arguments
-        #basename     = CUnicode("",help="Base Name for coadd fits files in the shape: COADD_BASENAME_$BAND.fits")
-        tilename = Unicode(None, help="The Name of the Tile Name to query",argparse=False)
-        tiledir  = CUnicode(None, help='The output directory for this tile.')
+        tilename = Unicode(None, help="The Name of the Tile Name to query")
+        tiledir  = Unicode(None, help="The output directory for this tile")
         clobber_MEF  = Bool(False, help="Cloober the existing MEF fits")
         cleanupSWarp = Bool(False, help="Clean-up SWarp files")
         MEF_execution_mode  = CUnicode("tofile",help="excution mode",
                                        argparse={'choices': ('tofile','dryrun','execute')})
 
-        def _validate_conditional(self):
-            pass
+        # Logging -- might be factored out
+        stdoutloglevel = CUnicode('INFO', help="The level with which logging info is streamed to stdout",
+                                  argparse={'choices': ('DEBUG','INFO','CRITICAL')} )
+        fileloglevel   = CUnicode('INFO', help="The level with which logging info is written to the logfile",
+                                  argparse={'choices': ('DEBUG','INFO','CRITICAL')} )
+
+        # Function to read ASCII/panda framework file (instead of json)
+        # Comment if you want to use json files
+        def _read_assoc_file(self):
+            mydict = {}
+            df = pd.read_csv(self.assoc_file,sep=' ')
+            mydict['assoc'] = {col: df[col].values.tolist() for col in df.columns}
+            return mydict
+
 
     def prewash(self):
 
@@ -66,7 +78,7 @@ class Job(BaseJob):
         if self.input.cleanupSWarp:
             self.cleanup_SWarpFiles(execute=True)
             
-        self.logger.info("# MEFs Creation Total time: %s" % elapsed_time(t0))
+        self.logger.info("MEFs Creation Total time: %s" % elapsed_time(t0))
         return
 
     def cleanup_SWarpFiles(self,execute=False):
@@ -116,13 +128,13 @@ class Job(BaseJob):
             t0 = time.time()
 
             if execution_mode == 'execute':
-                self.logger.info("# Making MEF file for BAND:%s --> %s" % (BAND,outname))
+                self.logger.info("Making MEF file for BAND:%s --> %s" % (BAND,outname))
                 despyfits.makeMEF(filenames=filenames,outname=outname,clobber=clobber,extnames=extnames,verb=verb)
             elif execution_mode == 'dryrun' or execution_mode == 'tofile':
-                self.logger.info("# Making MEF file for BAND:%s --> %s" % (BAND,outname))
+                self.logger.info("Making MEF file for BAND:%s --> %s" % (BAND,outname))
             else:
                 raise ValueError('Execution mode %s not implemented.' % execution_mode)
-            self.logger.info("# Done in %s" % elapsed_time(t0))
+            self.logger.info("Done in %s" % elapsed_time(t0))
 
         return
 
