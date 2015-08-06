@@ -1,10 +1,5 @@
 #!/usr/bin/env python
 
-# Mojo imports
-from mojo.jobs.base_job import BaseJob
-from traitlets import Unicode, Bool, Float, Int, CUnicode, CBool, CFloat, CInt, Instance, Dict, List, Integer
-from mojo.jobs.base_job import BaseJob, IO, IO_ValidationError
-from mojo.context import ContextProvider
 
 from despyastro import tableio
 import os
@@ -12,10 +7,17 @@ import sys
 import numpy
 import subprocess
 import time
+import pandas as pd
+
 from despymisc.miscutils import elapsed_time
 import multiepoch.utils as utils
 import multiepoch.contextDefs as contextDefs
 from multiepoch import file_handler as fh
+
+# Mojo imports
+from mojo.jobs.base_job import BaseJob
+from traitlets import Unicode, Bool, Float, Int, CUnicode, CBool, CFloat, CInt, Instance, Dict, List, Integer
+from mojo.jobs.base_job import BaseJob, IO, IO_ValidationError
 
 # JOB INTERNAL CONFIGURATION
 SWARP_EXE = 'swarp'
@@ -39,9 +41,13 @@ class Job(BaseJob):
         # 2. Geometry and tilename
         tileinfo = Dict(None, help="The json file with the tile information",argparse=False)
         tilename = Unicode(None, help="The Name of the Tile Name to query",argparse=False)
-        tiledir  = CUnicode(None, help='The output directory for this tile.')
+        tiledir  = Unicode(None, help="The output directory for this tile")
         tile_geom_input_file = CUnicode('',help='The json file with the tile information',input_file=True,
                                         argparse={ 'argtype': 'positional', })
+
+        local_archive        = CUnicode(None, help="The local filepath where the input fits files (will) live")
+        local_weight_archive = CUnicode(None, help='The path to the weights archive.')
+
         ######################
         # Optional arguments
         detecBANDS       = List(DETEC_BANDS_DEFAULT, help="List of bands used to build the Detection Image")
@@ -53,8 +59,24 @@ class Job(BaseJob):
                                 argparse={'nargs':'+',})
         custom_weights =  Bool(False, help="Use Custom SWarp weights")
 
+        # Logging -- might be factored out
+        stdoutloglevel = CUnicode('INFO', help="The level with which logging info is streamed to stdout",
+                                  argparse={'choices': ('DEBUG','INFO','CRITICAL')} )
+        fileloglevel   = CUnicode('INFO', help="The level with which logging info is written to the logfile",
+                                  argparse={'choices': ('DEBUG','INFO','CRITICAL')} )
+
+        # Function to read ASCII/panda framework file (instead of json)
+        # Comment if you want to use json files
+        def _read_assoc_file(self):
+            mydict = {}
+            df = pd.read_csv(self.assoc_file,sep=' ')
+            mydict['assoc'] = {col: df[col].values.tolist() for col in df.columns}
+            return mydict
+
         def _validate_conditional(self):
-            pass
+            if self.custom_weights and (self.local_archive == 'None' or self.local_weight_archive == 'None'):
+                mess = '\n\tIf --custom_weights, then both --local_archive and --local_weight_archive must be defined'
+                raise IO_ValidationError(mess)
 
         def _argparse_postproc_swarp_parameters(self, v):
             return utils.arglist2dict(v, separator='=')
@@ -65,7 +87,7 @@ class Job(BaseJob):
 
         # Re-construct the names for the custom weights in case not present
         if 'FILEPATH_LOCAL_WGT' not in self.ctx.assoc.keys() and self.input.custom_weights:
-            print "# Re-consrtuncting FILEPATH_LOCAL_WGT to ctx.assoc"
+            self.logger.info("Re-consrtuncting FILEPATH_LOCAL_WGT to ctx.assoc")
             self.ctx.assoc['FILEPATH_LOCAL_WGT'] = contextDefs.define_weight_names(self.ctx)
 
         # Re-cast the ctx.assoc as dictionary of arrays instead of lists
@@ -104,7 +126,7 @@ class Job(BaseJob):
                 self.writeCall(cmd_list)
                     
         elif execution_mode == 'dryrun':
-            self.logger.info("# For now we only print the commands (dry-run)")
+            self.logger.info("For now we only print the commands (dry-run)")
             for band in self.ctx.dBANDS:
                 if self.input.custom_weights:
                     self.logger.info(' '.join(cmd_list_sci[band]))
@@ -205,13 +227,26 @@ class Job(BaseJob):
 
         # The Science and Weight lists matching the bands used for detection
         useBANDS = list( set(self.ctx.BANDS) & set(self.input.detecBANDS) )
-        det_scilists = [ fh.get_sci_fits_file(tiledir,tilename, band) for band in useBANDS ]
-        det_wgtlists = [ fh.get_wgt_fits_file(tiledir,tilename, band) for band in useBANDS ]
+
+        if type=='sci': 
+            det_scilists = [ fh.get_sci_fits_file(tiledir,tilename, band) for band in useBANDS ]
+            det_wgtlists = [ fh.get_WGT_fits_file(tiledir,tilename, band,type='tmp_wgt') for band in useBANDS ]
+            pars["IMAGEOUT_NAME"]  = "%s" % fh.get_sci_fits_file(tiledir,tilename, BAND) 
+            pars["WEIGHTOUT_NAME"] = "%s" % fh.get_WGT_fits_file(tiledir,tilename, BAND,type='tmp_wgt') 
+        elif type=='wgt':
+            det_scilists = [ fh.get_SCI_fits_file(tiledir,tilename, band,type='tmp_sci') for band in useBANDS ]
+            det_wgtlists = [ fh.get_wgt_fits_file(tiledir,tilename, band) for band in useBANDS ]
+            pars["IMAGEOUT_NAME"]  = "%s" % fh.get_SCI_fits_file(tiledir,tilename, BAND,type='tmp_sci') 
+            pars["WEIGHTOUT_NAME"] = "%s" % fh.get_wgt_fits_file(tiledir,tilename, BAND) 
+        else:
+            det_scilists = [ fh.get_sci_fits_file(tiledir,tilename, band) for band in useBANDS ]
+            det_wgtlists = [ fh.get_wgt_fits_file(tiledir,tilename, band) for band in useBANDS ]
+            pars["IMAGEOUT_NAME"]  = "%s" % fh.get_sci_fits_file(tiledir,tilename, BAND) 
+            pars["WEIGHTOUT_NAME"] = "%s" % fh.get_wgt_fits_file(tiledir,tilename, BAND) 
+
 
         # The call to get the detection image
         pars["WEIGHT_IMAGE"]   = "%s" % " ".join(det_wgtlists)
-        pars["IMAGEOUT_NAME"]  = "%s" % fh.get_sci_fits_file(tiledir,tilename, BAND) 
-        pars["WEIGHTOUT_NAME"] = "%s" % fh.get_wgt_fits_file(tiledir,tilename, BAND) 
 
         swarp_cmd[BAND] = [SWARP_EXE, ]
         swarp_cmd[BAND].append("%s" % " ".join(det_scilists))
@@ -248,7 +283,7 @@ class Job(BaseJob):
         bkline  = self.ctx.get('breakline',BKLINE)
         # The file where we'll write the commands
         cmdfile = fh.get_swarp_cmd_file(self.input.tiledir, self.input.tilename)
-        self.logger.info("# Will write SWarp call to: %s" % cmdfile)
+        self.logger.info("Will write SWarp call to: %s" % cmdfile)
         with open(cmdfile, mode) as fid:
             for band in self.ctx.dBANDS:
                 fid.write(bkline.join(cmd_list[band])+'\n')
@@ -261,22 +296,22 @@ class Job(BaseJob):
         # FIXME :: logfile path via dh !!
         logfile = fh.get_swarp_log_file(self.input.tiledir, self.input.tilename)
         log = open(logfile,"w")
-        self.logger.info("# Will proceed to run the SWarp calls now:")
-        self.logger.info("# Will write to logfile: %s" % logfile)
+        self.logger.info("Will proceed to run the SWarp calls now:")
+        self.logger.info("Will write to logfile: %s" % logfile)
         t0 = time.time()
 
         for band in self.ctx.dBANDS:
             t1 = time.time()
             cmd  = ' '.join(cmd_list[band])
-            self.logger.info("# Executing SWarp SCI for tile:%s, BAND:%s" % (self.ctx.tilename,band))
-            self.logger.info("# %s " % cmd)
+            self.logger.info("Executing SWarp SCI for tile:%s, BAND:%s" % (self.ctx.tilename,band))
+            self.logger.info("%s " % cmd)
             status = subprocess.call(cmd,shell=True,stdout=log, stderr=log)
             if status > 0:
                 raise RuntimeError("\n***\nERROR while running SWarp, check logfile: %s\n***" % logfile)
-            self.logger.info("# Done in %s\n" % elapsed_time(t1))
+            self.logger.info("Done in %s" % elapsed_time(t1))
 
-        self.logger.info("# Total SWarp time %s" % elapsed_time(t0))
-        log.write("# Total SWarp time %s\n" % elapsed_time(t0))
+        self.logger.info("Total SWarp time %s" % elapsed_time(t0))
+        log.write("Total SWarp time %s\n" % elapsed_time(t0))
         log.close()
 
     # -------------------------------------------------------------------------

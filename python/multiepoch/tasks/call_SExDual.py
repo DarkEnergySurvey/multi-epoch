@@ -11,6 +11,7 @@ import sys
 import subprocess
 import multiprocessing
 import time
+import pandas as pd
 from despymisc.miscutils import elapsed_time
 
 import multiepoch.utils as utils
@@ -41,20 +42,27 @@ class Job(BaseJob):
         assoc_file = CUnicode('',help="Input association file with CCDs information",input_file=True,
                               argparse={ 'argtype': 'positional', })
         # Optional Arguments
-        tilename = Unicode(None, help="The Name of the Tile Name to query",argparse=False)
-        tiledir  = CUnicode(None, help='The output directory for this tile.')
+        tilename = Unicode(None, help="The Name of the Tile Name to query")
+        tiledir  = Unicode(None, help='The output directory for this tile.')
 
         SExDual_execution_mode = CUnicode("tofile",help="SExtractor Dual excution mode",
                                           argparse={'choices': ('tofile','dryrun','execute')})
         SExDual_parameters     = Dict({},help="A list of parameters to pass to SExtractor", argparse={'nargs':'+',})
         MP_SEx        = CInt(1,help="run using multi-process, 0=automatic, 1=single-process [default]")
 
-        def _validate_conditional(self):
-            # if in job standalone mode json
-            #if self.mojo_execution_mode == 'job as script' and self.basename == "":
-            #    mess = 'If job is run standalone basename cannot be ""'
-            #    raise IO_ValidationError(mess)
-            pass
+        # Logging -- might be factored out
+        stdoutloglevel = CUnicode('INFO', help="The level with which logging info is streamed to stdout",
+                                  argparse={'choices': ('DEBUG','INFO','CRITICAL')} )
+        fileloglevel   = CUnicode('INFO', help="The level with which logging info is written to the logfile",
+                                  argparse={'choices': ('DEBUG','INFO','CRITICAL')} )
+
+        # Function to read ASCII/panda framework file (instead of json)
+        # Comment if you want to use json files
+        def _read_assoc_file(self):
+            mydict = {}
+            df = pd.read_csv(self.assoc_file,sep=' ')
+            mydict['assoc'] = {col: df[col].values.tolist() for col in df.columns}
+            return mydict
 
         def _argparse_postproc_SExDual_parameters(self, v):
             return utils.arglist2dict(v, separator='=')
@@ -83,7 +91,7 @@ class Job(BaseJob):
             self.writeCall(cmd_list)
             
         elif executione_mode == 'dryrun':
-            self.logger.info("# For now we only print the commands (dry-run)")
+            self.logger.info("For now we only print the commands (dry-run)")
             for band in self.ctx.BANDS:
                 self.logger.info(' '.join(cmd_list[band]))
 
@@ -101,7 +109,7 @@ class Job(BaseJob):
         bkline  = self.ctx.get('breakline',BKLINE)
         # The file where we'll write the commands
         cmdfile = fh.get_SExdual_cmd_file(self.input.tiledir, self.input.tilename)
-        self.logger.info("# Will write SExDual call to: %s" % cmdfile)
+        self.logger.info("Will write SExDual call to: %s" % cmdfile)
         with open(cmdfile, 'w') as fid:
             for band in self.ctx.BANDS:
                 fid.write(bkline.join(cmd_list[band])+'\n')
@@ -110,7 +118,7 @@ class Job(BaseJob):
 
     def runSExDual(self,cmd_list,MP):
 
-        self.logger.info("# Will proceed to run the SEx Dual call now:")
+        self.logger.info("Will proceed to run the SEx Dual call now:")
         t0 = time.time()
         NP = utils.get_NP(MP) # Figure out NP to use, 0=automatic
         
@@ -118,33 +126,33 @@ class Job(BaseJob):
         if NP == 1:
             logfile = fh.get_SExdual_log_file(self.input.tiledir, self.input.tilename)
             log = open(logfile,"w")
-            self.logger.info("# Will write to logfile: %s" % logfile)
+            self.logger.info("Will write to logfile: %s" % logfile)
 
             for band in self.ctx.BANDS:
                 t1 = time.time()
                 cmd  = ' '.join(cmd_list[band])
-                self.logger.info("# Executing SExDual for BAND:%s" % band)
-                self.logger.info("# %s " % cmd)
+                self.logger.info("Executing SExDual for BAND:%s" % band)
+                self.logger.info("%s " % cmd)
                 status = subprocess.call(cmd,shell=True,stdout=log, stderr=log)
                 if status > 0:
                     raise RuntimeError("\n***\nERROR while running SExDual, check logfile: %s\n***" % logfile)
-                self.logger.info("# Done band %s in %s\n" % (band,elapsed_time(t1)))
+                self.logger.info("Done band %s in %s" % (band,elapsed_time(t1)))
             
         # Case B -- multi-process in case NP > 1
         else:
-            self.logger.info("# Will Use %s processors" % NP)
+            self.logger.info("Will Use %s processors" % NP)
             cmds = []
             logs = []
             for band in self.ctx.BANDS:
                 cmds.append(' '.join(cmd_list[band]))
                 logfile = fh.get_SExdual_log_file(self.input.tiledir, self.input.tilename,band)
                 logs.append(logfile)
-                self.logger.info("# Will write to logfile: %s" % logfile)
+                self.logger.info("Will write to logfile: %s" % logfile)
                 
             pool = multiprocessing.Pool(processes=NP)
             pool.map(utils.work_subprocess_logging, zip(cmds,logs))
 
-        self.logger.info("# Total SExtractor Dual time %s" % elapsed_time(t0))
+        self.logger.info("Total SExtractor Dual time %s" % elapsed_time(t0))
         return
 
 
@@ -182,7 +190,7 @@ class Job(BaseJob):
         # Sortcuts for less typing
         tiledir  = self.input.tiledir
         tilename = self.input.tilename
-        self.logger.info('# assembling commands for SEx Dual call')
+        self.logger.info('assembling commands for SEx Dual call')
 
         # SEx default configuration
         sex_conf = os.path.join(os.environ['MULTIEPOCH_DIR'],'etc','default.sex')

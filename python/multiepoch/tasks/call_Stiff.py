@@ -10,6 +10,7 @@ import os
 import sys
 import subprocess
 import time
+import pandas as pd
 from despymisc.miscutils import elapsed_time
 
 # Multi-epoch
@@ -33,24 +34,34 @@ class Job(BaseJob):
         Stiff call for the multi-epoch pipeline
         """
         ######################
-        # Required inputs
-        # 1. Association file and assoc dictionary
-        assoc      = Dict(None,help="The Dictionary containing the association file",
-                          argparse=False)
-        assoc_file = CUnicode('',help="Input association file with CCDs information",
-                              input_file=True,
+        # Positional Arguments
+        # 1. Tilename amd association file and assoc dictionary
+        assoc      = Dict(None,help="The Dictionary containing the association file",argparse=False)
+        assoc_file = CUnicode('',help="Input association file with CCDs information",input_file=True,
                               argparse={ 'argtype': 'positional', })
-
+        
         # Optional Arguments
-        basename              = CUnicode("",help="Base Name for coadd fits files in the shape: COADD_BASENAME_$BAND.fits")
+        tilename = Unicode(None, help="The Name of the Tile Name to query")
+        tiledir  = Unicode(None, help='The output directory for this tile')
         stiff_execution_mode  = CUnicode("tofile",help="Stiff excution mode",
                                          argparse={'choices': ('tofile','dryrun','execute')})
         stiff_parameters      = Dict({},help="A list of parameters to pass to Stiff",
                                      argparse={'nargs':'+',})
-        
-        def _validate_conditional(self):
-            pass
 
+        # Logging -- might be factored out
+        stdoutloglevel = CUnicode('INFO', help="The level with which logging info is streamed to stdout",
+                                  argparse={'choices': ('DEBUG','INFO','CRITICAL')} )
+        fileloglevel   = CUnicode('INFO', help="The level with which logging info is written to the logfile",
+                                  argparse={'choices': ('DEBUG','INFO','CRITICAL')} )
+
+        # Function to read ASCII/panda framework file (instead of json)
+        # Comment if you want to use json files
+        def _read_assoc_file(self):
+            mydict = {}
+            df = pd.read_csv(self.assoc_file,sep=' ')
+            mydict['assoc'] = {col: df[col].values.tolist() for col in df.columns}
+            return mydict
+        
         def _argparse_postproc_stiff_parameters(self, v):
             return utils.arglist2dict(v, separator='=')
 

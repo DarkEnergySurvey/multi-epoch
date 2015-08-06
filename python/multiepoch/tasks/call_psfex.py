@@ -10,6 +10,7 @@ from mojo.context import ContextProvider
 import os
 import sys
 import time
+import pandas as pd
 import subprocess
 from despymisc.miscutils import elapsed_time
 
@@ -36,29 +37,35 @@ class Job(BaseJob):
         """
 
         ######################
-        # Required inputs
+        # Positional Arguments
         # 1. Association file and assoc dictionary
         assoc      = Dict(None,help="The Dictionary containing the association file",argparse=False)
         assoc_file = CUnicode('',help="Input association file with CCDs information",input_file=True,
                               argparse={ 'argtype': 'positional', })
         # Optional Arguments
-        tilename = Unicode(None, help="The Name of the Tile Name to query",argparse=False)
-        tiledir  = CUnicode(None, help='The output directory for this tile.')
+        tilename = Unicode(None, help="The Name of the Tile Name to query")
+        tiledir  = Unicode(None, help='The output directory for this tile.')
         psfex_execution_mode  = CUnicode("tofile",help="psfex excution mode",
                                           argparse={'choices': ('tofile','dryrun','execute')})
         psfex_parameters       = Dict({},help="A list of parameters to pass to SExtractor",argparse={'nargs':'+',})
         cleanupPSFcats         = Bool(False, help="Clean-up PSFcat.fits files")
 
-        def _validate_conditional(self):
-            ## if in job standalone mode json
-            #if self.mojo_execution_mode == 'job as script' and self.basename == "":
-            #    mess = 'If job is run standalone basename cannot be ""'
-            #    raise IO_ValidationError(mess)
-            pass
+        # Logging -- might be factored out
+        stdoutloglevel = CUnicode('INFO', help="The level with which logging info is streamed to stdout",
+                                  argparse={'choices': ('DEBUG','INFO','CRITICAL')} )
+        fileloglevel   = CUnicode('INFO', help="The level with which logging info is written to the logfile",
+                                  argparse={'choices': ('DEBUG','INFO','CRITICAL')} )
+
+        # Function to read ASCII/panda framework file (instead of json)
+        # Comment if you want to use json files
+        def _read_assoc_file(self):
+            mydict = {}
+            df = pd.read_csv(self.assoc_file,sep=' ')
+            mydict['assoc'] = {col: df[col].values.tolist() for col in df.columns}
+            return mydict
 
         def _argparse_postproc_psfex_parameters(self, v):
             return utils.arglist2dict(v, separator='=')
-        
 
     def prewash(self):
 

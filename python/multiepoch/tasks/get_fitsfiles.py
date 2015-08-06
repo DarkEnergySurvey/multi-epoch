@@ -23,6 +23,8 @@ import os
 import sys
 import re
 import numpy
+import pandas as pd
+
 from despymisc import http_requests
 import multiepoch.utils as utils
 import multiepoch.contextDefs as contextDefs
@@ -33,11 +35,6 @@ from mojo.jobs.base_job import BaseJob
 from traitlets import Unicode, Bool, Float, Int, CUnicode, CBool, CFloat, CInt, Instance, Dict, List, Integer
 from mojo.jobs.base_job import BaseJob, IO, IO_ValidationError
 from mojo.context import ContextProvider
-
-
-#from traitlets import Bool, Dict, Unicode
-#from mojo.jobs import base_job
-
 
 class Job(BaseJob):
 
@@ -61,6 +58,13 @@ class Job(BaseJob):
         fileloglevel   = CUnicode('INFO', help="The level with which logging info is written to the logfile",
                                   argparse={'choices': ('DEBUG','INFO','CRITICAL')} )
 
+        # Function to read ASCII/panda framework file (instead of json)
+        # Comment if you want to use json files
+        def _read_assoc_file(self):
+            mydict = {}
+            df = pd.read_csv(self.assoc_file,sep=' ')
+            mydict['assoc'] = {col: df[col].values.tolist() for col in df.columns}
+            return mydict
 
         def _validate_conditional(self):
 
@@ -110,7 +114,6 @@ class Job(BaseJob):
                     os.makedirs(dirname)
                     
                 self.logger.info("Getting:  %s (%s/%s)" % (url,k+1,Nfiles))
-                print localfile
                 sys.stdout.flush()
                 # Get a file using the $HOME/.desservices.ini credentials
                 http_requests.download_file_des(url,localfile,section)
