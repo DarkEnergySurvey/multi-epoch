@@ -90,28 +90,28 @@ class Job(BaseJob):
             bkline  = self.ctx.get('breakline',BKLINE)
             # The file where we'll write the commands
             cmdfile = fh.get_stiff_cmd_file(self.input.tiledir, self.input.tilename)
-            self.logger.info("# Will write stiff call to: %s" % cmdfile)
+            self.logger.info("Will write stiff call to: %s" % cmdfile)
             with open(cmdfile, 'w') as fid:
                 fid.write(bkline.join(cmd_list)+'\n')
                 fid.write('\n')
 
         elif execution_mode == 'dryrun':
-           self.logger.info("# For now we only print the commands (dry-run)")
+           self.logger.info("For now we only print the commands (dry-run)")
            self.logger.info(' '.join(cmd_list))
 
         elif execution_mode == 'execute':
             logfile = fh.get_swarp_log_file(self.input.tiledir, self.input.tilename)
             log = open(logfile,"w")
-            self.logger.info("# Will proceed to run the stiff call now:")
-            self.logger.info("# Will write to logfile: %s" % logfile)
+            self.logger.info("Will proceed to run the stiff call now:")
+            self.logger.info("Will write to logfile: %s" % logfile)
             t0 = time.time()
             cmd  = ' '.join(cmd_list)
-            self.logger.info("# Executing stiff for tile:%s " % self.input.tilename)
-            self.logger.info("# %s " % cmd)
+            self.logger.info("Executing stiff for tile:%s " % self.input.tilename)
+            self.logger.info("%s " % cmd)
             status = subprocess.call(cmd,shell=True,stdout=log, stderr=log)
             if status > 0:
                 raise ValueError(" ERROR while running Stiff, check logfile: %s " % logfile)
-            self.logger.info("# Total stiff time %s" % elapsed_time(t0))
+            self.logger.info("Total stiff time %s" % elapsed_time(t0))
         else:
             raise ValueError('Execution mode %s not implemented.' % execution_mode)
         return
@@ -137,11 +137,11 @@ class Job(BaseJob):
 
         """ Make a color tiff of the TILENAME using stiff"""
 
-        self.logger.info("# assembling commands for Stiff call")
+        self.logger.info("assembling commands for Stiff call")
         
         if self.ctx.NBANDS < 3:
-            self.logger.info("# WARINING: Not enough filters to create color image")
-            self.logger.info("# WARINING: No color images will be created")
+            self.logger.info("WARINING: Not enough filters to create color image")
+            self.logger.info("WARINING: No color images will be created")
             return 
         
         # The update parameters set
@@ -165,7 +165,7 @@ class Job(BaseJob):
                 CSET = color_set
 
         if not CSET:
-            self.logger.info("# WARNING: Could not find a suitable filter set for color image")
+            self.logger.info("WARNING: Could not find a suitable filter set for color image")
             return 
         
         cmd_list = []
