@@ -301,7 +301,8 @@ if __name__ == "__main__":
     """
     
     names=['FILEPATH_LOCAL','BAND','MAG_ZERO']
+    # For now we'll try to use plain asscii that can be read/write with pandas
     job.write_assoc_pandas(job.ctx.assoc_file,names=names)
-    job.write_assoc_json(job.ctx.assoc_json,names=names)
+    #job.write_assoc_json(job.ctx.assoc_json,names=names)
 
 
