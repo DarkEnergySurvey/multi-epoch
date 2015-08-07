@@ -91,7 +91,7 @@ class Job(BaseJob):
             self.writeCall(cmd_list)
 
         elif executione_mode == 'dryrun':
-            self.logger.info("# For now we only print the commands (dry-run)")
+            self.logger.info("For now we only print the commands (dry-run)")
             for band in self.ctx.dBANDS:
                 self.logger.info(' '.join(cmd_list[band]))
 
@@ -109,7 +109,7 @@ class Job(BaseJob):
         bkline  = self.ctx.get('breakline',BKLINE)
         # The file where we'll write the commands
         cmdfile = fh.get_sexpsf_cmd_file(self.input.tiledir, self.input.tilename)
-        self.logger.info("# Will write SExpsf call to: %s" % cmdfile)
+        self.logger.info("Will write SExpsf call to: %s" % cmdfile)
         with open(cmdfile, 'w') as fid:
             for band in self.ctx.dBANDS:
                 fid.write(bkline.join(cmd_list[band])+'\n')
@@ -119,7 +119,7 @@ class Job(BaseJob):
 
     def runSExpsf(self,cmd_list,MP):
 
-        self.logger.info("# Will proceed to run the SEx psf call now:")
+        self.logger.info("Will proceed to run the SEx psf call now:")
         t0 = time.time()
         NP = utils.get_NP(MP) # Figure out NP to use, 0=automatic
         
@@ -127,32 +127,32 @@ class Job(BaseJob):
         if NP == 1:
             logfile = fh.get_sexpsf_log_file(self.input.tiledir, self.input.tilename)
             log = open(logfile,"w")
-            self.logger.info("# Will write to logfile: %s" % logfile)
+            self.logger.info("Will write to logfile: %s" % logfile)
             for band in self.ctx.dBANDS:
                 t1 = time.time()
                 cmd  = ' '.join(cmd_list[band])
-                self.logger.info("# Executing SEx/psf for BAND:%s" % band)
-                self.logger.info("# %s " % cmd)
+                self.logger.info("Executing SEx/psf for BAND:%s" % band)
+                self.logger.info("%s " % cmd)
                 status = subprocess.call(cmd,shell=True,stdout=log, stderr=log)
                 if status > 0:
                     raise RuntimeError("\n***\nERROR while running SExpsf, check logfile: %s\n***" % logfile)
-                self.logger.info("# Done band %s in %s\n" % (band,elapsed_time(t1)))
+                self.logger.info("Done band %s in %s\n" % (band,elapsed_time(t1)))
             
         # Case B -- multi-process in case NP > 1
         else:
-            self.logger.info("# Will Use %s processors" % NP)
+            self.logger.info("Will Use %s processors" % NP)
             cmds = []
             logs = []
             for band in self.ctx.dBANDS:
                 cmds.append(' '.join(cmd_list[band]))
                 logfile = fh.get_sexpsf_log_file(self.input.tiledir, self.input.tilename,band)
                 logs.append(logfile)
-                self.logger.info("# Will write to logfile: %s" % logfile)
+                self.logger.info("Will write to logfile: %s" % logfile)
                 
             pool = multiprocessing.Pool(processes=NP)
             pool.map(utils.work_subprocess_logging, zip(cmds,logs))
 
-        self.logger.info("# Total SEx psf time %s" % elapsed_time(t0))
+        self.logger.info("Total SEx psf time %s" % elapsed_time(t0))
         return
 
 
@@ -186,7 +186,7 @@ class Job(BaseJob):
         tiledir  = self.input.tiledir
         tilename = self.input.tilename
 
-        self.logger.info('# assembling commands for SWarp call')
+        self.logger.info("assembling commands for SEx psf call")
 
         # The updated parameters set for SEx
         pars = self.get_SExpsf_parameter_set(**self.input.SExpsf_parameters)

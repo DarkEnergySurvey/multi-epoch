@@ -90,7 +90,7 @@ class Job(BaseJob):
             self.writeCall(cmd_list)
 
         elif execution_mode == 'dryrun':
-            print "# For now we only print the commands (dry-run)"
+            self.logger.info("For now we only print the commands (dry-run)")
             for band in self.ctx.dBANDS:
                 self.logger.info(' '.join(cmd_list[band]))
 
@@ -112,7 +112,7 @@ class Job(BaseJob):
         bkline  = self.ctx.get('breakline',BKLINE)
         # The file where we'll write the commands
         cmdfile = fh.get_psfex_cmd_file(self.input.tiledir, self.input.tilename)
-        self.logger.info("# Will write psfex call to: %s" % cmdfile)
+        self.logger.info("Will write psfex call to: %s" % cmdfile)
         with open(cmdfile, 'w') as fid:
             for band in self.ctx.dBANDS:
                 fid.write(bkline.join(cmd_list[band])+'\n')
@@ -123,21 +123,21 @@ class Job(BaseJob):
     def runpsfex(self,cmd_list):
 
         t0 = time.time()
-        self.logger.info("# Will proceed to run the psfex call now:")
+        self.logger.info("Will proceed to run the psfex call now:")
         logfile = fh.get_sexpsf_log_file(self.input.tiledir, self.input.tilename)
         log = open(logfile,"w")
-        self.logger.info("# Will write to logfile: %s" % logfile)
+        self.logger.info("Will write to logfile: %s" % logfile)
 
         for band in self.ctx.dBANDS:
             t1 = time.time()
             cmd  = ' '.join(cmd_list[band])
-            self.logger.info("# Executing psfex for BAND:%s" % band)
-            self.logger.info("# %s " % cmd)
+            self.logger.info("Executing psfex for BAND:%s" % band)
+            self.logger.info("%s " % cmd)
             status = subprocess.call(cmd,shell=True,stdout=log, stderr=log)
             if status > 0:
                 raise RuntimeError("\n***\nERROR while running psfex, check logfile: %s\n***" % logfile)
-            self.logger.info("# Done band %s in %s" % (band,elapsed_time(t1)))
-        self.logger.info("# Total psfex time %s" % elapsed_time(t0))
+            self.logger.info("Done band %s in %s" % (band,elapsed_time(t1)))
+        self.logger.info("Total psfex time %s" % elapsed_time(t0))
         return
 
     def get_psfex_parameter_set(self,**kwargs):
@@ -157,7 +157,7 @@ class Job(BaseJob):
         
         """ Build the psfex call that runs psfex on coadd images and detection"""
 
-        self.logger.info('# assembling commands for psfex call')
+        self.logger.info('assembling commands for psfex call')
 
         # Sortcuts for less typing
         tiledir  = self.input.tiledir
@@ -193,12 +193,12 @@ class Job(BaseJob):
     def cleanup_PSFcats(self,execute=False):
 
         for BAND in self.ctx.dBANDS:
-            print "# Cleaning up %s" % self.ctx.psfcat[BAND]
+            self.logger.info("Cleaning up %s" % self.ctx.psfcat[BAND])
             if execute:
                 try:
                     os.remove(self.ctx.psfcat[BAND])
                 except:
-                    print "# Warning: cannot remove %s" % self.ctx.psfcat[BAND]
+                    self.logger.info("Warning: cannot remove %s" % self.ctx.psfcat[BAND])
         return
 
 
