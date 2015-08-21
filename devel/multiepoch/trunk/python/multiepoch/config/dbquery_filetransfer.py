@@ -3,8 +3,6 @@ A mojo configuration for the
 
 MULTIEPOCH PIPELINE
 
-to run the database queries and the filetransfer if necessary.
-
 
 How to Run
 ```````````
@@ -20,9 +18,9 @@ $ setup -r -v .
 ```
 
 from the multiepoch trunk directory after svn checkout
-then you can run this pipeline from anywhere by executing
+you can then run this pipeline from anywhere by executing
 
-$ mojo run_config multiepoch.config.dbquery_filetransfer
+$ mojo run_config multiepoch.config.full_pipeline
 
 Any of the parameters specified in this config file can be overwritten from
 the command line call using the --ARGUMENTNAME ARGUMENTVALUE syntax.
@@ -32,16 +30,7 @@ the python path, edit it and run your pipeline specification by executing
 
 $ mojo run_config my_python_package.my_pipeline_config 
 
-'''
-
-import os
-
-# TOP LEVEL CONFIGURATION
-# -----------------------------------------------------------------------------
-
-tilename = 'DES2246-4457'
-
-'''
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 available tiles for testing.
 felipe, april 4, 2015
@@ -64,15 +53,20 @@ tiles_ElGordo = ['DES0105-4831',
 
 '''
 
+import os
+
+
+# TOP LEVEL CONFIGURATION
+# -----------------------------------------------------------------------------
+
+tilename = 'DES2246-4457'
+
 jobs = [
-        #'multiepoch.tasks.setup_paths',
         'multiepoch.tasks.query_tileinfo',
-        #'multiepoch.tasks.set_tile_directory',
         'multiepoch.tasks.find_ccds_in_tile',
-        # alternatively to running the 3 tasks you can also run the single job
-        # below
-#       'multiepoch.tasks.query_database',
+
         'multiepoch.tasks.plot_ccd_corners_destile',
+
         'multiepoch.tasks.get_fitsfiles',
         ]
 
@@ -80,23 +74,48 @@ jobs = [
 # SETTING UP THE PATHS
 # -----------------------------------------------------------------------------
 
-# for default standalone applications we define one writeable root directory
-# this directory can be set to be the users home dir, nothing will directly be
-# written into here but into subdirectories herein only ..
-# in docker containers you will want to have this directory be a mounted volume
-MULTIEPOCH_ROOT = os.path.abspath('/MULTIEPOCH_ROOT')
+# Only the REQUIRED PIPELINE PARAMETERS local_archive, local_weights and
+# tiledir have to be set to run the pipeline. They CAN BE SET INDEPENDENTLY.
+# MULTIEPOCH_ROOT and outputpath are simply supportive, non-required
+# organisational variables.
 
-LOCAL_ARCHIVE = os.path.join(MULTIEPOCH_ROOT, 'LOCAL_DESAR')
+# MULTIEPOCH_ROOT :: not required organizational support variable
+# For default standalone applications we define one writeable root directory.
+# In docker containers you will want to have this directory to be a mounted
+# volume.
+# Required permissions for the executing user: writing
+#MULTIEPOCH_ROOT = os.path.abspath('/MULTIEPOCH_ROOT')
+MULTIEPOCH_ROOT = os.path.join(os.environ['HOME'],'MULTIEPOCH_ROOT')
+
+# local_archive :: REQUIRED PIPELINE PARAMETER !!
+# The path where your input archive images are located: Either they are already
+# present here or will be transferred to here using the get_fitsfiles task.
+# Required permissions for the executing user: only reading required
+local_archive = os.path.join(MULTIEPOCH_ROOT, 'LOCAL_DESAR')
+
+# local_weigths :: REQUIRED PIPELINE PARAMETER !!
+# The weights archive is a mirrored directory structure of the local_archive
+# and can be chosen to be the same as local_archive in case you would like your
+# weights files to end up in the 'archive'.
+# Required permissions for the executing user: writing
+local_weights = os.path.join(MULTIEPOCH_ROOT, 'LOCAL_WEIGHTS')
+
+# outputpath :: not required organizational support variable
+# Required permissions for the executing user: writing
 outputpath = os.path.join(MULTIEPOCH_ROOT, 'TILEBUILDER') 
 
-# the directory where ultimately all output will end up
+# tiledir :: REQUIRED PIPELINE PARAMETER !!
+# The directory where ultimately all output will end up for the tile being
+# produced here.
+# Required permissions for the executing user: writing
 tiledir = os.path.join(outputpath, tilename)
 
-# at the end of a run of this task we persist some of the ctx to be able to
-# reuse the generated information in later executable runs
-#json_dump_file = os.path.join(tiledir, tilename+'_tilename_tileinfo.json')
-#dump_var_list = ['tilename', 'tileinfo', 'assoc',]
 
+# LOGGING
+# -----------------------------------------------------------------------------
+stdoutloglevel = 'DEBUG'
+fileloglevel = 'DEBUG'
+logfile = os.path.join(tiledir, tilename+'_full_pipeline.log')
 
 
 # JOB SPECIFIC CONFIGURATION
@@ -107,25 +126,15 @@ coaddtile_table = 'felipe.coaddtile_new'
 db_section = 'db-destest'
 desservicesfile = '/MULTIEPOCH_ROOT/.desservices.ini'
 
-# set_tile_directory >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-# -
 
 # find_ccds_in_tile >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 tagname = 'Y2T_FIRSTCUT'
 exec_name = 'immask'
 
+
 # plot_ccd_corners_destile >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-# no extra config
+# -
+
 
 # get_fitsfiles >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-local_archive = LOCAL_ARCHIVE 
-# FIXME !!
-filepath_local = LOCAL_ARCHIVE 
 http_section = 'http-desarchive'
-
-
-# LOGGING
-# -----------------------------------------------------------------------------
-stdoutloglevel = 'DEBUG'
-fileloglevel = 'DEBUG'
-logfile = os.path.join(tiledir, tilename+'_dbquery_filetransfer.log')
