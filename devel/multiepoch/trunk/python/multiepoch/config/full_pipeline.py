@@ -139,7 +139,7 @@ logfile = os.path.join(tiledir, tilename+'_full_pipeline.log')
 # query_tileinfo >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 coaddtile_table = 'felipe.coaddtile_new'
 db_section = 'db-destest'
-desservicesfile = '/MULTIEPOCH_ROOT/.desservices.ini'
+desservicesfile = os.path.join(MULTIEPOCH_ROOT, '.desservices.ini')
 
 
 # find_ccds_in_tile >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
