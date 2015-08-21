@@ -53,8 +53,7 @@ jobs = [
         'multiepoch.tasks.get_fitsfiles',
 
         'multiepoch.tasks.make_SWarp_weights',
-        #'multiepoch.tasks.call_SWarp_michael_dev',
-        'multiepoch.tasks.call_SWarp_CustomWeights',
+        'multiepoch.tasks.call_SWarp',
         'multiepoch.tasks.call_Stiff',
         'multiepoch.tasks.call_SExpsf',
         'multiepoch.tasks.call_psfex',
@@ -66,7 +65,7 @@ jobs = [
 # SETTING UP THE PATHS
 # -----------------------------------------------------------------------------
 
-# Only the REQUIRED PIPELINE PARAMETERS local_archive, weights_archive and
+# Only the REQUIRED PIPELINE PARAMETERS local_archive, local_weights and
 # tiledir have to be set to run the pipeline. They CAN BE SET INDEPENDENTLY.
 # MULTIEPOCH_ROOT and outputpath are simply supportive, non-required
 # organisational variables.
@@ -85,12 +84,12 @@ MULTIEPOCH_ROOT = os.path.join(os.environ['HOME'],'MULTIEPOCH_ROOT')
 # Required permissions for the executing user: only reading required
 local_archive = os.path.join(MULTIEPOCH_ROOT, 'LOCAL_DESAR')
 
-# weights_archive :: REQUIRED PIPELINE PARAMETER !!
+# local_weigths :: REQUIRED PIPELINE PARAMETER !!
 # The weights archive is a mirrored directory structure of the local_archive
 # and can be chosen to be the same as local_archive in case you would like your
 # weights files to end up in the 'archive'.
 # Required permissions for the executing user: writing
-local_weight = os.path.join(MULTIEPOCH_ROOT, 'LOCAL_WEIGHTS')
+local_weights = os.path.join(MULTIEPOCH_ROOT, 'LOCAL_WEIGHTS')
 
 # outputpath :: not required organizational support variable
 # Required permissions for the executing user: writing
@@ -140,7 +139,7 @@ http_section = 'http-desarchive'
 # make_SWarp_weights >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 clobber_weights = False
 MP_weight = NCPU
-weights_execution_mode = 'execute'
+weights_execution_mode = EXECUTION_MODE
 
 
 # call_SWarp >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
@@ -151,3 +150,34 @@ swarp_parameters = {
     }
 DETEC_COMBINE_TYPE = "CHI-MEAN"
 swarp_execution_mode = EXECUTION_MODE
+
+
+# call_Stiff >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+stiff_params = {
+    "NTHREADS"  : args.nthreads,
+    }
+stiff_execution_mode = EXECUTION_MODE
+
+
+# call_SExpsf >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+SExpsf_execution_mode = EXECUTION_MODE
+MP_SEx = NCPU
+
+
+# call_psfex >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+psfex_execution_mode = EXECUTION_MODE
+cleanupPSFcats = False
+
+
+# call_SExDual >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+SExDual_parameters = {
+    "MAG_ZEROPOINT":30,
+    }
+SExDual_execution_mode = EXECUTION_MODE
+MP_SEx = NCPU
+
+
+# make_MEFs >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+clobber_MEF = False
+MEF_execution_mode = EXECUTION_MODE
+cleanupSWarp = False
