@@ -3,8 +3,6 @@ A mojo configuration for the
 
 MULTIEPOCH PIPELINE
 
-to run the database queries and the filetransfer if necessary.
-
 
 How to Run
 ```````````
@@ -31,6 +29,27 @@ You can also copy or import this configuration file into any python package on
 the python path, edit it and run your pipeline specification by executing
 
 $ mojo run_config my_python_package.my_pipeline_config 
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+available tiles for testing.
+felipe, april 4, 2015
+
+tiles_RXJ2248 = ['DES2251-4331',
+                    'DES2251-4414',
+                    'DES2254-4457',
+                    'DES2247-4331',
+                    'DES2247-4414',
+                    'DES2246-4457',
+                    'DES2250-4457']
+
+tiles_ElGordo = ['DES0105-4831',
+                    'DES0059-4957',
+                    'DES0103-4957',
+                    'DES0058-4914',
+                    'DES0102-4914',
+                    'DES0106-4914',
+                    'DES0101-4831']
 
 '''
 
