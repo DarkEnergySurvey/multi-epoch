@@ -223,6 +223,10 @@ class Job(BaseJob):
                                                      self.ctx.root_https,
                                                      logger=self.logger)
 
+        if self.input.assoc_json != "":
+            self.write_assoc_json(self.input.assoc_json)
+
+
     # -------------------------------------------------------------------------
 
     @staticmethod
