@@ -284,11 +284,9 @@ class Job(BaseJob):
 
         self.logger.info("Writing CCDS information to: %s" % assoc_jsonfile)
         dict_assoc = { name: self.ctx.assoc[name].tolist() for name in names }                         
-        o = open(assoc_jsonfile,"w")
-        # Put in the proper container
         jsondict = {'assoc': dict_assoc}
-        o.write(json.dumps(jsondict,sort_keys=False,indent=4))
-        o.close()
+	with open(assoc_jsonfile,"w") as jfi:
+	    jfi.write(json.dumps(jsondict,sort_keys=False,indent=4))
         return
 
     def __str__(self):
