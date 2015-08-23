@@ -98,7 +98,7 @@ local_archive = os.path.join(MULTIEPOCH_ROOT, 'LOCAL_DESAR')
 # and can be chosen to be the same as local_archive in case you would like your
 # weights files to end up in the 'archive'.
 # Required permissions for the executing user: writing
-local_weights = os.path.join(MULTIEPOCH_ROOT, 'LOCAL_WEIGHTS')
+local_weight_archive = os.path.join(MULTIEPOCH_ROOT, 'LOCAL_WEIGHTS')
 
 # outputpath :: not required organizational support variable
 # Required permissions for the executing user: writing
@@ -121,7 +121,7 @@ logfile = os.path.join(tiledir, tilename+'_dbquery_filetransfer.log')
 # CTX DUMP 
 # -----------------------------------------------------------------------------
 json_dump_file = os.path.join(tiledir, 'ctx', tilename+'_dbquery_filetransfer.json')
-dump_var_list = ['tilename', 'tileinfo', 'local_archive', 'local_weights', 
+dump_var_list = ['tilename', 'tileinfo', 'local_archive', 'local_weight_archive', 
 			'tiledir', ]
 
 
@@ -138,6 +138,7 @@ desservicesfile = os.path.join(MULTIEPOCH_ROOT, '.desservices.ini')
 # find_ccds_in_tile >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 tagname = 'Y2T_FIRSTCUT'
 exec_name = 'immask'
+assoc_json = os.path.join(tiledir, 'ctx', tilename+'_assoc.json')
 
 
 # plot_ccd_corners_destile >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
