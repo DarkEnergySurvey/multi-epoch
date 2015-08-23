@@ -115,7 +115,15 @@ tiledir = os.path.join(outputpath, tilename)
 # -----------------------------------------------------------------------------
 stdoutloglevel = 'DEBUG'
 fileloglevel = 'DEBUG'
-logfile = os.path.join(tiledir, tilename+'_full_pipeline.log')
+logfile = os.path.join(tiledir, tilename+'_dbquery_filetransfer.log')
+
+
+# CTX DUMP 
+# -----------------------------------------------------------------------------
+json_dump_file = os.path.join(tiledir, 'ctx', tilename+'_dbquery_filetransfer.json')
+dump_var_list = ['tilename', 'tileinfo', 'local_archive', 'local_weights', 
+			'tiledir', ]
+
 
 
 # JOB SPECIFIC CONFIGURATION
