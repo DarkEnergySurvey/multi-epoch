@@ -3,8 +3,6 @@ A mojo configuration for the
 
 MULTIEPOCH PIPELINE
 
-to run the database queries and the filetransfer if necessary.
-
 
 How to Run
 ```````````
@@ -41,22 +39,25 @@ import os
 
 tilename = 'DES2246-4457'
 
-# WARNING !!
+# WARNING !! ------------------------------------------------------------------
 # we need to load tileinfo and tilename from a ctx dump
 # have a look at the dbquery_filetransfer.py config to see how to produce it!
-DATA_PATH = os.path.join(os.environ['HOME'], 'DESDM', 'MULTIEPOCH_DATA') 
-json_load_file = os.path.join(DATA_PATH, 'CTXDUMP',
-        tilename+'_tilename_tileinfo.json')
+MULTIEPOCH_ROOT = os.path.join(os.environ['HOME'], 'MULTIEPOCH_ROOT')
+outputpath = os.path.join(MULTIEPOCH_ROOT, 'TILEBUILDER') 
+tiledir = os.path.join(outputpath, tilename)
+json_load_file = os.path.join(tiledir, 'ctx',
+        tilename+'_dbquery_filetransfer.json')
 
 EXECUTION_MODE = 'execute' # alternatively : 'tofile', 'execute', 'dryrun'
 
 jobs = [
         'multiepoch.tasks.make_SWarp_weights',
-#       'multiepoch.tasks.call_SWarp_CustomWeights',
-#       'multiepoch.tasks.call_Stiff',
-#       'multiepoch.tasks.call_SExpsf',
-#       'multiepoch.tasks.call_psfex',
-#       'multiepoch.tasks.call_SExDual',
+        'multiepoch.tasks.call_SWarp',
+        'multiepoch.tasks.call_Stiff',
+        'multiepoch.tasks.call_SExpsf',
+        'multiepoch.tasks.call_psfex',
+        'multiepoch.tasks.call_SExDual',
+        'multiepoch.tasks.make_MEFs',
         ]
 
 
@@ -66,8 +67,14 @@ NCPU = 8
 
 # IMPORTS 
 # -----------------------------------------------------------------------------
-from .dbquery_filetransfer import local_archive, outputpath
+#from .dbquery_filetransfer import local_archive, outputpath
 
+
+# LOGGING
+# -----------------------------------------------------------------------------
+stdoutloglevel = 'DEBUG'
+fileloglevel = 'DEBUG'
+logfile = os.path.join(tiledir, tilename+'_full_pipeline.log')
 
 
 # JOB SPECIFIC CONFIGURATION
@@ -76,8 +83,10 @@ from .dbquery_filetransfer import local_archive, outputpath
 # make_SWarp_weights >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 clobber_weights = False
 MP_weight = NCPU
+weights_execution_mode = EXECUTION_MODE
 
-# call_SWarp_CustomWeights >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+
+# call_SWarp >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 swarp_parameters = {
     "NTHREADS"     : NTHREADS,
     "COMBINE_TYPE" : "AVERAGE",    
@@ -86,22 +95,23 @@ swarp_parameters = {
 DETEC_COMBINE_TYPE = "CHI-MEAN"
 swarp_execution_mode = EXECUTION_MODE
 
+
 # call_Stiff >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 stiff_params = {
-    "NTHREADS"  : NTHREADS,
-    "COPYRIGHT" : "NCSA/DESDM",
-    "WRITE_XML" : "N",
+    "NTHREADS"  : args.nthreads,
     }
 stiff_execution_mode = EXECUTION_MODE
 
-# call_Stiff >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+
+# call_SExpsf >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 SExpsf_execution_mode = EXECUTION_MODE
+MP_SEx = NCPU
+
 
 # call_psfex >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-psfex_parameters = {
-    "NTHREADS"  : NTHREADS,
-    }
 psfex_execution_mode = EXECUTION_MODE
+cleanupPSFcats = False
+
 
 # call_SExDual >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 SExDual_parameters = {
@@ -111,8 +121,7 @@ SExDual_execution_mode = EXECUTION_MODE
 MP_SEx = NCPU
 
 
-# LOGGING
-# -----------------------------------------------------------------------------
-stdoutloglevel = 'DEBUG'
-fileloglevel = 'DEBUG'
-logfile = os.path.join(DATA_PATH, 'LOG', tilename+'.log')
+# make_MEFs >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+clobber_MEF = False
+MEF_execution_mode = EXECUTION_MODE
+cleanupSWarp = False
