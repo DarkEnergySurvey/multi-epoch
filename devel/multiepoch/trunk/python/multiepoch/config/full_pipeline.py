@@ -173,7 +173,7 @@ swarp_execution_mode = EXECUTION_MODE
 
 # call_Stiff >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 stiff_params = {
-    "NTHREADS"  : args.nthreads,
+    "NTHREADS"  : NTHREADS,
     }
 stiff_execution_mode = EXECUTION_MODE
 
