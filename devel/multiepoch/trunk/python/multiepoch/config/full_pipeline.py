@@ -84,7 +84,7 @@ jobs = [
 # SETTING UP THE PATHS
 # -----------------------------------------------------------------------------
 
-# Only the REQUIRED PIPELINE PARAMETERS local_archive, local_weights and
+# Only the REQUIRED PIPELINE PARAMETERS local_archive, local_weight_archive and
 # tiledir have to be set to run the pipeline. They CAN BE SET INDEPENDENTLY.
 # MULTIEPOCH_ROOT and outputpath are simply supportive, non-required
 # organisational variables.
@@ -108,7 +108,7 @@ local_archive = os.path.join(MULTIEPOCH_ROOT, 'LOCAL_DESAR')
 # and can be chosen to be the same as local_archive in case you would like your
 # weights files to end up in the 'archive'.
 # Required permissions for the executing user: writing
-local_weights = os.path.join(MULTIEPOCH_ROOT, 'LOCAL_WEIGHTS')
+local_weight_archive = os.path.join(MULTIEPOCH_ROOT, 'LOCAL_WEIGHTS')
 
 # outputpath :: not required organizational support variable
 # Required permissions for the executing user: writing
