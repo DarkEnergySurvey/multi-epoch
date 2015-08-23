@@ -47,6 +47,9 @@ outputpath = os.path.join(MULTIEPOCH_ROOT, 'TILEBUILDER')
 tiledir = os.path.join(outputpath, tilename)
 json_load_file = os.path.join(tiledir, 'ctx',
         tilename+'_dbquery_filetransfer.json')
+assoc_json = os.path.join(tiledir, 'ctx',
+        tilename+'_assoc.json')
+
 
 EXECUTION_MODE = 'execute' # alternatively : 'tofile', 'execute', 'dryrun'
 
@@ -74,7 +77,7 @@ NCPU = 8
 # -----------------------------------------------------------------------------
 stdoutloglevel = 'DEBUG'
 fileloglevel = 'DEBUG'
-logfile = os.path.join(tiledir, tilename+'_full_pipeline.log')
+logfile = os.path.join(tiledir, tilename+'_executable_calls.log')
 
 
 # JOB SPECIFIC CONFIGURATION
@@ -98,7 +101,7 @@ swarp_execution_mode = EXECUTION_MODE
 
 # call_Stiff >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 stiff_params = {
-    "NTHREADS"  : args.nthreads,
+    "NTHREADS"  : NTHREADS, 
     }
 stiff_execution_mode = EXECUTION_MODE
 
