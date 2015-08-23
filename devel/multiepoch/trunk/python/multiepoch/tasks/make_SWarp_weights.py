@@ -33,6 +33,8 @@ class Job(BaseJob):
         assoc = Dict(None,help="The Dictionary containing the association information.",argparse=False)
         assoc_file = CUnicode('',help="Input association file with CCDs information",input_file=True,
                               argparse={ 'argtype': 'positional', })
+        assoc_json = CUnicode('',help="Input association file with CCDs information",input_file=True,
+                              argparse=False)
 
         # Optional inputs -- postional arguments
         clobber_weights  = Bool(False, help="Cloober the existing custom weight files.")
