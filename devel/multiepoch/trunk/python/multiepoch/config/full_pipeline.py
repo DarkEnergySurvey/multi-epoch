@@ -61,7 +61,7 @@ import os
 
 tilename = 'DES2246-4457'
 
-EXECUTION_MODE = 'tofile'
+EXECUTION_MODE = 'execute'
 
 jobs = [
         'multiepoch.tasks.query_tileinfo',
