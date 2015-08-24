@@ -24,7 +24,8 @@ import pandas as pd
 class Job(BaseJob):
 
     class Input(IO):
-        """ Create Custom inputs Weights for SWarp
+        """
+        Create Custom inputs Weights for SWarp
         """
     
         # Required inputs to run the job (in ctx, after loading files)
