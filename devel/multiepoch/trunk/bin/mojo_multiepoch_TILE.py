@@ -16,7 +16,7 @@ def cmdline():
     # -----------------------------------------------------------------------------
     # The only REQUIRED PIPELINE PARAMETERS are:
     #  local_archive
-    #  weights_archive 
+    #  local_weight_archive 
     #  tiledir
     # and they have to be set to run the pipeline. They CAN BE SET INDEPENDENTLY.
     #
@@ -31,9 +31,9 @@ def cmdline():
         print "# Warning $HOME is not defined, will use ./ instead"
         MULTIEPOCH_ROOT = os.path.abspath('/MULTIEPOCH_ROOT')
 
-    outputpath      = os.path.join(MULTIEPOCH_ROOT, 'TILEBUILDER') 
-    local_archive   = os.path.join(MULTIEPOCH_ROOT, 'LOCAL_ARCHIVE')
-    local_weights   = os.path.join(MULTIEPOCH_ROOT, 'LOCAL_WEIGHTS')
+    outputpath           = os.path.join(MULTIEPOCH_ROOT, 'TILEBUILDER') 
+    local_archive        = os.path.join(MULTIEPOCH_ROOT, 'LOCAL_ARCHIVE')
+    local_weight_archive = os.path.join(MULTIEPOCH_ROOT, 'LOCAL_WEIGHTS')
 
     import argparse
     parser = argparse.ArgumentParser(description="Runs the DESDM multi-epoch pipeline")
@@ -65,7 +65,7 @@ def cmdline():
     # Optional path-related arguments
     parser.add_argument("--local_archive", action="store", default=local_archive,
                         help="Name of local archive repository [default: $MULTIEPOCH_ROOT/LOCAL_ARCHIVE]")
-    parser.add_argument("--local_weights", action="store", default=local_weights,
+    parser.add_argument("--local_weight_archive", action="store", default=local_weight_archive,
                         help="Name of local archive repository [default: $MULTIEPOCH_ROOT/LOCAL_WEIGHTS]")
     parser.add_argument("--outputpath", action="store",default=outputpath,
                         help="Path where we will write the outputs [default: $MULTIEPOCH_ROOT/TILEBUILDER]")
@@ -113,7 +113,7 @@ if __name__ == '__main__':
 
     # 5 Create custom weights for SWarp (optional)
     if args.custom_weights:
-        jo.run_job('multiepoch.tasks.make_SWarp_weights',clobber_weights=False, MP_weight=args.ncpu, local_weights=args.local_weights,weights_execution_mode=args.runmode)
+        jo.run_job('multiepoch.tasks.make_SWarp_weights',clobber_weights=False, MP_weight=args.ncpu, local_weight_archive=args.local_weight_archive,weights_execution_mode=args.runmode)
 
     # 6. The SWarp call 
     swarp_params={
