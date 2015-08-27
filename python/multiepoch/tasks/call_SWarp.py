@@ -39,8 +39,10 @@ class Job(BaseJob):
                               argparse={ 'argtype': 'positional', })
 
         # 2. Geometry and tilename
-        tileinfo = Dict(None, help="The json file with the tile information",argparse=False)
-        tilename = Unicode(None, help="The Name of the Tile Name to query",argparse=False)
+        tileinfo    = Dict(None, help="The json file with the tile information",argparse=False)
+        tilename    = Unicode(None, help="The Name of the Tile Name to query",argparse=False)
+        tilename_fh = CUnicode('',  help="Alternative tilename handle for unique identification default=TILENAME")
+        
         tiledir  = Unicode(None, help="The output directory for this tile")
         tile_geom_input_file = CUnicode('',help='The json file with the tile information',input_file=True,
                                         argparse={ 'argtype': 'positional', })
@@ -65,6 +67,7 @@ class Job(BaseJob):
         fileloglevel   = CUnicode('INFO', help="The level with which logging info is written to the logfile",
                                   argparse={'choices': ('DEBUG','INFO','CRITICAL')} )
 
+
         # Function to read ASCII/panda framework file (instead of json)
         # Comment if you want to use json files
         def _read_assoc_file(self):
@@ -77,6 +80,9 @@ class Job(BaseJob):
             if self.custom_weights and (self.local_archive == 'None' or self.local_weight_archive == 'None'):
                 mess = '\n\tIf --custom_weights, then both --local_archive and --local_weight_archive must be defined'
                 raise IO_ValidationError(mess)
+
+            if self.tilename_fh == '':
+                self.tilename_fh = self.tilename
 
         def _argparse_postproc_swarp_parameters(self, v):
             return utils.arglist2dict(v, separator='=')
@@ -94,6 +100,7 @@ class Job(BaseJob):
         self.ctx.assoc  = utils.dict2arrays(self.ctx.assoc)
         # Get the BANDs information in the context if they are not present
         self.ctx.update(contextDefs.get_BANDS(self.ctx.assoc, detname='det',logger=self.logger))
+
         
     def run(self):
 
@@ -160,12 +167,12 @@ class Job(BaseJob):
             flxscale      = 10.0**(0.4*(self.input.magbase - magzero))
 
             # writing the lists to files using tableio.put_data()
-            tableio.put_data(fh.get_sci_list_file(self.input.tiledir, self.input.tilename, BAND),(swarp_inputs,),  format='%s[0]')
-            tableio.put_data(fh.get_wgt_list_file(self.input.tiledir, self.input.tilename, BAND),(swarp_inputs,),  format='%s[2]')
-            tableio.put_data(fh.get_flx_list_file(self.input.tiledir, self.input.tilename, BAND),(flxscale,), format='%s')
+            tableio.put_data(fh.get_sci_list_file(self.input.tiledir, self.input.tilename_fh, BAND),(swarp_inputs,),  format='%s[0]')
+            tableio.put_data(fh.get_wgt_list_file(self.input.tiledir, self.input.tilename_fh, BAND),(swarp_inputs,),  format='%s[2]')
+            tableio.put_data(fh.get_flx_list_file(self.input.tiledir, self.input.tilename_fh, BAND),(flxscale,), format='%s')
             if self.input.custom_weights:
                 swarp_weights = self.ctx.assoc['FILEPATH_LOCAL_WGT'][idx]
-                tableio.put_data(fh.get_swg_list_file(self.input.tiledir, self.input.tilename, BAND),(swarp_weights,), format='%s')
+                tableio.put_data(fh.get_swg_list_file(self.input.tiledir, self.input.tilename_fh, BAND),(swarp_weights,), format='%s')
         return
 
     # ASSEMBLE THE COMMANDS
@@ -176,9 +183,9 @@ class Job(BaseJob):
         """
 
         # Sortcuts for less typing
-        tiledir  = self.input.tiledir
-        tilename = self.input.tilename
-        BAND     = self.ctx.detBAND # short cut
+        tiledir     = self.input.tiledir
+        tilename_fh = self.input.tilename_fh
+        BAND        = self.ctx.detBAND # short cut
 
         self.logger.info('# assembling commands for SWarp call')
 
@@ -196,26 +203,26 @@ class Job(BaseJob):
 
             
             # FSCALE_DEFAULT is the same for two swarp calls
-            pars["FSCALE_DEFAULT"] = "@%s" % fh.get_flx_list_file(tiledir,tilename, BAND)
+            pars["FSCALE_DEFAULT"] = "@%s" % fh.get_flx_list_file(tiledir,tilename_fh, BAND)
 
             # 1. The First SWarp call for the Science image -- depending on the mode
             if type=='sci': # Create science image using custom weight -- keep SCI, trash WGT
-                pars["IMAGEOUT_NAME"]  = "%s"  % fh.get_sci_fits_file(tiledir,tilename, BAND) # sci.fits
-                pars["WEIGHTOUT_NAME"] = "%s"  % fh.get_WGT_fits_file(tiledir,tilename, BAND, type='tmp_wgt') # wgt_tmp.fits
-                pars["WEIGHT_IMAGE"]   = "@%s" % fh.get_swg_list_file(tiledir,tilename, BAND) # swg.list
+                pars["IMAGEOUT_NAME"]  = "%s"  % fh.get_sci_fits_file(tiledir,tilename_fh, BAND) # sci.fits
+                pars["WEIGHTOUT_NAME"] = "%s"  % fh.get_WGT_fits_file(tiledir,tilename_fh, BAND, type='tmp_wgt') # wgt_tmp.fits
+                pars["WEIGHT_IMAGE"]   = "@%s" % fh.get_swg_list_file(tiledir,tilename_fh, BAND) # swg.list
             elif type=='wgt': # Create science image using normal weight -- trash SCI, keep WGT
-                pars["IMAGEOUT_NAME"]  = "%s"  % fh.get_SCI_fits_file(tiledir,tilename, BAND, type='tmp_sci')  # tmp_sci.fits
-                pars["WEIGHTOUT_NAME"] = "%s"  % fh.get_wgt_fits_file(tiledir,tilename, BAND) # wgt.fits
-                pars["WEIGHT_IMAGE"]   = "@%s" % fh.get_wgt_list_file(tiledir,tilename, BAND) # wgt.list
+                pars["IMAGEOUT_NAME"]  = "%s"  % fh.get_SCI_fits_file(tiledir,tilename_fh, BAND, type='tmp_sci')  # tmp_sci.fits
+                pars["WEIGHTOUT_NAME"] = "%s"  % fh.get_wgt_fits_file(tiledir,tilename_fh, BAND) # wgt.fits
+                pars["WEIGHT_IMAGE"]   = "@%s" % fh.get_wgt_list_file(tiledir,tilename_fh, BAND) # wgt.list
             else:
-                pars["IMAGEOUT_NAME"]  = "%s"  % fh.get_sci_fits_file(tiledir,tilename, BAND) 
-                pars["WEIGHTOUT_NAME"] = "%s"  % fh.get_wgt_fits_file(tiledir,tilename, BAND)
-                pars["WEIGHT_IMAGE"]   = "@%s" % fh.get_wgt_list_file(tiledir,tilename, BAND)
+                pars["IMAGEOUT_NAME"]  = "%s"  % fh.get_sci_fits_file(tiledir,tilename_fh, BAND) 
+                pars["WEIGHTOUT_NAME"] = "%s"  % fh.get_wgt_fits_file(tiledir,tilename_fh, BAND)
+                pars["WEIGHT_IMAGE"]   = "@%s" % fh.get_wgt_list_file(tiledir,tilename_fh, BAND)
 
             # Construct the call
             cmd = []
             cmd.append(SWARP_EXE)
-            cmd.append("@%s" % fh.get_sci_list_file(tiledir,tilename, BAND))
+            cmd.append("@%s" % fh.get_sci_list_file(tiledir,tilename_fh, BAND))
             cmd.append("-c %s" % swarp_conf)
             for param,value in pars.items():
                 cmd.append("-%s %s" % (param,value))
@@ -229,20 +236,20 @@ class Job(BaseJob):
         useBANDS = list( set(self.ctx.BANDS) & set(self.input.detecBANDS) )
 
         if type=='sci': 
-            det_scilists = [ fh.get_sci_fits_file(tiledir,tilename, band) for band in useBANDS ]
-            det_wgtlists = [ fh.get_WGT_fits_file(tiledir,tilename, band,type='tmp_wgt') for band in useBANDS ]
-            pars["IMAGEOUT_NAME"]  = "%s" % fh.get_sci_fits_file(tiledir,tilename, BAND) 
-            pars["WEIGHTOUT_NAME"] = "%s" % fh.get_WGT_fits_file(tiledir,tilename, BAND,type='tmp_wgt') 
+            det_scilists = [ fh.get_sci_fits_file(tiledir,tilename_fh, band) for band in useBANDS ]
+            det_wgtlists = [ fh.get_WGT_fits_file(tiledir,tilename_fh, band,type='tmp_wgt') for band in useBANDS ]
+            pars["IMAGEOUT_NAME"]  = "%s" % fh.get_sci_fits_file(tiledir,tilename_fh, BAND) 
+            pars["WEIGHTOUT_NAME"] = "%s" % fh.get_WGT_fits_file(tiledir,tilename_fh, BAND,type='tmp_wgt') 
         elif type=='wgt':
-            det_scilists = [ fh.get_SCI_fits_file(tiledir,tilename, band,type='tmp_sci') for band in useBANDS ]
-            det_wgtlists = [ fh.get_wgt_fits_file(tiledir,tilename, band) for band in useBANDS ]
-            pars["IMAGEOUT_NAME"]  = "%s" % fh.get_SCI_fits_file(tiledir,tilename, BAND,type='tmp_sci') 
-            pars["WEIGHTOUT_NAME"] = "%s" % fh.get_wgt_fits_file(tiledir,tilename, BAND) 
+            det_scilists = [ fh.get_SCI_fits_file(tiledir,tilename_fh, band,type='tmp_sci') for band in useBANDS ]
+            det_wgtlists = [ fh.get_wgt_fits_file(tiledir,tilename_fh, band) for band in useBANDS ]
+            pars["IMAGEOUT_NAME"]  = "%s" % fh.get_SCI_fits_file(tiledir,tilename_fh, BAND,type='tmp_sci') 
+            pars["WEIGHTOUT_NAME"] = "%s" % fh.get_wgt_fits_file(tiledir,tilename_fh, BAND) 
         else:
-            det_scilists = [ fh.get_sci_fits_file(tiledir,tilename, band) for band in useBANDS ]
-            det_wgtlists = [ fh.get_wgt_fits_file(tiledir,tilename, band) for band in useBANDS ]
-            pars["IMAGEOUT_NAME"]  = "%s" % fh.get_sci_fits_file(tiledir,tilename, BAND) 
-            pars["WEIGHTOUT_NAME"] = "%s" % fh.get_wgt_fits_file(tiledir,tilename, BAND) 
+            det_scilists = [ fh.get_sci_fits_file(tiledir,tilename_fh, band) for band in useBANDS ]
+            det_wgtlists = [ fh.get_wgt_fits_file(tiledir,tilename_fh, band) for band in useBANDS ]
+            pars["IMAGEOUT_NAME"]  = "%s" % fh.get_sci_fits_file(tiledir,tilename_fh, BAND) 
+            pars["WEIGHTOUT_NAME"] = "%s" % fh.get_wgt_fits_file(tiledir,tilename_fh, BAND) 
 
 
         # The call to get the detection image
@@ -282,7 +289,7 @@ class Job(BaseJob):
 
         bkline  = self.ctx.get('breakline',BKLINE)
         # The file where we'll write the commands
-        cmdfile = fh.get_swarp_cmd_file(self.input.tiledir, self.input.tilename)
+        cmdfile = fh.get_swarp_cmd_file(self.input.tiledir, self.input.tilename_fh)
         self.logger.info("Will write SWarp call to: %s" % cmdfile)
         with open(cmdfile, mode) as fid:
             for band in self.ctx.dBANDS:
@@ -294,7 +301,7 @@ class Job(BaseJob):
     def runSWarp(self, cmd_list):
 
         # FIXME :: logfile path via dh !!
-        logfile = fh.get_swarp_log_file(self.input.tiledir, self.input.tilename)
+        logfile = fh.get_swarp_log_file(self.input.tiledir, self.input.tilename_fh)
         log = open(logfile,"w")
         self.logger.info("Will proceed to run the SWarp calls now:")
         self.logger.info("Will write to logfile: %s" % logfile)
@@ -303,7 +310,7 @@ class Job(BaseJob):
         for band in self.ctx.dBANDS:
             t1 = time.time()
             cmd  = ' '.join(cmd_list[band])
-            self.logger.info("Executing SWarp SCI for tile:%s, BAND:%s" % (self.ctx.tilename,band))
+            self.logger.info("Executing SWarp SCI for tile:%s, BAND:%s" % (self.ctx.tilename_fh,band))
             self.logger.info("%s " % cmd)
             status = subprocess.call(cmd,shell=True,stdout=log, stderr=log)
             if status > 0:
