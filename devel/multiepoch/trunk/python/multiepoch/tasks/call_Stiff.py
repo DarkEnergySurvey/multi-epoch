@@ -41,13 +41,13 @@ class Job(BaseJob):
                               argparse={ 'argtype': 'positional', })
         
         # Optional Arguments
-        tilename = Unicode(None, help="The Name of the Tile Name to query")
-        tiledir  = Unicode(None, help='The output directory for this tile')
+        tilename    = Unicode(None, help="The Name of the Tile Name to query")
+        tilename_fh = CUnicode('',  help="Alternative tilename handle for unique identification default=TILENAME")
+        tiledir     = Unicode(None, help='The output directory for this tile')
         stiff_execution_mode  = CUnicode("tofile",help="Stiff excution mode",
                                          argparse={'choices': ('tofile','dryrun','execute')})
         stiff_parameters      = Dict({},help="A list of parameters to pass to Stiff",
                                      argparse={'nargs':'+',})
-
         # Logging -- might be factored out
         stdoutloglevel = CUnicode('INFO', help="The level with which logging info is streamed to stdout",
                                   argparse={'choices': ('DEBUG','INFO','CRITICAL')} )
@@ -61,6 +61,10 @@ class Job(BaseJob):
             df = pd.read_csv(self.assoc_file,sep=' ')
             mydict['assoc'] = {col: df[col].values.tolist() for col in df.columns}
             return mydict
+
+        def _validate_conditional(self):
+            if self.tilename_fh == '':
+                self.tilename_fh = self.tilename
         
         def _argparse_postproc_stiff_parameters(self, v):
             return utils.arglist2dict(v, separator='=')
@@ -89,7 +93,7 @@ class Job(BaseJob):
         if execution_mode == 'tofile':
             bkline  = self.ctx.get('breakline',BKLINE)
             # The file where we'll write the commands
-            cmdfile = fh.get_stiff_cmd_file(self.input.tiledir, self.input.tilename)
+            cmdfile = fh.get_stiff_cmd_file(self.input.tiledir, self.input.tilename_fh)
             self.logger.info("Will write stiff call to: %s" % cmdfile)
             with open(cmdfile, 'w') as fid:
                 fid.write(bkline.join(cmd_list)+'\n')
@@ -100,13 +104,13 @@ class Job(BaseJob):
            self.logger.info(' '.join(cmd_list))
 
         elif execution_mode == 'execute':
-            logfile = fh.get_swarp_log_file(self.input.tiledir, self.input.tilename)
+            logfile = fh.get_swarp_log_file(self.input.tiledir, self.input.tilename_fh)
             log = open(logfile,"w")
             self.logger.info("Will proceed to run the stiff call now:")
             self.logger.info("Will write to logfile: %s" % logfile)
             t0 = time.time()
             cmd  = ' '.join(cmd_list)
-            self.logger.info("Executing stiff for tile:%s " % self.input.tilename)
+            self.logger.info("Executing stiff for tile:%s " % self.input.tilename_fh)
             self.logger.info("%s " % cmd)
             status = subprocess.call(cmd,shell=True,stdout=log, stderr=log)
             if status > 0:
@@ -147,7 +151,7 @@ class Job(BaseJob):
         # The update parameters set
         pars = self.get_stiff_parameter_set(**self.input.stiff_parameters)
         # Set the output name of the color tiff file
-        pars["OUTFILE_NAME"] = fh.get_color_file(self.input.tiledir, self.input.tilename)
+        pars["OUTFILE_NAME"] = fh.get_color_file(self.input.tiledir, self.input.tilename_fh)
         # The default stiff configuration file
         stiff_conf = os.path.join(os.environ['MULTIEPOCH_DIR'],'etc','default.stiff')
         
@@ -171,7 +175,7 @@ class Job(BaseJob):
         cmd_list = []
         cmd_list.append("%s" % STIFF_EXE)
         for BAND in CSET:
-            sci_fits = fh.get_sci_fits_file(self.input.tiledir,self.input.tilename,BAND)
+            sci_fits = fh.get_sci_fits_file(self.input.tiledir,self.input.tilename_fh,BAND)
             cmd_list.append( "%s" % sci_fits)
 
         cmd_list.append("-c %s" % stiff_conf)
