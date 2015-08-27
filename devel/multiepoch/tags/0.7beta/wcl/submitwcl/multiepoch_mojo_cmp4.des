@@ -1,0 +1,81 @@
+# defines my environment
+<<include ../felipe_cfg.des>>
+# Custom compute site definitions
+<<include ../custom_computesites.wcl>>       
+
+# Compute site etc
+project = FM
+target_site = descmp4felipe
+home_archive = prodbeta
+des_http_section = file-http
+
+# General multiepoch conf
+tilename         = DES2246-4457
+database_section = db-destest
+firstcut_tag     = Y2T_FIRSTCUT
+ncores           = 8
+#exec_mode        = tofile
+exec_mode        = execute
+outdir           = ./TILEBUILDER-CMP4-N8
+local_archive    = /work/devel/felipe/LOCAL_DESAR_CMP4
+clean            = "True"
+
+# Run config
+reqnum = 0002
+jira_id = ME-TEST # example 
+label = query_tileinfo,test 
+
+# Pipeline confin
+pipeline = me # used in desstat output 
+pipeprod = Y2ME # eups meta package name
+pipever = 1.0+6E # eups meta package version
+
+ops_run_dir = ${project}/${pipeline}/${tilename}-r${reqnum}/p${attnum:2}
+unitname = ${tilename}
+
+
+# because we start a python on the remote site with user
+# nobody in this test setup. we need to trick the system
+# to look for the python eggs somewhere else.
+<job_environment>
+   PYTHON_EGG_CACHE =  /cluster_scratch/users/felipe/eggs
+</job_environment>
+
+
+blocklist = multiepoch
+
+
+<block>
+    <multiepoch>
+	modulelist = me_mojo_tile
+    </multiepoch>
+</block>
+
+# me_mojo module
+<module>
+    <me_mojo_tile>
+
+        wrappername = generic.py
+
+        <exec_1>
+            execname = mojo_multiepoch_TILE.py
+	    cmd_hyphen = alldouble
+
+            <cmdline>
+                # positional arguments with _num_blabla
+                _01_tilename = ${tilename}
+                # optional arguments
+		runmode    = ${exec_mode}
+		nthreads   = ${ncores}
+		ncpu       = ${ncores}
+		outputpath = ${outdir}
+                db_section = ${database_section}
+                local_desar= ${local_archive}
+                cleanup 
+            </cmdline>
+
+        </exec_1>
+
+    </me_mojo_tile>
+</module>
+
