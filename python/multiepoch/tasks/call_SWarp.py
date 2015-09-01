@@ -85,7 +85,7 @@ class Job(BaseJob):
             if self.tilename_fh == '':
                 self.tilename_fh = self.tilename
 
-        # Hack to also accept comma-separeted input lists
+        # To also accept comma-separeted input lists
         def _argparse_postproc_doBANDS(self, v):
             return utils.parse_comma_separated_list(v)
 
