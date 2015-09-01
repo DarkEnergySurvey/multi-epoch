@@ -21,6 +21,7 @@ from multiepoch import file_handler as fh
 # JOB INTERNAL CONFIGURATION
 STIFF_EXE = 'stiff'
 BKLINE = "\\\n"
+DETNAME = 'det'
 
 class Job(BaseJob):
 
@@ -43,13 +44,20 @@ class Job(BaseJob):
                              argparse={ 'argtype': 'positional', })
         
         # Optional Arguments
-        #tilename    = Unicode(None, help="The Name of the Tile Name to query")
         tilename_fh = CUnicode('',  help="Alternative tilename handle for unique identification default=TILENAME")
         tiledir     = Unicode(None, help='The output directory for this tile')
         stiff_execution_mode  = CUnicode("tofile",help="Stiff excution mode",
                                          argparse={'choices': ('tofile','dryrun','execute')})
         stiff_parameters      = Dict({},help="A list of parameters to pass to Stiff",
                                      argparse={'nargs':'+',})
+
+        doBANDS  = List(['all'],help="BANDS to processs (default=all)",argparse={'nargs':'+',})
+        detname  = CUnicode(DETNAME,help="File label for detection image, default=%s." % DETNAME)
+        
+
+        ## TODO
+        # Define color set from input line
+
         # Logging -- might be factored out
         stdoutloglevel = CUnicode('INFO', help="The level with which logging info is streamed to stdout",
                                   argparse={'choices': ('DEBUG','INFO','CRITICAL')} )
@@ -78,7 +86,13 @@ class Job(BaseJob):
         # Re-cast the ctx.assoc as dictionary of arrays instead of lists
         self.ctx.assoc  = utils.dict2arrays(self.ctx.assoc)
         # Get the BANDs information in the context if they are not present
-        self.ctx.update(contextDefs.get_BANDS(self.ctx.assoc, detname='det',logger=self.logger))
+        self.ctx.update(contextDefs.get_BANDS(self.ctx.assoc, detname=self.ctx.detname,logger=self.logger,doBANDS=self.input.doBANDS))
+
+        # Check info OK
+        self.logger.info("BANDS:   %s" % self.ctx.BANDS)
+        self.logger.info("doBANDS: %s" % self.ctx.doBANDS)
+        self.logger.info("dBANDS:  %s" % self.ctx.dBANDS)
+
 
     def run(self):
 
@@ -139,9 +153,32 @@ class Job(BaseJob):
         stiff_parameters.update(kwargs)
         return stiff_parameters
 
+
+    def get_CSET(self):
+
+        # Define the color filter sets we'd like to use, by priority depending on what BANDS will be combined
+        cset1 = ['i','r','g']
+        cset2 = ['z','r','g']
+        cset3 = ['z','i','g']
+        cset4 = ['z','i','r']
+        csets = (cset1,cset2,cset3,cset4)
+        CSET = False
+        for color_set in csets:
+            if CSET: break
+            inset = list( set(color_set) & set(self.ctx.doBANDS))
+            if len(inset) == 3:
+                CSET = color_set
+
+        if not CSET:
+            self.logger.info("WARNING: Could not find a suitable filter set for color image")
+            return 
+        return CSET
+
     def get_stiff_cmd_list(self):
 
         """ Make a color tiff of the TILENAME using stiff"""
+
+        CSET = self.get_CSET()
 
         self.logger.info("assembling commands for Stiff call")
         
@@ -157,22 +194,6 @@ class Job(BaseJob):
         # The default stiff configuration file
         stiff_conf = os.path.join(os.environ['MULTIEPOCH_DIR'],'etc','default.stiff')
         
-        # Define the color filter sets we'd like to use, by priority depending on what BANDS will be combined
-        cset1 = ['i','r','g']
-        cset2 = ['z','r','g']
-        cset3 = ['z','i','g']
-        cset4 = ['z','i','r']
-        csets = (cset1,cset2,cset3,cset4)
-        CSET = False
-        for color_set in csets:
-            if CSET: break
-            inset = list( set(color_set) & set(self.ctx.BANDS))
-            if len(inset) == 3:
-                CSET = color_set
-
-        if not CSET:
-            self.logger.info("WARNING: Could not find a suitable filter set for color image")
-            return 
         
         cmd_list = []
         cmd_list.append("%s" % STIFF_EXE)
