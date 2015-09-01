@@ -79,9 +79,8 @@ class Job(BaseJob):
         def _argparse_postproc_stiff_parameters(self, v):
             return utils.arglist2dict(v, separator='=')
 
-        # Hack to also accept comma-separeted input lists
+        # To also accept comma-separeted input lists
         def _argparse_postproc_doBANDS(self, v):
-            print v
             return utils.parse_comma_separated_list(v)
 
     def prewash(self):
