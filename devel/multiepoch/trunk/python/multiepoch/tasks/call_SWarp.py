@@ -22,9 +22,9 @@ from mojo.jobs.base_job import BaseJob, IO, IO_ValidationError
 # JOB INTERNAL CONFIGURATION
 SWARP_EXE = 'swarp'
 DETEC_BANDS_DEFAULT = ['r', 'i', 'z']
-BKLINE = "\\\n"
 MAGBASE = 30.0
-
+DETNAME = 'det'
+BKLINE = "\\\n"
 class Job(BaseJob):
 
     class Input(IO):
@@ -51,21 +51,23 @@ class Job(BaseJob):
 
         ######################
         # Optional arguments
-        detecBANDS       = List(DETEC_BANDS_DEFAULT, help="List of bands used to build the Detection Image")
-        magbase          = CFloat(MAGBASE, help="Zero point magnitude base for SWarp, default=30.")
+        detecBANDS       = List(DETEC_BANDS_DEFAULT, help="List of bands used to build the Detection Image, default=%s." % DETEC_BANDS_DEFAULT,
+                                argparse={'nargs':'+',})
+        magbase          = CFloat(MAGBASE, help="Zero point magnitude base for SWarp, default=%s." % MAGBASE)
         weight_extension = CUnicode('_wgt',help="Weight extension for the custom weight files")
         swarp_execution_mode  = CUnicode("tofile",help="SWarp excution mode",
                                           argparse={'choices': ('tofile','dryrun','execute')})
         swarp_parameters = Dict({},help="A list of parameters to pass to SWarp",
                                 argparse={'nargs':'+',})
-        custom_weights =  Bool(False, help="Use Custom SWarp weights")
+        custom_weights   = Bool(False, help="Use Custom SWarp weights")
+        doBANDS          = List(['all'],help="BANDS to processs (default=all)",argparse={'nargs':'+',})
+        detname          = CUnicode(DETNAME,help="File label for detection image, default=%s." % DETNAME)
 
         # Logging -- might be factored out
         stdoutloglevel = CUnicode('INFO', help="The level with which logging info is streamed to stdout",
                                   argparse={'choices': ('DEBUG','INFO','CRITICAL')} )
         fileloglevel   = CUnicode('INFO', help="The level with which logging info is written to the logfile",
                                   argparse={'choices': ('DEBUG','INFO','CRITICAL')} )
-
 
         # Function to read ASCII/panda framework file (instead of json)
         # Comment if you want to use json files
@@ -88,6 +90,7 @@ class Job(BaseJob):
 
     def prewash(self):
 
+
         """ Pre-wash of inputs, some of these are only needed when run as script"""
 
         # Re-construct the names for the custom weights in case not present
@@ -98,8 +101,12 @@ class Job(BaseJob):
         # Re-cast the ctx.assoc as dictionary of arrays instead of lists
         self.ctx.assoc  = utils.dict2arrays(self.ctx.assoc)
         # Get the BANDs information in the context if they are not present
-        self.ctx.update(contextDefs.get_BANDS(self.ctx.assoc, detname='det',logger=self.logger))
+        self.ctx.update(contextDefs.get_BANDS(self.ctx.assoc, detname=self.ctx.detname,logger=self.logger,doBANDS=self.input.doBANDS))
 
+        # Check info OK
+        self.logger.info("BANDS:   %s" % self.ctx.BANDS)
+        self.logger.info("doBANDS: %s" % self.ctx.doBANDS)
+        self.logger.info("dBANDS:  %s" % self.ctx.dBANDS)
         
     def run(self):
 
@@ -120,13 +127,14 @@ class Job(BaseJob):
             cmd_list_wgt = self.get_swarp_cmd_list(type='wgt')
         else:
             cmd_list = self.get_swarp_cmd_list()
+
         
         # 3. execute cmd_list according to execution_mode 
         # ---------------------------------------------------------------------
         execution_mode = self.input.swarp_execution_mode
         if execution_mode == 'tofile':
             if self.input.custom_weights:
-                self.writeCall(cmd_list_sci,mode='a')
+                self.writeCall(cmd_list_sci,mode='w')
                 self.writeCall(cmd_list_wgt,mode='a')
             else:
                 self.writeCall(cmd_list)
@@ -158,7 +166,7 @@ class Job(BaseJob):
         """
         self.logger.info('# writing swarp input files')
 
-        for BAND in self.ctx.BANDS:
+        for BAND in self.ctx.doBANDS:
             # extracting the list
             idx = numpy.where(self.ctx.assoc['BAND'] == BAND)[0]
             magzero       = self.ctx.assoc['MAG_ZERO'][idx]
@@ -198,8 +206,7 @@ class Job(BaseJob):
         swarp_cmd = {} # To create the science image we'll keep
 
         # Loop over all filters
-        for BAND in self.ctx.BANDS:
-
+        for BAND in self.ctx.doBANDS:
             
             # FSCALE_DEFAULT is the same for two swarp calls
             pars["FSCALE_DEFAULT"] = "@%s" % fh.get_flx_list_file(tiledir,tilename_fh, BAND)
@@ -232,7 +239,7 @@ class Job(BaseJob):
         if "FSCALE_DEFAULT" in pars : del pars["FSCALE_DEFAULT"]
 
         # The Science and Weight lists matching the bands used for detection
-        useBANDS = list( set(self.ctx.BANDS) & set(self.input.detecBANDS) )
+        useBANDS = list( set(self.ctx.BANDS) & set(self.ctx.detecBANDS) )
 
         if type=='sci': 
             det_scilists = [ fh.get_sci_fits_file(tiledir,tilename_fh, band) for band in useBANDS ]
