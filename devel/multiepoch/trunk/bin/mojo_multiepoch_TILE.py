@@ -126,10 +126,10 @@ if __name__ == '__main__':
 
     # 7. Create the color images using stiff
     stiff_params={"NTHREADS"  : args.nthreads,}
-    jo.run_job('multiepoch.tasks.call_Stiff',stiff_parameters=stiff_params, stiff_execution_mode=args.runmode)
+    jo.run_job('multiepoch.tasks.call_Stiff',tilename=args.tilename, stiff_parameters=stiff_params, stiff_execution_mode=args.runmode)
 
     # 8. make the SEx psf Call
-    jo.run_job('multiepoch.tasks.call_SExpsf',SExpsf_execution_mode=args.runmode,MP_SEx=args.ncpu)
+    jo.run_job('multiepoch.tasks.call_SExpsf',tilename=args.tilename, SExpsf_execution_mode=args.runmode,MP_SEx=args.ncpu)
 
     # 9. Run  psfex
     jo.run_job('multiepoch.tasks.call_psfex',psfex_parameters={"NTHREADS": args.nthreads,},psfex_execution_mode=args.runmode,cleanupPSFcats=args.cleanup)
