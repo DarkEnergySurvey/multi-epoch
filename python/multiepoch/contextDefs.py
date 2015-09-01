@@ -6,6 +6,7 @@ Set of functions to add defintions to the context
 import querylibs 
 import utils
 import os
+import copy
 
 def create_local_archive(local_archive):
     import os
@@ -50,7 +51,7 @@ def define_weight_names(ctx):
 
     return filepath_local_weight
 
-def get_BANDS(assoc, detname='det', logger=None):
+def get_BANDS_old(assoc, detname='det', logger=None):
 
     import numpy
 
@@ -76,4 +77,42 @@ def get_BANDS(assoc, detname='det', logger=None):
     ctxext['detBAND'] ='%s' % detname
     ctxext['dBANDS'] = list(ctxext['BANDS']) + [ctxext['detBAND']]
     return ctxext 
+
+
+def get_BANDS(assoc, detname='det', logger=None, doBANDS=['all']):
+
+    import numpy
+
+    """
+    Generic function to set up the band from the context information
+    into the context in case they are missing. This function defines
+    how the BAND names are to be setup at every step into the context
+    in case they are not present
+    """
+
+    # Avoid the Unicode 'u' in detname
+    detname = detname.encode('ascii')
+
+    if logger: logger.info("Extracting the BANDs information from assoc")
+    ctxext = {}
+    ctxext['BANDS']   = numpy.unique(assoc['BAND']) 
+    ctxext['NBANDS']  = len(ctxext['BANDS'])                  
+
+    # The SWarp-combined detection image input and ouputs
+    ctxext['detBAND'] ='%s' % detname
+
+    # Logic to define the bands we want to loop over actually as defined by the --doBANDS option
+    if 'all' in doBANDS or doBANDS =='all':     # Define doBANDS as BANDS if all
+        ctxext['doBANDS'] = ctxext['BANDS']
+        ctxext['dBANDS']  = list(ctxext['doBANDS']) + [detname]
+    else:
+        ctxext['doBANDS'] = copy.copy(doBANDS) # Make copies to avoid list.remove(item)
+        ctxext['dBANDS']  = copy.copy(doBANDS)
+
+    # Safe catch Remove detname from doBANDS if present
+    if detname in ctxext['doBANDS']:
+        ctxext['doBANDS'].remove(detname)
+
+    return ctxext 
+
 
