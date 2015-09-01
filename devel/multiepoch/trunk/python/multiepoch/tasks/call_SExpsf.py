@@ -41,8 +41,9 @@ class Job(BaseJob):
                               argparse={ 'argtype': 'positional', })
 
         # Optional Arguments
-        tilename = Unicode(None, help="The Name of the Tile Name to query")
-        tiledir  = Unicode(None, help='The output directory for this tile.')
+        tilename    = Unicode(None, help="The Name of the Tile Name to query")
+        tilename_fh = CUnicode('',  help="Alternative tilename handle for unique identification default=TILENAME")
+        tiledir     = Unicode(None, help='The output directory for this tile.')
         SExpsf_execution_mode  = CUnicode("tofile",help="SEx for psfex excution mode",
                                           argparse={'choices': ('tofile','dryrun','execute')})
         SExpsf_parameters       = Dict({},help="A list of parameters to pass to SExtractor",
@@ -62,6 +63,10 @@ class Job(BaseJob):
             df = pd.read_csv(self.assoc_file,sep=' ')
             mydict['assoc'] = {col: df[col].values.tolist() for col in df.columns}
             return mydict
+        
+        def _validate_conditional(self):
+            if self.tilename_fh == '':
+                self.tilename_fh = self.tilename
 
         def _argparse_postproc_SExpsf_parameters(self, v):
             return utils.arglist2dict(v, separator='=')
@@ -108,7 +113,7 @@ class Job(BaseJob):
 
         bkline  = self.ctx.get('breakline',BKLINE)
         # The file where we'll write the commands
-        cmdfile = fh.get_sexpsf_cmd_file(self.input.tiledir, self.input.tilename)
+        cmdfile = fh.get_sexpsf_cmd_file(self.input.tiledir, self.input.tilename_fh)
         self.logger.info("Will write SExpsf call to: %s" % cmdfile)
         with open(cmdfile, 'w') as fid:
             for band in self.ctx.dBANDS:
@@ -125,7 +130,7 @@ class Job(BaseJob):
         
         # Case A -- NP=1
         if NP == 1:
-            logfile = fh.get_sexpsf_log_file(self.input.tiledir, self.input.tilename)
+            logfile = fh.get_sexpsf_log_file(self.input.tiledir, self.input.tilename_fh)
             log = open(logfile,"w")
             self.logger.info("Will write to logfile: %s" % logfile)
             for band in self.ctx.dBANDS:
@@ -145,7 +150,7 @@ class Job(BaseJob):
             logs = []
             for band in self.ctx.dBANDS:
                 cmds.append(' '.join(cmd_list[band]))
-                logfile = fh.get_sexpsf_log_file(self.input.tiledir, self.input.tilename,band)
+                logfile = fh.get_sexpsf_log_file(self.input.tiledir, self.input.tilename_fh,band)
                 logs.append(logfile)
                 self.logger.info("Will write to logfile: %s" % logfile)
                 
@@ -184,7 +189,7 @@ class Job(BaseJob):
 
         # Sortcuts for less typing
         tiledir  = self.input.tiledir
-        tilename = self.input.tilename
+        tilename_fh = self.input.tilename_fh
 
         self.logger.info("assembling commands for SEx psf call")
 
@@ -199,13 +204,13 @@ class Job(BaseJob):
         # Loop over all bands and Detection
         for BAND in self.ctx.dBANDS:
 
-            pars["WEIGHT_IMAGE"]  = "%s" % fh.get_wgt_fits_file(tiledir,tilename, BAND)
-            pars["CATALOG_NAME"] = "%s"  % fh.get_psfcat_file(tiledir,tilename, BAND)
+            pars["WEIGHT_IMAGE"]  = "%s" % fh.get_wgt_fits_file(tiledir,tilename_fh, BAND)
+            pars["CATALOG_NAME"] = "%s"  % fh.get_psfcat_file(tiledir,tilename_fh, BAND)
 
             # Build the call
             cmd = []
             cmd.append("%s" % SEX_EXE)
-            cmd.append("%s" % fh.get_sci_fits_file(tiledir,tilename, BAND) )
+            cmd.append("%s" % fh.get_sci_fits_file(tiledir,tilename_fh, BAND) )
             cmd.append("-c %s" % sex_conf)
             for param,value in pars.items():
                 cmd.append("-%s %s" % (param,value))
