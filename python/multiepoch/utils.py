@@ -89,6 +89,15 @@ def arglist2dict(inputlist,separator='='):
     return dict( [ inputlist[index].split(separator) for index, item in enumerate(inputlist) ] )
 
 
+def parse_comma_separated_list(inputlist):
+
+    try:
+        print inputlist
+        return inputlist[0].split(',')
+    except:
+        print inputlist
+        return inputlist
+
 def inDESARcluster(domain_name='cosmology.illinois.edu',logger=None):
 
     import os,re
