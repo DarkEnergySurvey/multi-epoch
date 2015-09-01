@@ -75,7 +75,8 @@ class Job(BaseJob):
         def _validate_conditional(self):
             if self.tilename_fh == '':
                 self.tilename_fh = self.tilename
-        
+
+        # To also accept comma-separeted input lists
         def _argparse_postproc_stiff_parameters(self, v):
             return utils.arglist2dict(v, separator='=')
 
