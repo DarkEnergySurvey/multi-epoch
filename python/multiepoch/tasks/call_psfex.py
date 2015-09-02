@@ -146,7 +146,7 @@ class Job(BaseJob):
 
         t0 = time.time()
         self.logger.info("Will proceed to run the psfex call now:")
-        logfile = fh.get_sexpsf_log_file(self.input.tiledir, self.input.tilename_fh)
+        logfile = fh.get_psfex_log_file(self.input.tiledir, self.input.tilename_fh)
         log = open(logfile,"w")
         self.logger.info("Will write to logfile: %s" % logfile)
 

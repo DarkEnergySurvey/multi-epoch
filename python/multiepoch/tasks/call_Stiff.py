@@ -124,7 +124,7 @@ class Job(BaseJob):
            self.logger.info(' '.join(cmd_list))
 
         elif execution_mode == 'execute':
-            logfile = fh.get_swarp_log_file(self.input.tiledir, self.input.tilename_fh)
+            logfile = fh.get_stiff_log_file(self.input.tiledir, self.input.tilename_fh)
             log = open(logfile,"w")
             self.logger.info("Will proceed to run the stiff call now:")
             self.logger.info("Will write to logfile: %s" % logfile)
