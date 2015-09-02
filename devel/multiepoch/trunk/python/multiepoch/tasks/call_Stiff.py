@@ -56,7 +56,7 @@ class Job(BaseJob):
         
 
         ## TODO
-        # Define color set from input line
+        # Define color set from command-line option
 
         # Logging -- might be factored out
         stdoutloglevel = CUnicode('INFO', help="The level with which logging info is streamed to stdout",
