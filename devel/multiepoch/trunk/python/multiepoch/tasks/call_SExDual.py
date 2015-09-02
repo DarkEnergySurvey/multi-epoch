@@ -21,6 +21,8 @@ from multiepoch import file_handler as fh
 
 # JOB INTERNAL CONFIGURATION
 SEX_EXE = 'sex'
+DETNAME = 'det'
+MAGBASE = 30.0
 BKLINE = "\\\n"
 
 class Job(BaseJob):
@@ -41,15 +43,20 @@ class Job(BaseJob):
         assoc      = Dict(None,help="The Dictionary containing the association file",argparse=False)
         assoc_file = CUnicode('',help="Input association file with CCDs information",input_file=True,
                               argparse={ 'argtype': 'positional', })
+        tilename   = Unicode(None, help="The Name of the Tile Name to query",
+                             argparse={ 'argtype': 'positional', })
         # Optional Arguments
-        tilename = Unicode(None, help="The Name of the Tile Name to query")
+        tilename_fh = CUnicode('',  help="Alternative tilename handle for unique identification default=TILENAME")
         tiledir  = Unicode(None, help='The output directory for this tile.')
 
         SExDual_execution_mode = CUnicode("tofile",help="SExtractor Dual excution mode",
                                           argparse={'choices': ('tofile','dryrun','execute')})
         SExDual_parameters     = Dict({},help="A list of parameters to pass to SExtractor", argparse={'nargs':'+',})
         MP_SEx        = CInt(1,help="run using multi-process, 0=automatic, 1=single-process [default]")
-
+        doBANDS       = List(['all'],help="BANDS to processs (default=all)",argparse={'nargs':'+',})
+        detname       = CUnicode(DETNAME,help="File label for detection image, default=%s." % DETNAME)
+        magbase       = CFloat(MAGBASE, help="Zero point magnitude base for SWarp, default=%s." % MAGBASE)
+        
         # Logging -- might be factored out
         stdoutloglevel = CUnicode('INFO', help="The level with which logging info is streamed to stdout",
                                   argparse={'choices': ('DEBUG','INFO','CRITICAL')} )
@@ -64,6 +71,14 @@ class Job(BaseJob):
             mydict['assoc'] = {col: df[col].values.tolist() for col in df.columns}
             return mydict
 
+        def _validate_conditional(self):
+            if self.tilename_fh == '':
+                self.tilename_fh = self.tilename
+
+        # To also accept comma-separeted input lists
+        def _argparse_postproc_doBANDS(self, v):
+            return utils.parse_comma_separated_list(v)
+
         def _argparse_postproc_SExDual_parameters(self, v):
             return utils.arglist2dict(v, separator='=')
 
@@ -75,7 +90,13 @@ class Job(BaseJob):
         # Re-cast the ctx.assoc as dictionary of arrays instead of lists
         self.ctx.assoc  = utils.dict2arrays(self.ctx.assoc)
         # Get the BANDs information in the context if they are not present
-        self.ctx.update(contextDefs.get_BANDS(self.ctx.assoc, detname='det',logger=self.logger))
+        self.ctx.update(contextDefs.get_BANDS(self.ctx.assoc, detname=self.ctx.detname,logger=self.logger,doBANDS=self.input.doBANDS))
+
+        # Check info OK
+        self.logger.info("BANDS:   %s" % self.ctx.BANDS)
+        self.logger.info("doBANDS: %s" % self.ctx.doBANDS)
+        self.logger.info("dBANDS:  %s" % self.ctx.dBANDS)
+
         
     def run(self):
 
@@ -108,7 +129,7 @@ class Job(BaseJob):
 
         bkline  = self.ctx.get('breakline',BKLINE)
         # The file where we'll write the commands
-        cmdfile = fh.get_SExdual_cmd_file(self.input.tiledir, self.input.tilename)
+        cmdfile = fh.get_SExdual_cmd_file(self.input.tiledir, self.input.tilename_fh)
         self.logger.info("Will write SExDual call to: %s" % cmdfile)
         with open(cmdfile, 'w') as fid:
             for band in self.ctx.BANDS:
@@ -124,7 +145,7 @@ class Job(BaseJob):
         
         # Case A -- NP=1
         if NP == 1:
-            logfile = fh.get_SExdual_log_file(self.input.tiledir, self.input.tilename)
+            logfile = fh.get_SExdual_log_file(self.input.tiledir, self.input.tilename_fh)
             log = open(logfile,"w")
             self.logger.info("Will write to logfile: %s" % logfile)
 
@@ -145,7 +166,7 @@ class Job(BaseJob):
             logs = []
             for band in self.ctx.BANDS:
                 cmds.append(' '.join(cmd_list[band]))
-                logfile = fh.get_SExdual_log_file(self.input.tiledir, self.input.tilename,band)
+                logfile = fh.get_SExdual_log_file(self.input.tiledir, self.input.tilename_fh,band)
                 logs.append(logfile)
                 self.logger.info("Will write to logfile: %s" % logfile)
                 
@@ -189,7 +210,7 @@ class Job(BaseJob):
 
         # Sortcuts for less typing
         tiledir  = self.input.tiledir
-        tilename = self.input.tilename
+        tilename_fh = self.input.tilename_fh
         self.logger.info('assembling commands for SEx Dual call')
 
         # SEx default configuration
@@ -205,14 +226,14 @@ class Job(BaseJob):
 
             # Spell out input and output names
             # From SEx/psfex
-            sexcat = fh.get_cat_file(tiledir, tilename, BAND)
-            psf    = fh.get_psf_file(tiledir, tilename, BAND)
-            seg    = fh.get_seg_file(tiledir, tilename, BAND)
+            sexcat = fh.get_cat_file(tiledir, tilename_fh, BAND)
+            psf    = fh.get_psf_file(tiledir, tilename_fh, BAND)
+            seg    = fh.get_seg_file(tiledir, tilename_fh, BAND)
             # Combined images and weights
-            sci_comb     = fh.get_sci_fits_file(tiledir, tilename, BAND)
-            sci_comb_det = fh.get_sci_fits_file(tiledir, tilename, dBAND)
-            wgt_comb     = fh.get_wgt_fits_file(tiledir, tilename, BAND)
-            wgt_comb_det = fh.get_wgt_fits_file(tiledir, tilename, dBAND)
+            sci_comb     = fh.get_sci_fits_file(tiledir, tilename_fh, BAND)
+            sci_comb_det = fh.get_sci_fits_file(tiledir, tilename_fh, dBAND)
+            wgt_comb     = fh.get_wgt_fits_file(tiledir, tilename_fh, BAND)
+            wgt_comb_det = fh.get_wgt_fits_file(tiledir, tilename_fh, dBAND)
             
             pars['MAG_ZEROPOINT']   =  30.0000 
             pars['CATALOG_NAME']    =  sexcat           
