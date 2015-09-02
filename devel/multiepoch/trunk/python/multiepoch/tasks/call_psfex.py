@@ -133,7 +133,7 @@ class Job(BaseJob):
 
         bkline  = self.ctx.get('breakline',BKLINE)
         # The file where we'll write the commands
-        cmdfile = fh.get_psfex_cmd_file(self.input.tiledir, self.input.tilename)
+        cmdfile = fh.get_psfex_cmd_file(self.input.tiledir, self.input.tilename_fh)
         self.logger.info("Will write psfex call to: %s" % cmdfile)
         with open(cmdfile, 'w') as fid:
             for band in self.ctx.dBANDS:
@@ -146,7 +146,7 @@ class Job(BaseJob):
 
         t0 = time.time()
         self.logger.info("Will proceed to run the psfex call now:")
-        logfile = fh.get_sexpsf_log_file(self.input.tiledir, self.input.tilename)
+        logfile = fh.get_sexpsf_log_file(self.input.tiledir, self.input.tilename_fh)
         log = open(logfile,"w")
         self.logger.info("Will write to logfile: %s" % logfile)
 
@@ -183,7 +183,7 @@ class Job(BaseJob):
 
         # Sortcuts for less typing
         tiledir  = self.input.tiledir
-        tilename = self.input.tilename
+        tilename_fh = self.input.tilename_fh
 
         # psfex default configuration
         psfex_conf = os.path.join(os.environ['MULTIEPOCH_DIR'],'etc','default.psfex')
@@ -196,8 +196,8 @@ class Job(BaseJob):
         for BAND in self.ctx.dBANDS:
 
             # input and output
-            psfcat = fh.get_psfcat_file(tiledir,tilename, BAND)
-            psfxml = fh.get_psfxml_file(tiledir,tilename, BAND)
+            psfcat = fh.get_psfcat_file(tiledir,tilename_fh, BAND)
+            psfxml = fh.get_psfxml_file(tiledir,tilename_fh, BAND)
 
             pars['XML_NAME'] = psfxml
             # Build the call
