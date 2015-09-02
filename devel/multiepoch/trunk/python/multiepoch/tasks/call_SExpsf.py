@@ -21,6 +21,7 @@ from multiepoch import file_handler as fh
 
 # JOB INTERNAL CONFIGURATION
 SEX_EXE = 'sex'
+DETNAME = 'det'
 BKLINE = "\\\n"
 
 class Job(BaseJob):
@@ -50,6 +51,9 @@ class Job(BaseJob):
         SExpsf_parameters       = Dict({},help="A list of parameters to pass to SExtractor",
                                        argparse={'nargs':'+',})
         MP_SEx        = CInt(1,help="run using multi-process, 0=automatic, 1=single-process [default]")
+        doBANDS       = List(['all'],help="BANDS to processs (default=all)",argparse={'nargs':'+',})
+        detname       = CUnicode(DETNAME,help="File label for detection image, default=%s." % DETNAME)
+        
 
         # Logging -- might be factored out
         stdoutloglevel = CUnicode('INFO', help="The level with which logging info is streamed to stdout",
@@ -69,6 +73,10 @@ class Job(BaseJob):
             if self.tilename_fh == '':
                 self.tilename_fh = self.tilename
 
+        # To also accept comma-separeted input lists
+        def _argparse_postproc_doBANDS(self, v):
+            return utils.parse_comma_separated_list(v)
+
         def _argparse_postproc_SExpsf_parameters(self, v):
             return utils.arglist2dict(v, separator='=')
 
@@ -80,7 +88,12 @@ class Job(BaseJob):
         # Re-cast the ctx.assoc as dictionary of arrays instead of lists
         self.ctx.assoc  = utils.dict2arrays(self.ctx.assoc)
         # Get the BANDs information in the context if they are not present
-        self.ctx.update(contextDefs.get_BANDS(self.ctx.assoc, detname='det',logger=self.logger))
+        self.ctx.update(contextDefs.get_BANDS(self.ctx.assoc, detname=self.ctx.detname,logger=self.logger,doBANDS=self.input.doBANDS))
+
+        # Check info OK
+        self.logger.info("BANDS:   %s" % self.ctx.BANDS)
+        self.logger.info("doBANDS: %s" % self.ctx.doBANDS)
+        self.logger.info("dBANDS:  %s" % self.ctx.dBANDS)
 
         
     def run(self):
