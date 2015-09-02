@@ -21,7 +21,8 @@ from multiepoch import file_handler as fh
 
 # JOB INTERNAL CONFIGURATION
 PSFEX_EXE = 'psfex'
-BKLINE = "\\\n"
+DETNAME   = 'det'
+BKLINE    = "\\\n"
 
 class Job(BaseJob):
 
@@ -42,13 +43,20 @@ class Job(BaseJob):
         assoc      = Dict(None,help="The Dictionary containing the association file",argparse=False)
         assoc_file = CUnicode('',help="Input association file with CCDs information",input_file=True,
                               argparse={ 'argtype': 'positional', })
+        tilename   = Unicode(None, help="The Name of the Tile Name to query",
+                             argparse={ 'argtype': 'positional', })
+
         # Optional Arguments
-        tilename = Unicode(None, help="The Name of the Tile Name to query")
-        tiledir  = Unicode(None, help='The output directory for this tile.')
+        tilename_fh = CUnicode('',  help="Alternative tilename handle for unique identification default=TILENAME")
+        tiledir     = Unicode(None, help='The output directory for this tile.')
         psfex_execution_mode  = CUnicode("tofile",help="psfex excution mode",
                                           argparse={'choices': ('tofile','dryrun','execute')})
         psfex_parameters       = Dict({},help="A list of parameters to pass to SExtractor",argparse={'nargs':'+',})
         cleanupPSFcats         = Bool(False, help="Clean-up PSFcat.fits files")
+
+        doBANDS       = List(['all'],help="BANDS to processs (default=all)",argparse={'nargs':'+',})
+        detname       = CUnicode(DETNAME,help="File label for detection image, default=%s." % DETNAME)
+
 
         # Logging -- might be factored out
         stdoutloglevel = CUnicode('INFO', help="The level with which logging info is streamed to stdout",
@@ -64,6 +72,14 @@ class Job(BaseJob):
             mydict['assoc'] = {col: df[col].values.tolist() for col in df.columns}
             return mydict
 
+        def _validate_conditional(self):
+            if self.tilename_fh == '':
+                self.tilename_fh = self.tilename
+
+        # To also accept comma-separeted input lists
+        def _argparse_postproc_doBANDS(self, v):
+            return utils.parse_comma_separated_list(v)
+
         def _argparse_postproc_psfex_parameters(self, v):
             return utils.arglist2dict(v, separator='=')
 
@@ -74,7 +90,13 @@ class Job(BaseJob):
         # Re-cast the ctx.assoc as dictionary of arrays instead of lists
         self.ctx.assoc  = utils.dict2arrays(self.ctx.assoc)
         # Get the BANDs information in the context if they are not present
-        self.ctx.update(contextDefs.get_BANDS(self.ctx.assoc, detname='det',logger=self.logger))
+        self.ctx.update(contextDefs.get_BANDS(self.ctx.assoc, detname=self.ctx.detname,logger=self.logger,doBANDS=self.input.doBANDS))
+
+        # Check info OK
+        self.logger.info("BANDS:   %s" % self.ctx.BANDS)
+        self.logger.info("doBANDS: %s" % self.ctx.doBANDS)
+        self.logger.info("dBANDS:  %s" % self.ctx.dBANDS)
+
 
     def run(self):
 
