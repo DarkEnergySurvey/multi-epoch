@@ -95,7 +95,7 @@ def get_BANDS(assoc, detname='det', logger=None, doBANDS=['all']):
 
     if logger: logger.info("Extracting the BANDs information from assoc")
     ctxext = {}
-    ctxext['BANDS']   = numpy.unique(assoc['BAND']) 
+    ctxext['BANDS']   = numpy.unique(assoc['BAND']).tolist() 
     ctxext['NBANDS']  = len(ctxext['BANDS'])                  
 
     # The SWarp-combined detection image input and ouputs

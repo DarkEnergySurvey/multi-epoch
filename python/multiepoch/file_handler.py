@@ -191,7 +191,7 @@ def get_psfex_cmd_file(tiledir, tilename):
     filename = "%s_call_psfex.cmd" % tilename
     return dh.place_file(filename, 'aux')
 
-def get_sexpsf_log_file(tiledir, tilename,band=None):
+def get_psfex_log_file(tiledir, tilename,band=None):
     dh = get_tiledir_handler(tiledir)
     if band:
         filename = "%s_%s_psfex.log" % (tilename,band)
