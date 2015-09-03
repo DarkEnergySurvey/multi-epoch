@@ -64,7 +64,7 @@ class Job(BaseJob):
                                   argparse={'choices': ('DEBUG','INFO','CRITICAL')} )
 
         # TODO
-        # Make the configuration visible as a commandline options
+        # Make the SEx configuration file visible as a commandline options
         
         # Function to read ASCII/panda framework file (instead of json)
         # Comment if you want to use json files
