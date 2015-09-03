@@ -46,8 +46,8 @@ class Job(BaseJob):
         cleanupSWarp = Bool(False, help="Clean-up SWarp files")
         MEF_execution_mode  = CUnicode("tofile",help="excution mode",
                                        argparse={'choices': ('tofile','dryrun','execute')})
+        doBANDS       = List(['all'],help="BANDS to processs (default=all)",argparse={'nargs':'+',})
         detname       = CUnicode(DETNAME,help="File label for detection image, default=%s." % DETNAME)
-        magbase       = CFloat(MAGBASE, help="Zero point magnitude base for SWarp, default=%s." % MAGBASE)
         
         # Logging -- might be factored out
         stdoutloglevel = CUnicode('INFO', help="The level with which logging info is streamed to stdout",
