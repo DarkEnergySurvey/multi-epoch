@@ -35,14 +35,15 @@ class Job(BaseJob):
         assoc      = Dict(None,help="The Dictionary containing the association file",argparse=False)
         assoc_file = CUnicode('',help="Input association file with CCDs information",input_file=True,
                               argparse={ 'argtype': 'positional', })
+        tilename   = Unicode(None, help="The Name of the Tile Name to query",
+                             argparse={ 'argtype': 'positional', })
         # Optional Arguments
-        tilename = Unicode(None, help="The Name of the Tile Name to query")
-        tiledir  = Unicode(None, help="The output directory for this tile")
+        tilename_fh  = CUnicode('',  help="Alternative tilename handle for unique identification default=TILENAME")
+        tiledir      = Unicode(None, help="The output directory for this tile")
         clobber_MEF  = Bool(False, help="Cloober the existing MEF fits")
         cleanupSWarp = Bool(False, help="Clean-up SWarp files")
         MEF_execution_mode  = CUnicode("tofile",help="excution mode",
                                        argparse={'choices': ('tofile','dryrun','execute')})
-
         # Logging -- might be factored out
         stdoutloglevel = CUnicode('INFO', help="The level with which logging info is streamed to stdout",
                                   argparse={'choices': ('DEBUG','INFO','CRITICAL')} )
@@ -57,6 +58,13 @@ class Job(BaseJob):
             mydict['assoc'] = {col: df[col].values.tolist() for col in df.columns}
             return mydict
 
+        def _validate_conditional(self):
+            if self.tilename_fh == '':
+                self.tilename_fh = self.tilename
+
+        # To also accept comma-separeted input lists
+        def _argparse_postproc_doBANDS(self, v):
+            return utils.parse_comma_separated_list(v)
 
     def prewash(self):
 
@@ -65,7 +73,13 @@ class Job(BaseJob):
         # Re-cast the ctx.assoc as dictionary of arrays instead of lists
         self.ctx.assoc  = utils.dict2arrays(self.ctx.assoc)
         # Get the BANDs information in the context if they are not present
-        self.ctx.update(contextDefs.get_BANDS(self.ctx.assoc, detname='det',logger=self.logger))
+        self.ctx.update(contextDefs.get_BANDS(self.ctx.assoc, detname=self.ctx.detname,logger=self.logger,doBANDS=self.input.doBANDS))
+
+        # Check info OK
+        self.logger.info("BANDS:   %s" % self.ctx.BANDS)
+        self.logger.info("doBANDS: %s" % self.ctx.doBANDS)
+        self.logger.info("dBANDS:  %s" % self.ctx.dBANDS)
+
 
     def run(self):
 
@@ -85,15 +99,15 @@ class Job(BaseJob):
 
 
         # Sortcuts for less typing
-        tiledir  = self.input.tiledir
-        tilename = self.input.tilename
+        tiledir     = self.input.tiledir
+        tilename_fh = self.input.tilename_fh
 
         for BAND in self.ctx.dBANDS:
 
-            SWarpfiles = [fh.get_sci_fits_file(tiledir, tilename, BAND),
-                          fh.get_wgt_fits_file(tiledir, tilename, BAND),
-                          fh.get_SCI_fits_file(tiledir,tilename, BAND, type='tmp_sci'), # tmp_sci.fits
-                          fh.get_WGT_fits_file(tiledir,tilename, BAND, type='tmp_wgt')] # wgt_tmp.fits
+            SWarpfiles = [fh.get_sci_fits_file(tiledir,tilename_fh, BAND),
+                          fh.get_wgt_fits_file(tiledir,tilename_fh, BAND),
+                          fh.get_SCI_fits_file(tiledir,tilename_fh, BAND, type='tmp_sci'), # tmp_sci.fits
+                          fh.get_WGT_fits_file(tiledir,tilename_fh, BAND, type='tmp_wgt')] # wgt_tmp.fits
                           
             for sfile in SWarpfiles:
                 self.logger.info("# Cleaning up %s" % sfile)
@@ -115,15 +129,15 @@ class Job(BaseJob):
 
         # Sortcuts for less typing
         tiledir  = self.input.tiledir
-        tilename = self.input.tilename
+        tilename_fh = self.input.tilename_fh
 
         for BAND in self.ctx.dBANDS:
 
             # Inputs, SCI/WGT combined images
-            filenames = [fh.get_sci_fits_file(tiledir, tilename, BAND),
-                         fh.get_wgt_fits_file(tiledir, tilename, BAND)]
+            filenames = [fh.get_sci_fits_file(tiledir, tilename_fh, BAND),
+                         fh.get_wgt_fits_file(tiledir, tilename_fh, BAND)]
             # output name of the MEF
-            outname = fh.get_mef_file(tiledir, tilename, BAND)
+            outname = fh.get_mef_file(tiledir, tilename_fh, BAND)
             # Call it
             t0 = time.time()
 
