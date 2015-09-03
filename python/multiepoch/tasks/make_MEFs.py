@@ -19,6 +19,8 @@ import multiepoch.utils as utils
 import multiepoch.contextDefs as contextDefs
 from multiepoch import file_handler as fh
 
+DETNAME = 'det'
+
 class Job(BaseJob):
 
     """
@@ -44,6 +46,9 @@ class Job(BaseJob):
         cleanupSWarp = Bool(False, help="Clean-up SWarp files")
         MEF_execution_mode  = CUnicode("tofile",help="excution mode",
                                        argparse={'choices': ('tofile','dryrun','execute')})
+        detname       = CUnicode(DETNAME,help="File label for detection image, default=%s." % DETNAME)
+        magbase       = CFloat(MAGBASE, help="Zero point magnitude base for SWarp, default=%s." % MAGBASE)
+        
         # Logging -- might be factored out
         stdoutloglevel = CUnicode('INFO', help="The level with which logging info is streamed to stdout",
                                   argparse={'choices': ('DEBUG','INFO','CRITICAL')} )
