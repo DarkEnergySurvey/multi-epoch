@@ -61,6 +61,9 @@ class Job(BaseJob):
         fileloglevel   = CUnicode('INFO', help="The level with which logging info is written to the logfile",
                                   argparse={'choices': ('DEBUG','INFO','CRITICAL')} )
 
+        # TODO
+        # Make the configuration visible as a commandline options
+
         # Function to read ASCII/panda framework file (instead of json)
         # Comment if you want to use json files
         def _read_assoc_file(self):
