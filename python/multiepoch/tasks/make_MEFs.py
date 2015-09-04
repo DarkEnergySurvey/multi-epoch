@@ -29,9 +29,7 @@ class Job(BaseJob):
 
     class Input(IO):
         
-        """
-        Create MEF for the coadded fits files
-        """
+        """ Create MEF for the coadded fits files"""
 
         ######################
         # Required inputs
