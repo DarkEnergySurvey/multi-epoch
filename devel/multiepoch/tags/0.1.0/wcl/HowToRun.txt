@@ -1,0 +1,12 @@
+
+1) login to dessub
+
+2) setup -v Y2ME 1.0+3E 
+
+3) cd to multiepoch/trunk/wcl/submitwcl
+
+4) descheck.py multiepoch.des
+
+5) dessubmit multiepoch.des 
+
+6) check with desstat
