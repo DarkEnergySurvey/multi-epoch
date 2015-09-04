@@ -93,11 +93,6 @@ FROM_EXTRAS   = "felipe.extraZEROPOINT"
 AND_EXTRAS    = "felipe.extraZEROPOINT.FILENAME = image.FILENAME" 
 # -----------------------------------------------------------------------------
 
-#import mojo
-#import mojo.utils 
-#mojo.utils.log.DEFAULT_CONSOLELOGLEVEL = 'INFO'
-#mojo.utils.log.DEFAULT_FILELOGLEVEL    = 'INFO'
-#print mojo.utils.log.DEFAULT_CONSOLELOGLEVEL 
 
 class Job(BaseJob):
 
@@ -152,6 +147,7 @@ class Job(BaseJob):
         select_extras = CUnicode(SELECT_EXTRAS,help="string with extra SELECT for query",)
         and_extras    = CUnicode(AND_EXTRAS,help="string with extra AND for query",)
         from_extras   = CUnicode(FROM_EXTRAS,help="string with extra FROM for query",)
+
         tagname       = CUnicode('Y2T_FIRSTCUT',help="TAGNAME for images in the database",)
         exec_name     = CUnicode('immask', help=("EXEC_NAME for images in the database"))
         assoc_file    = CUnicode("", help=("Name of the output ASCII association file where we will store the cccds information for coadd"))
@@ -182,6 +178,9 @@ class Job(BaseJob):
             if not utils.inDESARcluster(logger=log.get_logger({})) and not self.local_archive: 
                 mess = 'If not in cosmology cluster local_archive cannot be empty [""]'
                 raise IO_ValidationError(mess)
+
+            if self.select_extras[-1] !=",":
+                self.select_extras = self.select_extras+","
 
             #########################################
             # REMOVE LATER
@@ -214,7 +213,7 @@ class Job(BaseJob):
             self.logger.info("In cosmology cluster -- setting local_archive=%s" % self.ctx.root_archive)
             self.ctx.local_archive = self.ctx.root_archive
         else:
-            self.logger.info("Not in cosmology cluster -- setting local_archive=%s" % self.ctx.local_archive)
+            self.logger.info("Setting local_archive=%s" % self.ctx.local_archive)
 
 
         # Now we get the locations, ie the association information
@@ -225,6 +224,13 @@ class Job(BaseJob):
 
         if self.input.assoc_json != "":
             self.write_assoc_json(self.input.assoc_json)
+
+
+        # do we plot as well?
+        if self.input.plot_outname !="":
+            from multiepoch.tasks.plot_ccd_corners_destile import Job as plot_job
+            plot = plot_job(ctx=self.ctx)
+            plot()
 
 
     # -------------------------------------------------------------------------

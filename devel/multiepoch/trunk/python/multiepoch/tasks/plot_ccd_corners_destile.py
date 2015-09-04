@@ -28,7 +28,7 @@ class Job(base_job.BaseJob):
 
         # Positional arguments --- must be provided, either by the context or the command-line
         tilename = Unicode(None, help='The name of the tile being plotted.')
-        tiledir  = Unicode(None, help='The tile output directory.')
+        tiledir  = Unicode('', help='The tile output directory.')
         tileinfo = Dict(None, help="The tileinfo dictionary", argparse=False)
 
         # we initialize an empty recarray here to not get a comparison warning
@@ -39,6 +39,12 @@ class Job(base_job.BaseJob):
 
         plot_band    = Unicode('', help='Plot single band only.')
         plot_outname = CUnicode(None, help="Output file name for plot")
+
+        def _validate_conditional(self):
+            if self.tiledir == '' and self.plot_outname is None:
+                mess = 'Need to define either tilename of plot_outname'
+                raise IO_ValidationError(mess)
+
 
     def run(self):
         
