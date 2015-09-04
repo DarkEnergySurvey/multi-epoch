@@ -120,6 +120,18 @@ def inDESARcluster(domain_name='cosmology.illinois.edu',logger=None):
     return LOCAL
 
 
+def check_filepath_exist(filepath,logger=None):
+
+    import os
+    if not os.path.exists(os.path.split(filepath)[0]):
+        mess = "Making: %s" % os.path.split(filepath)[0]
+        os.makedirs(os.path.split(filepath)[0])
+    else:
+        mess = "Filepath: %s already exists" % os.path.split(filepath)[0]
+
+    if logger: logger(mess)
+    return
+
 """
 A collection of utilities to call subprocess from multiprocess in python.
 F. Menanteau, NCSA, Dec 2014

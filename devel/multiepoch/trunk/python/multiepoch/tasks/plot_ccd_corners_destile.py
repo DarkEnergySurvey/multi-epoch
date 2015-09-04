@@ -16,6 +16,7 @@ from traitlets import Dict, Instance, CUnicode, Unicode
 from mojo.jobs import base_job 
 
 from multiepoch import file_handler as fh
+import multiepoch.utils as utils
 
 
 D2R = math.pi/180. # degrees to radians shorthand
@@ -37,8 +38,8 @@ class Job(base_job.BaseJob):
         CCDS = Instance(numpy.core.records.recarray, ([], 'int'), 
                 help='The CCDS we want to plot.')
 
-        plot_band    = Unicode('', help='Plot single band only.')
-        plot_outname = CUnicode(None, help="Output file name for plot")
+        plot_band    = CUnicode('', help='Plot single band only.')
+        plot_outname = Unicode(None, help="Output file name for plot")
 
         def _validate_conditional(self):
             if self.tiledir == '' and self.plot_outname is None:
@@ -70,6 +71,10 @@ class Job(base_job.BaseJob):
         else:
             # Use file-handler to set the name
             filepath = fh.get_ccd_plot_file(self.input.tiledir, self.input.tilename)
+
+        # Make sure that the filepath exists
+        utils.check_filepath_exist(filepath,logger=self.logger.debug)
+                             
         figure.savefig(filepath)
         self.logger.info("Wrote: %s" % filepath)
 
