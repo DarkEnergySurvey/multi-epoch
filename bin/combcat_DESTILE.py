@@ -33,7 +33,10 @@ def cmdline():
         MULTIEPOCH_ROOT = os.path.abspath('/MULTIEPOCH_ROOT')
 
     outputpath           = os.path.join(MULTIEPOCH_ROOT, 'TILEBUILDER') 
-    local_archive        = os.path.join(MULTIEPOCH_ROOT, 'LOCAL_ARCHIVE')
+    if utils.inDESARcluster():
+        local_archive        = "/work/prodbeta/archive"
+    else:
+        local_archive        = os.path.join(MULTIEPOCH_ROOT, 'LOCAL_ARCHIVE')
     local_weight_archive = os.path.join(MULTIEPOCH_ROOT, 'LOCAL_WEIGHTS')
 
     import argparse
