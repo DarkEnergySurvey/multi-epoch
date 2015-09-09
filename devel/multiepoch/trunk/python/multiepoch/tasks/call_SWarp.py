@@ -40,17 +40,18 @@ class Job(BaseJob):
 
         # 2. Geometry and tilename
         tileinfo    = Dict(None, help="The json file with the tile information",argparse=False)
+        tile_geom_input_file = CUnicode('',help='The json file with the tile information',input_file=True,
+                                        argparse={ 'argtype': 'positional', })
+
+        ######################
+        # Optional arguments
         tilename    = Unicode(None, help="The Name of the Tile Name to query",argparse=False)
         tilename_fh = CUnicode('',  help="Alternative tilename handle for unique identification default=TILENAME")
         tiledir     = Unicode(None, help="The output directory for this tile")
-        tile_geom_input_file = CUnicode('',help='The json file with the tile information',input_file=True,
-                                        argparse={ 'argtype': 'positional', })
 
         local_archive        = CUnicode(None, help="The local filepath where the input fits files (will) live")
         local_weight_archive = CUnicode(None, help='The path to the weights archive.')
 
-        ######################
-        # Optional arguments
         detecBANDS       = List(DETEC_BANDS_DEFAULT, help="List of bands used to build the Detection Image, default=%s." % DETEC_BANDS_DEFAULT,
                                 argparse={'nargs':'+',})
         magbase          = CFloat(MAGBASE, help="Zero point magnitude base for SWarp, default=%s." % MAGBASE)
