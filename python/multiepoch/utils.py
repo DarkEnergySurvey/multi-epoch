@@ -7,6 +7,17 @@ Felipe Menanteau, NCSA Jan 2015.
 
 import os
 
+
+def read_tileinfo(geomfile,logger=None):
+    import json
+    mess = "Reading the tile Geometry from file: %s" % geomfile
+    if logger: logger.info(mess)
+    else: print mess
+    with open(geomfile, 'rb') as fp:
+        json_dict = json.load(fp)
+    return json_dict
+
+
 # Check if database handle is in the context
 def check_dbh(ctx, logger=None):
 
