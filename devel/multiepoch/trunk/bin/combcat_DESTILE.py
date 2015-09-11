@@ -175,5 +175,5 @@ if __name__ == '__main__':
     jo.run_job('multiepoch.tasks.call_SExDual',SExDual_parameters={"MAG_ZEROPOINT":30,}, SExDual_execution_mode=args.runmode,MP_SEx=args.ncpu)
     
     # 10. Create the MEF fits files in the formar we like
-    jo.run_job('multiepoch.tasks.make_MEFs',clobber_MEF=False,MEF_execution_mode=args.runmode,cleanupSWarp=args.cleanup)
+    jo.run_job('multiepoch.tasks.make_MEFs',clobber_MEF=True,MEF_execution_mode=args.runmode,cleanupSWarp=args.cleanup)
     print "# Grand Total time: %s" % elapsed_time(t0)

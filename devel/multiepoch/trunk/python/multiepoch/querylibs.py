@@ -86,7 +86,7 @@ def get_CCDS_from_db_distance(dbh, tile_geometry, **kwargs):
 
     """
 
-    (ra_center, dec_center, ra_size, dec_size) = tile_geometry
+    (ra_center_tile, dec_center_tile, ra_size_tile, dec_size_tile) = tile_geometry
 
     logger = kwargs.pop('logger', None)
 
@@ -95,8 +95,8 @@ def get_CCDS_from_db_distance(dbh, tile_geometry, **kwargs):
     else: print mess
 
     distance_and = [
-        "ABS(image.RA_CENT  -  %.10f) < (%.10f + 0.505*ABS(image.RAC2 -image.RAC3 )) AND\n" % (ra_center, ra_size*0.5),
-        "ABS(image.DEC_CENT -  %.10f) < (%.10f + 0.505*ABS(image.DECC1-image.DECC2))\n"     % (dec_center,dec_size*0.5),
+        "ABS(image.RA_CENT  -  %.10f) < (%.10f + 0.505*ABS(image.RAC2 -image.RAC3 )) AND\n" % (ra_center_tile, ra_size_tile*0.5),
+        "ABS(image.DEC_CENT -  %.10f) < (%.10f + 0.505*ABS(image.DECC1-image.DECC2))\n"     % (dec_center_tile,dec_size_tile*0.5),
         ]
 
     ccd_query = QUERY_CCDS.format(
