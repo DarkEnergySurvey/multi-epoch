@@ -62,7 +62,8 @@ def get_tileinfo_from_db(dbh, **kwargs):
     mess = "Getting geometry information for tile:%s" % kwargs.get('tilename')
     if logger: logger.info(mess)
     else: print mess
-    
+
+    print  query_geom
     cur = dbh.cursor()
     cur.execute(query_geom)
     desc = [d[0] for d in cur.description]
@@ -74,10 +75,66 @@ def get_tileinfo_from_db(dbh, **kwargs):
     
     return tileinfo
 
-def get_CCDS_from_db(dbh, tile_edges, **kwargs): 
+
+def get_CCDS_from_db_distance(dbh, tile_geometry, **kwargs): 
     """
     Execute the database query that returns the ccds and store them in a numpy record array
     kwargs: exec_name, tagname, select_extras, and_extras, from_extras
+
+    This is a more general query, that will work on case that the TILE
+    is smaller than the input CCDS
+
+    """
+
+    (ra_center, dec_center, ra_size, dec_size) = tile_geometry
+
+    logger = kwargs.pop('logger', None)
+
+    mess = "Building and running the query to find the CCDS"
+    if logger: logger.debug(mess)
+    else: print mess
+
+    distance_and = [
+        "ABS(image.RA_CENT  -  %.10f) < (%.10f + 0.505*ABS(image.RAC2 -image.RAC3 )) AND\n" % (ra_center, ra_size*0.5),
+        "ABS(image.DEC_CENT -  %.10f) < (%.10f + 0.505*ABS(image.DECC1-image.DECC2))\n"     % (dec_center,dec_size*0.5),
+        ]
+
+    ccd_query = QUERY_CCDS.format(
+        tagname       = kwargs.get('tagname'),
+        exec_name     = kwargs.get('exec_name',     'immask'),
+        select_extras = kwargs.get('select_extras'),
+        from_extras   = kwargs.get('from_extras'),
+        and_extras    = kwargs.get('and_extras')+  ' AND\n (' + ' '.join(distance_and) + ')',
+        )
+
+    mess = "Will execute the query:\n%s\n" %  ccd_query
+    if logger: logger.info(mess)
+    else: print mess
+    
+    # Get the ccd images that are part of the DESTILE
+    CCDS = despyastro.genutil.query2rec(ccd_query, dbhandle=dbh)
+
+    mess = "Found %s input images" %  len(CCDS)
+    if logger: logger.info(mess)
+    else: print mess
+
+
+    # Here we fix 'COMPRESSION' from None --> '' if present
+    if 'COMPRESSION' in CCDS.dtype.names:
+        CCDS['COMPRESSION'] = numpy.where(CCDS['COMPRESSION'],CCDS['COMPRESSION'],'')
+
+    return CCDS 
+
+
+def get_CCDS_from_db_corners(dbh, tile_edges, **kwargs): 
+    """
+    Execute the database query that returns the ccds and store them in a numpy record array
+    kwargs: exec_name, tagname, select_extras, and_extras, from_extras
+
+    **** NOTE ***
+    This query will only work if the size of the TILE is larger than the size of the input CCD images
+    ***********
+
     """
 
     logger = kwargs.pop('logger', None)
