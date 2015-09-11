@@ -185,8 +185,8 @@ class Job(BaseJob):
             #########################################
             # REMOVE LATER
             # FOR TESTING ON SHORTER DATASETS
-            self.from_extras = FROM_EXTRAS+", felipe.TAGS"
-            self.and_extras  = AND_EXTRAS +" and\nfelipe.TAGS.FILENAME = image.FILENAME and felipe.TAGS.TAG = '%s_RAN_EXP'" % self.tilename
+            #self.from_extras = FROM_EXTRAS+", felipe.TAGS"
+            #self.and_extras  = AND_EXTRAS +" and\nfelipe.TAGS.FILENAME = image.FILENAME and felipe.TAGS.TAG = '%s_RAN_EXP'" % self.tilename
             #########################################
 
     def run(self):
@@ -199,8 +199,12 @@ class Job(BaseJob):
         DBH = self.ctx.dbh
 
         # Create the tile_edges tuple structure and query the database
-        tile_edges = self.get_tile_edges(self.ctx.tileinfo)
-        self.ctx.CCDS = querylibs.get_CCDS_from_db(DBH, tile_edges,logger=LOG,**self.input.as_dict())
+        #tile_edges = self.get_tile_edges(self.ctx.tileinfo)
+        #self.ctx.CCDS = querylibs.get_CCDS_from_db_corners(DBH, tile_edges,logger=LOG,**self.input.as_dict())
+
+        # Create a tuple with the tile geometry and query
+        tile_geometry = self.get_tile_geometry(self.ctx.tileinfo)
+        self.ctx.CCDS = querylibs.get_CCDS_from_db_distance(DBH, tile_geometry,logger=LOG,**self.input.as_dict())
 
         # Get root_https from from the DB with a query
         self.ctx.root_https   = querylibs.get_root_https(DBH,logger=LOG, archive_name=self.input.archive_name)
@@ -240,6 +244,14 @@ class Job(BaseJob):
         tile_edges = (tileinfo['RACMIN'], tileinfo['RACMAX'],
                 tileinfo['DECCMIN'], tileinfo['DECCMAX'])
         return tile_edges
+
+    @staticmethod
+    def get_tile_geometry(tileinfo):
+        tile_geometry = (tileinfo['RA'],
+                         tileinfo['DEC'],
+                         abs(tileinfo['RACMIN']-tileinfo['RACMAX']),   # RA_size
+                         abs(tileinfo['DECCMIN']-tileinfo['DECCMAX'])) # DEC_size
+        return tile_geometry
 
 
     @staticmethod

@@ -10,6 +10,11 @@ import os,sys
 import time
 from despymisc.miscutils import elapsed_time
 import multiepoch.utils as utils
+import multiepoch.tasks.find_ccds_in_tile 
+
+SELECT_EXTRAS = multiepoch.tasks.find_ccds_in_tile.SELECT_EXTRAS
+FROM_EXTRAS   = multiepoch.tasks.find_ccds_in_tile.FROM_EXTRAS
+AND_EXTRAS    = multiepoch.tasks.find_ccds_in_tile.AND_EXTRAS
 
 def cmdline():
     
@@ -76,6 +81,14 @@ def cmdline():
     parser.add_argument("--tiledir", action="store",default=None,
                         help="Path where we will write the outputs, overides --outputpath (i.e. $MULTIEPOCH_ROOT/TILEBUILDER/tilename)")
 
+    # and/select/from extras
+    parser.add_argument("--select_extras", action="store",default=SELECT_EXTRAS,
+                        help="string with extra SELECT for query")
+    parser.add_argument("--and_extras", action="store",default=AND_EXTRAS,
+                        help="string with extra AND for query")
+    parser.add_argument("--from_extras", action="store",default=FROM_EXTRAS,
+                        help="string with extra FROM for query")
+
     # More optional args to bypass queries for tileinfo and geometry
     parser.add_argument("--tile_geom_input_file", action="store",default='',
                         help="The json file with the tile information (default='')")
@@ -121,6 +134,9 @@ if __name__ == '__main__':
     # 2. Get the CCDs inside the tile -- unless provided
     if args.assoc_file == '':
         jo.run_job('multiepoch.tasks.find_ccds_in_tile',
+                   and_extras=args.and_extras,
+                   from_extras=args.from_extras,
+                   select_extras=args.select_extras,
                    tagname=args.tagname,
                    exec_name=args.exec_name)
         # 2b. Plot the corners -- all  bands (default)
