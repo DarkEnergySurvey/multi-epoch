@@ -265,7 +265,7 @@ class Job(BaseJob):
 
 
         # The call to get the detection image
-        pars["WEIGHT_IMAGE"]   = "%s" % " ".join(det_wgtlists)
+        pars["WEIGHT_IMAGE"]   = "%s" % ",".join(det_wgtlists)
 
         swarp_cmd[BAND] = [SWARP_EXE, ]
         swarp_cmd[BAND].append("%s" % " ".join(det_scilists))
