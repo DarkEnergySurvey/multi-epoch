@@ -179,16 +179,13 @@ class Job(BaseJob):
 
         # Case B -- multi-process in case NP > 1
         elif N>0:
-            self.logger.info("Will Use %s processors" % NP)
+            # Prepare the cmd 
             cmds = [' '.join(cmd) for cmd in cmd_list]
+            self.logger.info("Will Use %s processors" % NP)
             
-            # Prepare the cmd + logfiles
-            for cmd in cmd_list:
-                cmds.append(' '.join(cmd))
-                
             pool = multiprocessing.Pool(processes=NP)
             #pool.map(utils.work_subprocess, cmds) 
-            pool.map_async(utils.work_subprocess, cmds) # no logging option
+            pool.map_async(utils.work_subprocess, cmds)
             pool.close()
             pool.join()
 
