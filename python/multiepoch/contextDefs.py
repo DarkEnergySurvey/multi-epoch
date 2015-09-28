@@ -51,6 +51,27 @@ def define_weight_names(ctx):
 
     return filepath_local_weight
 
+def define_me_names(ctx):
+
+    """
+    A common method to define the weights names based in the
+    context using the information contained in assoc[FILEPATH_LOCAL]
+    """
+
+    # short-cuts for clarity
+    lo_ar = ctx.local_archive
+    me_ar = ctx.local_archive_me
+    mex   = ctx.extension_me
+    filepath_local_me = ctx.assoc['FILEPATH_LOCAL']
+
+    # 1. replace local_archive --> local_archive_me
+    filepath_local_me = [f.replace(lo_ar,  '{lw}'.format(lw=me_ar))   for f in filepath_local_me]
+    # 2. replace  .fits --> _me.fits
+    filepath_local_me = [f.replace('.fits','{me}.fits'.format(me=mex)) for f in filepath_local_me]
+
+    return filepath_local_me
+
+
 def get_BANDS_old(assoc, detname='det', logger=None):
 
     import numpy
