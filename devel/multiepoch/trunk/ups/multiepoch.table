@@ -1,23 +1,26 @@
 # Mojo
-setupRequired(mojo       0.2.3+0)
+setupRequired(mojo       0.2.3+1)
 
 # DESDM python
-setupRequired(despydb    2.0.0+2)
-setupRequired(despyastro 0.3.0+3) 
-setupRequired(despymisc  0.2.3+0) 
-setupRequired(despyfits  0.1.3+0) 
+setupRequired(despydb    2.0.0+4)
+setupRequired(despyastro 0.3.2+1) 
+setupRequired(despymisc  0.2.3+3) 
+
+# Pixcorrect
+setupRequired(pixcorrect 0.1.5+1)
+#setupRequired(despyfits  0.2.7+1) 
+#setupRequired(pyfits 3.3+3)
+#setupRequired(fitsio 0.9.8rc1+2)
 
 # Python core
-setupRequired(matplotlib 1.3.1+2)
-setupRequired(pyfits 3.3+2)
-setupRequired(fitsio 0.9.8rc1+0)
-setupRequired(pandas 0.15.2+0)
+setupRequired(matplotlib 1.3.1+4)
+setupRequired(pandas 0.15.2+1)
 
 # Astromatic stuff
-setupRequired(sextractor 2.18.10+16)
+setupRequired(sextractor 2.19.5+1)
 setupRequired(stiff 2.1.3+1)
-setupRequired(swarp 2.36.2+2)
-setupRequired(psfex 3.17.0+8)
+setupRequired(swarp 2.38.0.1+0)
+setupRequired(psfex 3.17.3+1)
 
 envAppend(PYTHONPATH, ${PRODUCT_DIR}/python)
 envAppend(PATH, ${PRODUCT_DIR}/bin)

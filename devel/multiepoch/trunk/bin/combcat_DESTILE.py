@@ -22,7 +22,7 @@ def cmdline():
     # -----------------------------------------------------------------------------
     # The only REQUIRED PIPELINE PARAMETERS are:
     #  local_archive
-    #  local_weight_archive 
+    #  local_archive_me 
     #  tiledir
     # and they have to be set to run the pipeline. They CAN BE SET INDEPENDENTLY.
     #
@@ -42,7 +42,7 @@ def cmdline():
         local_archive        = "/work/prodbeta/archive"
     else:
         local_archive        = os.path.join(MULTIEPOCH_ROOT, 'LOCAL_ARCHIVE')
-    local_weight_archive = os.path.join(MULTIEPOCH_ROOT, 'LOCAL_WEIGHTS')
+    local_archive_me = os.path.join(MULTIEPOCH_ROOT, 'LOCAL_ARCHIVE_ME')
 
     import argparse
     parser = argparse.ArgumentParser(description="Runs the DESDM multi-epoch pipeline")
@@ -69,12 +69,12 @@ def cmdline():
                         help="Clean up SWarp and psfcat fits files?")
     parser.add_argument("--keep", action="store_true",default=False,
                         help="Keep SWarp and psfcat fits files?")
-    parser.add_argument("--custom_weights", action="store_true",default=False,
-                        help="Use custom weights for SWarp coaddition")
+    #parser.add_argument("--custom_weights", action="store_true",default=False,
+    #                    help="Use custom weights for SWarp coaddition")
     # Optional path-related arguments
     parser.add_argument("--local_archive", action="store", default=local_archive,
                         help="Name of local archive repository [default: $MULTIEPOCH_ROOT/LOCAL_ARCHIVE]")
-    parser.add_argument("--local_weight_archive", action="store", default=local_weight_archive,
+    parser.add_argument("--local_archive_me", action="store", default=local_archive_me,
                         help="Name of local archive repository [default: $MULTIEPOCH_ROOT/LOCAL_WEIGHTS]")
     parser.add_argument("--outputpath", action="store",default=outputpath,
                         help="Path where we will write the outputs [default: $MULTIEPOCH_ROOT/TILEBUILDER]")
@@ -122,7 +122,7 @@ if __name__ == '__main__':
                                    tilename=args.tilename,
                                    tiledir=args.tiledir,
                                    local_archive=args.local_archive,
-                                   local_weight_archive=args.local_weight_archive,
+                                   local_archive_me=args.local_archive_me,
                                    )
 
     # 1.  Get the tile information from the table -- unless provided
@@ -147,11 +147,11 @@ if __name__ == '__main__':
     # 3. Retrieve the files -- if remotely
     jo.run_job('multiepoch.tasks.get_fitsfiles',assoc_file=args.assoc_file, http_section='http-desarchive')
 
-    # 4 Create custom weights for SWarp (optional)
-    if args.custom_weights:
-        jo.run_job('multiepoch.tasks.make_SWarp_weights',
-                   assoc_file=args.assoc_file,
-                   clobber_weights=False, MP_weight=args.ncpu, weights_execution_mode=args.runmode)
+    # 4. Prepare input for coadd
+    jo.run_job('multiepoch.tasks.me_prepare',
+               assoc_file=args.assoc_file,
+               clobber_me=False, MP_me=args.ncpu, me_execution_mode=args.runmode)
+    exit()
 
     # 5. The SWarp call 
     swarp_params={

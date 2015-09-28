@@ -232,6 +232,16 @@ def get_mef_file(tiledir, tilename, band):
     fnkwargs = {'base':tilename, 'band':band, 'ext':FITS_EXT}
     return dh.place_file(_me_notype_fn(**fnkwargs), 'products')
 
+# ME prepare
+def get_me_prepare_cmd_file(tiledir, tilename):
+    dh = get_tiledir_handler(tiledir)
+    filename = "%s_call_me_prepare.cmd" % tilename
+    return dh.place_file(filename, 'aux')
+
+def get_me_prepare_log_file(tiledir, tilename):
+    dh = get_tiledir_handler(tiledir)
+    filename = "%s_me_prepare.log" % tilename
+    return dh.place_file(filename, 'log')
 
 # -------------------------------------------------
 

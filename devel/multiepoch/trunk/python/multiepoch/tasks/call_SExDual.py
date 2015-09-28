@@ -4,7 +4,6 @@
 from mojo.jobs.base_job import BaseJob
 from traitlets import Unicode, Bool, Float, Int, CUnicode, CBool, CFloat, CInt, Instance, Dict, List, Integer
 from mojo.jobs.base_job import BaseJob, IO, IO_ValidationError
-from mojo.context import ContextProvider
 
 import os
 import sys
@@ -110,20 +109,20 @@ class Job(BaseJob):
         cmd_list = self.get_SExDual_cmd_list()
 
         # 2. check execution mode and write/print/execute commands accordingly --------------
-        executione_mode = self.ctx.get('SExDual_execution_mode', 'tofile')
-        if executione_mode == 'tofile':
+        execution_mode = self.ctx.get('SExDual_execution_mode', 'tofile')
+        if execution_mode == 'tofile':
             self.writeCall(cmd_list)
             
-        elif executione_mode == 'dryrun':
+        elif execution_mode == 'dryrun':
             self.logger.info("For now we only print the commands (dry-run)")
             for band in self.ctx.BANDS:
                 self.logger.info(' '.join(cmd_list[band]))
 
-        elif executione_mode == 'execute':
+        elif execution_mode == 'execute':
             MP = self.ctx.MP_SEx # MP or single Processs
             self.runSExDual(cmd_list,MP=MP)
         else:
-            raise ValueError('Execution mode %s not implemented.' % executione_mode)
+            raise ValueError('Execution mode %s not implemented.' % execution_mode)
         return
 
     def writeCall(self,cmd_list):
