@@ -16,6 +16,9 @@ SELECT_EXTRAS = multiepoch.tasks.find_ccds_in_tile.SELECT_EXTRAS
 FROM_EXTRAS   = multiepoch.tasks.find_ccds_in_tile.FROM_EXTRAS
 AND_EXTRAS    = multiepoch.tasks.find_ccds_in_tile.AND_EXTRAS
 
+CLOBBER_ME = False
+CLOBBER_ME = True
+
 def cmdline():
     
     # SETTING UP THE PATHS
@@ -146,12 +149,10 @@ if __name__ == '__main__':
     # 3. Retrieve the files -- if remotely
     jo.run_job('multiepoch.tasks.get_fitsfiles',assoc_file=args.assoc_file, http_section='http-desarchive')
 
-    exit()
-
     # 4. Prepare input for coadd
     jo.run_job('multiepoch.tasks.me_prepare',
                assoc_file=args.assoc_file,
-               clobber_me=False, MP_me=args.ncpu, me_execution_mode=args.runmode)
+               clobber_me=CLOBBER_ME, MP_me=args.ncpu, me_execution_mode=args.runmode)
     exit()
 
     # 5. The SWarp call 

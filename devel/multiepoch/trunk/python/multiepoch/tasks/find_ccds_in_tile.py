@@ -1,6 +1,10 @@
 #!/usr/bin/env python
 
 """
+
+Option A: CORNERS' Seach Method
+---------------------------------
+
 Finds all of the CCCs in the IMAGE table that fall inside the (RACMI,RACMAX)
 and (DECCMIN,DECCMAX) of a DES tile with a given set of extras SQL and/or
 constraints provided into the function. 
