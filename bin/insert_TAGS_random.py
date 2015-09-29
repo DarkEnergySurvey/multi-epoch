@@ -103,13 +103,13 @@ def checkTABLENAMEexists(dbh,tablename):
     return table_exists
 
 
-def insertTAG(tilename,myTAG,tablename='felipe.tags',clobber=False,db_section='db-destest',SELECT_BY="EXPOSURES",NEXP=4):
+def insertTAG(tilename,myTAG,tagname,tablename='felipe.tags',clobber=False,db_section='db-destest',SELECT_BY="EXPOSURES",NEXP=4):
 
     options = {
         'tilename'   : tilename,
         'coaddtile_table' : "felipe.coaddtile_new",
         'archive_name'  : "prodbeta",
-        'tagname'       : 'Y2T_FIRSTCUT',
+        'tagname'       : tagname,
         'exec_name'     : 'immask',
         'select_extras' : SELECT_EXTRAS,
         'from_extras'   : FROM_EXTRAS,
@@ -132,7 +132,7 @@ def insertTAG(tilename,myTAG,tablename='felipe.tags',clobber=False,db_section='d
     
     # Create the tile_edges tuple structure and query the database
     tile_edges = (tileinfo['RACMIN'], tileinfo['RACMAX'],tileinfo['DECCMIN'],tileinfo['DECCMAX'])
-    CCDS = querylibs.get_CCDS_from_db(dbh, tile_edges,**options)
+    CCDS = querylibs.get_CCDS_from_db_corners(dbh, tile_edges,**options)
 
     # Select random files for each 
     BANDS  = numpy.unique(CCDS['BAND'])
@@ -173,8 +173,16 @@ def insertTAG(tilename,myTAG,tablename='felipe.tags',clobber=False,db_section='d
 if __name__ == "__main__":
 
 
-    insertTAG('DES2246-4457',myTAG='DES2246-4457_RAN_CCD', tablename='felipe.tags',clobber=True,  SELECT_BY="CCDS")
-    insertTAG('DES2246-4457',myTAG='DES2246-4457_RAN_EXP', tablename='felipe.tags',clobber=False, SELECT_BY="EXPOSURES")
+    tagnames = ['Y2T_FIRSTCUT','Y2T2_FINALCUT']
+
+    clobber = True
+    for tagname in tagnames:
+        insertTAG('DES2246-4457',myTAG='DES2246-4457_RAN_CCD', tagname=tagname,tablename='felipe.tags',clobber=clobber, SELECT_BY="CCDS")
+
+        clobber = False
+        insertTAG('DES2246-4457',myTAG='DES2246-4457_RAN_EXP', tagname=tagname,tablename='felipe.tags',clobber=clobber, SELECT_BY="EXPOSURES")
+
+    exit()
 
 
     tiles_RXJ2248 = ['DES2251-4331',
@@ -192,12 +200,11 @@ if __name__ == "__main__":
                      'DES0102-4914',
                      'DES0106-4914',
                      'DES0101-4831']
-    
 
-    for tilename in tiles_RXJ2248+tiles_ElGordo:
-
-        print " # Creating TAGS for %s" % tilename
-        insertTAG(tilename,myTAG='%s_RAN_CCD' % tilename, tablename='felipe.tags',clobber=False,  SELECT_BY="CCDS")
-        insertTAG(tilename,myTAG='%s_RAN_EXP' % tilename, tablename='felipe.tags',clobber=False, SELECT_BY="EXPOSURES")
-
+    for tagname in tagnames:
+        for tilename in tiles_RXJ2248+tiles_ElGordo:
+            print " # Creating TAGS for %s" % tilename
+            insertTAG(tilename,myTAG='%s_RAN_CCD' % tilename, tagname=tagname, tablename='felipe.tags',clobber=clobber, SELECT_BY="CCDS")
+            insertTAG(tilename,myTAG='%s_RAN_EXP' % tilename, tagname=tagname, tablename='felipe.tags',clobber=clobber, SELECT_BY="EXPOSURES")
+            
     

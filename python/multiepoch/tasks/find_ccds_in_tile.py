@@ -198,10 +198,12 @@ class Job(BaseJob):
         LOG = self.logger
         DBH = self.ctx.dbh
 
+        # Corner's method
         # Create the tile_edges tuple structure and query the database
         #tile_edges = self.get_tile_edges(self.ctx.tileinfo)
         #self.ctx.CCDS = querylibs.get_CCDS_from_db_corners(DBH, tile_edges,logger=LOG,**self.input.as_dict())
 
+        # Distance method -- the more general case
         # Create a tuple with the tile geometry and query
         tile_geometry = self.get_tile_geometry(self.ctx.tileinfo)
         self.ctx.CCDS = querylibs.get_CCDS_from_db_distance(DBH, tile_geometry,logger=LOG,**self.input.as_dict())
@@ -323,6 +325,5 @@ if __name__ == "__main__":
     names=['FILEPATH_LOCAL','BAND','MAG_ZERO']
     # For now we'll try to use plain asscii that can be read/write with pandas
     job.write_assoc_pandas(job.ctx.assoc_file,names=names)
-    #job.write_assoc_json(job.ctx.assoc_json,names=names)
 
 

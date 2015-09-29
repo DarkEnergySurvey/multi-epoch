@@ -157,7 +157,6 @@ class Job(BaseJob):
         t0 = time.time()
         NP = utils.get_NP(MP)  # Figure out NP to use, 0=automatic
         logfile = fh.get_me_prepare_log_file(self.input.tiledir, self.input.tilename_fh)
-            
 
         # Get ready to run if applicable
         N = len(cmd_list)
@@ -168,7 +167,7 @@ class Job(BaseJob):
             self.logger.info("Will write to logfile: %s" % logfile)
 
             # Loop over all input files
-            for k in range(N):
+            for k,cmd in range(N):
                 t1 = time.time()
                 cmd  = ' '.join(cmd_list[k])
                 self.logger.info("Preparing:  %s (%s/%s)" % (cmd_list[k][1].split()[1],k+1,N))
@@ -178,25 +177,27 @@ class Job(BaseJob):
                 self.logger.info("Done in %s" % elapsed_time(t1))
 
         # Case B -- multi-process in case NP > 1
-        elif N>0:
-            # Prepare the cmd 
+        elif N > 0:
+
+            # Prepare the cmd -- no logging of each call for now.
             cmds = [' '.join(cmd) for cmd in cmd_list]
             self.logger.info("Will Use %s processors" % NP)
-            
             pool = multiprocessing.Pool(processes=NP)
-            #pool.map(utils.work_subprocess, cmds) 
-            pool.map_async(utils.work_subprocess, cmds)
-            pool.close()
-            pool.join()
-
+            pool.map(utils.work_subprocess, cmds) 
+            # ----------------------------------------------
+            # In case we want to run with async
+            # pool.map_async(utils.work_subprocess, cmds)
+            # pool.close()
+            # pool.join()
+            # ---------------------------------------------
         else:
-            self.logger.info("No me-prepare to be created")
+            self.logger.info("No me-prepare file to be created")
 
         self.logger.info("Total me-prepare time %s" % elapsed_time(t0))
         return
 
     def __str__(self):
-        return 'Create Custom inputs Weights for SWarp'
+        return 'Prepare input for me processing'
 
 
 if __name__ == "__main__":
