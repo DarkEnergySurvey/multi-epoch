@@ -21,8 +21,8 @@ QUERY_GEOM = '''
     WHERE tilename='{tilename}'
             '''
 
-# The query template used to get the the CCDs
-QUERY_CCDS = ''' 
+# The query template used to get the the CCDs, before finalcut
+QUERY_CCDS_Y2N = ''' 
      SELECT
          {select_extras}
          file_archive_info.FILENAME,file_archive_info.COMPRESSION,
@@ -45,7 +45,30 @@ QUERY_CCDS = '''
          ops_proctag.TAG = '{tagname}' AND
          {and_extras} 
      '''
-     
+
+# The query template used to get the the CCDs from finalcut
+QUERY_CCDS_Y2A1 = ''' 
+     SELECT
+         {select_extras}
+         file_archive_info.FILENAME,file_archive_info.COMPRESSION,
+         file_archive_info.PATH,
+         image.BAND,
+         image.RAC1,  image.RAC2,  image.RAC3,  image.RAC4,
+         image.DECC1, image.DECC2, image.DECC3, image.DECC4
+     FROM
+         file_archive_info, wgb, image, ops_proctag,
+         {from_extras} 
+     WHERE
+         file_archive_info.FILENAME  = image.FILENAME AND
+         file_archive_info.FILENAME  = wgb.FILENAME  AND
+         image.FILETYPE  = 'red_immask' AND
+         wgb.FILETYPE    = 'red_immask' AND
+         wgb.REQNUM      = ops_proctag.REQNUM AND
+         wgb.UNITNAME    = ops_proctag.UNITNAME AND
+         wgb.ATTNUM      = ops_proctag.ATTNUM AND
+         ops_proctag.TAG = '{tagname}' AND
+         {and_extras} 
+     '''
 
 # -----------------------------------------------------------------------------        
 # QUERY FUNCTIONS
@@ -58,7 +81,7 @@ def get_tileinfo_from_db(dbh, **kwargs):
     
     logger = kwargs.pop('logger', None)
     query_geom = QUERY_GEOM.format(**kwargs)
-    
+
     mess = "Getting geometry information for tile:%s" % kwargs.get('tilename')
     if logger: logger.info(mess)
     else: print mess
@@ -99,9 +122,16 @@ def get_CCDS_from_db_distance(dbh, tile_geometry, **kwargs):
         "ABS(image.DEC_CENT -  %.10f) < (%.10f + 0.505*ABS(image.DECC1-image.DECC2))\n"     % (dec_center_tile,dec_size_tile*0.5),
         ]
 
+    # Figure out which query to use depending on the campaign
+    if kwargs.get('tagname') == 'Y2T_FIRSTCUT':
+        QUERY_CCDS = QUERY_CCDS_Y2N
+    else:
+        QUERY_CCDS = QUERY_CCDS_Y2A1
+
     ccd_query = QUERY_CCDS.format(
+        filetype      = kwargs.get('filetype','red_immask'),
         tagname       = kwargs.get('tagname'),
-        exec_name     = kwargs.get('exec_name',     'immask'),
+        exec_name     = kwargs.get('exec_name','immask'),
         select_extras = kwargs.get('select_extras'),
         from_extras   = kwargs.get('from_extras'),
         and_extras    = kwargs.get('and_extras')+  ' AND\n (' + ' '.join(distance_and) + ')',
@@ -136,6 +166,12 @@ def get_CCDS_from_db_corners(dbh, tile_edges, **kwargs):
     ***********
 
     """
+
+    # Figure out which query to use depending on the campaign
+    if kwargs.get('tagname') == 'Y2T_FIRSTCUT':
+        QUERY_CCDS = QUERY_CCDS_Y2N
+    else:
+        QUERY_CCDS = QUERY_CCDS_Y2A1
 
     logger = kwargs.pop('logger', None)
 

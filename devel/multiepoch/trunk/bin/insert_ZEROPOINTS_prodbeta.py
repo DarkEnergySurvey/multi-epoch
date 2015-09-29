@@ -7,7 +7,7 @@ import despydb
 
 
 """
-A temporary ans simple script to copy the matched ZEROPOINT.MAG_ZERO
+A temporary and simple script to copy the matched ZEROPOINT.MAG_ZERO
 values from old runs to new runs when do not exits in ther ZEROPOINT
 table into the db-destest database
 
@@ -24,7 +24,7 @@ def findEXPOSURES(reqnum,attnum,section='db-destest',exec_name='immask'):
 
     regexp = "%" + "r%dp%02d_%s" % (reqnum, attnum, exec_name) + "%"
     query = """ select filename, 'DECam_'||to_char(expnum,'FM00000000')||'_'||to_char(ccdnum,'FM00')||'.fits'
-                from image where filename like '%s' and filetype='red'""" % regexp
+                from image where filename like '%s' and filetype='red_immask'""" % regexp
     print "# Will query \n%s\n" % query
 
     print "# Will find expnames for filenames in reqnum=%s, attnum=%s" % (reqnum,attnum)
@@ -275,7 +275,7 @@ def insertZEROPOINTS(tablename,reqnum,attnum,section='db-destest',clobber=False)
     cur = dbh.cursor()
     
     query = """SELECT distinct zeropoint.IMAGEID, image.IMAGENAME, zeropoint.MAG_ZERO
-    from IMAGE, ZEROPOINT, RUNTAG
+    from des_admin.IMAGE image, des_admin.ZEROPOINT zeropoint, des_admin.RUNTAG runtag
     where
     image.IMAGETYPE = 'red' and
     image.ID        = zeropoint.IMAGEID and
@@ -326,6 +326,10 @@ if __name__ == "__main__":
     # 1417       02
     # 1417       03
 
-    insertZEROPOINTS(tablename='felipe.extraZEROPOINT',reqnum=1413,attnum=2,clobber=True)
-    insertZEROPOINTS(tablename='felipe.extraZEROPOINT',reqnum=1417,attnum=2,clobber=False)# no-clobber table
-    insertZEROPOINTS(tablename='felipe.extraZEROPOINT',reqnum=1417,attnum=3,clobber=False)# no-clobber table
+    #insertZEROPOINTS(tablename='felipe.extraZEROPOINT',reqnum=1413,attnum=2,clobber=True)
+    #insertZEROPOINTS(tablename='felipe.extraZEROPOINT',reqnum=1417,attnum=2,clobber=False)# no-clobber table
+    #insertZEROPOINTS(tablename='felipe.extraZEROPOINT',reqnum=1417,attnum=3,clobber=False)# no-clobber table
+
+    # For Finalcut Y2T2_finalcut runs
+    insertZEROPOINTS(tablename='felipe.extraZEROPOINT',reqnum=1784,attnum=1,clobber=False)
+    insertZEROPOINTS(tablename='felipe.extraZEROPOINT',reqnum=1784,attnum=2,clobber=False)

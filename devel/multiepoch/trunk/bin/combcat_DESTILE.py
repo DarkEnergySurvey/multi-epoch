@@ -69,8 +69,7 @@ def cmdline():
                         help="Clean up SWarp and psfcat fits files?")
     parser.add_argument("--keep", action="store_true",default=False,
                         help="Keep SWarp and psfcat fits files?")
-    #parser.add_argument("--custom_weights", action="store_true",default=False,
-    #                    help="Use custom weights for SWarp coaddition")
+
     # Optional path-related arguments
     parser.add_argument("--local_archive", action="store", default=local_archive,
                         help="Name of local archive repository [default: $MULTIEPOCH_ROOT/LOCAL_ARCHIVE]")
@@ -146,6 +145,8 @@ if __name__ == '__main__':
 
     # 3. Retrieve the files -- if remotely
     jo.run_job('multiepoch.tasks.get_fitsfiles',assoc_file=args.assoc_file, http_section='http-desarchive')
+
+    exit()
 
     # 4. Prepare input for coadd
     jo.run_job('multiepoch.tasks.me_prepare',
