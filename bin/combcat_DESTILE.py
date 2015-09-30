@@ -15,9 +15,7 @@ import multiepoch.tasks.find_ccds_in_tile
 SELECT_EXTRAS = multiepoch.tasks.find_ccds_in_tile.SELECT_EXTRAS
 FROM_EXTRAS   = multiepoch.tasks.find_ccds_in_tile.FROM_EXTRAS
 AND_EXTRAS    = multiepoch.tasks.find_ccds_in_tile.AND_EXTRAS
-
 CLOBBER_ME = False
-CLOBBER_ME = True
 
 def cmdline():
     
@@ -82,7 +80,9 @@ def cmdline():
                         help="Path where we will write the outputs [default: $MULTIEPOCH_ROOT/TILEBUILDER]")
     parser.add_argument("--tiledir", action="store",default=None,
                         help="Path where we will write the outputs, overides --outputpath (i.e. $MULTIEPOCH_ROOT/TILEBUILDER/tilename)")
-
+    # me-prepare options
+    parser.add_argument("--clobber_me", action="store_true",default=CLOBBER_ME,
+                        help="Clobber existing me-prepared files?")
     # and/select/from extras
     parser.add_argument("--select_extras", action="store",default=SELECT_EXTRAS,
                         help="string with extra SELECT for query")
@@ -152,8 +152,7 @@ if __name__ == '__main__':
     # 4. Prepare input for coadd
     jo.run_job('multiepoch.tasks.me_prepare',
                assoc_file=args.assoc_file,
-               clobber_me=CLOBBER_ME, MP_me=args.ncpu, me_execution_mode=args.runmode)
-    exit()
+               clobber_me=args.clobber_me, MP_me=args.ncpu, me_execution_mode=args.runmode)
 
     # 5. The SWarp call 
     swarp_params={
@@ -161,8 +160,9 @@ if __name__ == '__main__':
         "COMBINE_TYPE" : "AVERAGE",    
         "PIXEL_SCALE"  : 0.263}
     jo.run_job('multiepoch.tasks.call_SWarp',assoc_file=args.assoc_file,tile_geom_input_file=args.tile_geom_input_file,swarp_parameters=swarp_params,
-               DETEC_COMBINE_TYPE="CHI-MEAN",swarp_execution_mode=args.runmode,custom_weights=args.custom_weights)
+               DETEC_COMBINE_TYPE="CHI-MEAN",swarp_execution_mode=args.runmode)#,custom_weights=args.custom_weights)
 
+    exit()
     # 6. Create the color images using stiff
     stiff_params={"NTHREADS"  : args.nthreads,}
     jo.run_job('multiepoch.tasks.call_Stiff',tilename=args.tilename, stiff_parameters=stiff_params, stiff_execution_mode=args.runmode)
