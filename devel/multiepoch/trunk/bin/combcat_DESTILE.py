@@ -70,7 +70,10 @@ def cmdline():
                         help="Clean up SWarp and psfcat fits files?")
     parser.add_argument("--keep", action="store_true",default=False,
                         help="Keep SWarp and psfcat fits files?")
-
+    parser.add_argument("--weight_for_mask", action="store_true",default=False,
+                        help="Create coadded weight for mask creation")
+    parser.add_argument("--doBANDS", action="store",default=['all'], nargs='+',
+                        help="BANDS to processs (default=all)")
     # Optional path-related arguments
     parser.add_argument("--local_archive", action="store", default=local_archive,
                         help="Name of local archive repository [default: $MULTIEPOCH_ROOT/LOCAL_ARCHIVE]")
@@ -160,7 +163,9 @@ if __name__ == '__main__':
         "COMBINE_TYPE" : "AVERAGE",    
         "PIXEL_SCALE"  : 0.263}
     jo.run_job('multiepoch.tasks.call_SWarp',assoc_file=args.assoc_file,tile_geom_input_file=args.tile_geom_input_file,swarp_parameters=swarp_params,
-               DETEC_COMBINE_TYPE="CHI-MEAN",swarp_execution_mode=args.runmode)#,custom_weights=args.custom_weights)
+               DETEC_COMBINE_TYPE="CHI-MEAN",swarp_execution_mode=args.runmode,weight_for_mask=args.weight_for_mask,doBANDS=args.doBANDS)
+
+    # Now we need to combine the 3 planes SCI/WGT/MSK into a single image
 
     exit()
     # 6. Create the color images using stiff

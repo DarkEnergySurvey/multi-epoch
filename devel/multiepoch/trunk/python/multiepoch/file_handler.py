@@ -32,7 +32,7 @@ SCI_TYPE = 'sci'
 WGT_TYPE = 'wgt'
 FLX_TYPE = 'flx'
 MEF_TYPE = 'mef'
-SWG_TYPE = 'swg'
+MSK_TYPE = 'msk'
 
 # PSF/psfex/SEx types
 PSFCAT_TYPE = 'psfcat'
@@ -81,13 +81,13 @@ def get_wgt_list_file(tiledir, tilename, band):
     fnkwargs = {'base':tilename, 'band':band, 'ftype':WGT_TYPE, 'ext':LIST_EXT}
     return dh.place_file(_me_fn(**fnkwargs), 'aux')
 
-def get_swg_list_file(tiledir, tilename, band):
+def get_msk_list_file(tiledir, tilename, band):
     dh = get_tiledir_handler(tiledir)
-    fnkwargs = {'base':tilename, 'band':band, 'ftype':SWG_TYPE, 'ext':LIST_EXT}
+    fnkwargs = {'base':tilename, 'band':band, 'ftype':MSK_TYPE, 'ext':LIST_EXT}
     return dh.place_file(_me_fn(**fnkwargs), 'aux')
 
 # ------------------------------------
-# 2. Output Coadd Files (sci/wgt/swg)
+# 2. Output Coadd Files (sci/wgt/msk)
 # ------------------------------------
 def get_sci_fits_file(tiledir, tilename, band):
     dh = get_tiledir_handler(tiledir)
@@ -99,23 +99,28 @@ def get_wgt_fits_file(tiledir, tilename, band):
     fnkwargs = {'base':tilename, 'band':band, 'ftype':WGT_TYPE, 'ext':FITS_EXT}
     return dh.place_file(_me_fn(**fnkwargs), 'products')
 
-def get_swg_fits_file(tiledir, tilename, band):
+def get_msk_fits_file(tiledir, tilename, band):
     dh = get_tiledir_handler(tiledir)
-    fnkwargs = {'base':tilename, 'band':band, 'ftype':SWG_TYPE, 'ext':FITS_EXT}
+    fnkwargs = {'base':tilename, 'band':band, 'ftype':MSK_TYPE, 'ext':FITS_EXT}
+    return dh.place_file(_me_fn(**fnkwargs), 'products')
+
+def get_gen_fits_file(tiledir, tilename, band, type='gen'):
+    dh = get_tiledir_handler(tiledir)
+    fnkwargs = {'base':tilename, 'band':band, 'ftype':type, 'ext':FITS_EXT}
     return dh.place_file(_me_fn(**fnkwargs), 'products')
 
 # ----------------------------------------------------------------------------
 # 2a. Outout Coadd different type (tmp_wgt/tmp_sci)
 # ----------------------------------------------------------------------------
-def get_WGT_fits_file(tiledir, tilename, band, type=WGT_TYPE):
-    dh = get_tiledir_handler(tiledir)
-    fnkwargs = {'base':tilename, 'band':band, 'ftype':type, 'ext':FITS_EXT}
-    return dh.place_file(_me_fn(**fnkwargs), 'products')
+#def get_WGT_fits_file(tiledir, tilename, band, type=WGT_TYPE):
+#    dh = get_tiledir_handler(tiledir)
+#    fnkwargs = {'base':tilename, 'band':band, 'ftype':type, 'ext':FITS_EXT}
+#    return dh.place_file(_me_fn(**fnkwargs), 'products')
 
-def get_SCI_fits_file(tiledir, tilename, band, type=SCI_TYPE):
-    dh = get_tiledir_handler(tiledir)
-    fnkwargs = {'base':tilename, 'band':band, 'ftype':type, 'ext':FITS_EXT}
-    return dh.place_file(_me_fn(**fnkwargs), 'products')
+#def get_SCI_fits_file(tiledir, tilename, band, type=SCI_TYPE):
+#    dh = get_tiledir_handler(tiledir)
+#    fnkwargs = {'base':tilename, 'band':band, 'ftype':type, 'ext':FITS_EXT}
+#    return dh.place_file(_me_fn(**fnkwargs), 'products')
 
 # ------------------------------------
 # 3. Misc files (log/fluxes/command)
