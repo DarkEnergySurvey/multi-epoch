@@ -50,7 +50,7 @@ class Job(BaseJob):
 
         # Optional inputs -- postional arguments
         clobber_me   = Bool(False, help="Cloober the existing me-ready files.")
-        extension_me = CUnicode('_me', help=("Weight extension to add to custom weight file names."))
+        extension_me = CUnicode('_me', help=(" extension to add to me-prepared file names."))
         MP_me        = CInt(1, help = ("Run using multi-process, 0=automatic, 1=single-process [default]"))
         
         local_archive     = Unicode(None, help=("The local filepath where the input fits files (will) live"))
@@ -81,10 +81,11 @@ class Job(BaseJob):
     def prewash(self):
 
         """ Pre-wash of inputs, some of these are only needed when run as script"""
-        
-        # Define weight names using function in contextDefs
-        self.logger.info("Constructing assoc[FILEPATH_LOCAL_ME] from assoc[FILEPATH_LOCAL]")
-        self.ctx.assoc['FILEPATH_LOCAL_ME'] = contextDefs.define_me_names(self.ctx)
+
+        # Re-construct the names in case not present
+        if 'FILEPATH_LOCAL_ME' not in self.ctx.assoc.keys():
+            self.logger.info("(Re)-constructing assoc[FILEPATH_LOCAL_ME] from assoc[FILEPATH_LOCAL]")
+            self.ctx.assoc['FILEPATH_LOCAL_ME'] = contextDefs.define_me_names(self.ctx)
 
         # now make sure all paths exist
         for path in self.ctx.assoc['FILEPATH_LOCAL_ME']:
@@ -167,7 +168,7 @@ class Job(BaseJob):
             self.logger.info("Will write to logfile: %s" % logfile)
 
             # Loop over all input files
-            for k,cmd in range(N):
+            for k in range(N):
                 t1 = time.time()
                 cmd  = ' '.join(cmd_list[k])
                 self.logger.info("Preparing:  %s (%s/%s)" % (cmd_list[k][1].split()[1],k+1,N))
