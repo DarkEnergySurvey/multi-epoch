@@ -7,7 +7,7 @@ setupRequired(despyastro 0.3.2+1)
 setupRequired(despymisc  0.2.3+3) 
 
 # Pixcorrect
-setupRequired(pixcorrect 0.1.5+1)
+setupRequired(pixcorrect 0.1.6+0)
 #setupRequired(despyfits  0.2.7+1) 
 #setupRequired(pyfits 3.3+3)
 #setupRequired(fitsio 0.9.8rc1+2)
