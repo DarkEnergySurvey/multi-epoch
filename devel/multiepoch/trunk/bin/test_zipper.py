@@ -4,7 +4,7 @@ from multiepoch import zipper_interp as zipp
 import fitsio
 import numpy 
 from despyfits import maskbits
-
+import time
 
 def update_wcs_matrix(header,x0,y0,naxis1,naxis2):
 
@@ -90,6 +90,11 @@ if __name__ == "__main__":
     h_section_sci = update_wcs_matrix(sci_hdr,x0,y0,naxis1,naxis2)
     h_section_msk = update_wcs_matrix(msk_hdr,x0,y0,naxis1,naxis2)
     h_section_wgt = update_wcs_matrix(wgt_hdr,x0,y0,naxis1,naxis2)
+
+    # Add to image history
+    interp_mask = 1
+    h_section_sci['HISTORY'] = time.asctime(time.localtime()) + \
+                               ' row_interp over mask 0x{:04X}'.format(interp_mask)
     
     print "# Writing %s" % file_out
     ofits = fitsio.FITS(file_out,'rw',clobber=True)

@@ -120,11 +120,6 @@ def zipper_interp_rows(image,mask,interp_mask,**kwargs):
         if BADPIX_INTERP:
             mask[ystart[run],xstart[run]:xend[run]] |= BADPIX_INTERP
 
-    # Move this to the outside
-    # Add to image history
-    #image['HISTORY'] =time.asctime(time.localtime()) + \
-    #                   ' row_interp over mask 0x{:04X}'.format(interp_mask)
-    
     if BADPIX_INTERP:
         return image,mask
     else:
