@@ -33,7 +33,7 @@ def zipper_interp_rows(image,mask,interp_mask,**kwargs):
     boundary pixels are invalid.
 
     Returns the 'image' back and if 'BADPIX_INTERP' is not None
-    returns a tuple of image,mask
+    it returns a tuple with image,mask
     
     :Postional parameters:
        'image': the 2D numpy array input image
@@ -144,9 +144,8 @@ def zipper_interp_cols(image,mask,interp_mask,**kwargs):
     'invalid_mask.'
 
     Returns the 'image' back and if 'BADPIX_INTERP' is not None
-    returns a tuple of image,mask
-    
-    
+    it returns a tuple with image,mask
+        
     :Postional parameters:
        'image': the 2D numpy array input image
        'mask':  the 2D numpy array input image
