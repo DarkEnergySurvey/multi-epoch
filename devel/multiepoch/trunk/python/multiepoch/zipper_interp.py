@@ -2,9 +2,6 @@
 
 import numpy as np
 
-# TODO:
-# Add logger to print
-
 DEFAULT_MINCOLS = 1     # Narrowest feature to interpolate
 DEFAULT_MAXCOLS = None  # Widest feature to interpolate.  None means no limit.
 

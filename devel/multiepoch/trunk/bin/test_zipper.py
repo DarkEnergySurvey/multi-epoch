@@ -3,41 +3,17 @@
 from multiepoch import zipper_interp as zipp
 import fitsio
 import numpy 
-from despyfits import maskbits
 import time
 
-def update_wcs_matrix(header,x0,y0,naxis1,naxis2):
-
-    from despyastro import wcsutil
-
-    """
-    Update the wcs header object with the right CRPIX[1,2] CRVAL[1,2] for a given subsection
-    """
-    import copy
-    # We need to make a deep copy/otherwise if fails
-    h = copy.deepcopy(header)
-    # Get the wcs object
-    wcs = wcsutil.WCS(h)
-    # Recompute CRVAL1/2 on the new center x0,y0
-    CRVAL1,CRVAL2 = wcs.image2sky(x0,y0)
-    # Asign CRPIX1/2 on the new image
-    CRPIX1 = int(naxis1/2.0)
-    CRPIX2 = int(naxis2/2.0)
-    # Update the values
-    h['CRVAL1'] = CRVAL1
-    h['CRVAL2'] = CRVAL2
-    h['CRPIX1'] = CRPIX1
-    h['CRPIX2'] = CRPIX2
-    return h
-
+from despyfits import maskbits
+from despyastro import astrometry
 
 
 if __name__ == "__main__":
 
-
-    sci_file = '/Users/felipe/DES2246-4457-pre2/products/DES2246-4457_r_sci.fits'
-    msk_file = '/Users/felipe/DES2246-4457-pre2/products/DES2246-4457_r_msk.fits'
-    wgt_file = '/Users/felipe/DES2246-4457-pre2/products/DES2246-4457_r_wgt.fits'
+    sci_file = '/Users/felipe/MULTIEPOCH_ROOT/TILEBUILDER/DES2246-4457-pre2/products/DES2246-4457_r_sci.fits'
+    msk_file = '/Users/felipe/MULTIEPOCH_ROOT/TILEBUILDER/DES2246-4457-pre2/products/DES2246-4457_r_msk.fits'
+    wgt_file = '/Users/felipe/MULTIEPOCH_ROOT/TILEBUILDER/DES2246-4457-pre2/products/DES2246-4457_r_wgt.fits'
     file_out = 'test.fits'
     
     print "Using fitsio version %s" % fitsio.__version__
@@ -87,9 +63,9 @@ if __name__ == "__main__":
     #SCI,MSK = zipp.zipper_interp(SCI,MSK,interp_mask=1,axis=1,BADPIX_INTERP=maskbits.BADPIX_INTERP)
 
     # Update the WCS in the headers and make a copy
-    h_section_sci = update_wcs_matrix(sci_hdr,x0,y0,naxis1,naxis2)
-    h_section_msk = update_wcs_matrix(msk_hdr,x0,y0,naxis1,naxis2)
-    h_section_wgt = update_wcs_matrix(wgt_hdr,x0,y0,naxis1,naxis2)
+    h_section_sci = astrometry.update_wcs_matrix(sci_hdr,x0,y0,naxis1,naxis2)
+    h_section_msk = astrometry.update_wcs_matrix(msk_hdr,x0,y0,naxis1,naxis2)
+    h_section_wgt = astrometry.update_wcs_matrix(wgt_hdr,x0,y0,naxis1,naxis2)
 
     # Add to image history
     interp_mask = 1
