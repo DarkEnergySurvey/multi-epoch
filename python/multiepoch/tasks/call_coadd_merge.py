@@ -107,7 +107,9 @@ class Job(BaseJob):
         args = self.assemble_args()
         
         if execution_mode == 'execute':
-            self.run_coadd_merge(args)
+            for BAND in self.ctx.dBANDS:
+                self.logger.info("Making MEF file for BAND:%s --> %s" % (BAND,args[BAND]['outname']))
+                coadd_merge.merge(**args[BAND])
 
         elif execution_mode == 'dryrun':
             for BAND in self.ctx.dBANDS:
@@ -131,29 +133,6 @@ class Job(BaseJob):
         self.logger.info("MEFs Creation Total time: %s" % elapsed_time(t0))
         return
 
-    def cleanup_SWarpFiles(self,execute=False):
-
-
-        # Sortcuts for less typing
-        tiledir     = self.input.tiledir
-        tilename_fh = self.input.tilename_fh
-
-        for BAND in self.ctx.dBANDS:
-
-            SWarpfiles = [fh.get_sci_fits_file(tiledir,tilename_fh, BAND),
-                          fh.get_wgt_fits_file(tiledir,tilename_fh, BAND),
-                          fh.get_SCI_fits_file(tiledir,tilename_fh, BAND, type='tmp_sci'), # tmp_sci.fits
-                          fh.get_WGT_fits_file(tiledir,tilename_fh, BAND, type='tmp_wgt')] # wgt_tmp.fits
-                          
-            for sfile in SWarpfiles:
-                self.logger.info("# Cleaning up %s" % sfile)
-                if execute:
-                    try:
-                        os.remove(sfile)
-                    except:
-                        self.logger.info("# Warning: cannot remove %s" % sfile)
-
-        return
             
 
     def get_merge_cmd(self,args):
@@ -184,20 +163,7 @@ class Job(BaseJob):
                           }
         return args
 
-    def run_coadd_merge(self,args):
-
-        for BAND in self.ctx.dBANDS:
-            self.logger.info("Making MEF file for BAND:%s --> %s" % (BAND,args[BAND]['outname']))
-            coadd_merge.merge(**args[BAND])
-        return
-        
-
-    def create_MEFs(self,clobber,verb=False):
-
-        """ Create the MEF files using despyfits"""
-        
-        # check execution mode and write/print/execute commands accordingly --------------
-        execution_mode = self.ctx.get('MEF_execution_mode')
+    def cleanup_SWarpFiles(self,execute=False):
 
         # Sortcuts for less typing
         tiledir     = self.input.tiledir
@@ -205,33 +171,23 @@ class Job(BaseJob):
 
         for BAND in self.ctx.dBANDS:
 
-            # Build the args dictionary to be pass as **kwrgs or comand-line
-            outname = fh.get_mef_file(tiledir, tilename_fh, BAND)
-            args = {'sci_file': fh.get_sci_fits_file(tiledir, tilename_fh, BAND),
-                    'msk_file': fh.get_msk_fits_file(tiledir, tilename_fh, BAND),
-                    'wgt_file': fh.get_wgt_fits_file(tiledir, tilename_fh, BAND),
-                    'outname' : outname,
-                    'logger'  : self.logger,
-                    'clobber' : clobber,
-                    }
-            self.logger.info("Making MEF file for BAND:%s --> %s" % (BAND,outname))
-
-            # Call it and time it
-            if execution_mode == 'execute':
-                coadd_merge.merge(**args)
-            elif execution_mode == 'tofile':
-                cmd = self.get_merge_cmd(args)
-                print BKLINE.join(cmd)+'\n'
-            elif execution_mode == 'dryrun':
-                cmd = self.get_merge_cmd(args)
-                self.logger.info(" ".join(cmd))
-            else:
-                raise ValueError('Execution mode %s not implemented.' % execution_mode)
+            SWarpfiles = [fh.get_sci_fits_file(tiledir,tilename_fh, BAND),
+                          fh.get_wgt_fits_file(tiledir,tilename_fh, BAND),
+                          fh.get_msk_fits_file(tiledir,tilename_fh, BAND),
+                          fh.get_gen_fits_file(tiledir,tilename_fh, BAND, type='tmp_sci') # tmp_sci.fits
+                          ]
+            for sfile in SWarpfiles:
+                self.logger.info("Cleaning up %s" % sfile)
+                if execute:
+                    try:
+                        os.remove(sfile)
+                    except:
+                        self.logger.info("Warning: cannot remove %s" % sfile)
 
         return
 
     def __str__(self):
-        return 'Create MEF file for a coadded TILE fron SCI/MSK/WGT image planes'
+        return 'Create MEF file for a coadded TILE fron SCI/MSK/WGT image planes using coadd_merge'
  
 if __name__ == '__main__':
     from mojo.utils import main_runner

@@ -224,10 +224,10 @@ class Job(BaseJob):
                 pars["WEIGHT_IMAGE"]   = "@%s" % fh.get_wgt_list_file(tiledir,tilename_fh, BAND) # list of weights
             elif type=='msk': # Create coadd of weight with starts null to create a msk plane
                 pars["IMAGEOUT_NAME"]  = "%s"  % fh.get_gen_fits_file(tiledir,tilename_fh, BAND, type='tmp_sci') # -- discard
-                pars["WEIGHTOUT_NAME"] = "%s"  % fh.get_msk_fits_file(tiledir,tilename_fh, BAND, ) # msk.fits -- keep
+                pars["WEIGHTOUT_NAME"] = "%s"  % fh.get_msk_fits_file(tiledir,tilename_fh, BAND) # msk.fits -- keep
                 pars["WEIGHT_IMAGE"]   = "@%s" % fh.get_msk_list_file(tiledir,tilename_fh, BAND) # list of msk/weights
             else:
-                print "# Need to define either sci/msk"
+                self.logger.info("ERROR: Need to define either sci/msk on call")
 
             # Construct the call
             cmd = []
