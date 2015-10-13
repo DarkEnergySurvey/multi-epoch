@@ -63,7 +63,7 @@ class Job(BaseJob):
         weight_for_mask  = Bool(False, help="Create coadded weight for mask creation")
         doBANDS          = List(['all'],help="BANDS to processs (default=all)",argparse={'nargs':'+',})
         detname          = CUnicode(DETNAME,help="File label for detection image, default=%s." % DETNAME)
-        detecCOMBINE     = Unicode(None, help="COMBINE type for detection Image")
+        COMBINE_TYPE_detec = CUnicode('', help="COMBINE type for detection Image")
 
         # Logging -- might be factored out
         stdoutloglevel = CUnicode('INFO', help="The level with which logging info is streamed to stdout",
@@ -82,6 +82,8 @@ class Job(BaseJob):
         def _validate_conditional(self):
             if self.tilename_fh == '':
                 self.tilename_fh = self.tilename
+            if self.COMBINE_TYPE_detec == '':
+                self.COMBINE_TYPE_detec = None
 
         # To also accept comma-separeted input lists
         def _argparse_postproc_doBANDS(self, v):
@@ -103,7 +105,10 @@ class Job(BaseJob):
         # Re-cast the ctx.assoc as dictionary of arrays instead of lists
         self.ctx.assoc  = utils.dict2arrays(self.ctx.assoc)
         # Get the BANDs information in the context if they are not present
-        self.ctx.update(contextDefs.get_BANDS(self.ctx.assoc, detname=self.ctx.detname,logger=self.logger,doBANDS=self.input.doBANDS))
+        if self.ctx.get('gotBANDS'):
+            self.logger.info("BANDs already defined in context -- skipping")
+        else:
+            self.ctx.update(contextDefs.get_BANDS(self.ctx.assoc, detname=self.ctx.detname,logger=self.logger,doBANDS=self.ctx.doBANDS))
 
         # Check info OK
         self.logger.info("BANDS:   %s" % self.ctx.BANDS)
@@ -166,7 +171,7 @@ class Job(BaseJob):
         """
         Write the input file list for SWarp
         """
-        self.logger.info('# writing swarp input files')
+        self.logger.info('Writing swarp input files')
 
         for BAND in self.ctx.doBANDS:
             # extracting the list
@@ -194,9 +199,8 @@ class Job(BaseJob):
         # Sortcuts for less typing
         tiledir     = self.input.tiledir
         tilename_fh = self.input.tilename_fh
-        BAND        = self.ctx.detBAND # short cut
 
-        self.logger.info('# assembling commands for SWarp call')
+        self.logger.info('Assembling commands for SWarp call')
 
         # Update and Set the SWarp options 
         pars = self.get_swarp_parameter_set(**self.input.swarp_parameters)
@@ -257,6 +261,11 @@ class Job(BaseJob):
             print "# Need to define either sci/msk"
 
         # The call to get the detection image
+
+        if self.ctx.COMBINE_TYPE_detec:
+            self.logger.info("Will use COMBINE_TYPE=%s for detection image" % self.ctx.COMBINE_TYPE_detec)
+            pars['COMBINE_TYPE'] = self.ctx.COMBINE_TYPE_detec
+
         swarp_cmd[BAND] = [SWARP_EXE, ]
         swarp_cmd[BAND].append("%s" % " ".join(det_scilists))
         swarp_cmd[BAND].append("-c %s" % swarp_conf)
