@@ -1,13 +1,13 @@
 #!/usr/bin/env python
 
-from multiepoch import zipper_interp as zipp
+#from multiepoch import zipper_interp as zipp
 import fitsio
 import numpy 
 import time
 
 from despyfits import maskbits
 from despyastro import astrometry
-
+from despyastro import zipper_interp as zipp
 
 if __name__ == "__main__":
 
