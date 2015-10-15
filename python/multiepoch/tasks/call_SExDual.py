@@ -55,6 +55,8 @@ class Job(BaseJob):
         doBANDS       = List(['all'],help="BANDS to processs (default=all)",argparse={'nargs':'+',})
         detname       = CUnicode(DETNAME,help="File label for detection image, default=%s." % DETNAME)
         magbase       = CFloat(MAGBASE, help="Zero point magnitude base for SWarp, default=%s." % MAGBASE)
+
+        cleanupPSFcats = Bool(False, help="Clean-up PSFcat.fits files")
         
         # Logging -- might be factored out
         stdoutloglevel = CUnicode('INFO', help="The level with which logging info is streamed to stdout",
@@ -92,7 +94,10 @@ class Job(BaseJob):
         # Re-cast the ctx.assoc as dictionary of arrays instead of lists
         self.ctx.assoc  = utils.dict2arrays(self.ctx.assoc)
         # Get the BANDs information in the context if they are not present
-        self.ctx.update(contextDefs.get_BANDS(self.ctx.assoc, detname=self.ctx.detname,logger=self.logger,doBANDS=self.input.doBANDS))
+        if self.ctx.get('gotBANDS'):
+            self.logger.info("BANDs already defined in context -- skipping")
+        else:
+            self.ctx.update(contextDefs.get_BANDS(self.ctx.assoc, detname=self.ctx.detname,logger=self.logger,doBANDS=self.ctx.doBANDS))
 
         # Check info OK
         self.logger.info("BANDS:   %s" % self.ctx.BANDS)
@@ -123,6 +128,11 @@ class Job(BaseJob):
             self.runSExDual(cmd_list,MP=MP)
         else:
             raise ValueError('Execution mode %s not implemented.' % execution_mode)
+
+
+        # 4. Clean up psfcat files
+        if self.input.cleanupPSFcats:
+            self.cleanup_PSFcats(execute=True)
         return
 
     def writeCall(self,cmd_list):
@@ -189,7 +199,7 @@ class Job(BaseJob):
         # General pars, BAND-independent
         SExDual_parameters = {
             'CATALOG_TYPE'    : "FITS_LDAC",
-            'FILTER_NAME'     : os.path.join(os.environ['MULTIEPOCH_DIR'],'etc','sex.conv'),
+            'FILTER_NAME'     : os.path.join(os.environ['MULTIEPOCH_DIR'],'etc','gauss_3.0_7x7.conv'),
             'STARNNW_NAME'    : os.path.join(os.environ['MULTIEPOCH_DIR'],'etc','sex.nnw'),
             'CATALOG_TYPE'    :   'FITS_1.0',
             'WEIGHT_TYPE'     : 'MAP_WEIGHT',
@@ -198,8 +208,10 @@ class Job(BaseJob):
             'DETECT_THRESH'   : 1.5,
             'DEBLEND_MINCONT' : 0.001, 
             #'PARAMETERS_NAME' : os.path.join(os.environ['MULTIEPOCH_DIR'],'etc','sex.param'),
-            'PARAMETERS_NAME' : os.path.join(os.environ['MULTIEPOCH_DIR'],'etc','sex.param_psfonly'), # Faster!!!
+            #'PARAMETERS_NAME' : os.path.join(os.environ['MULTIEPOCH_DIR'],'etc','sex.param_psfonly'), # Faster!!!
+            'PARAMETERS_NAME' : os.path.join(os.environ['MULTIEPOCH_DIR'],'etc','sex.param_nomodel'), # Way Faster!!!
             'VERBOSE_TYPE'    : 'NORMAL',
+            'INTERP_TYPE'     : 'NONE',
             }
 
         # Now update pars with kwargs
@@ -232,15 +244,17 @@ class Job(BaseJob):
             psf    = fh.get_psf_file(tiledir, tilename_fh, BAND)
             seg    = fh.get_seg_file(tiledir, tilename_fh, BAND)
             # Combined images and weights
-            sci_comb     = fh.get_sci_fits_file(tiledir, tilename_fh, BAND)
-            sci_comb_det = fh.get_sci_fits_file(tiledir, tilename_fh, dBAND)
-            wgt_comb     = fh.get_wgt_fits_file(tiledir, tilename_fh, BAND)
-            wgt_comb_det = fh.get_wgt_fits_file(tiledir, tilename_fh, dBAND)
+            sci_comb     = "%s'[%s]'" % (fh.get_mef_file(tiledir, tilename_fh, BAND),  utils.SCI_HDU)
+            sci_comb_det = "%s'[%s]'" % (fh.get_mef_file(tiledir, tilename_fh, dBAND), utils.SCI_HDU)
+            wgt_comb     = "%s'[%s]'" % (fh.get_mef_file(tiledir, tilename_fh, BAND),  utils.WGT_HDU)
+            wgt_comb_det = "%s'[%s]'" % (fh.get_mef_file(tiledir, tilename_fh, dBAND), utils.WGT_HDU)
+            msk_comb     = "%s'[%s]'" % (fh.get_mef_file(tiledir, tilename_fh, BAND),  utils.MSK_HDU)
             
             pars['MAG_ZEROPOINT']   =  30.0000 
             pars['CATALOG_NAME']    =  sexcat           
             pars['PSF_NAME']        =  psf
             pars['CHECKIMAGE_NAME'] =  seg
+            pars['FLAG_IMAGE']      =  msk_comb
             pars['WEIGHT_IMAGE']    =  "%s,%s" % (wgt_comb_det, wgt_comb)
             
             # Build the call for the band, using dband as detection image
@@ -253,6 +267,20 @@ class Job(BaseJob):
             SExDual_cmd[BAND] = cmd
 
         return SExDual_cmd
+
+
+    def cleanup_PSFcats(self,execute=False):
+
+        for BAND in self.ctx.dBANDS:
+
+            psfcat = fh.get_psf_file(self.ctx.tiledir, self.ctx.tilename_fh, BAND)
+            self.logger.info("Cleaning up %s" % psfcat)
+            if execute:
+                try:
+                    os.remove(psfcat)
+                except:
+                    self.logger.info("Warning: cannot remove %s" % psfcat)
+        return
 
 
     def __str__(self):

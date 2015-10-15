@@ -16,6 +16,8 @@ SELECT_EXTRAS = multiepoch.tasks.find_ccds_in_tile.SELECT_EXTRAS
 FROM_EXTRAS   = multiepoch.tasks.find_ccds_in_tile.FROM_EXTRAS
 AND_EXTRAS    = multiepoch.tasks.find_ccds_in_tile.AND_EXTRAS
 CLOBBER_ME = False
+XBLOCK = 5
+ADD_NOISE = True
 
 def cmdline():
     
@@ -74,6 +76,7 @@ def cmdline():
                         help="Create coadded weight for mask creation")
     parser.add_argument("--doBANDS", action="store",default=['all'], nargs='+',
                         help="BANDS to processs (default=all)")
+
     # Optional path-related arguments
     parser.add_argument("--local_archive", action="store", default=local_archive,
                         help="Name of local archive repository [default: $MULTIEPOCH_ROOT/LOCAL_ARCHIVE]")
@@ -86,6 +89,7 @@ def cmdline():
     # me-prepare options
     parser.add_argument("--clobber_me", action="store_true",default=CLOBBER_ME,
                         help="Clobber existing me-prepared files?")
+
     # and/select/from extras
     parser.add_argument("--select_extras", action="store",default=SELECT_EXTRAS,
                         help="string with extra SELECT for query")
@@ -160,27 +164,31 @@ if __name__ == '__main__':
     # 5. The SWarp call 
     swarp_params={
         "NTHREADS"     : args.nthreads,
-        "COMBINE_TYPE" : "AVERAGE",    
+        #"COMBINE_TYPE" : "AVERAGE",
+        "COMBINE_TYPE" : "WEIGHTED",    
         "PIXEL_SCALE"  : 0.263}
     jo.run_job('multiepoch.tasks.call_SWarp',assoc_file=args.assoc_file,tile_geom_input_file=args.tile_geom_input_file,swarp_parameters=swarp_params,
-               DETEC_COMBINE_TYPE="CHI-MEAN",swarp_execution_mode=args.runmode,weight_for_mask=args.weight_for_mask,doBANDS=args.doBANDS)
+               COMBINE_TYPE_detec="CHI-MEAN",swarp_execution_mode=args.runmode,weight_for_mask=args.weight_for_mask,doBANDS=args.doBANDS)
 
     # Now we need to combine the 3 planes SCI/WGT/MSK into a single image
+    jo.run_job('multiepoch.tasks.call_coadd_merge',clobber_MEF=True,MEF_execution_mode=args.runmode,cleanupSWarp=args.cleanup,add_noise=ADD_NOISE,xblock=XBLOCK)
+    jo.run_job('multiepoch.tasks.call_coadd_merge',clobber_MEF=True,MEF_execution_mode='execute',cleanupSWarp=args.cleanup,add_noise=ADD_NOISE,xblock=XBLOCK)
 
-    exit()
     # 6. Create the color images using stiff
     stiff_params={"NTHREADS"  : args.nthreads,}
     jo.run_job('multiepoch.tasks.call_Stiff',tilename=args.tilename, stiff_parameters=stiff_params, stiff_execution_mode=args.runmode)
-
+    jo.run_job('multiepoch.tasks.call_Stiff',tilename=args.tilename, stiff_parameters=stiff_params, stiff_execution_mode='execute')
+    
     # 7. make the SEx psf Call
     jo.run_job('multiepoch.tasks.call_SExpsf',tilename=args.tilename, SExpsf_execution_mode=args.runmode,MP_SEx=args.ncpu)
+    jo.run_job('multiepoch.tasks.call_SExpsf',tilename=args.tilename, SExpsf_execution_mode='execute',MP_SEx=args.ncpu)
 
     # 8. Run  psfex
-    jo.run_job('multiepoch.tasks.call_psfex',psfex_parameters={"NTHREADS": args.nthreads,},psfex_execution_mode=args.runmode,cleanupPSFcats=args.cleanup)
+    jo.run_job('multiepoch.tasks.call_psfex',psfex_parameters={"NTHREADS": args.nthreads,},psfex_execution_mode=args.runmode)
+    jo.run_job('multiepoch.tasks.call_psfex',psfex_parameters={"NTHREADS": args.nthreads,},psfex_execution_mode='execute')
 
     # 9. Run SExtractor un dual mode
-    jo.run_job('multiepoch.tasks.call_SExDual',SExDual_parameters={"MAG_ZEROPOINT":30,}, SExDual_execution_mode=args.runmode,MP_SEx=args.ncpu)
+    jo.run_job('multiepoch.tasks.call_SExDual',SExDual_parameters={"MAG_ZEROPOINT":30,}, SExDual_execution_mode=args.runmode,MP_SEx=args.ncpu,cleanupPSFcats=args.cleanup)
+    jo.run_job('multiepoch.tasks.call_SExDual',SExDual_parameters={"MAG_ZEROPOINT":30,}, SExDual_execution_mode='execute',MP_SEx=args.ncpu,cleanupPSFcats=args.cleanup)
     
-    # 10. Create the MEF fits files in the formar we like
-    jo.run_job('multiepoch.tasks.make_MEFs',clobber_MEF=True,MEF_execution_mode=args.runmode,cleanupSWarp=args.cleanup)
     print "# Grand Total time: %s" % elapsed_time(t0)

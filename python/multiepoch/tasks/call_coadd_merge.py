@@ -53,12 +53,20 @@ class Job(BaseJob):
                                        argparse={'choices': ('tofile','dryrun','execute')})
         doBANDS       = List(['all'],help="BANDS to processs (default=all)",argparse={'nargs':'+',})
         detname       = CUnicode(DETNAME,help="File label for detection image, default=%s." % DETNAME)
+
+        # zipper params
+        xblock    = CInt(1, help="Block size of zipper in x-direction")
+        add_noise = Bool(False,help="Add Poisson Noise to the zipper")
         
         # Logging -- might be factored out
         stdoutloglevel = CUnicode('INFO', help="The level with which logging info is streamed to stdout",
                                   argparse={'choices': ('DEBUG','INFO','CRITICAL')} )
         fileloglevel   = CUnicode('INFO', help="The level with which logging info is written to the logfile",
                                   argparse={'choices': ('DEBUG','INFO','CRITICAL')} )
+
+        # Add
+        # --add_noise
+        # --xblock
 
         # Function to read ASCII/panda framework file (instead of json)
         # Comment if you want to use json files
@@ -117,12 +125,13 @@ class Job(BaseJob):
                 self.logger.info(" ".join(cmd))
                 
         elif execution_mode == 'tofile':
+            bkline  = self.ctx.get('breakline',BKLINE)
             cmdfile = fh.get_mef_cmd_file(self.input.tiledir, self.input.tilename_fh)
             self.logger.info("Will write coadd_merge call to: %s" % cmdfile)
             with open(cmdfile, "w") as fid:
                 for BAND in self.ctx.dBANDS:
                     cmd = self.get_merge_cmd(args[BAND])
-                    fid.write(BKLINE.join(cmd)+'\n')
+                    fid.write(bkline.join(cmd)+'\n')
                     fid.write('\n\n')
         else:
             raise ValueError('Execution mode %s not implemented.' % execution_mode)
@@ -132,8 +141,6 @@ class Job(BaseJob):
             
         self.logger.info("MEFs Creation Total time: %s" % elapsed_time(t0))
         return
-
-            
 
     def get_merge_cmd(self,args):
         cmd = []
@@ -147,8 +154,7 @@ class Job(BaseJob):
         return cmd
 
     def assemble_args(self):
-
-        # Build the args dictionary to be pass as **kwrgs or comand-line
+        """ Build the args dictionary to be pass as **kwrgs or comand-line """
         args = {}
         tiledir     = self.input.tiledir
         tilename_fh = self.input.tilename_fh
@@ -160,6 +166,8 @@ class Job(BaseJob):
                           'outname' : outname,
                           'logger'  : self.logger,
                           'clobber' : self.ctx.clobber_MEF,
+                          'xblock'  : self.ctx.xblock,
+                          'add_noise' : self.ctx.add_noise,
                           }
         return args
 
@@ -170,7 +178,6 @@ class Job(BaseJob):
         tilename_fh = self.input.tilename_fh
 
         for BAND in self.ctx.dBANDS:
-
             SWarpfiles = [fh.get_sci_fits_file(tiledir,tilename_fh, BAND),
                           fh.get_wgt_fits_file(tiledir,tilename_fh, BAND),
                           fh.get_msk_fits_file(tiledir,tilename_fh, BAND),

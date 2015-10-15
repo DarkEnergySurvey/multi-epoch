@@ -91,7 +91,10 @@ class Job(BaseJob):
         # Re-cast the ctx.assoc as dictionary of arrays instead of lists
         self.ctx.assoc  = utils.dict2arrays(self.ctx.assoc)
         # Get the BANDs information in the context if they are not present
-        self.ctx.update(contextDefs.get_BANDS(self.ctx.assoc, detname=self.ctx.detname,logger=self.logger,doBANDS=self.input.doBANDS))
+        if self.ctx.get('gotBANDS'):
+            self.logger.info("BANDs already defined in context -- skipping")
+        else:
+            self.ctx.update(contextDefs.get_BANDS(self.ctx.assoc, detname=self.ctx.detname,logger=self.logger,doBANDS=self.ctx.doBANDS))
 
         # Check info OK
         self.logger.info("BANDS:   %s" % self.ctx.BANDS)
@@ -205,7 +208,7 @@ class Job(BaseJob):
         """ Build/Execute the SExtractor call for psf on the detection image"""
 
         # Sortcuts for less typing
-        tiledir  = self.input.tiledir
+        tiledir     = self.input.tiledir
         tilename_fh = self.input.tilename_fh
 
         self.logger.info("assembling commands for SEx psf call")
@@ -221,13 +224,13 @@ class Job(BaseJob):
         # Loop over all bands and Detection
         for BAND in self.ctx.dBANDS:
 
-            pars["WEIGHT_IMAGE"]  = "%s" % fh.get_wgt_fits_file(tiledir,tilename_fh, BAND)
-            pars["CATALOG_NAME"] = "%s"  % fh.get_psfcat_file(tiledir,tilename_fh, BAND)
+            pars["WEIGHT_IMAGE"]  = "%s'[%s]'" % (fh.get_mef_file(tiledir,tilename_fh, BAND),utils.WGT_HDU)
+            pars["CATALOG_NAME"]  = "%s"       % fh.get_psfcat_file(tiledir,tilename_fh, BAND)
 
             # Build the call
             cmd = []
             cmd.append("%s" % SEX_EXE)
-            cmd.append("%s" % fh.get_sci_fits_file(tiledir,tilename_fh, BAND) )
+            cmd.append("%s'[%s]'" % (fh.get_mef_file(tiledir,tilename_fh, BAND), utils.SCI_HDU))
             cmd.append("-c %s" % sex_conf)
             for param,value in pars.items():
                 cmd.append("-%s %s" % (param,value))

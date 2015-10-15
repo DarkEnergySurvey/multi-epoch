@@ -7,6 +7,10 @@ Felipe Menanteau, NCSA Jan 2015.
 
 import os
 
+# Define order of HDU for MEF
+SCI_HDU = 0
+MSK_HDU = 1
+WGT_HDU = 2
 
 def read_tileinfo(geomfile,logger=None):
     import json

@@ -14,28 +14,45 @@ from despyastro import zipper_interp as zipp
 from despymisc.miscutils import elapsed_time
 
 
-# -----------------------------------
 # Translator for DES_EXT, being nice.
-DES_EXT = {}
-DES_EXT['SCI'] = 'IMAGE'
-DES_EXT['WGT'] = 'WEIGHT'
-DES_EXT['MSK'] = 'MASK'
-# -----------------------
+DES_EXT = {
+    'SCI' : 'IMAGE',
+    'WGT' : 'WEIGHT',
+    'MSK' : 'MASK',
+    }
 
-def cmdline():
+def build_parser():
 
-    parser = argparse.ArgumentParser(description="Create a coadd MEF fits file from a list of single-plane fits files")
-    
+    desc = """
+    Creates a co-added MEF fits file from a set of single-plane fits
+    containing the SCI/MSK/WGT planes. Interpolates the SCI plane
+    using information in the 'custom'-weight mask, and also creates the MSK
+    plane to be used by SExtractor for IMAFLAG_ISO.
+    """
+
+    parser = argparse.ArgumentParser(description=desc)
     parser.add_argument("sci_file", default=None,
                         help="Input SCI fits file")
     parser.add_argument("msk_file", default=None,
                         help="Input MSK fits file")
     parser.add_argument("wgt_file", default=None,
                         help="Input WGT fits file")
-    parser.add_argument("-o","--outname", default=None, 
+    parser.add_argument("-o","--outname", default=None, required=True,
                         help="Name of output FITS file.")
     parser.add_argument("--clobber", action='store_true', default=False,
                         help="Clobber output MEF fits file")
+    parser.add_argument("--add_noise", action='store_true', default=False,
+                        help="Add Poisson Noise to the zipper")
+    parser.add_argument("--xblock", default=1, 
+                        help="Block size of zipper in x-direction")
+
+
+
+    return parser
+
+def cmdline():
+    
+    parser = build_parser()
     args = parser.parse_args()
 
     # Sanity ckecks for inputs...
@@ -82,10 +99,9 @@ def merge(**kwargs):
     wgt_file    = kwargs.get('wgt_file')
     logger      = kwargs.get('logger',None)
     outname     = kwargs.get('outname',False)
-    clobber     = kwargs.get('clobber',True)
     interp_mask = kwargs.get('interp_mask',1)
-    BADPIX_INTERP = kwargs.get('BADPIX_INTERP',maskbits.BADPIX_INTERP)
-    verbose = True
+    #BADPIX_INTERP = kwargs.get('BADPIX_INTERP',maskbits.BADPIX_INTERP)
+    BADPIX_INTERP = kwargs.get('BADPIX_INTERP',None)
 
     if not logger:
         logger = create_logger(level=logging.NOTSET)
@@ -97,14 +113,16 @@ def merge(**kwargs):
     logger.info("Reading in %s" % wgt_file)
     WGT,wgt_hdr = fitsio.read(wgt_file, ext=0, header=True)
     
-    # Make the mask for MSK
+    # Make the MSK for MSK-like weight
     MSK = numpy.where(MSK == 0,1,0)
+    # Make sure that we do not interpolate over zerors
+    MSK  = numpy.where(SCI == 0,0,MSK)
 
     # Perform column interpolation -- Axis=2
     if BADPIX_INTERP:
-        SCI,MSK = zipp.zipper_interp(SCI,MSK,interp_mask=interp_mask,axis=2,BADPIX_INTERP=BADPIX_INTERP,logger=logger)
+        SCI,MSK = zipp.zipper_interp(SCI,MSK,interp_mask,axis=2, **kwargs)
     else:
-        SCI     = zipp.zipper_interp(SCI,MSK,interp_mask=interp_mask,axis=2,BADPIX_INTERP=BADPIX_INTERP,logger=logger)
+        SCI     = zipp.zipper_interp(SCI,MSK,interp_mask,axis=2, **kwargs)
 
     # Update compression settings
     sci_hdr = update_hdr_compression(sci_hdr,'SCI')
