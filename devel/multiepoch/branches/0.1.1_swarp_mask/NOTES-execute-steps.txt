@@ -1,0 +1,16 @@
+1) In cosmology, make sure that you point to the DEV section of EUPS
+
+ unsetenv EUPS_DIR
+ unsetenv EUPS_PATH
+ echo "Setting up DEV RLE6"
+ source /work/apps/RHEL6/dev/eups/desdm_eups_setup.csh (or sh if bash)
+
+2) Check-out and EUPS setup the multiepoch pipeline from SVN 
+
+ svn co $SVNROOT/multiepoch multiepoch
+ cd multiepoch 
+ setup -v -r trunk
+
+See:
+https://opensource.ncsa.illinois.edu/confluence/display/DESDM/Multiepoch+Development+Notes
+
