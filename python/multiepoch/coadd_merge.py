@@ -45,9 +45,6 @@ def build_parser():
                         help="Add Poisson Noise to the zipper")
     parser.add_argument("--xblock", default=1, 
                         help="Block size of zipper in x-direction")
-
-
-
     return parser
 
 def cmdline():
