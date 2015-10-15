@@ -11,29 +11,12 @@ from despyastro import zipper_interp as zipp
 
 if __name__ == "__main__":
 
-    sci_file = '/Users/felipe/MULTIEPOCH_ROOT/TILEBUILDER/DES2246-4457-pre2/products/DES2246-4457_r_sci.fits'
-    msk_file = '/Users/felipe/MULTIEPOCH_ROOT/TILEBUILDER/DES2246-4457-pre2/products/DES2246-4457_r_msk.fits'
-    wgt_file = '/Users/felipe/MULTIEPOCH_ROOT/TILEBUILDER/DES2246-4457-pre2/products/DES2246-4457_r_wgt.fits'
+    sci_file = '/Users/felipe/MULTIEPOCH_ROOT/TILEBUILDER/DES2246-4457-section/products/DES2246-4457_r_sci.fits'
+    msk_file = '/Users/felipe/MULTIEPOCH_ROOT/TILEBUILDER/DES2246-4457-section/products/DES2246-4457_r_msk.fits'
+    wgt_file = '/Users/felipe/MULTIEPOCH_ROOT/TILEBUILDER/DES2246-4457-section/products/DES2246-4457_r_wgt.fits'
     file_out = 'test.fits'
     
     print "Using fitsio version %s" % fitsio.__version__
-    
-    x0 = 2336
-    y0 = 4901
-
-    dx = 2000
-    dy = 1000
-    
-    x1 = x0-dx
-    x2 = x0+dx
-    y1 = y0-dy
-    y2 = y0+dy
-    
-    if y1<0: y1=0
-    if x1<0: x1=0
-
-    naxis1 = 2*dx
-    naxis2 = 2*dy
     
     print "# Reading in %s" % sci_file
     scifits = fitsio.FITS(sci_file,'r')
@@ -49,33 +32,36 @@ if __name__ == "__main__":
     
     
     # Read in just a section
-    SCI = scifits[0][y1:y2,x1:x2]
-    MSK = mskfits[0][y1:y2,x1:x2]
-    WGT = wgtfits[0][y1:y2,x1:x2]
+    SCI = scifits[0].read()
+    MSK = mskfits[0].read()
+    WGT = wgtfits[0].read()
     
     # Make the mask for MSK
-    MSK = numpy.where(MSK == 0,1,0)
+    keep = numpy.where(SCI <= 0)
+    MSK  = numpy.where(MSK == 0,1,0)
+    # Make sure that we do not interpolate over zerors
+    MSK  = numpy.where(SCI == 0,0,MSK)
 
     # Axis 2 -- cols
-    SCI,MSK = zipp.zipper_interp(SCI,MSK,interp_mask=1,axis=2,BADPIX_INTERP=maskbits.BADPIX_INTERP)
+    SCI = zipp.zipper_interp(SCI,MSK,interp_mask=1,axis=2,BADPIX_INTERP=None,xblock=1,add_noise=False)
 
     # Axis 1 -- rows
     #SCI,MSK = zipp.zipper_interp(SCI,MSK,interp_mask=1,axis=1,BADPIX_INTERP=maskbits.BADPIX_INTERP)
 
     # Update the WCS in the headers and make a copy
-    h_section_sci = astrometry.update_wcs_matrix(sci_hdr,x0,y0,naxis1,naxis2)
-    h_section_msk = astrometry.update_wcs_matrix(msk_hdr,x0,y0,naxis1,naxis2)
-    h_section_wgt = astrometry.update_wcs_matrix(wgt_hdr,x0,y0,naxis1,naxis2)
+    #h_section_sci = astrometry.update_wcs_matrix(sci_hdr,x0,y0,naxis1,naxis2)
+    #h_section_msk = astrometry.update_wcs_matrix(msk_hdr,x0,y0,naxis1,naxis2)
+    #h_section_wgt = astrometry.update_wcs_matrix(wgt_hdr,x0,y0,naxis1,naxis2)
 
     # Add to image history
     interp_mask = 1
-    h_section_sci['HISTORY'] = time.asctime(time.localtime()) + \
-                               ' row_interp over mask 0x{:04X}'.format(interp_mask)
+    #h_section_sci['HISTORY'] = time.asctime(time.localtime()) + \
+    #                           ' row_interp over mask 0x{:04X}'.format(interp_mask)
     
     print "# Writing %s" % file_out
     ofits = fitsio.FITS(file_out,'rw',clobber=True)
-    ofits.write(SCI,extname='SCI',header=h_section_sci)
-    ofits.write(MSK,extname='MSK',header=h_section_msk)
-    ofits.write(WGT,extname='WGT',header=h_section_wgt)
+    ofits.write(SCI,extname='SCI',header=sci_hdr)
+    ofits.write(MSK,extname='MSK',header=msk_hdr)
+    ofits.write(WGT,extname='WGT',header=wgt_hdr)
     ofits.close()
     

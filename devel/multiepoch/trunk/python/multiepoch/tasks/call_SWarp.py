@@ -261,7 +261,7 @@ class Job(BaseJob):
             print "# Need to define either sci/msk"
 
         # The call to get the detection image
-
+        pars['RESAMPLE'] = 'N' # We do not need to resample them
         if self.ctx.COMBINE_TYPE_detec:
             self.logger.info("Will use COMBINE_TYPE=%s for detection image" % self.ctx.COMBINE_TYPE_detec)
             pars['COMBINE_TYPE'] = self.ctx.COMBINE_TYPE_detec

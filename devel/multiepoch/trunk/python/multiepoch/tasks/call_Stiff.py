@@ -90,7 +90,10 @@ class Job(BaseJob):
         # Re-cast the ctx.assoc as dictionary of arrays instead of lists
         self.ctx.assoc  = utils.dict2arrays(self.ctx.assoc)
         # Get the BANDs information in the context if they are not present
-        self.ctx.update(contextDefs.get_BANDS(self.ctx.assoc, detname=self.ctx.detname,logger=self.logger,doBANDS=self.input.doBANDS))
+        if self.ctx.get('gotBANDS'):
+            self.logger.info("BANDs already defined in context -- skipping")
+        else:
+            self.ctx.update(contextDefs.get_BANDS(self.ctx.assoc, detname=self.ctx.detname,logger=self.logger,doBANDS=self.ctx.doBANDS))
 
         # Check info OK
         self.logger.info("BANDS:   %s" % self.ctx.BANDS)
@@ -198,12 +201,11 @@ class Job(BaseJob):
         # The default stiff configuration file
         stiff_conf = os.path.join(os.environ['MULTIEPOCH_DIR'],'etc','default.stiff')
         
-        
         cmd_list = []
         cmd_list.append("%s" % STIFF_EXE)
         for BAND in CSET:
-            sci_fits = fh.get_sci_fits_file(self.input.tiledir,self.input.tilename_fh,BAND)
-            cmd_list.append( "%s" % sci_fits)
+            sci_fits = fh.get_mef_file(self.input.tiledir,self.input.tilename_fh,BAND)
+            cmd_list.append( "%s'[%s]'" % (sci_fits,utils.SCI_HDU))
 
         cmd_list.append("-c %s" % stiff_conf)
         for param,value in pars.items():

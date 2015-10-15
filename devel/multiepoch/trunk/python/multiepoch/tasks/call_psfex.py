@@ -52,7 +52,6 @@ class Job(BaseJob):
         psfex_execution_mode  = CUnicode("tofile",help="psfex excution mode",
                                           argparse={'choices': ('tofile','dryrun','execute')})
         psfex_parameters       = Dict({},help="A list of parameters to pass to SExtractor",argparse={'nargs':'+',})
-        cleanupPSFcats         = Bool(False, help="Clean-up PSFcat.fits files")
 
         doBANDS       = List(['all'],help="BANDS to processs (default=all)",argparse={'nargs':'+',})
         detname       = CUnicode(DETNAME,help="File label for detection image, default=%s." % DETNAME)
@@ -90,8 +89,11 @@ class Job(BaseJob):
         # Re-cast the ctx.assoc as dictionary of arrays instead of lists
         self.ctx.assoc  = utils.dict2arrays(self.ctx.assoc)
         # Get the BANDs information in the context if they are not present
-        self.ctx.update(contextDefs.get_BANDS(self.ctx.assoc, detname=self.ctx.detname,logger=self.logger,doBANDS=self.input.doBANDS))
-
+        if self.ctx.get('gotBANDS'):
+            self.logger.info("BANDs already defined in context -- skipping")
+        else:
+            self.ctx.update(contextDefs.get_BANDS(self.ctx.assoc, detname=self.ctx.detname,logger=self.logger,doBANDS=self.ctx.doBANDS))
+            
         # Check info OK
         self.logger.info("BANDS:   %s" % self.ctx.BANDS)
         self.logger.info("doBANDS: %s" % self.ctx.doBANDS)
@@ -121,9 +123,6 @@ class Job(BaseJob):
         else:
             raise ValueError('Execution mode %s not implemented.' % execution_mode)
 
-        # 4. Clean up psfcat files
-        if self.input.cleanupPSFcats:
-            self.cleanup_PSFcats(execute=True)
 
         return
 
@@ -210,18 +209,6 @@ class Job(BaseJob):
             psfex_cmd[BAND] = cmd
 
         return psfex_cmd
-
-
-    def cleanup_PSFcats(self,execute=False):
-
-        for BAND in self.ctx.dBANDS:
-            self.logger.info("Cleaning up %s" % self.ctx.psfcat[BAND])
-            if execute:
-                try:
-                    os.remove(self.ctx.psfcat[BAND])
-                except:
-                    self.logger.info("Warning: cannot remove %s" % self.ctx.psfcat[BAND])
-        return
 
 
     def __str__(self):

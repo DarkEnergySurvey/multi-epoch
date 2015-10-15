@@ -109,19 +109,6 @@ def get_gen_fits_file(tiledir, tilename, band, type='gen'):
     fnkwargs = {'base':tilename, 'band':band, 'ftype':type, 'ext':FITS_EXT}
     return dh.place_file(_me_fn(**fnkwargs), 'products')
 
-# ----------------------------------------------------------------------------
-# 2a. Outout Coadd different type (tmp_wgt/tmp_sci)
-# ----------------------------------------------------------------------------
-#def get_WGT_fits_file(tiledir, tilename, band, type=WGT_TYPE):
-#    dh = get_tiledir_handler(tiledir)
-#    fnkwargs = {'base':tilename, 'band':band, 'ftype':type, 'ext':FITS_EXT}
-#    return dh.place_file(_me_fn(**fnkwargs), 'products')
-
-#def get_SCI_fits_file(tiledir, tilename, band, type=SCI_TYPE):
-#    dh = get_tiledir_handler(tiledir)
-#    fnkwargs = {'base':tilename, 'band':band, 'ftype':type, 'ext':FITS_EXT}
-#    return dh.place_file(_me_fn(**fnkwargs), 'products')
-
 # ------------------------------------
 # 3. Misc files (log/fluxes/command)
 # ------------------------------------
@@ -231,11 +218,20 @@ def get_SExdual_log_file(tiledir, tilename,band=None):
     return dh.place_file(filename, 'log')
 
 
-# *** MEF (sci+weight files) ****
+# *** MEF (sci+msk+wgt files) ****
 def get_mef_file(tiledir, tilename, band):
     dh = get_tiledir_handler(tiledir)
     fnkwargs = {'base':tilename, 'band':band, 'ext':FITS_EXT}
     return dh.place_file(_me_notype_fn(**fnkwargs), 'products')
+
+def get_mef_cmd_file(tiledir, tilename,band=None):
+    dh = get_tiledir_handler(tiledir)
+    if band:
+        filename = "%s_%s_coadd_merge.cmd" % (tilename,band)
+    else:
+        filename = "%s_coadd_merge.cmd" % tilename
+    return dh.place_file(filename, 'aux')
+
 
 # ME prepare
 def get_me_prepare_cmd_file(tiledir, tilename):
