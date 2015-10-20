@@ -206,7 +206,8 @@ class Job(BaseJob):
             'MEMORY_BUFSIZE'  : 2048,
             'CHECKIMAGE_TYPE' : 'SEGMENTATION',
             'DETECT_THRESH'   : 1.5,
-            'DEBLEND_MINCONT' : 0.001, 
+            'DEBLEND_MINCONT' : 0.001,
+            #'DEBLEND_MINCONT' : 0.005, 
             #'PARAMETERS_NAME' : os.path.join(os.environ['MULTIEPOCH_DIR'],'etc','sex.param'),
             #'PARAMETERS_NAME' : os.path.join(os.environ['MULTIEPOCH_DIR'],'etc','sex.param_psfonly'), # Faster!!!
             'PARAMETERS_NAME' : os.path.join(os.environ['MULTIEPOCH_DIR'],'etc','sex.param_nomodel'), # Way Faster!!!

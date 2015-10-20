@@ -31,11 +31,11 @@ def build_parser():
     """
 
     parser = argparse.ArgumentParser(description=desc)
-    parser.add_argument("sci_file", default=None,
+    parser.add_argument("--sci_file", default=None,required=True,
                         help="Input SCI fits file")
-    parser.add_argument("msk_file", default=None,
-                        help="Input MSK fits file")
-    parser.add_argument("wgt_file", default=None,
+    parser.add_argument("--msk_file", default=None,required=False,
+                        help="Input WGT fits file")
+    parser.add_argument("--wgt_file", default=None,required=True,
                         help="Input WGT fits file")
     parser.add_argument("-o","--outname", default=None, required=True,
                         help="Name of output FITS file.")
@@ -92,7 +92,7 @@ def merge(**kwargs):
     """
 
     sci_file    = kwargs.get('sci_file')
-    msk_file    = kwargs.get('msk_file')
+    msk_file    = kwargs.get('msk_file',None)
     wgt_file    = kwargs.get('wgt_file')
     logger      = kwargs.get('logger',None)
     outname     = kwargs.get('outname',False)
@@ -105,21 +105,36 @@ def merge(**kwargs):
         
     logger.info("Reading in %s" % sci_file)
     SCI,sci_hdr = fitsio.read(sci_file, ext=0, header=True)
-    logger.info("Reading in %s" % msk_file)
-    MSK,msk_hdr = fitsio.read(msk_file, ext=0, header=True)
     logger.info("Reading in %s" % wgt_file)
     WGT,wgt_hdr = fitsio.read(wgt_file, ext=0, header=True)
     
-    # Make the MSK for MSK-like weight
-    MSK = numpy.where(MSK == 0,1,0)
-    # Make sure that we do not interpolate over zerors
+    if msk_file:
+        logger.info("Reading in %s" % msk_file)
+        MSK,msk_hdr = fitsio.read(msk_file, ext=0, header=True)
+        # Make the MSK for MSK-like weight
+        MSK = numpy.where(MSK == 0,1,0)
+    else: # Create mask from WGT plane
+        MSK = numpy.copy(WGT)
+        MSK = numpy.where(MSK == 0,1,0)
+        msk_hdr = wgt_hdr
+
+    # Make sure that we do not interpolate over zeroes
     MSK  = numpy.where(SCI == 0,0,MSK)
 
     # Perform column interpolation -- Axis=2
     if BADPIX_INTERP:
         SCI,MSK = zipp.zipper_interp(SCI,MSK,interp_mask,axis=2, **kwargs)
+        if not msk_file:
+            print "Interpolating WGT"
+            WGT,MSK = zipp.zipper_interp(WGT,MSK,interp_mask,axis=2, **kwargs)
     else:
+        print "Interpolating SCI"
         SCI     = zipp.zipper_interp(SCI,MSK,interp_mask,axis=2, **kwargs)
+        if not msk_file:
+            print "Interpolating WGT"
+            WGT     = zipp.zipper_interp(WGT,MSK,interp_mask,axis=2, dilate=True,**kwargs)
+
+    # Interpolate the WGT plane if we don't have a msk_file
 
     # Update compression settings
     sci_hdr = update_hdr_compression(sci_hdr,'SCI')

@@ -60,10 +60,13 @@ class Job(BaseJob):
                                           argparse={'choices': ('tofile','dryrun','execute')})
         swarp_parameters = Dict({},help="A list of parameters to pass to SWarp",
                                 argparse={'nargs':'+',})
-        weight_for_mask  = Bool(False, help="Create coadded weight for mask creation")
+
         doBANDS          = List(['all'],help="BANDS to processs (default=all)",argparse={'nargs':'+',})
         detname          = CUnicode(DETNAME,help="File label for detection image, default=%s." % DETNAME)
         COMBINE_TYPE_detec = CUnicode('', help="COMBINE type for detection Image")
+
+        # Weight for mask
+        weight_for_mask  = Bool(False, help="Create coadded weight for mask creation")
 
         # Logging -- might be factored out
         stdoutloglevel = CUnicode('INFO', help="The level with which logging info is streamed to stdout",
@@ -280,7 +283,7 @@ class Job(BaseJob):
         with kwargs to this function.
         """
         swarp_parameters = {
-            "COMBINE_TYPE"    : "MEDIAN",
+            "COMBINE_TYPE"    : "WEIGHTED",
             "WEIGHT_TYPE"     : "MAP_WEIGHT",
             "PIXEL_SCALE"     : "%.3f"  % self.ctx.tileinfo['PIXELSCALE'],
             "PIXELSCALE_TYPE" : "MANUAL",
