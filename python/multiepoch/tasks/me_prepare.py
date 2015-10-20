@@ -24,9 +24,12 @@ import pandas as pd
 from multiepoch import file_handler as fh
 from despymisc.miscutils import elapsed_time
 
+#ROWINTERP_NULLWEIGHT_EXE = 'rowinterp_nullweight_me'
+#ROWINTERP_NULLWEIGHT_OPTIONS = "--interp_mask TRAIL --invalid_mask EDGE --max_cols 50 --null_mask BADAMP,EDGEBLEED,EDGE,CRAY,SSXTALK,STREAK,TRAIL -v --me_prepare"
 
 ROWINTERP_NULLWEIGHT_EXE = 'rowinterp_nullweight_me'
-ROWINTERP_NULLWEIGHT_OPTIONS = "--interp_mask TRAIL --invalid_mask EDGE --max_cols 50 --null_mask BADAMP,EDGEBLEED,EDGE,CRAY,SSXTALK,STREAK,TRAIL -v --me_prepare"
+ROWINTERP_NULLWEIGHT_OPTIONS = "--interp_mask TRAIL --invalid_mask EDGE --max_cols 50 --null_mask BADAMP,EDGEBLEED,EDGE,CRAY,SSXTALK,STREAK,TRAIL -v"
+
 BKLINE = "\\\n"
 
 class Job(BaseJob):
@@ -49,6 +52,7 @@ class Job(BaseJob):
         tiledir     = Unicode(None, help='The output directory for this tile.')
 
         # Optional inputs -- postional arguments
+        weight_for_mask  = Bool(False, help="Create coadded weight for mask creation")
         clobber_me   = Bool(False, help="Cloober the existing me-ready files.")
         extension_me = CUnicode('_me', help=(" extension to add to me-prepared file names."))
         MP_me        = CInt(1, help = ("Run using multi-process, 0=automatic, 1=single-process [default]"))
@@ -145,7 +149,11 @@ class Job(BaseJob):
                 cmd = [ROWINTERP_NULLWEIGHT_EXE]
                 cmd.append("-i %s" % self.ctx.assoc['FILEPATH_LOCAL'][idx])
                 cmd.append("-o %s" % me_file)
-                cmd.append("%s" % ROWINTERP_NULLWEIGHT_OPTIONS)
+                # In case we want to create special weight for mask
+                if self.input.weight_for_mask:
+                    cmd.append("%s --me_prepare" % ROWINTERP_NULLWEIGHT_OPTIONS)
+                else:
+                    cmd.append("%s" % ROWINTERP_NULLWEIGHT_OPTIONS)
                 cmd_list.append(cmd)
 
         return cmd_list

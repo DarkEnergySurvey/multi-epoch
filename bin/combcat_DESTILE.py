@@ -16,7 +16,7 @@ SELECT_EXTRAS = multiepoch.tasks.find_ccds_in_tile.SELECT_EXTRAS
 FROM_EXTRAS   = multiepoch.tasks.find_ccds_in_tile.FROM_EXTRAS
 AND_EXTRAS    = multiepoch.tasks.find_ccds_in_tile.AND_EXTRAS
 CLOBBER_ME = False
-XBLOCK = 5
+XBLOCK = 10
 ADD_NOISE = True
 
 def cmdline():
@@ -159,17 +159,21 @@ if __name__ == '__main__':
     # 4. Prepare input for coadd
     jo.run_job('multiepoch.tasks.me_prepare',
                assoc_file=args.assoc_file,
-               clobber_me=args.clobber_me, MP_me=args.ncpu, me_execution_mode=args.runmode)
+               clobber_me=args.clobber_me, MP_me=args.ncpu, me_execution_mode=args.runmode,weight_for_mask=args.weight_for_mask)
+    jo.run_job('multiepoch.tasks.me_prepare',
+               assoc_file=args.assoc_file,
+               clobber_me=args.clobber_me, MP_me=args.ncpu, me_execution_mode='execute',weight_for_mask=args.weight_for_mask)
 
     # 5. The SWarp call 
     swarp_params={
         "NTHREADS"     : args.nthreads,
-        #"COMBINE_TYPE" : "AVERAGE",
-        "COMBINE_TYPE" : "WEIGHTED",    
+        "COMBINE_TYPE" : "WEIGHTED",
         "PIXEL_SCALE"  : 0.263}
     jo.run_job('multiepoch.tasks.call_SWarp',assoc_file=args.assoc_file,tile_geom_input_file=args.tile_geom_input_file,swarp_parameters=swarp_params,
-               COMBINE_TYPE_detec="CHI-MEAN",swarp_execution_mode=args.runmode,weight_for_mask=args.weight_for_mask,doBANDS=args.doBANDS)
-
+               COMBINE_TYPE_detec="CHI-MEAN",swarp_execution_mode=args.runmode,doBANDS=args.doBANDS)
+    jo.run_job('multiepoch.tasks.call_SWarp',assoc_file=args.assoc_file,tile_geom_input_file=args.tile_geom_input_file,swarp_parameters=swarp_params,
+               COMBINE_TYPE_detec="CHI-MEAN",swarp_execution_mode='execute',doBANDS=args.doBANDS)
+    
     # Now we need to combine the 3 planes SCI/WGT/MSK into a single image
     jo.run_job('multiepoch.tasks.call_coadd_merge',clobber_MEF=True,MEF_execution_mode=args.runmode,cleanupSWarp=args.cleanup,add_noise=ADD_NOISE,xblock=XBLOCK)
     jo.run_job('multiepoch.tasks.call_coadd_merge',clobber_MEF=True,MEF_execution_mode='execute',cleanupSWarp=args.cleanup,add_noise=ADD_NOISE,xblock=XBLOCK)

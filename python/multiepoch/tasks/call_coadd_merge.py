@@ -16,7 +16,7 @@ import pandas as pd
 import multiepoch.utils as utils
 import multiepoch.contextDefs as contextDefs
 from multiepoch import file_handler as fh
-from multiepoch import coadd_merge
+from multiepoch import coadd_merge as coadd_merge
 
 
 DETNAME = 'det'
@@ -54,6 +54,9 @@ class Job(BaseJob):
         doBANDS       = List(['all'],help="BANDS to processs (default=all)",argparse={'nargs':'+',})
         detname       = CUnicode(DETNAME,help="File label for detection image, default=%s." % DETNAME)
 
+        # Weight for mask
+        weight_for_mask  = Bool(False, help="Create coadded weight for mask creation")
+
         # zipper params
         xblock    = CInt(1, help="Block size of zipper in x-direction")
         add_noise = Bool(False,help="Add Poisson Noise to the zipper")
@@ -63,10 +66,6 @@ class Job(BaseJob):
                                   argparse={'choices': ('DEBUG','INFO','CRITICAL')} )
         fileloglevel   = CUnicode('INFO', help="The level with which logging info is written to the logfile",
                                   argparse={'choices': ('DEBUG','INFO','CRITICAL')} )
-
-        # Add
-        # --add_noise
-        # --xblock
 
         # Function to read ASCII/panda framework file (instead of json)
         # Comment if you want to use json files
@@ -145,9 +144,10 @@ class Job(BaseJob):
     def get_merge_cmd(self,args):
         cmd = []
         cmd.append(COADD_MERGE_EXE)
-        cmd.append(args['sci_file'])
-        cmd.append(args['msk_file'])
-        cmd.append(args['wgt_file'])
+        cmd.append("--%s %s" % ('sci_file',args['sci_file']))
+        cmd.append("--%s %s" % ('wgt_file',args['wgt_file']))
+        if self.input.weight_for_mask:
+            cmd.append("--%s %s" % ('msk_file',args['msk_file']))
         cmd.append("--%s %s" % ('outname',args['outname']))
         if args['clobber']:
             cmd.append("--%s " % 'clobber')
@@ -160,8 +160,7 @@ class Job(BaseJob):
         tilename_fh = self.input.tilename_fh
         for BAND in self.ctx.dBANDS:
             outname = fh.get_mef_file(tiledir, tilename_fh, BAND)
-            args[BAND] = {'sci_file': fh.get_sci_fits_file(tiledir, tilename_fh, BAND),
-                          'msk_file': fh.get_msk_fits_file(tiledir, tilename_fh, BAND),
+            args[BAND] = {'sci_file': fh.get_sci_fits_file(tiledir, tilename_fh, BAND),                          
                           'wgt_file': fh.get_wgt_fits_file(tiledir, tilename_fh, BAND),
                           'outname' : outname,
                           'logger'  : self.logger,
@@ -169,6 +168,10 @@ class Job(BaseJob):
                           'xblock'  : self.ctx.xblock,
                           'add_noise' : self.ctx.add_noise,
                           }
+            if self.input.weight_for_mask:
+                args[BAND]['msk_file'] = fh.get_msk_fits_file(tiledir, tilename_fh, BAND)
+
+            
         return args
 
     def cleanup_SWarpFiles(self,execute=False):
@@ -180,9 +183,11 @@ class Job(BaseJob):
         for BAND in self.ctx.dBANDS:
             SWarpfiles = [fh.get_sci_fits_file(tiledir,tilename_fh, BAND),
                           fh.get_wgt_fits_file(tiledir,tilename_fh, BAND),
-                          fh.get_msk_fits_file(tiledir,tilename_fh, BAND),
                           fh.get_gen_fits_file(tiledir,tilename_fh, BAND, type='tmp_sci') # tmp_sci.fits
                           ]
+            if self.input.weight_for_mask:
+                SWarpfiles.append(fh.get_msk_fits_file(tiledir,tilename_fh, BAND))
+            
             for sfile in SWarpfiles:
                 self.logger.info("Cleaning up %s" % sfile)
                 if execute:
