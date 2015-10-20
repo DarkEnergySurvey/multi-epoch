@@ -124,17 +124,14 @@ def merge(**kwargs):
     # Perform column interpolation -- Axis=2
     if BADPIX_INTERP:
         SCI,MSK = zipp.zipper_interp(SCI,MSK,interp_mask,axis=2, **kwargs)
+        # Interpolate the WGT plane if we don't have a msk_file
         if not msk_file:
-            print "Interpolating WGT"
-            WGT,MSK = zipp.zipper_interp(WGT,MSK,interp_mask,axis=2, **kwargs)
+            WGT,MSK = zipp.zipper_interp(WGT,MSK,interp_mask,axis=2, ydilate=10, **kwargs)
     else:
-        print "Interpolating SCI"
         SCI     = zipp.zipper_interp(SCI,MSK,interp_mask,axis=2, **kwargs)
+        # Interpolate the WGT plane if we don't have a msk_file
         if not msk_file:
-            print "Interpolating WGT"
-            WGT     = zipp.zipper_interp(WGT,MSK,interp_mask,axis=2, dilate=True,**kwargs)
-
-    # Interpolate the WGT plane if we don't have a msk_file
+            WGT     = zipp.zipper_interp(WGT,MSK,interp_mask,axis=2, ydilate=10,**kwargs)
 
     # Update compression settings
     sci_hdr = update_hdr_compression(sci_hdr,'SCI')
