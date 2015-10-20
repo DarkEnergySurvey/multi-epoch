@@ -171,8 +171,8 @@ if __name__ == '__main__':
         "PIXEL_SCALE"  : 0.263}
     jo.run_job('multiepoch.tasks.call_SWarp',assoc_file=args.assoc_file,tile_geom_input_file=args.tile_geom_input_file,swarp_parameters=swarp_params,
                COMBINE_TYPE_detec="CHI-MEAN",swarp_execution_mode=args.runmode,doBANDS=args.doBANDS)
-    jo.run_job('multiepoch.tasks.call_SWarp',assoc_file=args.assoc_file,tile_geom_input_file=args.tile_geom_input_file,swarp_parameters=swarp_params,
-               COMBINE_TYPE_detec="CHI-MEAN",swarp_execution_mode='execute',doBANDS=args.doBANDS)
+    #jo.run_job('multiepoch.tasks.call_SWarp',assoc_file=args.assoc_file,tile_geom_input_file=args.tile_geom_input_file,swarp_parameters=swarp_params,
+    #           COMBINE_TYPE_detec="CHI-MEAN",swarp_execution_mode='execute',doBANDS=args.doBANDS)
     
     # Now we need to combine the 3 planes SCI/WGT/MSK into a single image
     jo.run_job('multiepoch.tasks.call_coadd_merge',clobber_MEF=True,MEF_execution_mode=args.runmode,cleanupSWarp=args.cleanup,add_noise=ADD_NOISE,xblock=XBLOCK)
