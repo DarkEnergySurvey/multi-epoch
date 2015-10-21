@@ -16,7 +16,7 @@ import pandas as pd
 import multiepoch.utils as utils
 import multiepoch.contextDefs as contextDefs
 from multiepoch import file_handler as fh
-from multiepoch import coadd_merge as coadd_merge
+from multiepoch import coadd_merge 
 
 
 DETNAME = 'det'

@@ -56,14 +56,19 @@ class Job(BaseJob):
                                 argparse={'nargs':'+',})
         magbase          = CFloat(MAGBASE, help="Zero point magnitude base for SWarp, default=%s." % MAGBASE)
         extension_me     = CUnicode('_me', help=(" extension to add to me-prepared file names."))
-        swarp_execution_mode  = CUnicode("tofile",help="SWarp excution mode",
+        execution_mode_swarp  = CUnicode("tofile",help="SWarp excution mode",
                                           argparse={'choices': ('tofile','dryrun','execute')})
         swarp_parameters = Dict({},help="A list of parameters to pass to SWarp",
                                 argparse={'nargs':'+',})
 
         doBANDS          = List(['all'],help="BANDS to processs (default=all)",argparse={'nargs':'+',})
         detname          = CUnicode(DETNAME,help="File label for detection image, default=%s." % DETNAME)
-        COMBINE_TYPE_detec = CUnicode('', help="COMBINE type for detection Image")
+
+        # We want to make these options visible as command-line arguments. The full suite of options can be passed as
+        # swarp_parameters which will override these defaults
+        COMBINE_TYPE_detec = CUnicode('AVERAGE',  help="COMBINE type for detection coadd image")
+        COMBINE_TYPE       = CUnicode('CHI-MEAN', help="COMBINE type for band coadd image")
+        nthreads           = CInt(1,help="Number of threads to use in stiff/psfex/swarp")
 
         # Weight for mask
         weight_for_mask  = Bool(False, help="Create coadded weight for mask creation")
@@ -85,8 +90,6 @@ class Job(BaseJob):
         def _validate_conditional(self):
             if self.tilename_fh == '':
                 self.tilename_fh = self.tilename
-            if self.COMBINE_TYPE_detec == '':
-                self.COMBINE_TYPE_detec = None
 
         # To also accept comma-separeted input lists
         def _argparse_postproc_doBANDS(self, v):
@@ -141,7 +144,7 @@ class Job(BaseJob):
         
         # 3. execute cmd_list according to execution_mode 
         # ---------------------------------------------------------------------
-        execution_mode = self.input.swarp_execution_mode
+        execution_mode = self.input.execution_mode_swarp
         if execution_mode == 'tofile':
             if self.input.weight_for_mask:
                 self.writeCall(cmd_list_sci,mode='w')
@@ -265,9 +268,8 @@ class Job(BaseJob):
 
         # The call to get the detection image
         pars['RESAMPLE'] = 'N' # We do not need to resample them, they are on the same pixel coordinates
-        if self.ctx.COMBINE_TYPE_detec:
-            self.logger.info("Will use COMBINE_TYPE=%s for detection image" % self.ctx.COMBINE_TYPE_detec)
-            pars['COMBINE_TYPE'] = self.ctx.COMBINE_TYPE_detec
+        self.logger.info("Will use COMBINE_TYPE=%s for detection image" % self.ctx.COMBINE_TYPE_detec)
+        pars['COMBINE_TYPE'] = self.ctx.COMBINE_TYPE_detec
 
         swarp_cmd[BAND] = [SWARP_EXE, ]
         swarp_cmd[BAND].append("%s" % " ".join(det_scilists))
@@ -283,11 +285,11 @@ class Job(BaseJob):
         with kwargs to this function.
         """
         swarp_parameters = {
-            "COMBINE_TYPE"    : "WEIGHTED",
+            "COMBINE_TYPE"    : self.ctx.COMBINE_TYPE,
             "WEIGHT_TYPE"     : "MAP_WEIGHT",
             "PIXEL_SCALE"     : "%.3f"  % self.ctx.tileinfo['PIXELSCALE'],
             "PIXELSCALE_TYPE" : "MANUAL",
-            "NTHREADS"        : 1,
+            "NTHREADS"        : self.ctx.nthreads,
             "CENTER_TYPE"     : "MANUAL",
             "IMAGE_SIZE"      : "%s,%d" % (self.ctx.tileinfo['NAXIS1'],self.ctx.tileinfo['NAXIS2']),
             "CENTER"          : "%s,%s" % (self.ctx.tileinfo['RA'],self.ctx.tileinfo['DEC']),
