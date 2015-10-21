@@ -59,7 +59,7 @@ class Job(BaseJob):
         
         local_archive     = Unicode(None, help=("The local filepath where the input fits files (will) live"))
         local_archive_me  = Unicode(None, help=('The path to the me prepared files archive.'))
-        me_execution_mode = CUnicode("dryrun",help="me_prepare excution mode",
+        execution_mode_me = CUnicode("dryrun",help="me_prepare excution mode",
                                            argparse={'choices': ('tofile','dryrun','execute')})
         # Logging -- might be factored out
         stdoutloglevel = CUnicode('INFO', help="The level with which logging info is streamed to stdout",
@@ -105,7 +105,7 @@ class Job(BaseJob):
         cmd_list = self.get_me_prepare_cmd_list()
 
         # 2. check execution mode and write/print/execute commands accordingly --------------
-        execution_mode = self.ctx.get('me_execution_mode', 'tofile')
+        execution_mode = self.ctx.get('execution_mode_me', 'tofile')
 
         if execution_mode == 'tofile':
             self.writeCall(cmd_list)
