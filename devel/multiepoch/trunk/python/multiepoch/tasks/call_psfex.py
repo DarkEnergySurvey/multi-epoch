@@ -49,13 +49,13 @@ class Job(BaseJob):
         # Optional Arguments
         tilename_fh = CUnicode('',  help="Alternative tilename handle for unique identification default=TILENAME")
         tiledir     = Unicode(None, help='The output directory for this tile.')
-        psfex_execution_mode  = CUnicode("tofile",help="psfex excution mode",
+        execution_mode_psfex  = CUnicode("tofile",help="psfex excution mode",
                                           argparse={'choices': ('tofile','dryrun','execute')})
         psfex_parameters       = Dict({},help="A list of parameters to pass to SExtractor",argparse={'nargs':'+',})
 
-        doBANDS       = List(['all'],help="BANDS to processs (default=all)",argparse={'nargs':'+',})
-        detname       = CUnicode(DETNAME,help="File label for detection image, default=%s." % DETNAME)
-
+        doBANDS  = List(['all'],help="BANDS to processs (default=all)",argparse={'nargs':'+',})
+        detname  = CUnicode(DETNAME,help="File label for detection image, default=%s." % DETNAME)
+        nthreads = CInt(1,help="Number of threads to use in stiff/psfex/swarp")
 
         # Logging -- might be factored out
         stdoutloglevel = CUnicode('INFO', help="The level with which logging info is streamed to stdout",
@@ -109,7 +109,7 @@ class Job(BaseJob):
         cmd_list = self.get_psfex_cmd_list()
 
         # 3. check execution mode and write/print/execute commands accordingly --------------
-        execution_mode = self.ctx.get('psfex_execution_mode', 'tofile')
+        execution_mode = self.ctx.execution_mode_psfex
         if execution_mode == 'tofile':
             self.writeCall(cmd_list)
 
@@ -122,7 +122,6 @@ class Job(BaseJob):
             self.runpsfex(cmd_list)
         else:
             raise ValueError('Execution mode %s not implemented.' % execution_mode)
-
 
         return
 
@@ -169,6 +168,7 @@ class Job(BaseJob):
         """
         psfex_parameters = {
             'WRITE_XML' : 'Y',
+            "NTHREADS"  : self.ctx.nthreads,
         }
         # Now update pars with kwargs
         psfex_parameters.update(kwargs)

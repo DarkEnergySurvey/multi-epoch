@@ -16,11 +16,10 @@ import pandas as pd
 import multiepoch.utils as utils
 import multiepoch.contextDefs as contextDefs
 from multiepoch import file_handler as fh
-from multiepoch import coadd_merge 
-
+from multiepoch import coadd_MEF 
 
 DETNAME = 'det'
-COADD_MERGE_EXE = 'coadd_merge'
+COADD_MEF_EXE = 'coadd_MEF'
 BKLINE = "\\\n"
 
 class Job(BaseJob):
@@ -49,7 +48,7 @@ class Job(BaseJob):
         tiledir      = Unicode(None, help="The output directory for this tile")
         clobber_MEF  = Bool(False, help="Cloober the existing MEF fits")
         cleanupSWarp = Bool(False, help="Clean-up SWarp files")
-        MEF_execution_mode  = CUnicode("tofile",help="excution mode",
+        execution_mode_MEF  = CUnicode("tofile",help="excution mode",
                                        argparse={'choices': ('tofile','dryrun','execute')})
         doBANDS       = List(['all'],help="BANDS to processs (default=all)",argparse={'nargs':'+',})
         detname       = CUnicode(DETNAME,help="File label for detection image, default=%s." % DETNAME)
@@ -108,7 +107,7 @@ class Job(BaseJob):
         self.prewash()
 
         # check execution mode and write/print/execute commands accordingly --------------
-        execution_mode = self.ctx.get('MEF_execution_mode')
+        execution_mode = self.ctx.execution_mode_MEF
         
         # Build the args dictionary for all BANDS
         args = self.assemble_args()
@@ -116,7 +115,7 @@ class Job(BaseJob):
         if execution_mode == 'execute':
             for BAND in self.ctx.dBANDS:
                 self.logger.info("Making MEF file for BAND:%s --> %s" % (BAND,args[BAND]['outname']))
-                coadd_merge.merge(**args[BAND])
+                coadd_MEF.merge(**args[BAND])
 
         elif execution_mode == 'dryrun':
             for BAND in self.ctx.dBANDS:
@@ -126,7 +125,7 @@ class Job(BaseJob):
         elif execution_mode == 'tofile':
             bkline  = self.ctx.get('breakline',BKLINE)
             cmdfile = fh.get_mef_cmd_file(self.input.tiledir, self.input.tilename_fh)
-            self.logger.info("Will write coadd_merge call to: %s" % cmdfile)
+            self.logger.info("Will write coadd_MEF call to: %s" % cmdfile)
             with open(cmdfile, "w") as fid:
                 for BAND in self.ctx.dBANDS:
                     cmd = self.get_merge_cmd(args[BAND])
@@ -143,7 +142,7 @@ class Job(BaseJob):
 
     def get_merge_cmd(self,args):
         cmd = []
-        cmd.append(COADD_MERGE_EXE)
+        cmd.append(COADD_MEF_EXE)
         cmd.append("--%s %s" % ('sci_file',args['sci_file']))
         cmd.append("--%s %s" % ('wgt_file',args['wgt_file']))
         if self.input.weight_for_mask:
@@ -199,7 +198,7 @@ class Job(BaseJob):
         return
 
     def __str__(self):
-        return 'Create MEF file for a coadded TILE fron SCI/MSK/WGT image planes using coadd_merge'
+        return 'Create MEF file for a coadded TILE fron SCI/MSK/WGT image planes using coadd_MEF'
  
 if __name__ == '__main__':
     from mojo.utils import main_runner

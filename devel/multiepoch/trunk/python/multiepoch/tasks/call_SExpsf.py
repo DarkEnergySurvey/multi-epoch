@@ -46,7 +46,7 @@ class Job(BaseJob):
         # Optional Arguments
         tilename_fh = CUnicode('',  help="Alternative tilename handle for unique identification default=TILENAME")
         tiledir     = Unicode(None, help='The output directory for this tile.')
-        SExpsf_execution_mode  = CUnicode("tofile",help="SEx for psfex excution mode",
+        execution_mode_SExpsf  = CUnicode("tofile",help="SEx for psfex excution mode",
                                           argparse={'choices': ('tofile','dryrun','execute')})
         SExpsf_parameters       = Dict({},help="A list of parameters to pass to SExtractor",
                                        argparse={'nargs':'+',})
@@ -111,20 +111,20 @@ class Job(BaseJob):
         cmd_list = self.get_SExpsf_cmd_list()
 
         # 2. check execution mode and write/print/execute commands accordingly --------------
-        executione_mode = self.ctx.get('SExpsf_execution_mode', 'tofile')
-        if executione_mode == 'tofile':
+        execution_mode = self.ctx.execution_mode_SExpsf
+        if execution_mode == 'tofile':
             self.writeCall(cmd_list)
 
-        elif executione_mode == 'dryrun':
+        elif execution_mode == 'dryrun':
             self.logger.info("For now we only print the commands (dry-run)")
             for band in self.ctx.dBANDS:
                 self.logger.info(' '.join(cmd_list[band]))
 
-        elif executione_mode == 'execute':
+        elif execution_mode == 'execute':
             MP = self.ctx.MP_SEx # MP or single Processs
             self.runSExpsf(cmd_list,MP=MP)
         else:
-            raise ValueError('Execution mode %s not implemented.' % executione_mode)
+            raise ValueError('Execution mode %s not implemented.' % execution_mode)
         return
 
     def writeCall(self,cmd_list):
