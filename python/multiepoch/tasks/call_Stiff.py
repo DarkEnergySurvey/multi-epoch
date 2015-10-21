@@ -46,15 +46,15 @@ class Job(BaseJob):
         # Optional Arguments
         tilename_fh = CUnicode('',  help="Alternative tilename handle for unique identification default=TILENAME")
         tiledir     = Unicode(None, help='The output directory for this tile')
-        stiff_execution_mode  = CUnicode("tofile",help="Stiff excution mode",
+        execution_mode_stiff  = CUnicode("tofile",help="Stiff excution mode",
                                          argparse={'choices': ('tofile','dryrun','execute')})
         stiff_parameters      = Dict({},help="A list of parameters to pass to Stiff",
                                      argparse={'nargs':'+',})
 
         doBANDS  = List(['all'],help="BANDS to processs (default=all)",argparse={'nargs':'+',})
         detname  = CUnicode(DETNAME,help="File label for detection image, default=%s." % DETNAME)
+        nthreads = CInt(1,help="Number of threads to use in stiff/psfex/swarp")
         
-
         ## TODO
         # Define color set from command-line option
 
@@ -111,7 +111,7 @@ class Job(BaseJob):
         cmd_list = self.get_stiff_cmd_list()
         
         # 3. check execution mode and write/print/execute commands accordingly --------------
-        execution_mode = self.input.stiff_execution_mode
+        execution_mode = self.input.execution_mode_stiff
 
         if execution_mode == 'tofile':
             bkline  = self.ctx.get('breakline',BKLINE)
@@ -152,11 +152,10 @@ class Job(BaseJob):
         """
         stiff_parameters = {
             "COMPRESSION_TYPE" : "JPEG",
-            "NTHREADS"         : 1,
+            "NTHREADS"        : self.ctx.nthreads,
             "COPYRIGHT"        : "NCSA/DESDM",
             "WRITE_XML"        : "N",
         }
-
         stiff_parameters.update(kwargs)
         return stiff_parameters
 

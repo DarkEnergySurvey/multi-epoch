@@ -17,7 +17,7 @@ FROM_EXTRAS   = multiepoch.tasks.find_ccds_in_tile.FROM_EXTRAS
 AND_EXTRAS    = multiepoch.tasks.find_ccds_in_tile.AND_EXTRAS
 CLOBBER_ME = False
 XBLOCK = 10
-ADD_NOISE = True
+ADD_NOISE = False
 
 def cmdline():
     
@@ -39,7 +39,6 @@ def cmdline():
     else:
         print "# Warning $HOME is not defined, will use ./ instead"
         MULTIEPOCH_ROOT = os.path.abspath('/MULTIEPOCH_ROOT')
-
     outputpath           = os.path.join(MULTIEPOCH_ROOT, 'TILEBUILDER') 
     if utils.inDESARcluster():
         local_archive        = "/work/prodbeta/archive"
@@ -103,6 +102,12 @@ def cmdline():
     parser.add_argument("--weight_for_mask", action="store_true",default=False,
                         help="Create extra coadded weight for mask creation")
 
+    # coadd MEF options
+    parser.add_argument("--add_noise", action="store_true",default=ADD_NOISE,
+                        help="Add Poisson Noise to the zipper")
+    parser.add_argument("--xblock", action="store",default=XBLOCK,
+                        help="Block size of zipper in x-direction")
+
     # More optional args to bypass queries for tileinfo and geometry
     parser.add_argument("--tile_geom_input_file", action="store",default='',
                         help="The json file with the tile information (default='')")
@@ -121,30 +126,44 @@ def cmdline():
 
     # Update execution modes for individual tasks 
     # me_prepare
-    args.MP_me = args.ncpu
     args.execution_mode_me = args.runmode
+    args.MP_me             = args.ncpu
     # SWarp
     args.execution_mode_swarp = args.runmode
+    args.cleanupSWarp         = args.cleanup
+    # coadd_MEF
+    args.execution_mode_MEF = args.runmode
+    # Stiff
+    args.execution_mode_stiff = args.runmode
+    # SExpsf
+    args.execution_mode_SExpsf = args.runmode
+    args.MP_SEx = args.ncpu
+    # psfex
+    args.execution_mode_psfex = args.runmode
+    # SExDual
+    args.execution_mode_SExDual = args.runmode
+    args.MP_SEx = args.ncpu
+    args.cleanupPSFcats = args.cleanup
+
     return args
     
 if __name__ == '__main__':
 
-    args   = cmdline()
-    kwargs = vars(args)
-
     # Take time
     t0 = time.time()
 
+    # Get the args and kwargs for calls
+    args   = cmdline()
+    kwargs = vars(args)
+
     # 0. Initialize Job Operator
     jo  = job_operator.JobOperator(mojo_execution_mode='python',
-                                   stdoutloglevel = 'DEBUG',
-                                   fileloglevel = 'DEBUG',
+                                   stdoutloglevel = 'DEBUG', fileloglevel = 'DEBUG',
                                    logfile = os.path.join(args.tiledir, args.tilename+'_full_pipeline.log'),
                                    **kwargs) 
-
     # 1.  Get the tile information from the table -- unless provided
     if args.tile_geom_input_file == '':
-        jo.run_job('multiepoch.tasks.query_tileinfo', **kwargs) #tilename=args.tilename, coaddtile_table=args.coaddtile_table,db_section=args.db_section)
+        jo.run_job('multiepoch.tasks.query_tileinfo', **kwargs) 
     else:
         jo.logger.info("Skipping tasks.query_tileinfo, will loaad assoc file:%s" % args.tile_geom_input_file)
         
@@ -163,23 +182,24 @@ if __name__ == '__main__':
     jo.run_job('multiepoch.tasks.me_prepare',**kwargs)
 
     # 5. The SWarp call 
-    swarp_pars={"PIXEL_SCALE": 0.263}
+    swarp_pars={'WRITE_FILEINFO':'Y'}
     jo.run_job('multiepoch.tasks.call_SWarp',swarp_parameters=swarp_pars,**kwargs)
                
-    # Now we need to combine the 3 planes SCI/WGT/MSK into a single image
-    jo.run_job('multiepoch.tasks.call_coadd_merge',clobber_MEF=True,MEF_execution_mode=args.runmode,cleanupSWarp=args.cleanup,add_noise=ADD_NOISE,xblock=XBLOCK)
+    # 6. Combine the 3 planes SCI/WGT/MSK into a single image, interpolate the SCI and create MSK 
+    jo.run_job('multiepoch.tasks.call_coadd_MEF',clobber_MEF=True,**kwargs)
 
-    # 6. Create the color images using stiff
-    stiff_params={"NTHREADS"  : args.nthreads,}
-    jo.run_job('multiepoch.tasks.call_Stiff',tilename=args.tilename, stiff_parameters=stiff_params, stiff_execution_mode=args.runmode)
+    # 7. Create the color images using stiff
+    stiff_pars={"DESCRIPTION" : "'Pseudo Color of coadded image for DES tile %s'" % args.tilename}
+    jo.run_job('multiepoch.tasks.call_Stiff',stiff_parameters=stiff_pars, **kwargs)
     
-    # 7. make the SEx psf Call
-    jo.run_job('multiepoch.tasks.call_SExpsf',tilename=args.tilename, SExpsf_execution_mode=args.runmode,MP_SEx=args.ncpu)
+    # 8. make the SEx psf Call
+    jo.run_job('multiepoch.tasks.call_SExpsf',**kwargs)
 
-    # 8. Run  psfex
-    jo.run_job('multiepoch.tasks.call_psfex',psfex_parameters={"NTHREADS": args.nthreads,},psfex_execution_mode=args.runmode)
+    # 9. Run  psfex
+    jo.run_job('multiepoch.tasks.call_psfex',psfex_parameters={"VERBOSE_TYPE":"NORMAL"}, **kwargs)
 
-    # 9. Run SExtractor un dual mode
-    jo.run_job('multiepoch.tasks.call_SExDual',SExDual_parameters={"MAG_ZEROPOINT":30,}, SExDual_execution_mode=args.runmode,MP_SEx=args.ncpu,cleanupPSFcats=args.cleanup)
-    
-    print "# Grand Total time: %s" % elapsed_time(t0)
+    # 10. Run SExtractor un dual mode
+    jo.run_job('multiepoch.tasks.call_SExDual',SExDual_parameters={"MAG_ZEROPOINT":30,}, **kwargs)
+
+    # Done
+    jo.logger.info("Grand Total time: %s" % elapsed_time(t0))

@@ -48,7 +48,7 @@ class Job(BaseJob):
         tilename_fh = CUnicode('',  help="Alternative tilename handle for unique identification default=TILENAME")
         tiledir  = Unicode(None, help='The output directory for this tile.')
 
-        SExDual_execution_mode = CUnicode("tofile",help="SExtractor Dual excution mode",
+        execution_mode_SExDual = CUnicode("tofile",help="SExtractor Dual excution mode",
                                           argparse={'choices': ('tofile','dryrun','execute')})
         SExDual_parameters     = Dict({},help="A list of parameters to pass to SExtractor", argparse={'nargs':'+',})
         MP_SEx        = CInt(1,help="run using multi-process, 0=automatic, 1=single-process [default]")
@@ -65,7 +65,7 @@ class Job(BaseJob):
                                   argparse={'choices': ('DEBUG','INFO','CRITICAL')} )
 
         # TODO
-        # Make the SEx configuration file visible as a commandline options
+        # Make the SEx configuration (-c option) file visible as a commandline options
         
         # Function to read ASCII/panda framework file (instead of json)
         # Comment if you want to use json files
@@ -114,7 +114,7 @@ class Job(BaseJob):
         cmd_list = self.get_SExDual_cmd_list()
 
         # 2. check execution mode and write/print/execute commands accordingly --------------
-        execution_mode = self.ctx.get('SExDual_execution_mode', 'tofile')
+        execution_mode = self.ctx.execution_mode_SExDual
         if execution_mode == 'tofile':
             self.writeCall(cmd_list)
             

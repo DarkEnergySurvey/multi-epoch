@@ -24,12 +24,8 @@ import pandas as pd
 from multiepoch import file_handler as fh
 from despymisc.miscutils import elapsed_time
 
-#ROWINTERP_NULLWEIGHT_EXE = 'rowinterp_nullweight_me'
-#ROWINTERP_NULLWEIGHT_OPTIONS = "--interp_mask TRAIL --invalid_mask EDGE --max_cols 50 --null_mask BADAMP,EDGEBLEED,EDGE,CRAY,SSXTALK,STREAK,TRAIL -v --me_prepare"
-
 ROWINTERP_NULLWEIGHT_EXE = 'rowinterp_nullweight_me'
 ROWINTERP_NULLWEIGHT_OPTIONS = "--interp_mask TRAIL --invalid_mask EDGE --max_cols 50 --null_mask BADAMP,EDGEBLEED,EDGE,CRAY,SSXTALK,STREAK,TRAIL -v"
-
 BKLINE = "\\\n"
 
 class Job(BaseJob):
