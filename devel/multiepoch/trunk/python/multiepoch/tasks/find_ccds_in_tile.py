@@ -152,8 +152,10 @@ class Job(BaseJob):
         and_extras    = CUnicode(AND_EXTRAS,help="string with extra AND for query",)
         from_extras   = CUnicode(FROM_EXTRAS,help="string with extra FROM for query",)
 
-        tagname       = CUnicode('Y2T_FIRSTCUT',help="TAGNAME for images in the database",)
+        tagname       = CUnicode('Y2T3_FINALCUT',help="TAGNAME for images in the database",)
         exec_name     = CUnicode('immask', help=("EXEC_NAME for images in the database"))
+        filetype      = CUnicode('red_immask', help=("FILETYPE for images in the database"))
+        
         assoc_file    = CUnicode("", help=("Name of the output ASCII association file where we will store the cccds information for coadd"))
         assoc_json    = CUnicode("", help=("Name of the output JSON association file where we will store the cccds information for coadd"))
         plot_outname  = CUnicode("", help=("Output file name for plot, in case we want to plot"))

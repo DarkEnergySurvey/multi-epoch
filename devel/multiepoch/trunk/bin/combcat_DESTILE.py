@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 """
-Make sure we do:
+If running fromn Make sure we do:
  setup -v -r ~/DESDM-Code/devel/multiepoch/trunk
 """
 
@@ -78,8 +78,8 @@ def cmdline():
                         help="DB Section to query")
     parser.add_argument("--http_section", action="store", default='http-desarchive',
                         help="Name of section on desservices file to use for file transfer")
-    parser.add_argument("--tagname", action="store", default='Y2T_FIRSTCUT',
-                        help="database TAG (i.e. Y2T_FIRSTCUT)")
+    parser.add_argument("--tagname", action="store", default='Y2T3_FINALCUT',
+                        help="database TAG (i.e. Y2T3_FINALCUT)")
     parser.add_argument("--exec_name", action="store", default='immask', # REVIEW ASK FILETYPES HAVE CHANGED
                         help="firstcut last exec_name (i.e. immask)")
     parser.add_argument("--coaddtile_table", action="store",default='felipe.coaddtile_new',  # NEED TO BE REVISED

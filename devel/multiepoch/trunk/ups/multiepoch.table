@@ -6,11 +6,8 @@ setupRequired(despydb    2.0.0+4)
 setupRequired(despyastro 0.3.2+1) 
 setupRequired(despymisc  0.2.3+3) 
 
-# Pixcorrect
-setupRequired(pixcorrect 0.1.6+0)
-#setupRequired(despyfits  0.2.7+1) 
-#setupRequired(pyfits 3.3+3)
-#setupRequired(fitsio 0.9.8rc1+2)
+# Pixcorrect -- loads despyfits/fitsio/imsupport
+setupRequired(pixcorrect 0.1.6+1)
 
 # Python core
 setupRequired(matplotlib 1.3.1+4)

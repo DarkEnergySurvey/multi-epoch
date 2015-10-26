@@ -2,7 +2,7 @@
 
 QUERY_TILE_RUNS = '''
   SELECT DISTINCT location.run, location.tilename,tag
-  FROM location, runtag
+  FROM des_admin.location, des_admin.runtag
   WHERE
     tag like '{tag}' AND
     location.run = runtag.run AND
@@ -12,14 +12,14 @@ QUERY_TILE_RUNS = '''
 
 QUERY_INPUT_FOR_RUN = '''
         SELECT id,exposurename,expnum, nite,band
-        FROM exposure
+        FROM des_admin.exposure
         WHERE id in (
             SELECT exposureid
-            FROM image WHERE id in (
+            FROM des_admin.image WHERE id in (
                     SELECT distinct src_imageid
-                    FROM coadd_src WHERE coadd_imageid in (
+                    FROM des_admin.coadd_src WHERE coadd_imageid in (
                         SELECT distinct id
-                        FROM coadd WHERE run='{run}' AND imagename not like '%%_det.fits'
+                        FROM des_admin.coadd WHERE run='{run}' AND imagename not like '%%_det.fits'
             ))
         )
         ORDER by band
