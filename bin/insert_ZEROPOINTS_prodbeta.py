@@ -2,9 +2,8 @@
 
 import os,sys
 import time
-# DESDM Modules
 import despydb
-
+import despyastro
 
 """
 A temporary and simple script to copy the matched ZEROPOINT.MAG_ZERO
@@ -311,6 +310,17 @@ def insertZEROPOINTS(tablename,reqnum,attnum,section='db-destest',clobber=False)
     return
 
 
+
+def get_REQNUM_ATTNUM(tagname,section='db-destest',clobber=False):
+
+    # To find the REQNUM and ATTNUM:
+    # select unique REQNUM, ATTNUM  from OPS_PROCTAG where TAG='Y2T3_FINALCUT';
+    QUERY_REQNUM_ATTNUN = "select unique REQNUM, ATTNUM  from OPS_PROCTAG where TAG='{tagname}'"
+    dbh = despydb.desdbi.DesDbi(section=section)
+    query = QUERY_REQNUM_ATTNUN.format(tagname=tagname)
+    rec = despyastro.query2rec(query,dbh,verb=True)
+    return rec
+
 if __name__ == "__main__":
 
     # We only want the runs from Michael for El Gordo and RXJ
@@ -331,5 +341,18 @@ if __name__ == "__main__":
     #insertZEROPOINTS(tablename='felipe.extraZEROPOINT',reqnum=1417,attnum=3,clobber=False)# no-clobber table
 
     # For Finalcut Y2T2_finalcut runs
-    insertZEROPOINTS(tablename='felipe.extraZEROPOINT',reqnum=1784,attnum=1,clobber=False)
-    insertZEROPOINTS(tablename='felipe.extraZEROPOINT',reqnum=1784,attnum=2,clobber=False)
+    #insertZEROPOINTS(tablename='felipe.extraZEROPOINT',reqnum=1784,attnum=1,clobber=False)
+    #insertZEROPOINTS(tablename='felipe.extraZEROPOINT',reqnum=1784,attnum=2,clobber=False)
+
+
+    # Now more generaly for a given TAG
+    try:
+        TAGNAME = sys.argv[1]
+    except:
+        prog = os.path.basename(__file__)
+        usage = "ERROR: \n USAGE: %s <TAGNAME>\n Example: %s %s\n" % (prog,prog,'Y2T3_FINALCUT')
+        sys.exit(usage)
+    # Get The corresponding REQNUM/ATTNUM for a fiven TAG
+    runs = get_REQNUM_ATTNUM(tagname='Y2T3_FINALCUT')
+    for run in runs:
+        insertZEROPOINTS(tablename='felipe.extraZEROPOINT',reqnum=run['REQNUM'],attnum=run['ATTNUM'],clobber=False)

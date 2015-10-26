@@ -5,6 +5,8 @@ Set of common query tasks for the multi-epoch pipeline
 
 import despyastro
 import numpy
+import time
+from despymisc.miscutils import elapsed_time
 
 # QUERIES
 # -----------------------------------------------------------------------------
@@ -61,14 +63,15 @@ QUERY_CCDS_Y2A1 = '''
      WHERE
          file_archive_info.FILENAME  = image.FILENAME AND
          file_archive_info.FILENAME  = wgb.FILENAME  AND
-         image.FILETYPE  = 'red_immask' AND
-         wgb.FILETYPE    = 'red_immask' AND
+         image.FILETYPE  = '{filetype}' AND
+         wgb.FILETYPE    = '{filetype}' AND
          wgb.REQNUM      = ops_proctag.REQNUM AND
          wgb.UNITNAME    = ops_proctag.UNITNAME AND
          wgb.ATTNUM      = ops_proctag.ATTNUM AND
          ops_proctag.TAG = '{tagname}' AND
          {and_extras} 
      '''
+
 
 # -----------------------------------------------------------------------------        
 # QUERY FUNCTIONS
@@ -129,9 +132,9 @@ def get_CCDS_from_db_distance(dbh, tile_geometry, **kwargs):
         QUERY_CCDS = QUERY_CCDS_Y2A1
 
     ccd_query = QUERY_CCDS.format(
-        filetype      = kwargs.get('filetype','red_immask'),
         tagname       = kwargs.get('tagname'),
         exec_name     = kwargs.get('exec_name','immask'),
+        filetype      = kwargs.get('filetype','red_immask'),
         select_extras = kwargs.get('select_extras'),
         from_extras   = kwargs.get('from_extras'),
         and_extras    = kwargs.get('and_extras')+  ' AND\n (' + ' '.join(distance_and) + ')',
@@ -142,7 +145,11 @@ def get_CCDS_from_db_distance(dbh, tile_geometry, **kwargs):
     else: print mess
     
     # Get the ccd images that are part of the DESTILE
+    t0 = time.time()
     CCDS = despyastro.genutil.query2rec(ccd_query, dbhandle=dbh)
+    mess = "Query time for CCDs: %s" % elapsed_time(t0)
+    if logger: logger.info(mess)
+    else: print mess
 
     mess = "Found %s input images" %  len(CCDS)
     if logger: logger.info(mess)

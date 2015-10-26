@@ -173,18 +173,6 @@ def insertTAG(tilename,myTAG,tagname,tablename='felipe.tags',clobber=False,db_se
 if __name__ == "__main__":
 
 
-    tagnames = ['Y2T_FIRSTCUT','Y2T2_FINALCUT']
-
-    clobber = True
-    for tagname in tagnames:
-        insertTAG('DES2246-4457',myTAG='DES2246-4457_RAN_CCD', tagname=tagname,tablename='felipe.tags',clobber=clobber, SELECT_BY="CCDS")
-
-        clobber = False
-        insertTAG('DES2246-4457',myTAG='DES2246-4457_RAN_EXP', tagname=tagname,tablename='felipe.tags',clobber=clobber, SELECT_BY="EXPOSURES")
-
-    exit()
-
-
     tiles_RXJ2248 = ['DES2251-4331',
                      'DES2251-4414',
                      'DES2254-4457',
@@ -201,10 +189,38 @@ if __name__ == "__main__":
                      'DES0106-4914',
                      'DES0101-4831']
 
-    for tagname in tagnames:
-        for tilename in tiles_RXJ2248+tiles_ElGordo:
-            print " # Creating TAGS for %s" % tilename
-            insertTAG(tilename,myTAG='%s_RAN_CCD' % tilename, tagname=tagname, tablename='felipe.tags',clobber=clobber, SELECT_BY="CCDS")
-            insertTAG(tilename,myTAG='%s_RAN_EXP' % tilename, tagname=tagname, tablename='felipe.tags',clobber=clobber, SELECT_BY="EXPOSURES")
+    #tagnames = ['Y2T_FIRSTCUT','Y2T2_FINALCUT','Y2T3_FINALCUT']
+    #clobber = True
+    #for tagname in tagnames:
+    #    insertTAG('DES2246-4457',myTAG='DES2246-4457_RAN_CCD', tagname=tagname,tablename='felipe.tags',clobber=clobber, SELECT_BY="CCDS")
+    #    clobber = False
+    #    insertTAG('DES2246-4457',myTAG='DES2246-4457_RAN_EXP', tagname=tagname,tablename='felipe.tags',clobber=clobber, SELECT_BY="EXPOSURES")
+    #exit()
+    #
+    #clobber = False
+    #for tagname in tagnames:
+    #    for tilename in tiles_RXJ2248+tiles_ElGordo:
+    #        print " # Creating TAGS for %s" % tilename
+    #        insertTAG(tilename,myTAG='%s_RAN_CCD' % tilename, tagname=tagname, tablename='felipe.tags',clobber=clobber, SELECT_BY="CCDS")
+    #        clobber = False
+    #        insertTAG(tilename,myTAG='%s_RAN_EXP' % tilename, tagname=tagname, tablename='felipe.tags',clobber=clobber, SELECT_BY="EXPOSURES")
+
+    # Now more generaly for a given TAGNAME
+    try:
+        TAGNAME = sys.argv[1]
+    except:
+        prog = os.path.basename(__file__)
+        usage = "ERROR: \n USAGE: %s <TAGNAME>\n Example: %s %s\n" % (prog,prog,'Y2T3_FINALCUT')
+        sys.exit(usage)
+
+
+    # If table already exist and want to keep adding then clobber=False
+    clobber = False
+    #tiles = ['DES2246-4457']
+    for tilename in tiles_RXJ2248+tiles_ElGordo:
+    #for tilename in tiles:
+        print " # Creating TAGS for %s" % tilename
+        insertTAG(tilename,myTAG='%s_RAN_CCD' % tilename, tagname=TAGNAME, tablename='felipe.tags',clobber=clobber, SELECT_BY="CCDS")
+        insertTAG(tilename,myTAG='%s_RAN_EXP' % tilename, tagname=TAGNAME, tablename='felipe.tags',clobber=clobber, SELECT_BY="EXPOSURES")
             
     

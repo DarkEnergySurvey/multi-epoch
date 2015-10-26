@@ -7,7 +7,9 @@ import argparse
 import logging
 import os,sys
 
+import despyfits
 from despyfits import maskbits
+from despyfits import DESImage
 from despyfits import compressionhdu as chdu
 from despyastro import astrometry
 from despyastro import zipper_interp as zipp
@@ -61,15 +63,6 @@ def cmdline():
     if os.path.isfile(args.outname) and args.clobber is False:
         raise ValueError("Output file exists, try --clobber option, no files created")
     return args
-
-def update_hdr_compression(hdr,extname):
-    
-    hdr['DES_EXT']  = DES_EXT[extname]
-    hdr['FZALGOR']  = chdu.get_FZALGOR(extname)
-    hdr['FZQMETHD'] = chdu.get_FZQMETHD(extname)
-    hdr['FZDTHRSD'] = chdu.get_FZDTHRSD(extname)
-    hdr['FZQVALUE'] = chdu.get_FZQVALUE(extname)
-    return hdr
 
 def create_logger(level=logging.NOTSET):
 
@@ -134,9 +127,9 @@ def merge(**kwargs):
             WGT     = zipp.zipper_interp(WGT,MSK,interp_mask,axis=2, ydilate=10,**kwargs)
 
     # Update compression settings
-    sci_hdr = update_hdr_compression(sci_hdr,'SCI')
-    msk_hdr = update_hdr_compression(msk_hdr,'MSK')
-    wgt_hdr = update_hdr_compression(wgt_hdr,'WGT')
+    sci_hdr = DESImage.update_hdr_compression(sci_hdr,'SCI')
+    msk_hdr = DESImage.update_hdr_compression(msk_hdr,'MSK')
+    wgt_hdr = DESImage.update_hdr_compression(wgt_hdr,'WGT')
 
     # Add to image history
     sci_hdr['HISTORY'] = time.asctime(time.localtime()) + \
