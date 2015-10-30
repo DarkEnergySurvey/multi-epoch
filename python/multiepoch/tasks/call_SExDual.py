@@ -120,7 +120,7 @@ class Job(BaseJob):
             
         elif execution_mode == 'dryrun':
             self.logger.info("For now we only print the commands (dry-run)")
-            for band in self.ctx.BANDS:
+            for band in self.ctx.doBANDS:
                 self.logger.info(' '.join(cmd_list[band]))
 
         elif execution_mode == 'execute':
