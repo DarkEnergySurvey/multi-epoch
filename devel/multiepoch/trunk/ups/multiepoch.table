@@ -3,7 +3,7 @@ setupRequired(mojo       0.2.3+1)
 
 # DESDM python
 setupRequired(despydb    2.0.0+4)
-setupRequired(despyastro 0.3.2+1) 
+setupRequired(despyastro 0.3.3+0) 
 setupRequired(despymisc  0.2.3+3) 
 
 # Pixcorrect -- loads despyfits/fitsio/imsupport

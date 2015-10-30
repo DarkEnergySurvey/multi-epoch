@@ -101,6 +101,9 @@ def get_BANDS(assoc, detname='det', logger=None, doBANDS=['all']):
     else:
         ctxext['doBANDS'] = copy.copy(doBANDS) # Make copies to avoid list.remove(item)
         ctxext['dBANDS']  = copy.copy(doBANDS)
+        if detname not in ctxext['dBANDS']:
+            ctxext['dBANDS'] = ctxext['dBANDS'] + [detname]
+
 
     # Safe catch Remove detname from doBANDS if present
     if detname in ctxext['doBANDS']:

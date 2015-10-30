@@ -47,22 +47,21 @@ def build_conf_parser():
         config = ConfigParser.RawConfigParser()
         config.optionxform=str # Case sensitive
         config.read([args.conf_file]) # Fix True/False to boolean values
-        config2Bool(config) # Fix bool
-        config2List(config,'doBANDS') # Fix to list
+        updateBool(config) # Fix str -> bool 
+        updateList(config,'doBANDS') # Fix comma-separated to list
         defaults = {}
         for section in config.sections():
             defaults.update(dict(config.items(section)))
         return conf_parser,defaults
 
-def config2List(config,option):
+def updateList(config,option):
     for section in config.sections():
         for opt,val in config.items(section):
             if opt == option: config.set(section,opt,val.split(','))
     return config
 
-def config2Bool(config):
+def updateBool(config):
     # Reading all sections and dump them in defaults dictionary
-    defaults = {}
     for section in config.sections():
         for option,value in config.items(section):
             if value == 'False' or value == 'True':
@@ -153,7 +152,7 @@ def cmdline():
     parser.add_argument("--tile_geom_input_file", action="store",default='',
                         help="The json file with the tile information (default='')")
     parser.add_argument("--assoc_file", action="store",default='',
-                        help="Input association file with CCDs information (default=''")
+                        help="Input association file with CCDs information (default='')")
 
     parser.set_defaults(**defaults)
     args = parser.parse_args()
@@ -187,11 +186,6 @@ def cmdline():
     args.MP_SEx = args.ncpu
     args.cleanupPSFcats = args.cleanup
     
-    #for key, value in args._get_kwargs():
-        #print "%s = %s" % (key,value)
-        #print argument, value,getattr(args, argument)
-        #value = getattr(args, argument)
-        #print value
     return args
     
 if __name__ == '__main__':
