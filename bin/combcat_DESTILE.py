@@ -12,6 +12,10 @@ from despymisc.miscutils import elapsed_time
 import multiepoch.utils as utils
 import multiepoch.tasks.find_ccds_in_tile 
 
+from ConfigParser import SafeConfigParser, NoOptionError
+import ConfigParser
+import argparse
+
 SELECT_EXTRAS = multiepoch.tasks.find_ccds_in_tile.SELECT_EXTRAS
 FROM_EXTRAS   = multiepoch.tasks.find_ccds_in_tile.FROM_EXTRAS
 AND_EXTRAS    = multiepoch.tasks.find_ccds_in_tile.AND_EXTRAS
@@ -19,19 +23,56 @@ CLOBBER_ME = False
 XBLOCK = 10
 ADD_NOISE = False
 
+def build_conf_parser():
+
+    """ Create a paser with argparse and ConfigParser to load default arguments """
+
+    # Parse any conf_file specification
+    # We make this parser with add_help=False so that
+    # it doesn't parse -h and print help.
+    conf_parser = argparse.ArgumentParser(
+        description=__doc__, # printed with -h/--help
+        # Don't mess with format of description
+        formatter_class=argparse.RawDescriptionHelpFormatter,
+        # Turn off help, so we print all options in response to -h
+        add_help=False
+        )
+    conf_parser.optionxform = str
+    conf_parser.add_argument("-c", "--conf_file",
+                             help="Specify config file")
+    args, remaining_argv = conf_parser.parse_known_args()
+    if args.conf_file:
+        if not os.path.exists(args.conf_file):
+            print "# WARNING: configuration file %s not found" % args.conf_file
+        config = ConfigParser.RawConfigParser()
+        config.optionxform=str # Case sensitive
+        config.read([args.conf_file]) # Fix True/False to boolean values
+        config2Bool(config) # Fix bool
+        config2List(config,'doBANDS') # Fix to list
+        defaults = {}
+        for section in config.sections():
+            defaults.update(dict(config.items(section)))
+        return conf_parser,defaults
+
+def config2List(config,option):
+    for section in config.sections():
+        for opt,val in config.items(section):
+            if opt == option: config.set(section,opt,val.split(','))
+    return config
+
+def config2Bool(config):
+    # Reading all sections and dump them in defaults dictionary
+    defaults = {}
+    for section in config.sections():
+        for option,value in config.items(section):
+            if value == 'False' or value == 'True':
+                bool_value = config.getboolean(section, option)   
+                print "# Updating %s: %s --> bool(%s) section: %s" % (option,value,bool_value, section)
+                config.set(section,option, bool_value)
+    return config
+
 def cmdline():
-    
-    # SETTING UP THE PATHS
-    # -----------------------------------------------------------------------------
-    # The only REQUIRED PIPELINE PARAMETERS are:
-    #  local_archive
-    #  local_archive_me 
-    #  tiledir
-    # and they have to be set to run the pipeline. They CAN BE SET INDEPENDENTLY.
-    #
-    # MULTIEPOCH_ROOT and outputpath are simply supportive,
-    # non-required organisational variables.
-    # ------------------------------------------------------------------------
+
     if os.environ.get('MULTIEPOCH_ROOT'):
         MULTIEPOCH_ROOT = os.environ['MULTIEPOCH_ROOT']
     elif os.environ.get('HOME'):
@@ -46,8 +87,10 @@ def cmdline():
         local_archive        = os.path.join(MULTIEPOCH_ROOT, 'LOCAL_ARCHIVE')
     local_archive_me = os.path.join(MULTIEPOCH_ROOT, 'LOCAL_ARCHIVE_ME')
 
-    import argparse
-    parser = argparse.ArgumentParser(description="Runs the DESDM multi-epoch pipeline")
+    conf_parser,defaults = build_conf_parser()
+    parser = argparse.ArgumentParser(description="Runs the DESDM multi-epoch pipeline",
+                                     # Inherit options from config_parser
+                                     parents=[conf_parser])
     # The positional arguments
     parser.add_argument("tilename", action="store",default=None,
                         help="Name of the TILENAME")
@@ -101,19 +144,18 @@ def cmdline():
                         help="SWarp COMBINE_TYPE for detection coadds")
     parser.add_argument("--weight_for_mask", action="store_true",default=False,
                         help="Create extra coadded weight for mask creation")
-
     # coadd MEF options
     parser.add_argument("--add_noise", action="store_true",default=ADD_NOISE,
                         help="Add Poisson Noise to the zipper")
     parser.add_argument("--xblock", action="store",default=XBLOCK,
                         help="Block size of zipper in x-direction")
-
     # More optional args to bypass queries for tileinfo and geometry
     parser.add_argument("--tile_geom_input_file", action="store",default='',
                         help="The json file with the tile information (default='')")
     parser.add_argument("--assoc_file", action="store",default='',
                         help="Input association file with CCDs information (default=''")
 
+    parser.set_defaults(**defaults)
     args = parser.parse_args()
 
     # Sanity checks
@@ -144,7 +186,12 @@ def cmdline():
     args.execution_mode_SExDual = args.runmode
     args.MP_SEx = args.ncpu
     args.cleanupPSFcats = args.cleanup
-
+    
+    #for key, value in args._get_kwargs():
+        #print "%s = %s" % (key,value)
+        #print argument, value,getattr(args, argument)
+        #value = getattr(args, argument)
+        #print value
     return args
     
 if __name__ == '__main__':
@@ -175,6 +222,7 @@ if __name__ == '__main__':
     else:
         jo.logger.info("Skipping task tasks.find_ccds_in_tile, will loaad assoc file:%s" % args.assoc_file)
 
+
     # 3. Retrieve the files -- if not running on cosmology cluster
     jo.run_job('multiepoch.tasks.get_fitsfiles',**kwargs)
 
@@ -185,6 +233,9 @@ if __name__ == '__main__':
     swarp_pars={'WRITE_FILEINFO':'Y'}
     jo.run_job('multiepoch.tasks.call_SWarp',swarp_parameters=swarp_pars,**kwargs)
                
+    # Update doBANDS and keep the for later
+    kwargs['doBANDS'] = jo.ctx.doBANDS
+
     # 6. Combine the 3 planes SCI/WGT/MSK into a single image, interpolate the SCI and create MSK 
     jo.run_job('multiepoch.tasks.call_coadd_MEF',clobber_MEF=True,**kwargs)
 
