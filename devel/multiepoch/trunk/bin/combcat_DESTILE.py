@@ -41,6 +41,7 @@ def build_conf_parser():
     conf_parser.add_argument("-c", "--conf_file",
                              help="Specify config file")
     args, remaining_argv = conf_parser.parse_known_args()
+    defaults = {}
     if args.conf_file:
         if not os.path.exists(args.conf_file):
             print "# WARNING: configuration file %s not found" % args.conf_file
@@ -49,10 +50,9 @@ def build_conf_parser():
         config.read([args.conf_file]) # Fix True/False to boolean values
         updateBool(config) # Fix str -> bool 
         updateList(config,'doBANDS') # Fix comma-separated to list
-        defaults = {}
         for section in config.sections():
             defaults.update(dict(config.items(section)))
-        return conf_parser,defaults
+    return conf_parser,defaults
 
 def updateList(config,option):
     for section in config.sections():
