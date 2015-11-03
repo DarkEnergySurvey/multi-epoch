@@ -80,14 +80,14 @@ def cmdline():
         print "# Warning $HOME is not defined, will use ./ instead"
         MULTIEPOCH_ROOT = os.path.abspath('/MULTIEPOCH_ROOT')
     outputpath           = os.path.join(MULTIEPOCH_ROOT, 'TILEBUILDER') 
-    if utils.inDESARcluster():
+    if utils.inDESARcluster(verb=False):
         local_archive        = "/work/prodbeta/archive"
     else:
         local_archive        = os.path.join(MULTIEPOCH_ROOT, 'LOCAL_ARCHIVE')
     local_archive_me = os.path.join(MULTIEPOCH_ROOT, 'LOCAL_ARCHIVE_ME')
 
     conf_parser,defaults = build_conf_parser()
-    parser = argparse.ArgumentParser(description="Runs the DESDM multi-epoch pipeline",
+    parser = argparse.ArgumentParser(description="Runs the DESDM combination+cataloguing pipeline",
                                      # Inherit options from config_parser
                                      parents=[conf_parser])
     # The positional arguments
@@ -215,7 +215,6 @@ if __name__ == '__main__':
         jo.run_job('multiepoch.tasks.plot_ccd_corners_destile',**kwargs)
     else:
         jo.logger.info("Skipping task tasks.find_ccds_in_tile, will loaad assoc file:%s" % args.assoc_file)
-
 
     # 3. Retrieve the files -- if not running on cosmology cluster
     jo.run_job('multiepoch.tasks.get_fitsfiles',**kwargs)

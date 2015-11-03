@@ -137,7 +137,7 @@ def get_CCDS_from_db_distance(dbh, tile_geometry, **kwargs):
         filetype      = kwargs.get('filetype','red_immask'),
         select_extras = kwargs.get('select_extras'),
         from_extras   = kwargs.get('from_extras'),
-        and_extras    = kwargs.get('and_extras')+  ' AND\n (' + ' '.join(distance_and) + ')',
+        and_extras    = kwargs.get('and_extras')+  ' AND\n (\n ' + ' '.join(distance_and) + ')',
         )
 
     mess = "Will execute the query:\n%s\n" %  ccd_query
@@ -192,12 +192,14 @@ def get_CCDS_from_db_corners(dbh, tile_edges, **kwargs):
         "((image.RAC3 BETWEEN %.10f AND %.10f) AND (image.DECC3 BETWEEN %.10f AND %.10f))\n" % tile_edges,
         "((image.RAC4 BETWEEN %.10f AND %.10f) AND (image.DECC4 BETWEEN %.10f AND %.10f))\n" % tile_edges,
         ]
+
     ccd_query = QUERY_CCDS.format(
         tagname       = kwargs.get('tagname'),
         exec_name     = kwargs.get('exec_name',     'immask'),
+        filetype      = kwargs.get('filetype','red_immask'),
         select_extras = kwargs.get('select_extras'),
         from_extras   = kwargs.get('from_extras'),
-        and_extras    = kwargs.get('and_extras')+  ' AND\n (' + ' OR '.join(corners_and) + ')',
+        and_extras    = kwargs.get('and_extras') + ' AND\n (' + ' OR '.join(corners_and) + ')'
         )
 
     mess = "Will execute the query:\n%s\n" %  ccd_query

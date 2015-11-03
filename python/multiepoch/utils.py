@@ -111,7 +111,7 @@ def parse_comma_separated_list(inputlist):
     else:
         return inputlist
 
-def inDESARcluster(domain_name='cosmology.illinois.edu',logger=None):
+def inDESARcluster(domain_name='cosmology.illinois.edu',logger=None,verb=False):
 
     import os,re
     """ Figure out if we are in the cosmology.illinois.edu cluster """
@@ -130,7 +130,8 @@ def inDESARcluster(domain_name='cosmology.illinois.edu',logger=None):
         message = "Found hostname: %s, running:%s --> NOT in %s cluster." % (hostname, uname, domain_name)
                 
     if logger: logger.debug(message)
-    else: print message
+    else:
+        if verb: print message
 
     return LOCAL
 
