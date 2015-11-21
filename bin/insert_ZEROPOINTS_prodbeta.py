@@ -34,6 +34,7 @@ def findEXPOSURES(reqnum,attnum,section='db-destest',exec_name='immask'):
     (filenames,exposurenames) = zip(*cur.fetchall())
     cur.close()
 
+    print "# Found %s filename for %s exposurenames" %  (len(filenames),len(exposurenames))
     return filenames,exposurenames
 
 
@@ -139,118 +140,11 @@ def createZEROPOINTtable(tablename,section,clobber=False):
     roles = ['DES_READER','PROD_ROLE','PROD_READER_ROLE']
     for role in roles:
         grant = "grant select on %s to %s" % (tablename.split(".")[1],role)
-        print "# Granting permission: %s\n" % grant
+        print "# Granting permission: %s" % grant
         cur.execute(grant)
     dbh.commit()
     cur.close()
     return
-
-
-def insertZEROPOINTS(tablename,section='db-destest',clobber=False):
-        
-    """
-    INSERT the ZEROPOINTS to a tablename from old Schema in db-desoper
-    """
-    
-
-    # Get the filenames and exposurenames
-    filenames, exposurenames = findEXPOSURES(reqnum=1007,attnum=5,section=section)
-    Nexp = len(exposurenames)
-
-    # Make sure that the ZEROPOINT table exists
-    createZEROPOINTtable(tablename,section=section,clobber=clobber)
-
-
-    dbh_desoper = despydb.desdbi.DesDbi(section="db-desoper")
-    cur_desoper = dbh_desoper.cursor()
-    
-    dbh = despydb.desdbi.DesDbi(section=section)
-    cur = dbh.cursor()
-
-    # To find the runs from SVA1_FINALCUT for el Gordo and RXJ
-    # select RUN from  RUNTAG  where runtag.RUN like '%20121207%' and runtag.tag='SVA1_FINALCUT';
-    # select RUN from  RUNTAG  where runtag.RUN like '%20121124%' and runtag.tag='SVA1_FINALCUT';
-
-    # Template query to find the zeropoints
-    query = """SELECT distinct zeropoint.IMAGEID, image.IMAGENAME, zeropoint.MAG_ZERO
-    from IMAGE, ZEROPOINT, RUNTAG
-    where
-    image.IMAGETYPE = 'red' and
-    image.ID        = zeropoint.IMAGEID and
-    image.RUN       = runtag.RUN and
-    runtag.tag      = 'SVA1_FINALCUT' and
-    image.run in ('20130717213138_20121124','20130712064117_20121207') and
-    image.IMAGENAME='%s' """ 
-
-    # Cols from the new table
-    cols = "FILENAME,IMAGENAME,MAG_ZERO,IMAGEID"
-    
-    for k in range(Nexp):
-        cur_desoper.execute(query % exposurenames[k])
-
-        items =     dbh = despydb.desdbi.DesDbi(section=section)
-    cur = dbh.cursor()
-    cur.execute(query)
-    count = cur.fetchone()[0]
-    cur.close()
-    
-    if count >= 1:
-        table_exists = True
-    else:
-        table_exists = False
-    print "# %s exists: %s " % (tablename,table_exists)
-    return table_exists
-
-
-def createZEROPOINTtable(tablename,section,clobber=False):
-    
-    dbh = despydb.desdbi.DesDbi(section=section)
-    cur = dbh.cursor()
-    # make sure we delete before we created -- if it exist only
-    drop = "drop   table %s purge" % tablename
-    
-    create = """
-    create table %s (
-    FILENAME                VARCHAR2(100),
-    IMAGENAME               VARCHAR2(100),
-    MAG_ZERO                NUMBER(22,8),
-    IMAGEID                 VARCHAR2(100),
-    constraint %s PRIMARY KEY (FILENAME)
-    )
-    """ % (tablename,tablename.split(".")[1])
-
-    # -- Add description of columns
-    comments ="""comment on column %s.IMAGEID     is 'ID from IMAGE.ID'
-    comment on column %s.FILENAME    is 'FILENAME from IMAGE.FILENAME'
-    comment on column %s.IMAGENAME   is 'IMAGENAME from IMAGE.IMAGENAME old Schema'
-    comment on column %s.MAG_ZERO    is 'MAG_ZERO in counts/s' """
-
-    # Check if table exists
-    table_exist = checkTABLENAMEexists(tablename,section)
-
-    # Drop if exists and clobber=True
-    if table_exist and clobber:
-        print "# Dropping table: %s" % tablename
-        cur.execute(drop)
-
-    # Create if not exist or clobber=True
-    if not table_exist or clobber:
-        print "# Creating table: %s" % tablename
-        cur.execute(create)
-        # Comments
-        print "# Adding comments to: %s" % tablename
-        for comment in comments.split("\n"):
-            print comment % tablename
-            cur.execute(comment % tablename)
-
-    # Grand permission
-    grant = "grant select on %s to des_reader" % tablename.split(".")[1]
-    print "# Granting permission: %s\n" % grant
-    cur.execute(grant)
-    dbh.commit()
-    cur.close()
-    return
-
 
 def insertZEROPOINTS(tablename,reqnum,attnum,section='db-destest',clobber=False):
         
@@ -266,22 +160,32 @@ def insertZEROPOINTS(tablename,reqnum,attnum,section='db-destest',clobber=False)
     # Make sure that the ZEROPOINT table exists
     createZEROPOINTtable(tablename,section=section,clobber=clobber)
 
-
     dbh_desoper = despydb.desdbi.DesDbi(section="db-desoper")
     cur_desoper = dbh_desoper.cursor()
     
     dbh = despydb.desdbi.DesDbi(section=section)
     cur = dbh.cursor()
     
-    query = """SELECT distinct zeropoint.IMAGEID, image.IMAGENAME, zeropoint.MAG_ZERO
-    from des_admin.IMAGE image, des_admin.ZEROPOINT zeropoint, des_admin.RUNTAG runtag
-    where
-    image.IMAGETYPE = 'red' and
-    image.ID        = zeropoint.IMAGEID and
-    image.RUN       = runtag.RUN and
-    runtag.tag      = 'SVA1_FINALCUT' and
-    image.run in ('20130717213138_20121124','20130712064117_20121207') and
-    image.IMAGENAME='%s' """ 
+    query = """
+    with myimage as (select id, filename 
+    from des_admin.location, des_admin.RUNTAG 
+      where runtag.tag in 
+      ('SVA1_FINALCUT','Y1A1_FINALCUT') and 
+       location.RUN=runtag.RUN and 
+       location.filename='%s' and 
+       location.filetype='red') 
+       select distinct zeropoint.IMAGEID, myimage.fileNAME, zeropoint.MAG_ZERO from myimage, des_admin.ZEROPOINT where zeropoint.imageid=myimage.id
+     """
+
+    # OLD QUERY
+    #"""SELECT distinct zeropoint.IMAGEID, image.IMAGENAME, zeropoint.MAG_ZERO
+    #from des_admin.IMAGE image, des_admin.ZEROPOINT zeropoint
+    #where
+    #image.IMAGETYPE = 'red' and
+    #image.ID        = zeropoint.IMAGEID and
+    #image.run in
+    #   (select distinct image.run from des_admin.IMAGE, des_admin.RUNTAG where (runtag.tag in ('SVA1_FINALCUT','Y1A1_FINALCUT') and image.RUN=runtag.RUN)) and
+    #image.IMAGENAME='%s' """ 
     
     cols = "FILENAME,IMAGENAME,MAG_ZERO,IMAGEID"
     
@@ -292,13 +196,12 @@ def insertZEROPOINTS(tablename,reqnum,attnum,section='db-destest',clobber=False)
 
         # Check if returns a value
         if items is None:
+            print "WARNING: Found no ZEROPOINT for: %s\n" % filenames[k]
             continue
         
         (imageid, imagename, mag_zero) = items
 
-        sys.stdout.write("\r# Inserting MAG_ZERO for %s (%s/%s)" % (exposurenames[k],k+1,Nexp))
-        sys.stdout.flush()
-
+        sys.stdout.write("# Inserting MAG_ZERO for %s (%s/%s)\n" % (exposurenames[k],k+1,Nexp))
         # Now we insert
         values = (filenames[k], exposurenames[k], mag_zero, imageid)
         insert_cmd = "INSERT INTO %s (%s) VALUES %s" % (tablename,cols,values)
@@ -323,28 +226,6 @@ def get_REQNUM_ATTNUM(tagname,section='db-destest',clobber=False):
 
 if __name__ == "__main__":
 
-    # We only want the runs from Michael for El Gordo and RXJ
-    # REQNUM     ATTNUM
-    # ---------- ----------
-    #  1007	    5
-    #  1155	    1
-    # On the new destest
-    #
-    # REQNUM     ATTNUM
-    # ---------- ----------
-    # 1413       02
-    # 1417       02
-    # 1417       03
-
-    #insertZEROPOINTS(tablename='felipe.extraZEROPOINT',reqnum=1413,attnum=2,clobber=True)
-    #insertZEROPOINTS(tablename='felipe.extraZEROPOINT',reqnum=1417,attnum=2,clobber=False)# no-clobber table
-    #insertZEROPOINTS(tablename='felipe.extraZEROPOINT',reqnum=1417,attnum=3,clobber=False)# no-clobber table
-
-    # For Finalcut Y2T2_finalcut runs
-    #insertZEROPOINTS(tablename='felipe.extraZEROPOINT',reqnum=1784,attnum=1,clobber=False)
-    #insertZEROPOINTS(tablename='felipe.extraZEROPOINT',reqnum=1784,attnum=2,clobber=False)
-
-
     # Now more generaly for a given TAG
     try:
         TAGNAME = sys.argv[1]
@@ -353,6 +234,9 @@ if __name__ == "__main__":
         usage = "ERROR: \n USAGE: %s <TAGNAME>\n Example: %s %s\n" % (prog,prog,'Y2T3_FINALCUT')
         sys.exit(usage)
     # Get The corresponding REQNUM/ATTNUM for a fiven TAG
-    runs = get_REQNUM_ATTNUM(tagname='Y2T3_FINALCUT')
+    runs = get_REQNUM_ATTNUM(tagname=TAGNAME)
+
     for run in runs:
-        insertZEROPOINTS(tablename='felipe.extraZEROPOINT',reqnum=run['REQNUM'],attnum=run['ATTNUM'],clobber=False)
+        clobber = False
+        #clobber = True
+        insertZEROPOINTS(tablename='felipe.extraZEROPOINT',reqnum=run['REQNUM'],attnum=run['ATTNUM'],clobber=clobber)

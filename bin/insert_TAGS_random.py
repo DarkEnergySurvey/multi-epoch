@@ -4,6 +4,7 @@ import os,sys
 
 import multiepoch.utils as utils
 import multiepoch.querylibs as querylibs
+import multiepoch.tasks.find_ccds_in_tile as find_ccds_in_tile
 from despydb import desdbi
 import numpy
 
@@ -18,9 +19,24 @@ import numpy
 # grep i tiles_depth_sql_sorted.out | awk ' { a[i++]=$3; } END { print a[int(i/2)]; }'
 
 # The default EXTRAS
-SELECT_EXTRAS = "felipe.extraZEROPOINT.MAG_ZERO,"
-FROM_EXTRAS   = "felipe.extraZEROPOINT"
-AND_EXTRAS    = "felipe.extraZEROPOINT.FILENAME = image.FILENAME" 
+SELECT_EXTRAS = find_ccds_in_tile.SELECT_EXTRAS
+FROM_EXTRAS   = find_ccds_in_tile.FROM_EXTRAS
+AND_EXTRAS    = find_ccds_in_tile.AND_EXTRAS
+
+def get_tile_geometry(tileinfo):
+    
+    ra_center_tile  = tileinfo['RA']
+    dec_center_tile = tileinfo['DEC']
+    dec_size_tile   = abs(tileinfo['DECCMIN']-tileinfo['DECCMAX'])
+    
+    if tileinfo['CROSSRAZERO'] == 'Y':
+        ra_size_tile = abs(tileinfo['RACMIN']- 360 - tileinfo['RACMAX'])
+    else:
+        ra_size_tile   = abs(tileinfo['RACMIN']-tileinfo['RACMAX'])   # RA_size
+        
+    tile_geometry = (ra_center_tile, dec_center_tile, ra_size_tile, dec_size_tile)
+    return tile_geometry
+
 
 def get_expnames(ccdlist):
     expnames = [ccd[0:9] for ccd in ccdlist]
@@ -69,7 +85,7 @@ def createTAGtable(dbh, tablename,clobber=False):
     roles = ['DES_READER','PROD_ROLE','PROD_READER_ROLE']
     for role in roles:
         grant = "grant select on %s to %s" % (tablename.split(".")[1],role)
-        print "# Granting permission: %s\n" % grant
+        print "# Granting permission: %s" % grant
         cur.execute(grant)
 
     dbh.commit()
@@ -110,7 +126,7 @@ def insertTAG(tilename,myTAG,tagname,tablename='felipe.tags',clobber=False,db_se
         'coaddtile_table' : "felipe.coaddtile_new",
         'archive_name'  : "prodbeta",
         'tagname'       : tagname,
-        'exec_name'     : 'immask',
+        #'exec_name'     : 'immask',
         'select_extras' : SELECT_EXTRAS,
         'from_extras'   : FROM_EXTRAS,
         'and_extras'    : AND_EXTRAS,
@@ -131,8 +147,16 @@ def insertTAG(tilename,myTAG,tagname,tablename='felipe.tags',clobber=False,db_se
     tileinfo = querylibs.get_tileinfo_from_db(dbh,**options)
     
     # Create the tile_edges tuple structure and query the database
-    tile_edges = (tileinfo['RACMIN'], tileinfo['RACMAX'],tileinfo['DECCMIN'],tileinfo['DECCMAX'])
-    CCDS = querylibs.get_CCDS_from_db_corners(dbh, tile_edges,**options)
+    tile_geometry = get_tile_geometry(tileinfo)
+    CCDS = querylibs.get_CCDS_from_db_distance(dbh, tile_geometry,**options)
+
+    if CCDS is False:
+        print "# no CCDS can be TAG for %s" % tilename
+        return
+
+    # Old method using corners
+    #tile_edges = (tileinfo['RACMIN'], tileinfo['RACMAX'],tileinfo['DECCMIN'],tileinfo['DECCMAX'])
+    #CCDS = querylibs.get_CCDS_from_db_corners(dbh, tile_edges,**options)
 
     # Select random files for each 
     BANDS  = numpy.unique(CCDS['BAND'])
@@ -169,6 +193,7 @@ def insertTAG(tilename,myTAG,tagname,tablename='felipe.tags',clobber=False,db_se
     cur.close()
     dbh.commit()
     print "# Done inserting Random TAGS...\n"
+    return
 
 if __name__ == "__main__":
 
@@ -178,32 +203,27 @@ if __name__ == "__main__":
                      'DES2254-4457',
                      'DES2247-4331',
                      'DES2247-4414',
-                     #'DES2246-4457',
+                     'DES2246-4457',
                      'DES2250-4457']
     
     tiles_ElGordo = ['DES0105-4831',
                      'DES0059-4957',
                      'DES0103-4957',
                      'DES0058-4914',
+                     #'DES0101-4831'
                      'DES0102-4914',
-                     'DES0106-4914',
-                     'DES0101-4831']
+                     'DES0106-4914']
 
-    #tagnames = ['Y2T_FIRSTCUT','Y2T2_FINALCUT','Y2T3_FINALCUT']
-    #clobber = True
-    #for tagname in tagnames:
-    #    insertTAG('DES2246-4457',myTAG='DES2246-4457_RAN_CCD', tagname=tagname,tablename='felipe.tags',clobber=clobber, SELECT_BY="CCDS")
-    #    clobber = False
-    #    insertTAG('DES2246-4457',myTAG='DES2246-4457_RAN_EXP', tagname=tagname,tablename='felipe.tags',clobber=clobber, SELECT_BY="EXPOSURES")
-    #exit()
-    #
-    #clobber = False
-    #for tagname in tagnames:
-    #    for tilename in tiles_RXJ2248+tiles_ElGordo:
-    #        print " # Creating TAGS for %s" % tilename
-    #        insertTAG(tilename,myTAG='%s_RAN_CCD' % tilename, tagname=tagname, tablename='felipe.tags',clobber=clobber, SELECT_BY="CCDS")
-    #        clobber = False
-    #        insertTAG(tilename,myTAG='%s_RAN_EXP' % tilename, tagname=tagname, tablename='felipe.tags',clobber=clobber, SELECT_BY="EXPOSURES")
+    tiles_crossRA0 = ['DES2354+0043',
+                      'DES2356+0043',
+                      'DES2359+0043',
+                      'DES0002+0043',
+                      'DES2354+0001',
+                      'DES2356+0001',
+                      'DES2359+0001',
+                      'DES0002+0001'] 
+
+                     
 
     # Now more generaly for a given TAGNAME
     try:
@@ -216,11 +236,10 @@ if __name__ == "__main__":
 
     # If table already exist and want to keep adding then clobber=False
     clobber = False
-    #tiles = ['DES2246-4457']
     for tilename in tiles_RXJ2248+tiles_ElGordo:
-    #for tilename in tiles:
-        print " # Creating TAGS for %s" % tilename
+        print "# Creating TAGS for %s" % tilename
         insertTAG(tilename,myTAG='%s_RAN_CCD' % tilename, tagname=TAGNAME, tablename='felipe.tags',clobber=clobber, SELECT_BY="CCDS")
+        clobber = False
         insertTAG(tilename,myTAG='%s_RAN_EXP' % tilename, tagname=TAGNAME, tablename='felipe.tags',clobber=clobber, SELECT_BY="EXPOSURES")
             
     

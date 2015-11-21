@@ -92,9 +92,13 @@ import multiepoch.querylibs as querylibs
 
 # DEFAULT PARAMETER VALUES -- Change from felipe.XXXXX --> XXXXX
 # -----------------------------------------------------------------------------
-SELECT_EXTRAS = "felipe.extraZEROPOINT.MAG_ZERO,"
-FROM_EXTRAS   = "felipe.extraZEROPOINT"
-AND_EXTRAS    = "felipe.extraZEROPOINT.FILENAME = image.FILENAME" 
+#SELECT_EXTRAS = "felipe.extraZEROPOINT.MAG_ZERO,"
+#FROM_EXTRAS   = "felipe.extraZEROPOINT"
+#AND_EXTRAS    = "felipe.extraZEROPOINT.FILENAME = me.FILENAME AND" 
+# Changing default to empty strings for now
+SELECT_EXTRAS = ""
+FROM_EXTRAS   = ""
+AND_EXTRAS    = "" 
 # -----------------------------------------------------------------------------
 
 
@@ -153,8 +157,6 @@ class Job(BaseJob):
         from_extras   = CUnicode(FROM_EXTRAS,help="string with extra FROM for query",)
 
         tagname       = CUnicode('Y2T3_FINALCUT',help="TAGNAME for images in the database",)
-        exec_name     = CUnicode('immask', help=("EXEC_NAME for images in the database"))
-        filetype      = CUnicode('red_immask', help=("FILETYPE for images in the database"))
         
         assoc_file    = CUnicode("", help=("Name of the output ASCII association file where we will store the cccds information for coadd"))
         assoc_json    = CUnicode("", help=("Name of the output JSON association file where we will store the cccds information for coadd"))
@@ -185,8 +187,9 @@ class Job(BaseJob):
                 mess = 'If not in cosmology cluster local_archive cannot be empty [""]'
                 raise IO_ValidationError(mess)
 
-            if self.select_extras[-1] !=",":
-                self.select_extras = self.select_extras+","
+            if len(self.select_extras) != 0:
+                if self.select_extras[-1] !=",":
+                    self.select_extras = self.select_extras+","
 
             #########################################
             # REMOVE LATER
@@ -204,7 +207,10 @@ class Job(BaseJob):
         LOG = self.logger
         DBH = self.ctx.dbh
 
-        # Corner's method
+        # Update tileinfo if we cross RA=0
+        self.ctx.tileinfo = utils.update_tileinfo_RAZERO(self.ctx.tileinfo)
+
+        # Corner's method -- only works if CCDs are smaller than the TILE
         # Create the tile_edges tuple structure and query the database
         #tile_edges = self.get_tile_edges(self.ctx.tileinfo)
         #self.ctx.CCDS = querylibs.get_CCDS_from_db_corners(DBH, tile_edges,logger=LOG,**self.input.as_dict())
@@ -217,7 +223,7 @@ class Job(BaseJob):
         # Get root_https from from the DB with a query
         self.ctx.root_https   = querylibs.get_root_https(DBH,logger=LOG, archive_name=self.input.archive_name)
         self.ctx.root_archive = querylibs.get_root_archive(DBH,logger=LOG, archive_name=self.input.archive_name)
-        # In case we want root_http (DESDM framework)
+        # In case we want root_http (for DESDM framework) -- not implemented yet
         #self.ctx.root_https  = querylibs.get_root_http(self.ctx.dbh, archive_name=self.input.archive_name)
             
         # If in the cosmology archive local_archive=root path and local_archive not defined
@@ -250,15 +256,16 @@ class Job(BaseJob):
     @staticmethod
     def get_tile_edges(tileinfo):
         tile_edges = (tileinfo['RACMIN'], tileinfo['RACMAX'],
-                tileinfo['DECCMIN'], tileinfo['DECCMAX'])
+                      tileinfo['DECCMIN'], tileinfo['DECCMAX'])
         return tile_edges
 
     @staticmethod
     def get_tile_geometry(tileinfo):
-        tile_geometry = (tileinfo['RA'],
-                         tileinfo['DEC'],
-                         abs(tileinfo['RACMIN']-tileinfo['RACMAX']),   # RA_size
-                         abs(tileinfo['DECCMIN']-tileinfo['DECCMAX'])) # DEC_size
+        ra_center_tile  = tileinfo['RA']
+        dec_center_tile = tileinfo['DEC']
+        dec_size_tile   = abs(tileinfo['DECCMIN']-tileinfo['DECCMAX'])
+        ra_size_tile    = abs(tileinfo['RACMIN']-tileinfo['RACMAX'])   # RA_size
+        tile_geometry = (ra_center_tile, dec_center_tile, ra_size_tile, dec_size_tile)
         return tile_geometry
 
 
@@ -275,10 +282,14 @@ class Job(BaseJob):
         # 1. Construct an new dictionary that will store the
         # information required to associate files for co-addition
         assoc = {}
-        assoc['MAG_ZERO']    = CCDS['MAG_ZERO']
         assoc['BAND']        = CCDS['BAND']
         assoc['FILENAME']    = CCDS['FILENAME']
         assoc['COMPRESSION'] = CCDS['COMPRESSION']
+
+        if 'MAG_ZERO'in CCDS.dtype.names:
+            assoc['MAG_ZERO']    = CCDS['MAG_ZERO']
+        else:
+            assoc['MAG_ZERO']    = numpy.zeros(Nimages) + 30 
 
         # Filename with fz if exists
         #assoc['FILENAME'] =  [CCDS['FILENAME'][k]+CCDS['COMPRESSION'][k] for k in range(Nimages)]
