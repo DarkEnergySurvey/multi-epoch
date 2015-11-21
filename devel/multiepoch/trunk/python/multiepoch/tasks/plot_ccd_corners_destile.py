@@ -46,9 +46,8 @@ class Job(base_job.BaseJob):
                 mess = 'Need to define either tilename of plot_outname'
                 raise IO_ValidationError(mess)
 
-
     def run(self):
-        
+
         # Re-pack the tile corners
         tile_racs  = numpy.array([
             self.input.tileinfo['RAC1'], self.input.tileinfo['RAC2'],

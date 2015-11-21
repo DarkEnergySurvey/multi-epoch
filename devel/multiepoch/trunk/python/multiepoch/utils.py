@@ -139,6 +139,12 @@ def inDESARcluster(domain_name='cosmology.illinois.edu',logger=None,verb=False):
 def check_filepath_exist(filepath,logger=None):
 
     import os
+
+    if not os.path.isdir(filepath):
+        mess = "Filepath: %s is not a directory" % os.path.split(filepath)[0]
+        if logger: logger(mess)
+        return
+
     if not os.path.exists(os.path.split(filepath)[0]):
         mess = "Making: %s" % os.path.split(filepath)[0]
         os.makedirs(os.path.split(filepath)[0])
@@ -173,3 +179,89 @@ def work_subprocess_logging(tup):
     if status > 0:
         raise RuntimeError("\n***\nERROR while running, check logfile: %s\n***" % logfile)
     return status
+
+
+def checkTABLENAMEexists(tablename,dbh=None,db_section=None,verb=False,logger=None):
+
+    from despydb import desdbi
+
+    """
+    Check if exists. Tablename has to be a full owner.table_name format
+    """
+
+    mess = "Checking if %s exists." % tablename
+    if logger: logger.info(mess)
+    elif verb: print mess
+    
+    # Make sure is all upper case
+    tablename = tablename.upper()
+
+    query = """
+    select count (*) from all_tables where table_name='%s'""" % tablename
+
+    # Get a dbh if not provided
+    if not dbh:
+        dbh = desdbi.DesDbi(section=db_section)
+        
+    cur = dbh.cursor()
+    cur.execute(query)
+    count = cur.fetchone()[0]
+    cur.close()
+    
+    if count >= 1:
+        table_exists = True
+    else:
+        table_exists = False
+    mess = "%s exists: %s " % (tablename,table_exists)
+    if logger: logger.info(mess)
+    elif verb: print mess
+
+    return table_exists
+
+
+def grant_read_permission(tablename,dbh, roles=['DES_READER','PROD_ROLE','PROD_READER_ROLE']):
+
+    # Grand permission to a table
+    cur = dbh.cursor()
+    for role in roles:
+        grant = "grant select on %s to %s" % (tablename,role)
+        print "# Granting permission: %s" % grant
+        cur.execute(grant)
+    dbh.commit()
+    cur.close()
+    return
+
+
+# Pass mess to debug logger or print
+def pass_logger_debug(mess,logger=None):
+    if logger: logger.debug(mess)
+    else: print mess
+    return
+
+# Pass mess to info logger or print
+def pass_logger_info(mess,logger=None):
+    if logger: logger.info(mess)
+    else: print mess
+    return
+
+
+# Update RAs when crosssing RA=0
+def update_tileinfo_RAZERO(tileinfo):
+    keys = ['RA','RAC1','RAC2','RAC3','RAC4','RACMIN','RACMAX']
+    # We move the tile to RA=-180/+180
+    if tileinfo['CROSSRAZERO'] == 'Y':
+        for key in keys:
+            if tileinfo[key] > 180: tileinfo[key] -= 360 
+            #else: tileinfo[key] += 180 
+    return tileinfo
+
+def update_CCDS_RAZERO(CCDS,crossRAzero=False):
+    import numpy
+    keys = ['RA_CENT','RAC1','RAC2','RAC3','RAC4']
+    # We move the tile to RA=180
+    if crossRAzero == 'Y':
+        for key in keys:
+            CCDS[key] = numpy.where( CCDS[key] > 180, CCDS[key] - 360,  CCDS[key])
+    return CCDS
+
+
