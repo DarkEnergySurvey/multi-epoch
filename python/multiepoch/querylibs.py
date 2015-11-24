@@ -16,7 +16,8 @@ from multiepoch import utils
 # The query template used to get the geometry of the tile
 QUERY_GEOM = """
     SELECT PIXELSCALE, NAXIS1, NAXIS2,
-        RA, DEC,
+        RA_CENT, DEC_CENT,
+        RA_SIZE,DEC_SIZE,
         RAC1, RAC2, RAC3, RAC4,
         DECC1, DECC2, DECC3, DECC4,
         RACMIN,RACMAX,DECCMIN,DECCMAX,
@@ -52,7 +53,6 @@ QUERY_ME_INPUTS = """
          felipe.me_inputs_{tagname} me
          """
 
-
 QUERY_ME_TEMPLATE = """
      SELECT
          {select_extras}
@@ -79,7 +79,6 @@ QUERY_ME_TEMPLATE_RAZERO = """
           (case when RAC4 > 180.    THEN RAC4-360.    ELSE RAC4 END) as RAC4,
           DEC_CENT, DECC1, DECC2, DECC3, DECC4
      FROM felipe.me_inputs_{tagname})
-
   SELECT 
          {select_extras}
          me.FILENAME,me.COMPRESSION,me.PATH,me.BAND,
@@ -115,6 +114,16 @@ def get_tileinfo_from_db(dbh, **kwargs):
     cur.close()
     # Make a dictionary/header for all the columns from COADDTILE table
     tileinfo = dict(zip(desc, line))
+
+    # Add RA_SIZE, DEC_SIZE if not present / to make it compatible with older tables
+    #if 'RA_SIZE' not in tileinfo:
+    #    if tileinfo['CROSSRAZERO'] == 'Y':
+    #        tileinfo['RA_SIZE']  = abs(tileinfo['RACMAX']-(tileinfo['RACMIN']-360))
+    #    else:
+    #        tileinfo['RA_SIZE']  = abs(tileinfo['RACMAX']- tileinfo['RACMIN'])
+    #if 'DEC_SIZE' not in tileinfo:
+    #    tileinfo['DEC_SIZE'] = abs(tileinfo['DECCMAX']-tileinfo['DECCMIN'])
+        
     return tileinfo
 
 def get_CCDS_from_db_distance_sql(dbh, tile_geometry, **kwargs): 

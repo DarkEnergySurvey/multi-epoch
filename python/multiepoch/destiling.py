@@ -148,12 +148,16 @@ class DEStiling:
             # Maybe we substract 360 instead?
             self.RACMIN = ras.max()
             self.RACMAX = ras.min()
+            self.RA_SIZE = abs( self.RACMAX - (self.RACMIN-360))
         else:
             self.RACMIN = ras.min()
             self.RACMAX = ras.max()
+            self.RA_SIZE = abs( self.RACMAX - self.RACMIN)
+            
             
         self.DECCMIN = decs.min()
         self.DECCMAX = decs.max()
+        self.DEC_SIZE = abs( self.DECCMAX - self.DECCMIN)
 
         return
         
@@ -218,8 +222,8 @@ class DEStiling:
         create = """
         create table %s (
         TILENAME                VARCHAR2(50),
-        RA                      NUMBER(15,10),
-        DEC                     NUMBER(15,10),
+        RA_CENT                 NUMBER(15,10),
+        DEC_CENT                NUMBER(15,10),
         RAC1			NUMBER(15,10),
         RAC2			NUMBER(15,10),
         RAC3			NUMBER(15,10),
@@ -231,6 +235,8 @@ class DEStiling:
         RACMIN                  NUMBER(15,10),
         RACMAX                  NUMBER(15,10),
         DECCMIN                 NUMBER(15,10),
+        RA_SIZE                 NUMBER(15,10),
+        DEC_SIZE                NUMBER(15,10),
         DECCMAX                 NUMBER(15,10),
         URAL                    NUMBER(15,10),
         URAU                    NUMBER(15,10),
@@ -253,24 +259,26 @@ class DEStiling:
         """ % (table,table.split(".")[1])
         
         # -- Add description of columns
-        comments ="""comment on column %s.DEC    is 'RA  center of DES tile (deg)' 
-        comment on column %s.RA      is 'DEC center of DES file (deg)'
-        comment on column %s.RAC1    is 'Corner 1 RA of DES tile (deg)'
-        comment on column %s.RAC2    is 'Corner 2 RA of DES tile (deg)'
-        comment on column %s.RAC3    is 'Corner 3 RA of DES tile (deg)'
-        comment on column %s.RAC4    is 'Corner 4 RA of DES tile (deg)'
-        comment on column %s.DECC1   is 'Corner 1 DEC of DES tile (deg)'
-        comment on column %s.DECC2   is 'Corner 2 DEC of DES tile (deg)'
-        comment on column %s.DECC3   is 'Corner 3 DEC of DES tile (deg)'
-        comment on column %s.DECC4   is 'Corner 4 DEC of DES tile (deg)'
-        comment on column %s.RACMIN  is 'Minimum RA[1-4] corner (deg)'
-        comment on column %s.RACMAX  is 'Maximum RA[1-4] corner (deg)'
-        comment on column %s.DECCMIN is 'Minimum DEC[1-4] corner (deg)'
-        comment on column %s.DECCMAX is 'Maximum DEC[1-4] corner (deg)'
-        comment on column %s.URAL    is 'Unique RA lower (deg)'
-        comment on column %s.URAU    is 'Unique RA upper (deg)'
-        comment on column %s.UDECL   is 'Unique DEC lower (deg)'
-        comment on column %s.UDECU   is 'Unique DEC upper (deg)'
+        comments ="""comment on column %s.DEC_CENT    is 'DEC  center of DES tile (deg)' 
+        comment on column %s.RA_CENT  is 'RA center of DES file (deg)'
+        comment on column %s.RAC1     is 'Corner 1 RA of DES tile (deg)'
+        comment on column %s.RAC2     is 'Corner 2 RA of DES tile (deg)'
+        comment on column %s.RAC3     is 'Corner 3 RA of DES tile (deg)'
+        comment on column %s.RAC4     is 'Corner 4 RA of DES tile (deg)'
+        comment on column %s.DECC1    is 'Corner 1 DEC of DES tile (deg)'
+        comment on column %s.DECC2    is 'Corner 2 DEC of DES tile (deg)'
+        comment on column %s.DECC3    is 'Corner 3 DEC of DES tile (deg)'
+        comment on column %s.DECC4    is 'Corner 4 DEC of DES tile (deg)'
+        comment on column %s.RACMIN   is 'Minimum RA[1-4] corner (deg)'
+        comment on column %s.RACMAX   is 'Maximum RA[1-4] corner (deg)'
+        comment on column %s.DECCMIN  is 'Minimum DEC[1-4] corner (deg)'
+        comment on column %s.DECCMAX  is 'Maximum DEC[1-4] corner (deg)'
+        comment on column %s.RA_SIZE  is 'RA  Size of DES tile (deg)'
+        comment on column %s.DEC_SIZE is 'DEC Size of DES tile (deg)'
+        comment on column %s.URAL     is 'Unique RA lower (deg)'
+        comment on column %s.URAU     is 'Unique RA upper (deg)'
+        comment on column %s.UDECL    is 'Unique DEC lower (deg)'
+        comment on column %s.UDECU    is 'Unique DEC upper (deg)'
         comment on column %s.CROSSRAZERO  is 'DES tile crosses RA=0 [Y/N]'"""
 
         print "# Will create new COADDTILE table: %s" % table
@@ -291,7 +299,7 @@ class DEStiling:
         roles = ['des_reader','PROD_ROLE','PROD_READER_ROLE']
         for role in roles:
             grant = "grant select on %s to %s" % (table.split(".")[1],role)
-            print "# Granting permission: %s\n" % grant
+            print "# Granting permission: %s" % grant
             cur.execute(grant)
 
         self.dbh.commit()
@@ -311,8 +319,8 @@ class DEStiling:
         dbh = self.dbh
 
         columns = ('TILENAME',
-                   'RA',
-                   'DEC',
+                   'RA_CENT',
+                   'DEC_CENT',
                    'RAC1',
                    'RAC2',
                    'RAC3',
@@ -325,6 +333,8 @@ class DEStiling:
                    'RACMAX',
                    'DECCMIN',
                    'DECCMAX',
+                   'RA_SIZE',
+                   'DEC_SIZE',
                    'URAL',
                    'URAU',
                    'UDECL',
@@ -357,6 +367,8 @@ class DEStiling:
                   self.RACMAX,
                   self.DECCMIN,
                   self.DECCMAX,
+                  self.RA_SIZE,
+                  self.DEC_SIZE,
                   self.ural,
                   self.urau,
                   self.udecl,
@@ -420,6 +432,7 @@ class DEStiling:
         dec = dec_ini
         while done is False: # DEC loop
 
+            print "# Doing loop around Decl. = %10.6f" % dec
             self.dec_center = dec
             
             # Get the overlap size
@@ -457,6 +470,7 @@ class DEStiling:
 
                 # Get the tilename --> self.tilename
                 self.get_tilename()
+                #print "# Computing TILE: %s" % self.tilename
 
                 # Fix values > 360 for unique edges
                 if self.ural > 360:
