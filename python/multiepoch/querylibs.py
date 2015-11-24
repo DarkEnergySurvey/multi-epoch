@@ -160,7 +160,6 @@ def get_CCDS_from_db_distance_sql(dbh, **kwargs):
     return CCDS 
 
 
-
 def get_CCDS_from_db_distance_np(dbh, **kwargs): 
     """
     Execute the database query that returns the ccds and store them in a numpy record array
@@ -327,10 +326,3 @@ def find_distance(CCDS,tileinfo):
         )
     return CCDS[idx]
 
-
-def get_tile_geometry(tileinfo):
-    ra_center_tile  = tileinfo['RA']
-    dec_center_tile = tileinfo['DEC']
-    dec_size_tile   = abs(tileinfo['DECCMIN'] - tileinfo['DECCMAX'])
-    ra_size_tile    = abs(tileinfo['RACMIN']  - tileinfo['RACMAX'])   # RA_size
-    return ra_center_tile, dec_center_tile, ra_size_tile, dec_size_tile
