@@ -27,20 +27,6 @@ QUERY_GEOM = """
 """
 
 # Using the pre-computed felipe.ME_INPUTS_<TAGNAME> table, this is significantly faster
-QUERY_ME_INPUTS_LONG = """
-     SELECT
-         {select_extras}
-         me.FILENAME,me.COMPRESSION,me.PATH,me.BAND,
-         me.RA_CENT,me.DEC_CENT,
-         me.RAC1,  me.RAC2,  me.RAC3,  me.RAC4,
-         me.DECC1, me.DECC2, me.DECC3, me.DECC4
-     FROM
-         {from_extras} 
-         felipe.me_inputs_{tagname} me
-     WHERE
-         {and_extras} 
-         """
-
 QUERY_ME_INPUTS = """
      SELECT
          {select_extras}
@@ -53,7 +39,7 @@ QUERY_ME_INPUTS = """
          felipe.me_inputs_{tagname} me
          """
 
-QUERY_ME_TEMPLATE = """
+QUERY_ME_SQL_TEMPLATE = """
      SELECT
          {select_extras}
          me.FILENAME,me.COMPRESSION,me.PATH,me.BAND,
@@ -65,10 +51,12 @@ QUERY_ME_TEMPLATE = """
          {from_extras} 
          felipe.me_inputs_{tagname} me
      WHERE
-         {and_extras} 
-         """
+         {and_extras}
+         (ABS(me.RA_CENT  -  {ra_center_tile})  < (0.5*{ra_size_tile}  + 0.5*ABS(RAC2 - RAC3) )) AND
+         (ABS(me.DEC_CENT -  {dec_center_tile}) < (0.5*{dec_size_tile} + 0.5*ABS(DECC1- DECC2)))
+"""
 
-QUERY_ME_TEMPLATE_RAZERO = """
+QUERY_ME_SQL_TEMPLATE_RAZERO = """
  with me as 
     (SELECT /*+ materialize */ 
           FILENAME, COMPRESSION, PATH, BAND,
@@ -90,7 +78,9 @@ QUERY_ME_TEMPLATE_RAZERO = """
          {from_extras} 
          me
      WHERE
-         {and_extras} 
+         {and_extras}
+         (ABS(me.RA_CENT  -  {ra_center_tile})  < (0.5*{ra_size_tile}  + 0.5*ABS(RAC2 - RAC3) )) AND
+         (ABS(me.DEC_CENT -  {dec_center_tile}) < (0.5*{dec_size_tile} + 0.5*ABS(DECC1- DECC2)))
 """
 
 # ----------------
@@ -116,7 +106,7 @@ def get_tileinfo_from_db(dbh, **kwargs):
     tileinfo = dict(zip(desc, line))
     return tileinfo
 
-def get_CCDS_from_db_distance_sql(dbh, tile_geometry, **kwargs): 
+def get_CCDS_from_db_distance_sql(dbh, **kwargs): 
     """
     Execute the database query that returns the ccds and store them in a numpy record array
     kwargs: exec_name, tagname, select_extras, and_extras, from_extras
@@ -135,36 +125,28 @@ def get_CCDS_from_db_distance_sql(dbh, tile_geometry, **kwargs):
 
     utils.pass_logger_debug("Building and running the query to find the CCDS",logger)
 
-    # Get the tile geomtry -- TODO: this could all be part of the tiles definition
-    ra_center_tile, dec_center_tile, ra_size_tile, dec_size_tile = get_tile_geometry(tileinfo)
-
-    # Build the The distance AND condition for the query
-    distance_and = [
-        "ABS(RA_CENT  -  %.10f) < (%.10f + 0.505*ABS(RAC2 - RAC3 )) AND\n" % (ra_center_tile, ra_size_tile*0.5),
-        "ABS(DEC_CENT -  %.10f) < (%.10f + 0.505*ABS(DECC1- DECC2))\n"     % (dec_center_tile,dec_size_tile*0.5),
-        ]
-
+    # Decide the template to use
     if tileinfo['CROSSRAZERO'] == 'Y':
-        QUERY_CCDS = QUERY_ME_TEMPLATE_RAZERO
+        QUERY_CCDS = QUERY_ME_SQL_TEMPLATE_RAZERO
     else:
-        QUERY_CCDS = QUERY_ME_TEMPLATE
+        QUERY_CCDS = QUERY_ME_SQL_TEMPLATE
 
+    # Format the SQL query string
     ccd_query = QUERY_CCDS.format(
-        tagname       = tagname,
-        select_extras = select_extras,
-        from_extras   = from_extras,
-        and_extras    = and_extras,
+        tagname         = tagname,
+        ra_center_tile  = tileinfo['RA_CENT'],
+        dec_center_tile = tileinfo['DEC_CENT'],
+        ra_size_tile    = tileinfo['RA_SIZE'],
+        dec_size_tile   = tileinfo['DEC_SIZE'],
+        select_extras   = select_extras,
+        from_extras     = from_extras,
+        and_extras      = and_extras,
         )
-
-    ccd_query = ccd_query + "\n" + and_extras +' (\n ' + ' '.join(distance_and) + ')'
-
-    #ccd_query = ccd_query + '  (\n ' + ' '.join(distance_and) + ')'
     utils.pass_logger_info("Will execute the query:\n%s\n" %  ccd_query,logger)
     
     # Get the ccd images that are part of the DESTILE
     t0 = time.time()
     CCDS = despyastro.query2rec(ccd_query, dbhandle=dbh)
-
     if CCDS is False:
         utils.pass_logger_info("No input images found", logger)
         return CCDS
@@ -179,7 +161,7 @@ def get_CCDS_from_db_distance_sql(dbh, tile_geometry, **kwargs):
 
 
 
-def get_CCDS_from_db_distance_np(dbh, tile_geometry, **kwargs): 
+def get_CCDS_from_db_distance_np(dbh, **kwargs): 
     """
     Execute the database query that returns the ccds and store them in a numpy record array
     kwargs: exec_name, tagname, select_extras, and_extras, from_extras
@@ -198,17 +180,13 @@ def get_CCDS_from_db_distance_np(dbh, tile_geometry, **kwargs):
     
     utils.pass_logger_debug("Building and running the query to find the CCDS",logger)
 
-    # Get the tile geomtry -- TODO: this could all be part of the tiles definition
-    ra_center_tile, dec_center_tile, ra_size_tile, dec_size_tile = get_tile_geometry(tileinfo)
-
-    QUERY_CCDS = QUERY_ME_INPUTS
-
-    ccd_query = QUERY_CCDS.format(
+    ccd_query = QUERY_ME_INPUTS.format(
         tagname       = tagname,
         select_extras = select_extras,
         from_extras   = from_extras,
         )
 
+    # If and_extras whe need to add the WHERE statement
     if and_extras !='':
         ccd_query = ccd_query + "\nWHERE\n" + and_extras
 
@@ -218,7 +196,7 @@ def get_CCDS_from_db_distance_np(dbh, tile_geometry, **kwargs):
     t0 = time.time()
     CCDS = despyastro.query2rec(ccd_query, dbhandle=dbh)
     CCDS = utils.update_CCDS_RAZERO(CCDS,crossrazero=tileinfo['CROSSRAZERO'])
-    CCDS = find_distance(CCDS,tile_geometry)
+    CCDS = find_distance(CCDS,tileinfo)
 
     if CCDS is False:
         utils.pass_logger_info("No input images found", logger)
@@ -330,21 +308,22 @@ def get_root_http(dbh, archive_name='desar2home', logger=None):
 # -----------------------------------------------------------------------------
 
 
-def find_distance(CCDS,tile_geometry):
+def find_distance(CCDS,tileinfo):
 
-    (ra_center_tile, dec_center_tile, ra_size_tile, dec_size_tile) = tile_geometry
-    
-    RA_CENT      = CCDS['RA_CENT']
-    DEC_CENT     = CCDS['DEC_CENT']
-    RA_SIZE_CCD  = numpy.abs(CCDS['RAC2']  - CCDS['RAC3'])
-    DEC_SIZE_CCD = numpy.abs(CCDS['DECC1'] - CCDS['DECC2'])
-
-    RA_dist_centers  = RA_CENT  - ra_center_tile
-    DEC_dist_centers = DEC_CENT - dec_center_tile
+    # Center of TILE and CCDS
+    RA_CENT_CCD   = CCDS['RA_CENT']
+    DEC_CENT_CCD  = CCDS['DEC_CENT']
+    RA_CENT_TILE  = tileinfo['RA_CENT']
+    DEC_CENT_TILE = tileinfo['DEC_CENT']
+    # SIZE of TILE and CCDS
+    RA_SIZE_CCD   = numpy.abs(CCDS['RAC2']  - CCDS['RAC3'])
+    DEC_SIZE_CCD  = numpy.abs(CCDS['DECC1'] - CCDS['DECC2'])
+    RA_SIZE_TILE  = tileinfo['RA_SIZE']
+    DEC_SIZE_TILE = tileinfo['DEC_SIZE']
 
     idx = numpy.logical_and(
-        numpy.abs(RA_CENT  - ra_center_tile)  < ( 0.5*ra_size_tile  + 0.505*RA_SIZE_CCD),
-        numpy.abs(DEC_CENT - dec_center_tile) < ( 0.5*dec_size_tile + 0.505*DEC_SIZE_CCD)
+        numpy.abs(RA_CENT_CCD  - RA_CENT_TILE)  < ( 0.5*RA_SIZE_TILE  + 0.5*RA_SIZE_CCD),
+        numpy.abs(DEC_CENT_CCD - DEC_CENT_TILE) < ( 0.5*DEC_SIZE_TILE + 0.5*DEC_SIZE_CCD)
         )
     return CCDS[idx]
 

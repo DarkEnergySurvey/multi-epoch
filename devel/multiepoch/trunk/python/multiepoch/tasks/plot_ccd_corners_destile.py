@@ -99,7 +99,7 @@ class Job(base_job.BaseJob):
 
         # Figure out the aspects ratios for the main and sub-plots
         plot_aspect    = float(nrows)/float(ncols)
-        subplot_aspect = 1/math.cos(D2R*self.input.tileinfo['DEC'])
+        subplot_aspect = 1/math.cos(D2R*self.input.tileinfo['DEC_CENT'])
 
         # The main figure
         fig = plt.figure(FIGNUMBER,figsize=(FIGSIZE, FIGSIZE*plot_aspect))
