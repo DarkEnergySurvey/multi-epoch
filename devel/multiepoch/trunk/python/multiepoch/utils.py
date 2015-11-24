@@ -215,9 +215,7 @@ def checkTABLENAMEexists(tablename,dbh=None,db_section=None,verb=False,logger=No
     mess = "%s exists: %s " % (tablename,table_exists)
     if logger: logger.info(mess)
     elif verb: print mess
-
     return table_exists
-
 
 def grant_read_permission(tablename,dbh, roles=['DES_READER','PROD_ROLE','PROD_READER_ROLE']):
 
@@ -231,7 +229,6 @@ def grant_read_permission(tablename,dbh, roles=['DES_READER','PROD_ROLE','PROD_R
     cur.close()
     return
 
-
 # Pass mess to debug logger or print
 def pass_logger_debug(mess,logger=None):
     if logger: logger.debug(mess)
@@ -244,7 +241,7 @@ def pass_logger_info(mess,logger=None):
     else: print mess
     return
 
-
+# ----------------------------------------
 # Update RAs when crosssing RA=0
 def update_tileinfo_RAZERO(tileinfo):
     keys = ['RA','RAC1','RAC2','RAC3','RAC4','RACMIN','RACMAX']
@@ -255,13 +252,13 @@ def update_tileinfo_RAZERO(tileinfo):
             #else: tileinfo[key] += 180 
     return tileinfo
 
-def update_CCDS_RAZERO(CCDS,crossRAzero=False):
+def update_CCDS_RAZERO(CCDS,crossrazero=False):
     import numpy
     keys = ['RA_CENT','RAC1','RAC2','RAC3','RAC4']
     # We move the tile to RA=180
-    if crossRAzero == 'Y':
+    if crossrazero == 'Y' or crossrazero is True:
         for key in keys:
             CCDS[key] = numpy.where( CCDS[key] > 180, CCDS[key] - 360,  CCDS[key])
     return CCDS
-
+# ----------------------------------------
 
