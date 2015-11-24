@@ -45,7 +45,7 @@ The following driagram describes how this works:
    |        |                         |                    |
    |        |                         |                    |
    +----------------------------------+                    |
-(RAC1,DEC1)  |                       (RAC2,DEC2)            |
+(RAC1,DEC1)  |                       (RAC2,DEC2)           |
             |                                              |
             |                                  (RAC4,DEC4) |                        (RAC3,DEC3)
             |                                     +--------|-------------------------+
@@ -226,10 +226,10 @@ class Job(BaseJob):
         tile_geometry = self.get_tile_geometry(self.ctx.tileinfo)
 
         # Numpy
-        self.ctx.CCDS = querylibs.get_CCDS_from_db_distance_np(DBH, tile_geometry,logger=LOG,**input_kw)
+        #self.ctx.CCDS = querylibs.get_CCDS_from_db_distance_np(DBH, tile_geometry,logger=LOG,**input_kw)
 
         # SQL
-        #self.ctx.CCDS = querylibs.get_CCDS_from_db_distance_sql(DBH, tile_geometry,logger=LOG,**input_kw)
+        self.ctx.CCDS = querylibs.get_CCDS_from_db_distance_sql(DBH, tile_geometry,logger=LOG,**input_kw)
 
         # Get root_https from from the DB with a query
         self.ctx.root_https   = querylibs.get_root_https(DBH,logger=LOG, archive_name=self.input.archive_name)
