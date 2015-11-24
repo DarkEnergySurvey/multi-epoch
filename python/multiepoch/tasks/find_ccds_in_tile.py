@@ -187,9 +187,12 @@ class Job(BaseJob):
                 mess = 'If not in cosmology cluster local_archive cannot be empty [""]'
                 raise IO_ValidationError(mess)
 
+            # Make sure that some of the extras statements have the proper endingh
             if len(self.select_extras) != 0:
-                if self.select_extras[-1] !=",":
-                    self.select_extras = self.select_extras+","
+                if self.select_extras[-1] !=",": self.select_extras = self.select_extras+","
+            if len(self.from_extras) != 0:
+                if self.from_extras[-1] !=",": self.from_extras = self.from_extras+","
+
 
             #########################################
             # REMOVE LATER
@@ -207,7 +210,10 @@ class Job(BaseJob):
         LOG = self.logger
         DBH = self.ctx.dbh
 
-        # Update tileinfo if we cross RA=0
+        # Put the inputs as kwargs
+        input_kw = self.input.as_dict()
+
+        # Update tileinfo -- does nothing if we do not cross RA=0
         self.ctx.tileinfo = utils.update_tileinfo_RAZERO(self.ctx.tileinfo)
 
         # Corner's method -- only works if CCDs are smaller than the TILE
@@ -218,7 +224,12 @@ class Job(BaseJob):
         # Distance method -- the more general case
         # Create a tuple with the tile geometry and query
         tile_geometry = self.get_tile_geometry(self.ctx.tileinfo)
-        self.ctx.CCDS = querylibs.get_CCDS_from_db_distance(DBH, tile_geometry,logger=LOG,**self.input.as_dict())
+
+        # Numpy
+        self.ctx.CCDS = querylibs.get_CCDS_from_db_distance_np(DBH, tile_geometry,logger=LOG,**input_kw)
+
+        # SQL
+        #self.ctx.CCDS = querylibs.get_CCDS_from_db_distance_sql(DBH, tile_geometry,logger=LOG,**input_kw)
 
         # Get root_https from from the DB with a query
         self.ctx.root_https   = querylibs.get_root_https(DBH,logger=LOG, archive_name=self.input.archive_name)
