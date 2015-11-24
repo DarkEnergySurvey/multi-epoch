@@ -114,16 +114,6 @@ def get_tileinfo_from_db(dbh, **kwargs):
     cur.close()
     # Make a dictionary/header for all the columns from COADDTILE table
     tileinfo = dict(zip(desc, line))
-
-    # Add RA_SIZE, DEC_SIZE if not present / to make it compatible with older tables
-    #if 'RA_SIZE' not in tileinfo:
-    #    if tileinfo['CROSSRAZERO'] == 'Y':
-    #        tileinfo['RA_SIZE']  = abs(tileinfo['RACMAX']-(tileinfo['RACMIN']-360))
-    #    else:
-    #        tileinfo['RA_SIZE']  = abs(tileinfo['RACMAX']- tileinfo['RACMIN'])
-    #if 'DEC_SIZE' not in tileinfo:
-    #    tileinfo['DEC_SIZE'] = abs(tileinfo['DECCMAX']-tileinfo['DECCMIN'])
-        
     return tileinfo
 
 def get_CCDS_from_db_distance_sql(dbh, tile_geometry, **kwargs): 
