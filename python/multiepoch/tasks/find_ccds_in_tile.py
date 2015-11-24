@@ -222,14 +222,12 @@ class Job(BaseJob):
         #self.ctx.CCDS = querylibs.get_CCDS_from_db_corners(DBH, tile_edges,logger=LOG,**self.input.as_dict())
 
         # Distance method -- the more general case
-        # Create a tuple with the tile geometry and query
-        tile_geometry = self.get_tile_geometry(self.ctx.tileinfo)
 
         # Numpy
-        #self.ctx.CCDS = querylibs.get_CCDS_from_db_distance_np(DBH, tile_geometry,logger=LOG,**input_kw)
+        self.ctx.CCDS = querylibs.get_CCDS_from_db_distance_np(DBH, logger=LOG,**input_kw)
 
         # SQL
-        self.ctx.CCDS = querylibs.get_CCDS_from_db_distance_sql(DBH, tile_geometry,logger=LOG,**input_kw)
+        #self.ctx.CCDS = querylibs.get_CCDS_from_db_distance_sql(DBH, logger=LOG,**input_kw)
 
         # Get root_https from from the DB with a query
         self.ctx.root_https   = querylibs.get_root_https(DBH,logger=LOG, archive_name=self.input.archive_name)
@@ -269,16 +267,6 @@ class Job(BaseJob):
         tile_edges = (tileinfo['RACMIN'], tileinfo['RACMAX'],
                       tileinfo['DECCMIN'], tileinfo['DECCMAX'])
         return tile_edges
-
-    @staticmethod
-    def get_tile_geometry(tileinfo):
-        ra_center_tile  = tileinfo['RA']
-        dec_center_tile = tileinfo['DEC']
-        dec_size_tile   = abs(tileinfo['DECCMIN']-tileinfo['DECCMAX'])
-        ra_size_tile    = abs(tileinfo['RACMIN']-tileinfo['RACMAX'])   # RA_size
-        tile_geometry = (ra_center_tile, dec_center_tile, ra_size_tile, dec_size_tile)
-        return tile_geometry
-
 
     @staticmethod
     def get_fitsfile_locations(CCDS, local_archive, root_https, logger=None):

@@ -244,7 +244,7 @@ def pass_logger_info(mess,logger=None):
 # ----------------------------------------
 # Update RAs when crosssing RA=0
 def update_tileinfo_RAZERO(tileinfo):
-    keys = ['RA','RAC1','RAC2','RAC3','RAC4','RACMIN','RACMAX']
+    keys = ['RA_CENT','RAC1','RAC2','RAC3','RAC4','RACMIN','RACMAX']
     # We move the tile to RA=-180/+180
     if tileinfo['CROSSRAZERO'] == 'Y':
         for key in keys:
