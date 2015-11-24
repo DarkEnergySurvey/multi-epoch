@@ -27,7 +27,7 @@ QUERY_GEOM = """
 """
 
 # Using the pre-computed felipe.ME_INPUTS_<TAGNAME> table, this is significantly faster
-QUERY_ME_INPUTS = """
+QUERY_ME_NP_TEMPLATE = """
      SELECT
          {select_extras}
          me.FILENAME,me.COMPRESSION,me.PATH,me.BAND,
@@ -179,7 +179,7 @@ def get_CCDS_from_db_distance_np(dbh, **kwargs):
     
     utils.pass_logger_debug("Building and running the query to find the CCDS",logger)
 
-    ccd_query = QUERY_ME_INPUTS.format(
+    ccd_query = QUERY_ME_NP_TEMPLATE.format(
         tagname       = tagname,
         select_extras = select_extras,
         from_extras   = from_extras,
