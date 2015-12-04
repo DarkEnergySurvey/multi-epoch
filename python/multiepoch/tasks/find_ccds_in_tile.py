@@ -2,7 +2,50 @@
 
 """
 
-Option A: CORNERS' Seach Method
+Option A: Distance Search Method
+--------------------------------
+
+|-----------RA_SIZE_TILE ---------------|
+       
+     +---------------------------------------+       - 
+     |                                       |       | 
+     |                                       |       | 
+     |                                       |       | 
+     |                                       |       | 
+     |                                       |       | 
+     |                                       |       | 
+     |      RA_CENT_TILE, DEC_CENT_TILE      |       | 
+     |                                       |  DEC_SIZE_TILE
+     |                  +                    |       |                   _
+     |                                       |       |                   |
+     |                                       |       |                   |
+     |                                       |       |                   |
+     |                                       |       |                   dy
+     |                         +----------------------------------+      |   
+     |                         |             |       |            |      |
+     |                         |             |       |            |      |
+     +---------------------------------------+       -            |      |
+                               |                +                 |      -
+                               |     RA_CENT_CCD,DEC_CENT_CCD     |
+                               |                                  |
+                               |                                  |
+                               +----------------------------------+        
+                                  
+                               |<------   RA_SIZE_CCD    -------->|
+ 
+                       
+                        |<-------- dx ------->|
+ 
+                     
+ dx=abs(RA_CENT_TILE  - RA_CENT_CCD)/2
+ dy=abs(DEC_CENT_TILE - DEC_CENT_CCD)/2
+ 
+Condition to be satisfied:
+ dx < (RA_SIZE_TILE  + RA_SIZE_CCD)/2 AND
+ dy < (DEC_SIZE_TILE + DEC_SIZE_CCD)/2
+
+
+Option B: CORNERS' Seach Method
 ---------------------------------
 
 Finds all of the CCCs in the IMAGE table that fall inside the (RACMI,RACMAX)
