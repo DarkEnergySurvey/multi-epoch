@@ -251,7 +251,7 @@ class Job(BaseJob):
             wgt_comb_det = "%s'[%s]'" % (fh.get_mef_file(tiledir, tilename_fh, dBAND), utils.WGT_HDU)
             msk_comb     = "%s'[%s]'" % (fh.get_mef_file(tiledir, tilename_fh, BAND),  utils.MSK_HDU)
             
-            pars['MAG_ZEROPOINT']   =  30.0000 
+            pars['MAG_ZEROPOINT']   =  self.ctx.magbase 
             pars['CATALOG_NAME']    =  sexcat           
             pars['PSF_NAME']        =  psf
             pars['CHECKIMAGE_NAME'] =  seg
