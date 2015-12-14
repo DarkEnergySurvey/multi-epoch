@@ -292,7 +292,7 @@ class Job(BaseJob):
             "NTHREADS"        : self.ctx.nthreads,
             "CENTER_TYPE"     : "MANUAL",
             "IMAGE_SIZE"      : "%s,%d" % (self.ctx.tileinfo['NAXIS1'],self.ctx.tileinfo['NAXIS2']),
-            "CENTER"          : "%s,%s" % (self.ctx.tileinfo['RA'],self.ctx.tileinfo['DEC']),
+            "CENTER"          : "%s,%s" % (self.ctx.tileinfo['RA_CENT'],self.ctx.tileinfo['DEC_CENT']),
             "WRITE_XML"       : "N",
             }
         swarp_parameters.update(kwargs)

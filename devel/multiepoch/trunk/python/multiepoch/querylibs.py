@@ -26,7 +26,7 @@ QUERY_GEOM = """
     WHERE tilename='{tilename}'
 """
 
-# Using the pre-computed felipe.ME_INPUTS_<TAGNAME> table, this is significantly faster
+# Using the pre-computed felipe.ME_IMAGES_<TAGNAME> table, this is significantly faster
 QUERY_ME_NP_TEMPLATE = """
      SELECT
          {select_extras}
@@ -36,7 +36,7 @@ QUERY_ME_NP_TEMPLATE = """
          me.DECC1, me.DECC2, me.DECC3, me.DECC4
      FROM
          {from_extras} 
-         felipe.me_inputs_{tagname} me
+         felipe.me_images_{tagname} me
          """
 
 QUERY_ME_SQL_TEMPLATE = """
@@ -49,7 +49,7 @@ QUERY_ME_SQL_TEMPLATE = """
          ABS(me.DECC1 - me.DECC2 ) as DEC_SIZE_CCD	
      FROM
          {from_extras} 
-         felipe.me_inputs_{tagname} me
+         felipe.me_images_{tagname} me
      WHERE
          {and_extras}
          (ABS(me.RA_CENT  -  {ra_center_tile})  < (0.5*{ra_size_tile}  + 0.5*ABS(RAC2 - RAC3) )) AND
@@ -66,7 +66,7 @@ QUERY_ME_SQL_TEMPLATE_RAZERO = """
           (case when RAC3 > 180.    THEN RAC3-360.    ELSE RAC3 END) as RAC3,
           (case when RAC4 > 180.    THEN RAC4-360.    ELSE RAC4 END) as RAC4,
           DEC_CENT, DECC1, DECC2, DECC3, DECC4
-     FROM felipe.me_inputs_{tagname})
+     FROM felipe.me_images_{tagname})
   SELECT 
          {select_extras}
          me.FILENAME,me.COMPRESSION,me.PATH,me.BAND,
@@ -81,6 +81,21 @@ QUERY_ME_SQL_TEMPLATE_RAZERO = """
          {and_extras}
          (ABS(me.RA_CENT  -  {ra_center_tile})  < (0.5*{ra_size_tile}  + 0.5*ABS(RAC2 - RAC3) )) AND
          (ABS(me.DEC_CENT -  {dec_center_tile}) < (0.5*{dec_size_tile} + 0.5*ABS(DECC1- DECC2)))
+"""
+
+QUERY_ME_CORNERS = """
+     SELECT
+         {select_extras}
+         me.FILENAME,me.COMPRESSION,me.PATH,me.BAND,
+         me.RA_CENT, me.RAC1,  me.RAC2,  me.RAC3,  me.RAC4,
+         me.DEC_CENT,me.DECC1, me.DECC2, me.DECC3, me.DECC4,
+         ABS(me.RAC2  - me.RAC3 )  as RA_SIZE_CCD,
+         ABS(me.DECC1 - me.DECC2 ) as DEC_SIZE_CCD	
+     FROM
+         {from_extras} 
+         felipe.me_images_{tagname} me
+     WHERE
+         {and_extras}
 """
 
 # ----------------
@@ -219,7 +234,7 @@ def get_CCDS_from_db_corners(dbh, tile_edges, **kwargs):
     ***********
     """
 
-    QUERY_CCDS = QUERY_ME_INPUTS
+    QUERY_CCDS = QUERY_ME_CORNERS
     logger = kwargs.pop('logger', None)
 
     utils.pass_logger_debug("Building and running the query to find the CCDS",logger)
@@ -233,8 +248,6 @@ def get_CCDS_from_db_corners(dbh, tile_edges, **kwargs):
 
     ccd_query = QUERY_CCDS.format(
         tagname       = kwargs.get('tagname'),
-        exec_name     = kwargs.get('exec_name','immask'),
-        filetype      = kwargs.get('filetype','red_immask'),
         select_extras = kwargs.get('select_extras'),
         from_extras   = kwargs.get('from_extras'),
         and_extras    = kwargs.get('and_extras') + ' AND\n (' + ' OR '.join(corners_and) + ')'

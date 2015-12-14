@@ -120,10 +120,10 @@ def cmdline():
                         help="DB Section to query")
     parser.add_argument("--http_section", action="store", default='http-desarchive',
                         help="Name of section on desservices file to use for file transfer")
-    parser.add_argument("--tagname", action="store", default='Y2T3_FINALCUT',
-                        help="database TAG (i.e. Y2T3_FINALCUT)")
-    parser.add_argument("--exec_name", action="store", default='immask', # REVIEW ASK FILETYPES HAVE CHANGED
-                        help="firstcut last exec_name (i.e. immask)")
+    parser.add_argument("--tagname", action="store", default='Y2T4_FINALCUT',
+                        help="database TAG (i.e. Y2T4_FINALCUT)")
+    #parser.add_argument("--exec_name", action="store", default='immask', # REVIEW ASK FILETYPES HAVE CHANGED
+    #                    help="firstcut last exec_name (i.e. immask)")
     parser.add_argument("--coaddtile_table", action="store",default='felipe.coaddtile_new',  # NEED TO BE REVISED
                         help="Name of the table with coaddtile geometry")
     # and/select/from extras
@@ -239,7 +239,7 @@ if __name__ == '__main__':
     # 8. make the SEx psf Call
     jo.run_job('multiepoch.tasks.call_SExpsf',**kwargs)
 
-    # 9. Run  psfex
+    # 9. Run psfex
     jo.run_job('multiepoch.tasks.call_psfex',psfex_parameters={"VERBOSE_TYPE":"NORMAL"}, **kwargs)
 
     # 10. Run SExtractor un dual mode

@@ -199,7 +199,7 @@ class Job(BaseJob):
         and_extras    = CUnicode(AND_EXTRAS,help="string with extra AND for query",)
         from_extras   = CUnicode(FROM_EXTRAS,help="string with extra FROM for query",)
 
-        tagname       = CUnicode('Y2T3_FINALCUT',help="TAGNAME for images in the database",)
+        tagname       = CUnicode('Y2T4_FINALCUT',help="TAGNAME for images in the database",)
         
         assoc_file    = CUnicode("", help=("Name of the output ASCII association file where we will store the cccds information for coadd"))
         assoc_json    = CUnicode("", help=("Name of the output JSON association file where we will store the cccds information for coadd"))

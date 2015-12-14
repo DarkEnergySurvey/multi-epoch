@@ -17,6 +17,7 @@ create table {tablename_root}_{tagname} as
          file_archive_info.FILENAME,
 	 file_archive_info.COMPRESSION,
          file_archive_info.PATH,
+         wgb.UNITNAME,wgb.REQNUM,wgb.ATTNUM,
          image.BAND,
 	 image.RA_CENT,image.DEC_CENT,
          image.RAC1,  image.RAC2,  image.RAC3,  image.RAC4,
@@ -33,7 +34,7 @@ create table {tablename_root}_{tagname} as
          ops_proctag.TAG = '{tagname}'
 """
 
-def create_table_from_query(tagname,db_section='db-destest',filetype='red_immask',tablename_root='me_inputs',clobber=False,verb=False):
+def create_table_from_query(tagname,db_section='db-destest',filetype='red_immask',tablename_root='me_images',clobber=False,verb=False):
 
     # Get the handle
     dbh = desdbi.DesDbi(section=db_section)
@@ -67,7 +68,7 @@ def create_table_from_query(tagname,db_section='db-destest',filetype='red_immask
 
 if __name__ == "__main__":
 
-    parser = argparse.ArgumentParser(description="Create table with Muti-epoch inputs from coadds and cataloguing")
+    parser = argparse.ArgumentParser(description="Create table with Multi-epoch inputs from coadds and cataloguing")
     parser.add_argument("tagname", action="store",default=None,
                         help="Name of the TAGNAME used to select inputs")
     parser.add_argument("--db_section", action="store", default='db-destest',choices=['db-desoper','db-destest'],
