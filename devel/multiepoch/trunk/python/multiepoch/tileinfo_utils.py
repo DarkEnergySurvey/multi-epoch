@@ -37,8 +37,8 @@ def write_tileinfo_json(tilename,hdr,json_file):
     # Make all keywords consisten with CCD_corners.update_DESDM_corners definitions
     # these are not consisten and should be fixed in destiling and when generating the tiles definitions
     dict = {
-        'RA'          : hdr['RA_CENT'],
-        'DEC'         : hdr['DEC_CENT'],
+        'RA_CENT'     : hdr['RA_CENT'],
+        'DEC_CENT'    : hdr['DEC_CENT'],
         'CROSSRAZERO' : hdr['CROSSRA0']}
 
     keys = ['RAC1', 'RAC2', 'RAC3', 'RAC4',

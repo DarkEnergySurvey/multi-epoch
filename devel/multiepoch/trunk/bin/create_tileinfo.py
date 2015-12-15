@@ -14,9 +14,9 @@ if __name__ == "__main__":
                         help="DEC Center of the TILE")
     parser.add_argument("--tilename", action="store",default=None,
                         help="Name of the tile that you want to build")
-    parser.add_argument("--xsize", action="store", default=10,
+    parser.add_argument("--xsize", action="store", type=float, default=10,
                         help="X-size of output tile in arcmin")
-    parser.add_argument("--ysize", action="store", default=10,
+    parser.add_argument("--ysize", action="store", type=float, default=10,
                         help="Y-size of output tile in arcmin")
     parser.add_argument("--json_file", action="store", default=None, 
                         help="Y-size of output tile in arcmin")
