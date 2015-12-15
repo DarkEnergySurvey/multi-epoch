@@ -39,7 +39,7 @@ QUERY_ME_NP_TEMPLATE = """
          felipe.me_images_{tagname} me
          """
 
-QUERY_ME_SQL_TEMPLATE = """
+QUERY_ME_IMAGES_TEMPLATE = """
      SELECT
          {select_extras}
          me.FILENAME,me.COMPRESSION,me.PATH,me.BAND,
@@ -56,7 +56,8 @@ QUERY_ME_SQL_TEMPLATE = """
          (ABS(me.DEC_CENT -  {dec_center_tile}) < (0.5*{dec_size_tile} + 0.5*ABS(DECC1- DECC2)))
 """
 
-QUERY_ME_SQL_TEMPLATE_RAZERO = """
+
+QUERY_ME_IMAGES_TEMPLATE_RAZERO = """
  with me as 
     (SELECT /*+ materialize */ 
           FILENAME, COMPRESSION, PATH, BAND,
@@ -82,6 +83,7 @@ QUERY_ME_SQL_TEMPLATE_RAZERO = """
          (ABS(me.RA_CENT  -  {ra_center_tile})  < (0.5*{ra_size_tile}  + 0.5*ABS(RAC2 - RAC3) )) AND
          (ABS(me.DEC_CENT -  {dec_center_tile}) < (0.5*{dec_size_tile} + 0.5*ABS(DECC1- DECC2)))
 """
+
 
 QUERY_ME_CORNERS = """
      SELECT
@@ -142,9 +144,9 @@ def get_CCDS_from_db_distance_sql(dbh, **kwargs):
 
     # Decide the template to use
     if tileinfo['CROSSRAZERO'] == 'Y':
-        QUERY_CCDS = QUERY_ME_SQL_TEMPLATE_RAZERO
+        QUERY_CCDS = QUERY_ME_IMAGES_TEMPLATE_RAZERO
     else:
-        QUERY_CCDS = QUERY_ME_SQL_TEMPLATE
+        QUERY_CCDS = QUERY_ME_IMAGES_TEMPLATE
 
     # Format the SQL query string
     ccd_query = QUERY_CCDS.format(

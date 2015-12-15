@@ -18,11 +18,15 @@ create table {tablename_root}_{tagname} as
          file_archive_info.PATH,
          wgb.UNITNAME,
          wgb.REQNUM,
-         wgb.ATTNUM
+         wgb.ATTNUM,
+         cat.BAND,
+         cat.CCDNUM,
+         cat.EXPNUM
      FROM
-         wgb, ops_proctag, file_archive_info
+         wgb, ops_proctag, file_archive_info, catalog cat
      WHERE
          file_archive_info.FILENAME  = wgb.FILENAME  AND
+         file_archive_info.FILENAME  = cat.FILENAME AND
          wgb.FILETYPE    = '{filetype}' AND
          wgb.REQNUM      = ops_proctag.REQNUM AND
          wgb.UNITNAME    = ops_proctag.UNITNAME AND

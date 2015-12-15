@@ -19,6 +19,7 @@ create table {tablename_root}_{tagname} as
          file_archive_info.PATH,
          wgb.UNITNAME,wgb.REQNUM,wgb.ATTNUM,
          image.BAND,
+         image.CCDNUM,
 	 image.RA_CENT,image.DEC_CENT,
          image.RAC1,  image.RAC2,  image.RAC3,  image.RAC4,
          image.DECC1, image.DECC2, image.DECC3, image.DECC4
