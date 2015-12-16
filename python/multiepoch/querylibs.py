@@ -42,7 +42,7 @@ QUERY_ME_NP_TEMPLATE = """
 QUERY_ME_IMAGES_TEMPLATE = """
      SELECT
          {select_extras}
-         me.FILENAME,me.COMPRESSION,me.PATH,me.BAND,
+         me.FILENAME,me.COMPRESSION,me.PATH,me.BAND,me.UNITNAME,
          me.RA_CENT, me.RAC1,  me.RAC2,  me.RAC3,  me.RAC4,
          me.DEC_CENT,me.DECC1, me.DECC2, me.DECC3, me.DECC4,
          ABS(me.RAC2  - me.RAC3 )  as RA_SIZE_CCD,
@@ -52,15 +52,15 @@ QUERY_ME_IMAGES_TEMPLATE = """
          felipe.me_images_{tagname} me
      WHERE
          {and_extras}
-         (ABS(me.RA_CENT  -  {ra_center_tile})  < (0.5*{ra_size_tile}  + 0.5*ABS(RAC2 - RAC3) )) AND
-         (ABS(me.DEC_CENT -  {dec_center_tile}) < (0.5*{dec_size_tile} + 0.5*ABS(DECC1- DECC2)))
+         (ABS(me.RA_CENT  -  {ra_center_tile})  < (0.5*{ra_size_tile}  + 0.5*ABS(me.RAC2 - me.RAC3) )) AND
+         (ABS(me.DEC_CENT -  {dec_center_tile}) < (0.5*{dec_size_tile} + 0.5*ABS(me.DECC1- me.DECC2)))
 """
 
 
 QUERY_ME_IMAGES_TEMPLATE_RAZERO = """
  with me as 
     (SELECT /*+ materialize */ 
-          FILENAME, COMPRESSION, PATH, BAND,
+          FILENAME, COMPRESSION, PATH, BAND, UNITNAME,
           (case when RA_CENT > 180. THEN RA_CENT-360. ELSE RA_CENT END) as RA_CENT, 
           (case when RAC1 > 180.    THEN RAC1-360.    ELSE RAC1 END) as RAC1,	  
           (case when RAC2 > 180.    THEN RAC2-360.    ELSE RAC2 END) as RAC2,		
@@ -70,7 +70,7 @@ QUERY_ME_IMAGES_TEMPLATE_RAZERO = """
      FROM felipe.me_images_{tagname})
   SELECT 
          {select_extras}
-         me.FILENAME,me.COMPRESSION,me.PATH,me.BAND,
+         me.FILENAME,me.COMPRESSION,me.PATH,me.BAND,me.UNITNAME,
          me.RA_CENT, me.RAC1,  me.RAC2,  me.RAC3,  me.RAC4,
          me.DEC_CENT,me.DECC1, me.DECC2, me.DECC3, me.DECC4,
          ABS(me.RAC2  - me.RAC3 )  as RA_SIZE_CCD,
@@ -80,11 +80,75 @@ QUERY_ME_IMAGES_TEMPLATE_RAZERO = """
          me
      WHERE
          {and_extras}
-         (ABS(me.RA_CENT  -  {ra_center_tile})  < (0.5*{ra_size_tile}  + 0.5*ABS(RAC2 - RAC3) )) AND
-         (ABS(me.DEC_CENT -  {dec_center_tile}) < (0.5*{dec_size_tile} + 0.5*ABS(DECC1- DECC2)))
+         (ABS(me.RA_CENT  -  {ra_center_tile})  < (0.5*{ra_size_tile}  + 0.5*ABS(me.RAC2 - me.RAC3) )) AND
+         (ABS(me.DEC_CENT -  {dec_center_tile}) < (0.5*{dec_size_tile} + 0.5*ABS(me.DECC1- me.DECC2)))
 """
 
 
+QUERY_ME_CATALOGS_TEMPLATE = """
+     SELECT 
+         {select_extras}
+         distinct cat.FILENAME, cat.PATH, cat.BAND,cat.expnum,cat.CCDNUM,
+         cat.UNITNAME, cat.ATTNUM, cat.REQNUM
+     FROM 
+         felipe.me_catalogs_{tagname} cat,
+         felipe.me_images_{tagname}   ima
+     WHERE
+         ima.unitname = cat.unitname and
+         ima.unitname in
+       (SELECT 
+         distinct me.UNITNAME
+        FROM
+         {select_extras}
+         felipe.me_images_{tagname} me
+        WHERE
+         {and_extras}
+         (ABS(me.RA_CENT  -  {ra_center_tile})  < (0.5*{ra_size_tile}  + 0.5*ABS(me.RAC2 - me.RAC3) )) AND
+         (ABS(me.DEC_CENT -  {dec_center_tile}) < (0.5*{dec_size_tile} + 0.5*ABS(me.DECC1- me.DECC2)))
+         )
+         order by cat.FILENAME
+"""
+
+
+QUERY_ME_CATALOGS_TEMPLATE_RAZERO = """
+     SELECT 
+         {select_extras}
+         distinct cat.FILENAME, cat.PATH, cat.BAND,cat.expnum,cat.CCDNUM,
+         cat.UNITNAME, cat.ATTNUM, cat.REQNUM
+     FROM 
+         felipe.me_catalogs_{tagname} cat,
+         felipe.me_images_{tagname}   ima
+     WHERE
+         ima.unitname = cat.unitname and
+         ima.unitname in
+       (
+         with me as 
+          (SELECT /*+ materialize */ 
+            FILENAME, COMPRESSION, PATH, BAND, UNITNAME,
+            (case when RA_CENT > 180. THEN RA_CENT-360. ELSE RA_CENT END) as RA_CENT, 
+            (case when RAC1 > 180.    THEN RAC1-360.    ELSE RAC1 END) as RAC1,	  
+            (case when RAC2 > 180.    THEN RAC2-360.    ELSE RAC2 END) as RAC2,		
+            (case when RAC3 > 180.    THEN RAC3-360.    ELSE RAC3 END) as RAC3,
+            (case when RAC4 > 180.    THEN RAC4-360.    ELSE RAC4 END) as RAC4,
+            DEC_CENT, DECC1, DECC2, DECC3, DECC4
+          FROM felipe.me_images_{tagname})
+
+       SELECT 
+         distinct me.UNITNAME
+        FROM
+         {from_extras} 
+         me
+        WHERE
+         {and_extras}
+         (ABS(me.RA_CENT  -  {ra_center_tile})  < (0.5*{ra_size_tile}  + 0.5*ABS(me.RAC2 - me.RAC3) )) AND
+         (ABS(me.DEC_CENT -  {dec_center_tile}) < (0.5*{dec_size_tile} + 0.5*ABS(me.DECC1- me.DECC2)))
+         )
+         
+         order by cat.FILENAME
+"""
+
+
+# To be deprecated
 QUERY_ME_CORNERS = """
      SELECT
          {select_extras}
@@ -265,6 +329,60 @@ def get_CCDS_from_db_corners(dbh, tile_edges, **kwargs):
     if 'COMPRESSION' in CCDS.dtype.names:
         CCDS['COMPRESSION'] = numpy.where(CCDS['COMPRESSION'],CCDS['COMPRESSION'],'')
     return CCDS 
+
+
+
+def get_CATS_from_db_distance_sql(dbh, **kwargs): 
+    """
+    Execute the database query that returns the ccds and store them in a numpy record array
+    kwargs: exec_name, tagname, select_extras, and_extras, from_extras
+
+    This is a more general query, that will work on case that the TILE
+    is smaller than the input CCDS
+    """
+
+    # Get params from kwargs
+    logger        = kwargs.get('logger', None)
+    tagname       = kwargs.get('tagname')
+    tileinfo      = kwargs.get('tileinfo') 
+    select_extras = kwargs.get('select_extras','')
+    from_extras   = kwargs.get('from_extras','')
+    and_extras    = kwargs.get('and_extras','') 
+
+    utils.pass_logger_debug("Building and running the query to find the CCDS",logger)
+
+    # Decide the template to use
+    if tileinfo['CROSSRAZERO'] == 'Y':
+        QUERY_CATS = QUERY_ME_CATALOGS_TEMPLATE_RAZERO
+    else:
+        QUERY_CATS = QUERY_ME_CATALOGS_TEMPLATE
+
+    # Format the SQL query string
+    cat_query = QUERY_CATS.format(
+        tagname         = tagname,
+        ra_center_tile  = tileinfo['RA_CENT'],
+        dec_center_tile = tileinfo['DEC_CENT'],
+        ra_size_tile    = tileinfo['RA_SIZE'],
+        dec_size_tile   = tileinfo['DEC_SIZE'],
+        select_extras   = select_extras,
+        from_extras     = from_extras,
+        and_extras      = and_extras,
+        )
+    utils.pass_logger_info("Will execute the query:\n%s\n" %  cat_query,logger)
+    
+    # Get the ccd images that are part of the DESTILE
+    t0 = time.time()
+    CATS = despyastro.query2rec(cat_query, dbhandle=dbh)
+    if CATS is False:
+        utils.pass_logger_info("No input images found", logger)
+        return CATS
+    
+    utils.pass_logger_info("Query time for catalogs: %s" % elapsed_time(t0),logger)
+    utils.pass_logger_info("Found %s input catalogs" %  len(CATS),logger)
+
+    return CATS
+
+
 
 # --------------------------------------------------------
 # QUERY methods for root names -- available to all tasks
