@@ -16,6 +16,7 @@ def create_local_archive(local_archive):
         os.mkdir(local_archive)
     return
 
+# Soon to be deprecarted -- this is the particular case where we do this for the ctx.assoc alone
 def define_https_names(ctx,logger=None):
     
     """
@@ -30,6 +31,23 @@ def define_https_names(ctx,logger=None):
     filepath_https = [f.replace(ctx.local_archive,'{path}'.format(path=ctx.root_https)) for f in filepath_https]
 
     return filepath_https
+
+
+def define_https_by_name(ctx,name='assoc',logger=None):
+    
+    """
+    Define FILEPATH_HTTPS using the information on FILEPATH_LOCAL and the context for a name in the context
+    """
+
+    if 'root_https' not in ctx[name].keys():
+        ctx = utils.check_dbh(ctx, logger=logger)
+        ctx.root_https = querylibs.get_root_https(ctx.dbh,logger=logger, archive_name=ctx.archive_name)
+
+    filepath_https = ctx[name]['FILEPATH_LOCAL']
+    filepath_https = [f.replace(ctx.local_archive,'{path}'.format(path=ctx.root_https)) for f in filepath_https]
+
+    return filepath_https
+
 
 def define_weight_names(ctx):
 
