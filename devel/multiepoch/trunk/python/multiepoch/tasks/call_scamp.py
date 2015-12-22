@@ -189,7 +189,7 @@ class Job(BaseJob):
         cmd = []
         cmd.append(SCAMP_EXE)
         cmd.append("@%s" % fh.get_expcat_list_file(tiledir, tilename_fh))
-        #cmd.append("-c %s" % scamp_conf)
+        cmd.append("-c %s" % scamp_conf)
         for param,value in pars.items():
             cmd.append("-%s %s" % (param,value))
         return cmd
