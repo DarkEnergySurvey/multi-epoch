@@ -133,10 +133,9 @@ class Job(BaseJob):
                 fid.write('\n')
         return
 
-    
     def get_me_prepare_cmd_list(self):
         
-        # Figure out which ME files need to be created
+        """ Figure out which ME files need to be created"""
         cmd_list = []
         for idx, me_file in enumerate(self.ctx.assoc['FILEPATH_LOCAL_ME']):
             if os.path.exists(me_file) and not self.input.clobber_me:

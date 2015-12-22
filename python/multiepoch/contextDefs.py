@@ -133,3 +133,13 @@ def get_BANDS(assoc, detname='det', logger=None, doBANDS=['all']):
     return ctxext 
 
 
+def get_scamp_unitnames(ctx):
+    import numpy
+    """
+    Get the unique set of unitnames that for which we like to
+    merge ccd-based red catalogs and use as inputs for scamp
+    """
+    unitnames = []
+    for BAND in ctx.doBANDS:
+        unitnames = unitnames + numpy.unique(ctx.catlist['UNITNAME'][ctx.catlist['BAND'] == BAND]).tolist()
+    return unitnames

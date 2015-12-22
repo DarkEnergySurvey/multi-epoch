@@ -39,18 +39,24 @@ PSFCAT_TYPE = 'psfcat'
 PSFEX_TYPE  = 'psfex'
 SEXCAT_TYPE = 'cat'
 SEXSEG_TYPE = 'seg'
+SCAMP_TYPE  = 'scamp'
 
 FITS_EXT = 'fits'
 LIST_EXT = 'list'
 PSF_EXT  = 'psf'
 XML_EXT  = 'xml'
 
+# scamp types
+CCDCAT_TYPE = 'ccdcat'
+EXPCAT_TYPE = 'expcat'
 
 # GENERIC MULTIEPOCH FILENAME GENERATOR 
 
-_GENERIC_FILENAMEPATTERN         = "{base}_{band}_{ftype}.{ext}"
-_GENERIC_FILENAMEPATTERN_NOBAND  = "{base}_{ftype}.{ext}"
-_GENERIC_FILENAMEPATTERN_NOFTYPE = "{base}_{band}.{ext}"
+_GENERIC_FILENAMEPATTERN          = "{base}_{band}_{ftype}.{ext}"
+_GENERIC_FILENAMEPATTERN_NOBAND   = "{base}_{ftype}.{ext}"
+_GENERIC_FILENAMEPATTERN_NOFTYPE  = "{base}_{band}.{ext}"
+_GENERIC_FILENAMEPATTERN_EXPOSURE = "{base}_{exposure}_{ftype}.{ext}"
+
 
 def _me_fn(**kwargs):
     ''' the generic multiepoch filename generator '''
@@ -64,6 +70,9 @@ def _me_notype_fn(**kwargs):
     ''' the generic multiepoch filename generator without ftype'''
     return _GENERIC_FILENAMEPATTERN_NOFTYPE.format(**kwargs)
 
+def _me_exposure_fn(**kwargs):
+    ''' the generic multiepoch filename generator for exposure=-based names'''
+    return _GENERIC_FILENAMEPATTERN_EXPOSURE.format(**kwargs)
 
 # FILENAME GENERATOR FUNCTIONS
 
@@ -251,3 +260,37 @@ def get_ccd_plot_file(tiledir, tilename):
     filename = "%s_overlap.pdf" % tilename
     return dh.place_file(filename, 'aux')
 
+
+
+#  ***** SCAMP FILES *****
+
+# The lit of CCD finalcut red catalos that go into an exposure-based catalog
+def get_catlist_file(tiledir, tilename, exposure):
+    dh = get_tiledir_handler(tiledir)
+    fnkwargs = {'base':tilename, 'exposure':exposure, 'ftype':CCDCAT_TYPE, 'ext':LIST_EXT}
+    return dh.place_file(_me_exposure_fn(**fnkwargs), 'aux') 
+
+def get_expcat_file(tiledir, tilename, exposure):
+    dh = get_tiledir_handler(tiledir)
+    fnkwargs = {'base':tilename, 'exposure':exposure, 'ftype':EXPCAT_TYPE, 'ext':FITS_EXT}
+    return dh.place_file(_me_exposure_fn(**fnkwargs), 'aux') 
+
+def get_expcat_list_file(tiledir, tilename):
+    dh = get_tiledir_handler(tiledir)
+    fnkwargs = {'base':tilename, 'ftype':EXPCAT_TYPE, 'ext':LIST_EXT}
+    return dh.place_file(_me_noband_fn(**fnkwargs), 'aux') 
+
+def get_combine_cats_cmd_file(tiledir, tilename):
+    dh = get_tiledir_handler(tiledir)
+    filename = "%s_call_combine_cats.cmd" % tilename
+    return dh.place_file(filename, 'aux')
+
+def get_scamp_xml_file(tiledir, tilename):
+    dh = get_tiledir_handler(tiledir)
+    fnkwargs = {'base':tilename, 'ftype':SCAMP_TYPE, 'ext':XML_EXT}
+    return dh.place_file(_me_noband_fn(**fnkwargs), 'products') 
+
+def get_scamp_cmd_file(tiledir, tilename):
+    dh = get_tiledir_handler(tiledir)
+    filename = "%s_call_scamp.cmd" % tilename
+    return dh.place_file(filename, 'aux')

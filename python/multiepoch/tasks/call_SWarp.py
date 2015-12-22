@@ -68,7 +68,7 @@ class Job(BaseJob):
         # swarp_parameters which will override these defaults
         COMBINE_TYPE_detec = CUnicode('AVERAGE',  help="COMBINE type for detection coadd image")
         COMBINE_TYPE       = CUnicode('CHI-MEAN', help="COMBINE type for band coadd image")
-        nthreads           = CInt(1,help="Number of threads to use in stiff/psfex/swarp")
+        nthreads           = CInt(1,help="Number of threads to use in stiff/psfex/swarp/scamp")
 
         # Weight for mask
         weight_for_mask  = Bool(False, help="Create coadded weight for mask creation")
