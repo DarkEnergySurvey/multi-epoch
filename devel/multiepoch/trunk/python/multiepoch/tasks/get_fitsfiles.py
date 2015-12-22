@@ -35,7 +35,7 @@ class Job(BaseJob):
 
     class Input(IO):
 
-        assoc = Dict(None,help="The Dictionary containing the association information.",argparse=False)
+        assoc      = Dict(None,help="The Dictionary containing the association information.",argparse=False)
         assoc_file = CUnicode('',help="Input association file with CCDs information",input_file=True,
                               argparse={ 'argtype': 'positional', })
 
@@ -49,8 +49,8 @@ class Job(BaseJob):
 
         # Super-alignment options
         cats_file    = CUnicode('',help="Name of the output ASCII catalog list storing the information for scamp", input_file=True)
+        catlist      = Dict(None,help="The Dictionary containing input CCD-level catalog list ",argparse=False)
         super_align  = Bool(False, help=("Run super-aligment of tile using scamp"))
-
 
         # Logging -- might be factored out
         stdoutloglevel = CUnicode('INFO', help="The level with which logging info is streamed to stdout",
@@ -77,6 +77,10 @@ class Job(BaseJob):
             logger = mojo_log.get_logger({})
 
             if self.cats_file != "" and not self.super_align:
+                logger.info("Updating super_align value to True")
+                self.super_align = True
+
+            if self.catlist and not self.super_align:
                 logger.info("Updating super_align value to True")
                 self.super_align = True
             
