@@ -9,8 +9,8 @@ FGROUP_RADIUS          3.0             # Max dist (deg) between field groups
 #---------------------------- Reference catalogs ------------------------------
  
 REF_SERVER         cocat1.u-strasbg.fr # Internet addresses of catalog servers
-REF_PORT               1660            # Ports to connect to catalog servers
-CDSCLIENT_EXEC         aclient         # CDSclient executable
+#REF_PORT               1660            # Ports to connect to catalog servers
+#CDSCLIENT_EXEC         aclient         # CDSclient executable
 ASTREF_CATALOG         UCAC-4          # NONE, FILE,USNO-A1, USNO-A2, USNO-B1,
                                        # GSC-1.3, GSC-2.2, UCAC-1, UCAC-2,
                                        # 2MASS, or SDSS-R3
@@ -113,9 +113,10 @@ SN_THRESHOLDS          10.0,100.0      # S/N thresholds (in sigmas) for all and
                                        # high-SN sample
 #FWHM_THRESHOLDS        0.0,50.0        # FWHM thresholds (in pixels) for sources
 FWHM_THRESHOLDS        1.0,10.0        # FWHM thresholds (in pixels) for sources
-FLAGS_MASK             0x00f0          # Rejection mask on SEx FLAGS
-WEIGHTFLAGS_MASK       0x00ff          # Rejection mask on SEx FLAGS_WEIGHT
-IMAFLAGS_MASK          0x0             # Rejection mask on SEx IMAFLAGS_ISO
+#FLAGS_MASK             0x00f0          # Rejection mask on SEx FLAGS
+#WEIGHTFLAGS_MASK       0x00ff          # Rejection mask on SEx FLAGS_WEIGHT
+WEIGHTFLAGS_MASK       0x0             # Rejection mask on SEx FLAGS_WEIGHT
+#IMAFLAGS_MASK          0x0             # Rejection mask on SEx IMAFLAGS_ISO
 AHEADER_GLOBAL         scamp.ahead     # Filename of the global INPUT header
 AHEADER_SUFFIX         .aheadnoexist         # Filename extension for additional
                                        # INPUT headers
@@ -129,7 +130,6 @@ XSL_URL                file:///var/tmp/scamp-buildroot/usr/local//share/scamp/sc
 NTHREADS               0               # Number of simultaneous threads for
                                        # the SMP version of SCAMP
                                        # 0 = automatic
-                                       #
-                                       #
-                                       #
-                                       #
+IMAFLAGS_MASK          0x0700          # Added for Y2A1
+FLAGS_MASK             0x00fd          # Added for Y2A1
+ASTR_FLAGSMASK         0x0000          # Added for Y2A1

@@ -9,8 +9,8 @@ FGROUP_RADIUS          3.0             # Max dist (deg) between field groups
 #---------------------------- Reference catalogs ------------------------------
  
 REF_SERVER         cocat1.u-strasbg.fr # Internet addresses of catalog servers
-REF_PORT               1660            # Ports to connect to catalog servers
-CDSCLIENT_EXEC         aclient         # CDSclient executable
+#REF_PORT               1660            # Ports to connect to catalog servers
+#CDSCLIENT_EXEC         aclient         # CDSclient executable
 ASTREF_CATALOG         USNO-B1         # NONE, FILE,USNO-A1, USNO-A2, USNO-B1,
                                        # GSC-1.3, GSC-2.2, UCAC-1, UCAC-2,
                                        # 2MASS, or SDSS-R3
