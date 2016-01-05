@@ -105,22 +105,22 @@ def get_msk_list_file(tiledir, tilename, band):
 def get_sci_fits_file(tiledir, tilename, band):
     dh = get_tiledir_handler(tiledir)
     fnkwargs = {'base':tilename, 'band':band, 'ftype':SCI_TYPE, 'ext':FITS_EXT}
-    return dh.place_file(_me_fn(**fnkwargs), 'products')
+    return dh.place_file(_me_fn(**fnkwargs), 'coadd')
 
 def get_wgt_fits_file(tiledir, tilename, band):
     dh = get_tiledir_handler(tiledir)
     fnkwargs = {'base':tilename, 'band':band, 'ftype':WGT_TYPE, 'ext':FITS_EXT}
-    return dh.place_file(_me_fn(**fnkwargs), 'products')
+    return dh.place_file(_me_fn(**fnkwargs), 'coadd')
 
 def get_msk_fits_file(tiledir, tilename, band):
     dh = get_tiledir_handler(tiledir)
     fnkwargs = {'base':tilename, 'band':band, 'ftype':MSK_TYPE, 'ext':FITS_EXT}
-    return dh.place_file(_me_fn(**fnkwargs), 'products')
+    return dh.place_file(_me_fn(**fnkwargs), 'coadd')
 
 def get_gen_fits_file(tiledir, tilename, band, type='gen'):
     dh = get_tiledir_handler(tiledir)
     fnkwargs = {'base':tilename, 'band':band, 'ftype':type, 'ext':FITS_EXT}
-    return dh.place_file(_me_fn(**fnkwargs), 'products')
+    return dh.place_file(_me_fn(**fnkwargs), 'coadd')
 
 # ------------------------------------
 # 3. Misc files (log/fluxes/command)
@@ -155,7 +155,7 @@ def get_stiff_log_file(tiledir, tilename):
 def get_color_file(tiledir, tilename):
     dh = get_tiledir_handler(tiledir)
     filename = "%s.tiff" % tilename
-    return dh.place_file(filename, 'products')
+    return dh.place_file(filename, 'coadd')
 
 
 # -----------------------------------------------------------------------------
@@ -163,12 +163,12 @@ def get_color_file(tiledir, tilename):
 def get_psf_file(tiledir, tilename, band):
     dh = get_tiledir_handler(tiledir)
     fnkwargs = {'base':tilename, 'band':band, 'ftype':PSFCAT_TYPE, 'ext':PSF_EXT}
-    return dh.place_file(_me_fn(**fnkwargs), 'products')
+    return dh.place_file(_me_fn(**fnkwargs), 'coadd')
 
 def get_psfcat_file(tiledir, tilename, band):
     dh = get_tiledir_handler(tiledir)
     fnkwargs = {'base':tilename, 'band':band, 'ftype':PSFCAT_TYPE, 'ext':FITS_EXT}
-    return dh.place_file(_me_fn(**fnkwargs), 'products')
+    return dh.place_file(_me_fn(**fnkwargs), 'coadd')
 
 def get_sexpsf_cmd_file(tiledir, tilename):
     dh = get_tiledir_handler(tiledir)
@@ -189,7 +189,7 @@ def get_sexpsf_log_file(tiledir, tilename,band=None):
 def get_psfxml_file(tiledir, tilename, band):
     dh = get_tiledir_handler(tiledir)
     fnkwargs = {'base':tilename, 'band':band, 'ftype':PSFEX_TYPE, 'ext':XML_EXT}
-    return dh.place_file(_me_fn(**fnkwargs), 'products')
+    return dh.place_file(_me_fn(**fnkwargs), 'coadd')
 
 def get_psfex_cmd_file(tiledir, tilename):
     dh = get_tiledir_handler(tiledir)
@@ -210,12 +210,12 @@ def get_psfex_log_file(tiledir, tilename,band=None):
 def get_cat_file(tiledir, tilename, band):
     dh = get_tiledir_handler(tiledir)
     fnkwargs = {'base':tilename, 'band':band, 'ftype':SEXCAT_TYPE, 'ext':FITS_EXT}
-    return dh.place_file(_me_fn(**fnkwargs), 'products')
+    return dh.place_file(_me_fn(**fnkwargs), 'coadd')
 
 def get_seg_file(tiledir, tilename, band):
     dh = get_tiledir_handler(tiledir)
     fnkwargs = {'base':tilename, 'band':band, 'ftype':SEXSEG_TYPE, 'ext':FITS_EXT}
-    return dh.place_file(_me_fn(**fnkwargs), 'products')
+    return dh.place_file(_me_fn(**fnkwargs), 'coadd')
 
 def get_SExdual_cmd_file(tiledir, tilename):
     dh = get_tiledir_handler(tiledir)
@@ -235,7 +235,7 @@ def get_SExdual_log_file(tiledir, tilename,band=None):
 def get_mef_file(tiledir, tilename, band):
     dh = get_tiledir_handler(tiledir)
     fnkwargs = {'base':tilename, 'band':band, 'ext':FITS_EXT}
-    return dh.place_file(_me_notype_fn(**fnkwargs), 'products')
+    return dh.place_file(_me_notype_fn(**fnkwargs), 'coadd')
 
 def get_mef_cmd_file(tiledir, tilename,band=None):
     dh = get_tiledir_handler(tiledir)
