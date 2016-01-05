@@ -316,7 +316,6 @@ class Job(BaseJob):
 
     def runSWarp(self, cmd_list):
 
-        # FIXME :: logfile path via dh !!
         logfile = fh.get_swarp_log_file(self.input.tiledir, self.input.tilename_fh)
         log = open(logfile,"w")
         self.logger.info("Will proceed to run the SWarp calls now:")
@@ -333,8 +332,8 @@ class Job(BaseJob):
                 raise RuntimeError("\n***\nERROR while running SWarp, check logfile: %s\n***" % logfile)
             self.logger.info("Done in %s" % elapsed_time(t1))
 
-        self.logger.info("Total SWarp time %s" % elapsed_time(t0))
-        log.write("Total SWarp time %s\n" % elapsed_time(t0))
+        self.logger.info("Total SWarp time: %s" % elapsed_time(t0))
+        log.write("Total SWarp time: %s\n" % elapsed_time(t0))
         log.close()
 
     # -------------------------------------------------------------------------

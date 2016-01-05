@@ -6,7 +6,8 @@ import sys
 import numpy
 import time
 import pandas as pd
-import multiprocessing as mp
+import subprocess
+
 
 from despymisc.miscutils import elapsed_time
 import multiepoch.utils as utils
@@ -116,7 +117,7 @@ class Job(BaseJob):
         elif execution_mode == 'dryrun':
             [self.logger.info(' '.join(cmdlist[key])) for key in cmdlist.keys()]
         elif execution_mode == 'execute':
-            self.combine_cats_for_scamp(self.input.MP_cats)
+            self.run_scamp(cmdlist)
         else:
             raise ValueError('Execution mode %s not implemented.' % execution_mode)
         return
@@ -137,35 +138,28 @@ class Job(BaseJob):
         tableio.put_data(fh.get_expcat_list_file(tiledir, tilename_fh),(expcats,),format="%s")
         return
 
-    # Create the inputs and combine the catalogs for scamp
+    # Run scamp
     # -------------------------------------------------------------------------
-    def combine_cats_for_scamp(self,MP):
+    def run_scamp(self,cmd_list):
         """
-        Combine the CCD catalogs into exposure-based catalogs for scamp inputs
+        Run scamp
         """
 
+        logfile = fh.get_scamp_log_file(self.input.tiledir, self.input.tilename_fh)
+        log = open(logfile,"w")
+        self.logger.info("Will proceed to run scamp now:")
+        self.logger.info("Will write to logfile: %s" % logfile)
         t0 = time.time()
-        NP = utils.get_NP(MP)  # Figure out NP to use, 0=automatic
-        
-        if NP > 1 :
-            p = mp.Pool(processes=NP)
-        # Loop over all unitnames
-        for UNITNAME in self.ctx.unitnames:
-            self.logger.info("Combining CCD catalogs for %s" % UNITNAME)
-            # The sorted CCD catlist per UNITNAME and the output name for the conbined cat as args
-            args = (','.join(self.get_ccd_catlist(self.ctx.catlist,UNITNAME)),
-                    fh.get_expcat_file(self.input.tiledir, self.input.tilename_fh, UNITNAME))
-            kw = {}
-            if NP > 1:
-                p.apply_async(fitsutils.combine_cats, args, kw)
-            else:
-                fitsutils.combine_cats(*args)
-                
-        if NP > 1:
-            p.close()
-            p.join()
 
-        self.logger.info("Total Catalog Combine time: %s" % elapsed_time(t0))
+        cmd  = ' '.join(cmd_list)
+        self.logger.info("Executing scamp super-alignment for tile:%s" % self.ctx.tilename_fh)
+        self.logger.info("%s " % cmd)
+        status = subprocess.call(cmd,shell=True,stdout=log, stderr=log)
+        if status > 0:
+            raise RuntimeError("\n***\nERROR while running scamp, check logfile: %s\n***" % logfile)
+        self.logger.info("Total scamp time: %s" % elapsed_time(t0))
+        log.write("Total scamp time: %s\n" % elapsed_time(t0))
+        log.close()
         return
 
     # Assemble the command

@@ -27,7 +27,7 @@ class Job(BaseJob):
 
     class Input(IO):
 
-        """ Scamp preparation call for the multiepoch pipeline"""
+        """ Split the single scamp output file into their catalog components"""
 
         ######################
         # Required inputs
@@ -42,10 +42,9 @@ class Job(BaseJob):
                                 argparse={ 'argtype': 'positional', })
         #super_align  = Bool(False, help=("Run super-aligment of tile using scamp"))
 
-        execution_mode_scamp_prep  = CUnicode("tofile",help="Scamp prepare files excution mode",
+        execution_mode_head  = CUnicode("tofile",help="head prepare files excution mode",
                                               argparse={'choices': ('tofile','dryrun','execute')})
-        MP_cats      = CInt(1, help = ("Run using multi-process, 0=automatic, 1=single-process [default]"))
-        
+        MP_head = CInt(1, help = ("Run using multi-process, 0=automatic, 1=single-process [default]"))
 
         ######################
         # Optional arguments
@@ -54,7 +53,8 @@ class Job(BaseJob):
         tiledir     = Unicode(None, help="The output directory for this tile")
 
         local_archive     = Unicode(None, help="The local filepath where the input fits files (will) live")
-        #local_archive_me  = Unicode(None, help=('The path to the me prepared files archive.'))
+        local_archive_me  = Unicode(None, help=('The path to the me prepared files archive.'))
+        extension_me      = CUnicode('_me', help=(" extension to add to me-prepared file names."))
         
         doBANDS          = List(['all'],help="BANDS to processs (default=all)",argparse={'nargs':'+',})
         detname          = CUnicode(DETNAME,help="File label for detection image, default=%s." % DETNAME)
@@ -89,9 +89,20 @@ class Job(BaseJob):
         """ Pre-wash of inputs, some of these are only needed when run as script"""
 
         # Re-cast the ctx.assoc/ctx.catlist as dictionary of arrays instead of lists
-        #self.ctx.assoc    = utils.dict2arrays(self.ctx.assoc)
         self.ctx.catlist  = utils.dict2arrays(self.ctx.catlist)
 
+        # Re-construct the head names in case not present
+        if 'FILEPATH_LOCAL_HEAD' not in self.ctx.catlist.keys():
+            self.logger.info("(Re)-constructing catlist[FILEPATH_LOCAL_HEAD] from assoc[FILEPATH_LOCAL]")
+            self.ctx.catlist['FILEPATH_LOCAL_HEAD'] = contextDefs.define_head_names(self.ctx)
+            print self.ctx.catlist['FILEPATH_LOCAL_HEAD']
+
+        # now make sure all paths exist
+        for path in self.ctx.catlist['FILEPATH_LOCAL_HEAD']:
+            if not os.path.exists(os.path.split(path)[0]):
+                self.logger.debug("Creating path for: %s" % path)
+                os.makedirs(os.path.split(path)[0])
+            
         # Get the BANDs information in the context if they are not present
         if self.ctx.get('gotBANDS'):
             self.logger.info("BANDs already defined in context -- skipping")
@@ -105,7 +116,7 @@ class Job(BaseJob):
         
     def run(self):
         
-        execution_mode = self.input.execution_mode_scamp_prep
+        execution_mode = self.input.execution_mode_head
 
         # 0. Prepare the context
         self.prewash_scamp()
@@ -114,26 +125,26 @@ class Job(BaseJob):
         self.ctx.unitnames = contextDefs.get_scamp_unitnames(self.ctx)
 
         # 2. Get the list of command lines
-        cmdlist = self.get_combine_cats_cmd_list(execution_mode)
+        cmdlist = self.get_split_head_cmd_list(execution_mode)
         
         # 3. Execute a cmdlist according to execution_mode 
         # --> the input list files are written to the AUX directory
-        self.logger.info("Combining CCD catalogs for scamp")
+        self.logger.info("Splitting scamp head output")
         if execution_mode == 'tofile':
-            self.writeCall_combine_cats(cmdlist)
+            self.writeCall_split_head(cmdlist)
         elif execution_mode == 'dryrun':
             [self.logger.info(' '.join(cmdlist[key])) for key in cmdlist.keys()]
         elif execution_mode == 'execute':
-            self.combine_cats_for_scamp(self.input.MP_cats)
+            self.run_split_head(self.input.MP_head)
         else:
             raise ValueError('Execution mode %s not implemented.' % execution_mode)
         return
 
     # Create the inputs and combine the catalogs for scamp
     # -------------------------------------------------------------------------
-    def combine_cats_for_scamp(self,MP):
+    def run_split_head(self,MP):
         """
-        Combine the CCD catalogs into exposure-based catalogs for scamp inputs
+        Split the scamp output head
         """
 
         t0 = time.time()
@@ -143,61 +154,62 @@ class Job(BaseJob):
             p = mp.Pool(processes=NP)
         # Loop over all unitnames
         for UNITNAME in self.ctx.unitnames:
-            self.logger.info("Combining CCD catalogs for %s" % UNITNAME)
+            self.logger.info("Splitting head files for %s" % UNITNAME)
             # The sorted CCD catlist per UNITNAME and the output name for the conbined cat as args
-            args = (','.join(contextDefs.get_ccd_catlist(self.ctx.catlist,UNITNAME)),
-                    fh.get_expcat_file(self.input.tiledir, self.input.tilename_fh, UNITNAME))
+            args = (fh.get_exphead_file(self.input.tiledir, self.input.tilename_fh, UNITNAME),
+                    ','.join(contextDefs.get_ccd_headlist(self.ctx.catlist,UNITNAME)))
             kw = {}
             if NP > 1:
-                p.apply_async(fitsutils.combine_cats, args, kw)
+                p.apply_async(fitsutils.splitScampHead, args, kw)
             else:
-                fitsutils.combine_cats(*args)
+                fitsutils.splitScampHead(*args)
                 
         if NP > 1:
             p.close()
             p.join()
 
-        self.logger.info("Total Catalog Combine time: %s" % elapsed_time(t0))
+        self.logger.info("Total split head files time: %s" % elapsed_time(t0))
         return
 
     # Assemble the command
     # -------------------------------------------------------------------------
-    def get_combine_cats_cmd_list(self,execute_mode):
+    def get_split_head_cmd_list(self,execute_mode):
 
         # Sortcuts for less typing
         tiledir     = self.input.tiledir
         tilename_fh = self.input.tilename_fh
         # The dictionary, keyed to UNITNAMES where we store the commands
-        combine_cats_cmd = {}
+        cmd_list = {}
         for UNITNAME in self.ctx.unitnames:
-            # Get the sorted CCD catlist per UNITNAME
-            ccd_catlist = contextDefs.get_ccd_catlist(self.ctx.catlist,UNITNAME)
+            # Get the sorted CCD head list per UNITNAME, based on the CCD list of catalogs
+            ccd_headlist = contextDefs.get_ccd_headlist(self.ctx.catlist,UNITNAME)
             # Write out the file list containing the input catalogs
             if execute_mode == 'tofile' or execute_mode == 'dryrun':
-                tableio.put_data(fh.get_catlist_file(tiledir, tilename_fh, UNITNAME),(ccd_catlist,),format="%s")
-                self.logger.debug("Writing CCD red catalog list file: %s" % fh.get_catlist_file(tiledir, tilename_fh, UNITNAME))
+                tableio.put_data(fh.get_headlist_file(tiledir, tilename_fh, UNITNAME),(ccd_headlist,),format="%s")
+                self.logger.debug("Writing CCD head list file: %s" % fh.get_headlist_file(tiledir, tilename_fh, UNITNAME))
 
             # Build the cmdline string
             cmd = []
-            cmd.append("combine_cats.py")
-            cmd.append("--list  %s" % fh.get_catlist_file(tiledir, tilename_fh, UNITNAME))
-            cmd.append("--outcat %s" % fh.get_expcat_file(tiledir, tilename_fh, UNITNAME))
-            combine_cats_cmd[UNITNAME] = cmd
-        return combine_cats_cmd
+            cmd.append("split_head.py")
+            cmd.append("--in    %s" % fh.get_exphead_file(tiledir, tilename_fh, UNITNAME))
+            cmd.append("--list  %s" % fh.get_headlist_file(tiledir, tilename_fh, UNITNAME))
+            cmd_list[UNITNAME] = cmd
+        return cmd_list
 
     # 'EXECUTION' FUNCTIONS
     # -------------------------------------------------------------------------
-    def writeCall_combine_cats(self,cmd_list,mode='w'):
+    def writeCall_split_head(self,cmd_list,mode='w'):
 
         bkline  = self.ctx.get('breakline',BKLINE)
         # The file where we'll write the commands
-        cmdfile = fh.get_combine_cats_cmd_file(self.input.tiledir, self.input.tilename_fh)
-        self.logger.info("Will write combine_cats call to: %s" % cmdfile)
+        cmdfile = fh.get_split_head_cmd_file(self.input.tiledir, self.input.tilename_fh)
+        self.logger.info("Will write split head call to: %s" % cmdfile)
         with open(cmdfile, mode) as fid:
             for key in cmd_list.keys():
                 fid.write(bkline.join(cmd_list[key])+'\n')
                 fid.write('\n\n')
         return
+
 
 
     def __str__(self):
