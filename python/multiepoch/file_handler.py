@@ -15,6 +15,8 @@ TILEDIR_SUBDIRECTORIES = {
         'ctx': 'ctx',
         'log': 'log',
         'products': 'products',
+        'align': 'products/align',
+        'coadd': 'products/coadd',
         }
 
 def get_tiledir_handler(tiledir, logger=None):
@@ -42,13 +44,15 @@ SEXSEG_TYPE = 'seg'
 SCAMP_TYPE  = 'scamp'
 
 FITS_EXT = 'fits'
+HEAD_EXT = 'head'
 LIST_EXT = 'list'
 PSF_EXT  = 'psf'
 XML_EXT  = 'xml'
 
 # scamp types
-CCDCAT_TYPE = 'ccdcat'
-EXPCAT_TYPE = 'expcat'
+HEADCAT_TYPE = 'ccdhead'
+CCDCAT_TYPE  = 'ccdcat'
+EXPCAT_TYPE  = 'expcat'
 
 # GENERIC MULTIEPOCH FILENAME GENERATOR 
 
@@ -264,33 +268,59 @@ def get_ccd_plot_file(tiledir, tilename):
 
 #  ***** SCAMP FILES *****
 
-# The lit of CCD finalcut red catalos that go into an exposure-based catalog
+# The list of CCD finalcut red catalogs that go into an exposure-based catalog
 def get_catlist_file(tiledir, tilename, exposure):
     dh = get_tiledir_handler(tiledir)
     fnkwargs = {'base':tilename, 'exposure':exposure, 'ftype':CCDCAT_TYPE, 'ext':LIST_EXT}
     return dh.place_file(_me_exposure_fn(**fnkwargs), 'aux') 
 
+# The list of head CCD associated to the red catalogs
+def get_headlist_file(tiledir, tilename, exposure):
+    dh = get_tiledir_handler(tiledir)
+    fnkwargs = {'base':tilename, 'exposure':exposure, 'ftype':HEADCAT_TYPE, 'ext':LIST_EXT}
+    return dh.place_file(_me_exposure_fn(**fnkwargs), 'aux') 
+
+# The combined exposure-based set of SEx fits catalogs
 def get_expcat_file(tiledir, tilename, exposure):
     dh = get_tiledir_handler(tiledir)
     fnkwargs = {'base':tilename, 'exposure':exposure, 'ftype':EXPCAT_TYPE, 'ext':FITS_EXT}
-    return dh.place_file(_me_exposure_fn(**fnkwargs), 'aux') 
+    return dh.place_file(_me_exposure_fn(**fnkwargs), 'align') 
 
+# The scamp output for the combined exposure-based head file
+def get_exphead_file(tiledir, tilename, exposure):
+    dh = get_tiledir_handler(tiledir)
+    fnkwargs = {'base':tilename, 'exposure':exposure, 'ftype':EXPCAT_TYPE, 'ext':HEAD_EXT}
+    return dh.place_file(_me_exposure_fn(**fnkwargs), 'align') 
+
+# The scamp input list of exposure-based catalogs
 def get_expcat_list_file(tiledir, tilename):
     dh = get_tiledir_handler(tiledir)
     fnkwargs = {'base':tilename, 'ftype':EXPCAT_TYPE, 'ext':LIST_EXT}
     return dh.place_file(_me_noband_fn(**fnkwargs), 'aux') 
 
+# The output scamp xml file
+def get_scamp_xml_file(tiledir, tilename):
+    dh = get_tiledir_handler(tiledir)
+    fnkwargs = {'base':tilename, 'ftype':SCAMP_TYPE, 'ext':XML_EXT}
+    return dh.place_file(_me_noband_fn(**fnkwargs), 'align') 
+
+# Filenames to hold the command-line 
 def get_combine_cats_cmd_file(tiledir, tilename):
     dh = get_tiledir_handler(tiledir)
     filename = "%s_call_combine_cats.cmd" % tilename
     return dh.place_file(filename, 'aux')
 
-def get_scamp_xml_file(tiledir, tilename):
+def get_split_head_cmd_file(tiledir, tilename):
     dh = get_tiledir_handler(tiledir)
-    fnkwargs = {'base':tilename, 'ftype':SCAMP_TYPE, 'ext':XML_EXT}
-    return dh.place_file(_me_noband_fn(**fnkwargs), 'products') 
+    filename = "%s_call_split_head.cmd" % tilename
+    return dh.place_file(filename, 'aux')
 
 def get_scamp_cmd_file(tiledir, tilename):
     dh = get_tiledir_handler(tiledir)
     filename = "%s_call_scamp.cmd" % tilename
     return dh.place_file(filename, 'aux')
+
+def get_scamp_log_file(tiledir, tilename):
+    dh = get_tiledir_handler(tiledir)
+    filename = "%s_scamp.log" % tilename
+    return dh.place_file(filename, 'log')
