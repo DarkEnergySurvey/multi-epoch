@@ -49,7 +49,7 @@ class Job(BaseJob):
 
         # Super-alignment options
         cats_file    = CUnicode('',help="Name of the output ASCII catalog list storing the information for scamp", input_file=True)
-        catlist      = Dict(None,help="The Dictionary containing input CCD-level catalog list ",argparse=False)
+        catlist      = Dict({},help="The Dictionary containing input CCD-level catalog list ",argparse=False)
         super_align  = Bool(False, help=("Run super-aligment of tile using scamp"))
 
         # Logging -- might be factored out
