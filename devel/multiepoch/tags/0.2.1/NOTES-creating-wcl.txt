@@ -1,0 +1,9 @@
+1) Created a module wcl i.e. query_tileinfo.wcl
+
+2) In destest: we inserted 'tile_generic' file  pattern into the ops_filename_pattern 
+
+3) In destest: creating directory pattern 'me' ops_directory_patterns
+
+ > insert into ops_directory_pattern (NAME,OPS,RUNTIME) VALUES ('me','${ops_run_dir}/${ops_enddir}','${rundir}');
+
+4) 
