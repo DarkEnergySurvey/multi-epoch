@@ -228,6 +228,7 @@ def get_CCDS_from_db_distance_sql(dbh, **kwargs):
     # Get the ccd images that are part of the DESTILE
     t0 = time.time()
     CCDS = despyastro.query2rec(ccd_query, dbhandle=dbh)
+    
     if CCDS is False:
         utils.pass_logger_info("No input images found", logger)
         return CCDS
@@ -237,7 +238,9 @@ def get_CCDS_from_db_distance_sql(dbh, **kwargs):
 
     # Here we fix 'COMPRESSION' from None --> '' if present
     if 'COMPRESSION' in CCDS.dtype.names:
-        CCDS['COMPRESSION'] = numpy.where(CCDS['COMPRESSION'],CCDS['COMPRESSION'],'')
+        compression = [ '' if c is None else c for c in CCDS['COMPRESSION'] ]
+        CCDS['COMPRESSION'] = numpy.array(compression)
+
     return CCDS 
 
 

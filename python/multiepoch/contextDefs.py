@@ -7,6 +7,8 @@ import querylibs
 import utils
 import os
 import copy
+import numpy
+
 
 def create_local_archive(local_archive):
     import os
@@ -49,103 +51,100 @@ def define_https_by_name(ctx,name='assoc',logger=None):
     return filepath_https
 
 
-def define_weight_names(ctx):
+def extract_flabel(files):
 
-    """
-    A common method to define the me-prepared names based in the
-    context using the information contained in assoc[FILEPATH_LOCAL]
-    """
+    """ Extract and f_label from file and make sures it is unique"""
 
-    # short-cuts for clarity
-    lo_ar = ctx.local_archive
-    lw_ar = ctx.local_weight_archive
-    we    = ctx.weight_extension
-    filepath_local_weight = ctx.assoc['FILEPATH_LOCAL']
-
-    # 1. replace local_archive --> local_weight_archive
-    filepath_local_weight = [f.replace(lo_ar,  '{lw}'.format(lw=lw_ar))   for f in filepath_local_weight]
-    # 2. replace  .fits --> _wgt.fits
-    filepath_local_weight = [f.replace('.fits','{we}.fits'.format(we=we)) for f in filepath_local_weight]
-
-    return filepath_local_weight
-
-def define_me_names(ctx):
-
-    """
-    A common method to define the ccd prepared names based in the
-    context using the information contained in assoc[FILEPATH_LOCAL]
-    """
-
-    # short-cuts for clarity
-    lo_ar = ctx.local_archive
-    me_ar = ctx.local_archive_me
-    mex   = ctx.extension_me
-    filepath_local_me = ctx.assoc['FILEPATH_LOCAL']
-
-    # 1. replace local_archive --> local_archive_me
-    filepath_local_me = [f.replace(lo_ar,  '{lw}'.format(lw=me_ar))   for f in filepath_local_me]
-    # 2. replace  .fits --> _me.fits
-    filepath_local_me = [f.replace('.fits','{me}.fits'.format(me=mex)) for f in filepath_local_me]
-
-    return filepath_local_me
-
-def define_head_names_archive(ctx):
-
-    import numpy
-
-    """
-    A common method to define head names per ccd base on the context
-    using the information contained in catlist[FILEPATH_LOCAL]
-    """
-
-    # short-cuts for clarity
-    lo_ar = ctx.local_archive
-    me_ar = ctx.local_archive_me
-    ext   = 'head'
-    filepath_local_head = ctx.catlist['FILEPATH_LOCAL']
-
-    # 1. replace local_archive --> local_archive_me
-    filepath_local_head = [f.replace(lo_ar,  '{lw}'.format(lw=me_ar))   for f in filepath_local_head]
-    # 2. replace  .fits --> '.head'
-    filepath_local_head = [f.replace('.fits','.{ext}'.format(ext=ext)) for f in filepath_local_head]
-    return numpy.array(filepath_local_head)
-
+    flabel_cat = [os.path.splitext(os.path.basename(f))[0].split('_')[-1] for f in files]
+    flabs = numpy.unique(flabel_cat)
+    if len(flabs) > 1:
+        raise ValueError("ERROR: F_LABEL not unique from file list")
+    elif len(flabs) == 0:
+        raise ValueError("ERROR: F_LABEL not found")
+    return flabs[0]
 
 def define_head_names(ctx):
 
-    import numpy
+    import file_handler as fh
 
     """
     A common method to define head names per ccd base on the context
     using the information contained in catlist[FILEPATH_LOCAL]
     """
 
-    # Todo:
-    # 1. Define in ctx the _red-fullcat  and _immasked FLABEL 
-    # 2. Define in ctx the /cat/ and /red/immask
+    # Short-cuts
+    ext_me   = ctx.extension_me
+    ext_head = fh.HEAD_EXT
 
-    # short-cuts for clarity
-    lo_ar = ctx.local_archive
-    me_ar = ctx.local_archive_me
-    mex   = ctx.extension_me
-    ext   = 'head'
-    filepath_local_head = ctx.catlist['FILEPATH_LOCAL']
+    # Get the f_label for file types
+    flabel_cat = ctx.get('flabel_cat',extract_flabel(ctx.catlist['FILEPATH_LOCAL']))
+    flabel_red = ctx.get('flabel_red','immasked')
+    flabel_me  = "%s-%s" % (flabel_red,ext_me)
 
-    # 1. replace local_archive --> local_archive_me
-    filepath_local_head = [f.replace(lo_ar,  '{lw}'.format(lw=me_ar))   for f in filepath_local_head]
+    # Build the path for inputs in TILEBUILDER
+    # Get the dh object with file_handler struct
+    dh = fh.get_tiledir_handler(ctx.tiledir)
+    input_path = os.path.join(ctx.tiledir,dh.subdirs['inputs'])
+
+    # Build the input heads in steps for clarity
+    # 1. Strip the path to get the filename and add the tilename_fh to make it unique: TILENAME_FH_filename.fits
+    input_head = ["%s_%s" % (ctx.tilename_fh,os.path.basename(f)) for f in ctx.catlist['FILEPATH_LOCAL']]
+
+    # 2. Add the input path
+    input_head = [os.path.join(input_path,f) for f in input_head]
+
+    # 3 Exchange F_LABELS: _red-fullcat.fits --> _immasked_me.head
+    input_head = [f.replace(flabel_cat, flabel_me) for f in input_head]
+
     # 2. replace  .fits --> '.head'
-    # _red-fullcat.fits --> _immasked_me.head
-    filepath_local_head = [f.replace('_red-fullcat.fits','_immasked{me}.{ext}'.format(me=mex,ext=ext)) for f in filepath_local_head]
+    input_head = [f.replace('fits', ext_head) for f in input_head]
+    return numpy.array(input_head)
 
-    # 3. Testing.... Now we need to replace:
-    # /cat --> /red and
-    filepath_local_head = [f.replace('/cat/','/red/immask/') for f in filepath_local_head]
-    return numpy.array(filepath_local_head)
+def define_red_names(ctx):
 
+    import file_handler as fh
+
+    """
+    A common method to define head names per ccd base on the context
+    using the information contained in assoc[FILEPATH_LOCAL]
+    """
+
+    # TODO: Figure out what happend when inputs are fits.fz files instead of .fits
+    
+    # short-cuts for clarity
+    ext_me   = ctx.extension_me
+    
+    # Build the path for inputs in TILEBUILDER
+    # Get the dh object with file_handler struct
+    dh = fh.get_tiledir_handler(ctx.tiledir)
+    input_path = os.path.join(ctx.tiledir,dh.subdirs['inputs'])
+
+    # Build the input heads in steps for clarity
+    # 1. Strip the path to get the filename and add the tilename_fh to make it unique: TILENAME_FH_filename.fits
+    filepath_input_red = ["%s_%s" % (ctx.tilename_fh,os.path.basename(f)) for f in ctx.assoc['FILEPATH_LOCAL']]
+
+    # 2. Add the input path
+    filepath_input_red = [os.path.join(input_path,f) for f in filepath_input_red]
+
+    # 3. Remove the "fz" part:  .fits.fz --> .fits 
+    filepath_input_red = [f.replace('.fits.fz','.fits') for f in filepath_input_red]
+    
+    # 4. replace  .fits --> -me.fits
+    filepath_input_red = [f.replace('.fits','-%s.fits' % ext_me) for f in filepath_input_red]
+
+    return  numpy.array(filepath_input_red)
+
+
+def get_flabel(assoc, flabel='flabel_red',logger=None):
+    """ Return the flabel with new context"""
+
+    if logger: logger.info("Extracting the flabel: %s from information from assoc/catlist" % flabel)
+    ctxext = {}
+    ctxext[flabel] = extract_flabel(assoc['FILEPATH_LOCAL'])
+    if logger: logger.info("Found {%s : %s}" % (flabel,ctxext[flabel]))
+    return ctxext
 
 def get_BANDS(assoc, detname='det', logger=None, doBANDS=['all']):
-
-    import numpy
 
     """
     Generic function to set up the band from the context information
@@ -157,7 +156,7 @@ def get_BANDS(assoc, detname='det', logger=None, doBANDS=['all']):
     # Avoid the Unicode 'u' in detname
     detname = detname.encode('ascii')
 
-    if logger: logger.info("Extracting the BANDs information from assoc")
+    if logger: logger.info("Extracting the BANDs information from assoc/catlist")
     ctxext = {}
     ctxext['BANDS']   = numpy.unique(assoc['BAND']).tolist() 
     ctxext['NBANDS']  = len(ctxext['BANDS'])                  
@@ -207,7 +206,7 @@ def get_ccd_catlist(catlist,unitname):
 def get_ccd_headlist(catlist,unitname):
 
     """ Consistent method to extract the ccd head list from context per unitname"""
-    ccd_headlist = catlist['FILEPATH_LOCAL_HEAD'][catlist['UNITNAME'] == unitname]
+    ccd_headlist = catlist['FILEPATH_INPUT_HEAD'][catlist['UNITNAME'] == unitname]
     ccd_headlist.sort() # Make sure that they are sorted
     return ccd_headlist
 

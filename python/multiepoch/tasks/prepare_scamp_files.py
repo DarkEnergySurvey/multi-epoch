@@ -40,12 +40,9 @@ class Job(BaseJob):
         catlist      = Dict(None,help="The Dictionary containing input CCD-level catalog list ",argparse=False)
         cats_file    = CUnicode('',help="Name of the output ASCII catalog list storing the information for scamp", input_file=True,
                                 argparse={ 'argtype': 'positional', })
-        #super_align  = Bool(False, help=("Run super-aligment of tile using scamp"))
-
         execution_mode_scamp_prep  = CUnicode("tofile",help="Scamp prepare files excution mode",
                                               argparse={'choices': ('tofile','dryrun','execute')})
         MP_cats      = CInt(1, help = ("Run using multi-process, 0=automatic, 1=single-process [default]"))
-        
 
         ######################
         # Optional arguments
@@ -54,7 +51,6 @@ class Job(BaseJob):
         tiledir     = Unicode(None, help="The output directory for this tile")
 
         local_archive     = Unicode(None, help="The local filepath where the input fits files (will) live")
-        #local_archive_me  = Unicode(None, help=('The path to the me prepared files archive.'))
         
         doBANDS          = List(['all'],help="BANDS to processs (default=all)",argparse={'nargs':'+',})
         detname          = CUnicode(DETNAME,help="File label for detection image, default=%s." % DETNAME)
@@ -89,7 +85,6 @@ class Job(BaseJob):
         """ Pre-wash of inputs, some of these are only needed when run as script"""
 
         # Re-cast the ctx.assoc/ctx.catlist as dictionary of arrays instead of lists
-        #self.ctx.assoc    = utils.dict2arrays(self.ctx.assoc)
         self.ctx.catlist  = utils.dict2arrays(self.ctx.catlist)
 
         # Get the BANDs information in the context if they are not present
