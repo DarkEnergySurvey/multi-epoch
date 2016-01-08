@@ -50,22 +50,17 @@ class Job(BaseJob):
         # Optional inputs -- postional arguments
         weight_for_mask  = Bool(False, help="Create coadded weight for mask creation")
         clobber_me   = Bool(False, help="Cloober the existing me-ready files.")
-        extension_me = CUnicode('_me', help=(" extension to add to me-prepared file names."))
+        extension_me = CUnicode('me', help=(" extension to add to me-prepared file names."))
         MP_me        = CInt(1, help = ("Run using multi-process, 0=automatic, 1=single-process [default]"))
         
         local_archive     = Unicode(None, help=("The local filepath where the input fits files (will) live"))
-        local_archive_me  = Unicode(None, help=('The path to the me prepared files archive.'))
-        execution_mode_me = CUnicode("dryrun",help="me_prepare excution mode",
+        execution_mode_red = CUnicode("dryrun",help="me_prepare excution mode",
                                            argparse={'choices': ('tofile','dryrun','execute')})
         # Logging -- might be factored out
         stdoutloglevel = CUnicode('INFO', help="The level with which logging info is streamed to stdout",
                                   argparse={'choices': ('DEBUG','INFO','CRITICAL')} )
         fileloglevel   = CUnicode('INFO', help="The level with which logging info is written to the logfile",
                                   argparse={'choices': ('DEBUG','INFO','CRITICAL')} )
-
-        # TODO:
-        # Add method to pass row_interp_nullweight options
-        # Copy .head file if available
 
         # Function to read ASCII/panda framework file (instead of json)
         def _read_assoc_file(self):
@@ -83,12 +78,12 @@ class Job(BaseJob):
         """ Pre-wash of inputs, some of these are only needed when run as script"""
 
         # Re-construct the names in case not present
-        if 'FILEPATH_LOCAL_ME' not in self.ctx.assoc.keys():
-            self.logger.info("(Re)-constructing assoc[FILEPATH_LOCAL_ME] from assoc[FILEPATH_LOCAL]")
-            self.ctx.assoc['FILEPATH_LOCAL_ME'] = contextDefs.define_me_names(self.ctx)
+        if 'FILEPATH_INPUT_RED' not in self.ctx.assoc.keys():
+            self.logger.info("(Re)-constructing assoc[FILEPATH_INPUT_RED] from assoc[FILEPATH_LOCAL]")
+            self.ctx.assoc['FILEPATH_INPUT_RED'] = contextDefs.define_red_names(self.ctx)
 
         # now make sure all paths exist
-        for path in self.ctx.assoc['FILEPATH_LOCAL_ME']:
+        for path in self.ctx.assoc['FILEPATH_INPUT_RED']:
             if not os.path.exists(os.path.split(path)[0]):
                 os.makedirs(os.path.split(path)[0])
 
@@ -101,7 +96,7 @@ class Job(BaseJob):
         cmd_list = self.get_me_prepare_cmd_list()
 
         # 2. check execution mode and write/print/execute commands accordingly --------------
-        execution_mode = self.ctx.get('execution_mode_me', 'tofile')
+        execution_mode = self.ctx.get('execution_mode_red', 'tofile')
 
         if execution_mode == 'tofile':
             self.writeCall(cmd_list)
@@ -115,7 +110,7 @@ class Job(BaseJob):
             raise ValueError('Execution mode %s not implemented.' % execution_mode)
 
         # we prefer it to be a numpy array
-        self.ctx.assoc['FILEPATH_LOCAL_ME'] = numpy.array(self.ctx.assoc['FILEPATH_LOCAL_ME'])
+        self.ctx.assoc['FILEPATH_INPUT_RED'] = numpy.array(self.ctx.assoc['FILEPATH_INPUT_RED'])
 
         return
 
@@ -137,7 +132,7 @@ class Job(BaseJob):
         
         """ Figure out which ME files need to be created"""
         cmd_list = []
-        for idx, me_file in enumerate(self.ctx.assoc['FILEPATH_LOCAL_ME']):
+        for idx, me_file in enumerate(self.ctx.assoc['FILEPATH_INPUT_RED']):
             if os.path.exists(me_file) and not self.input.clobber_me:
                 self.logger.debug('Skipping creation of %s, exists already.' % me_file)
             else:

@@ -12,11 +12,12 @@ from mojo.utils import directory_handler
 
 TILEDIR_SUBDIRECTORIES = {
         'aux': 'aux',
+        'list': 'list',        
         'ctx': 'ctx',
         'log': 'log',
-        'products': 'products',
-        'align': 'products/align',
-        'coadd': 'products/coadd',
+        'align': 'align',
+        'coadd': 'coadd',
+        'inputs': 'inputs',
         }
 
 def get_tiledir_handler(tiledir, logger=None):
@@ -33,15 +34,15 @@ def get_tiledir_handler(tiledir, logger=None):
 SCI_TYPE = 'sci'
 WGT_TYPE = 'wgt'
 FLX_TYPE = 'flx'
-MEF_TYPE = 'mef'
 MSK_TYPE = 'msk'
 
-# PSF/psfex/SEx types
+# Scamp/PSF/psfex/SEx types
 PSFCAT_TYPE = 'psfcat'
 PSFEX_TYPE  = 'psfex'
 SEXCAT_TYPE = 'cat'
 SEXSEG_TYPE = 'seg'
 SCAMP_TYPE  = 'scamp'
+SCAMPCAT_TYPE  = 'scampcat'
 
 FITS_EXT = 'fits'
 HEAD_EXT = 'head'
@@ -49,13 +50,7 @@ LIST_EXT = 'list'
 PSF_EXT  = 'psf'
 XML_EXT  = 'xml'
 
-# scamp types
-HEADCAT_TYPE = 'ccdhead'
-CCDCAT_TYPE  = 'ccdcat'
-EXPCAT_TYPE  = 'expcat'
-
-# GENERIC MULTIEPOCH FILENAME GENERATOR 
-
+# MULTIEPOCH FILENAME GENERATORS
 _GENERIC_FILENAMEPATTERN          = "{base}_{band}_{ftype}.{ext}"
 _GENERIC_FILENAMEPATTERN_NOBAND   = "{base}_{ftype}.{ext}"
 _GENERIC_FILENAMEPATTERN_NOFTYPE  = "{base}_{band}.{ext}"
@@ -87,17 +82,17 @@ def _me_exposure_fn(**kwargs):
 def get_sci_list_file(tiledir, tilename, band):
     dh = get_tiledir_handler(tiledir)
     fnkwargs = {'base':tilename, 'band':band, 'ftype':SCI_TYPE, 'ext':LIST_EXT}
-    return dh.place_file(_me_fn(**fnkwargs), 'aux') 
+    return dh.place_file(_me_fn(**fnkwargs), 'list') 
 
 def get_wgt_list_file(tiledir, tilename, band):
     dh = get_tiledir_handler(tiledir)
     fnkwargs = {'base':tilename, 'band':band, 'ftype':WGT_TYPE, 'ext':LIST_EXT}
-    return dh.place_file(_me_fn(**fnkwargs), 'aux')
+    return dh.place_file(_me_fn(**fnkwargs), 'list')
 
 def get_msk_list_file(tiledir, tilename, band):
     dh = get_tiledir_handler(tiledir)
     fnkwargs = {'base':tilename, 'band':band, 'ftype':MSK_TYPE, 'ext':LIST_EXT}
-    return dh.place_file(_me_fn(**fnkwargs), 'aux')
+    return dh.place_file(_me_fn(**fnkwargs), 'list')
 
 # ------------------------------------
 # 2. Output Coadd Files (sci/wgt/msk)
@@ -128,7 +123,7 @@ def get_gen_fits_file(tiledir, tilename, band, type='gen'):
 def get_flx_list_file(tiledir, tilename, band):
     dh = get_tiledir_handler(tiledir)
     fnkwargs = {'base':tilename, 'band':band, 'ftype':FLX_TYPE, 'ext':LIST_EXT}
-    return dh.place_file(_me_fn(**fnkwargs), 'aux')
+    return dh.place_file(_me_fn(**fnkwargs), 'list')
 
 def get_swarp_log_file(tiledir, tilename):
     dh = get_tiledir_handler(tiledir)
@@ -265,38 +260,37 @@ def get_ccd_plot_file(tiledir, tilename):
     return dh.place_file(filename, 'aux')
 
 
-
 #  ***** SCAMP FILES *****
 
 # The list of CCD finalcut red catalogs that go into an exposure-based catalog
 def get_catlist_file(tiledir, tilename, exposure):
     dh = get_tiledir_handler(tiledir)
-    fnkwargs = {'base':tilename, 'exposure':exposure, 'ftype':CCDCAT_TYPE, 'ext':LIST_EXT}
-    return dh.place_file(_me_exposure_fn(**fnkwargs), 'aux') 
+    fnkwargs = {'base':tilename, 'exposure':exposure, 'ftype':SCAMPCAT_TYPE, 'ext':LIST_EXT}
+    return dh.place_file(_me_exposure_fn(**fnkwargs), 'list') 
 
 # The list of head CCD associated to the red catalogs
 def get_headlist_file(tiledir, tilename, exposure):
     dh = get_tiledir_handler(tiledir)
-    fnkwargs = {'base':tilename, 'exposure':exposure, 'ftype':HEADCAT_TYPE, 'ext':LIST_EXT}
-    return dh.place_file(_me_exposure_fn(**fnkwargs), 'aux') 
+    fnkwargs = {'base':tilename, 'exposure':exposure, 'ftype':SCAMP_TYPE, 'ext':LIST_EXT}
+    return dh.place_file(_me_exposure_fn(**fnkwargs), 'list') 
 
 # The combined exposure-based set of SEx fits catalogs
 def get_expcat_file(tiledir, tilename, exposure):
     dh = get_tiledir_handler(tiledir)
-    fnkwargs = {'base':tilename, 'exposure':exposure, 'ftype':EXPCAT_TYPE, 'ext':FITS_EXT}
+    fnkwargs = {'base':tilename, 'exposure':exposure, 'ftype':SCAMPCAT_TYPE, 'ext':FITS_EXT}
     return dh.place_file(_me_exposure_fn(**fnkwargs), 'align') 
 
 # The scamp output for the combined exposure-based head file
 def get_exphead_file(tiledir, tilename, exposure):
     dh = get_tiledir_handler(tiledir)
-    fnkwargs = {'base':tilename, 'exposure':exposure, 'ftype':EXPCAT_TYPE, 'ext':HEAD_EXT}
+    fnkwargs = {'base':tilename, 'exposure':exposure, 'ftype':SCAMPCAT_TYPE, 'ext':HEAD_EXT}
     return dh.place_file(_me_exposure_fn(**fnkwargs), 'align') 
 
 # The scamp input list of exposure-based catalogs
 def get_expcat_list_file(tiledir, tilename):
     dh = get_tiledir_handler(tiledir)
-    fnkwargs = {'base':tilename, 'ftype':EXPCAT_TYPE, 'ext':LIST_EXT}
-    return dh.place_file(_me_noband_fn(**fnkwargs), 'aux') 
+    fnkwargs = {'base':tilename, 'ftype':SCAMPCAT_TYPE, 'ext':LIST_EXT}
+    return dh.place_file(_me_noband_fn(**fnkwargs), 'list') 
 
 # The output scamp xml file
 def get_scamp_xml_file(tiledir, tilename):

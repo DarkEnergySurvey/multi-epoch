@@ -50,12 +50,11 @@ class Job(BaseJob):
         tiledir     = Unicode(None, help="The output directory for this tile")
 
         local_archive     = Unicode(None, help="The local filepath where the input fits files (will) live")
-        local_archive_me  = Unicode(None, help=('The path to the me prepared files archive.'))
         
         detecBANDS       = List(DETEC_BANDS_DEFAULT, help="List of bands used to build the Detection Image, default=%s." % DETEC_BANDS_DEFAULT,
                                 argparse={'nargs':'+',})
         magbase          = CFloat(MAGBASE, help="Zero point magnitude base for SWarp, default=%s." % MAGBASE)
-        extension_me     = CUnicode('_me', help=(" extension to add to me-prepared file names."))
+        extension_me     = CUnicode('me', help=(" extension to add to me-prepared file names."))
         execution_mode_swarp  = CUnicode("tofile",help="SWarp excution mode",
                                           argparse={'choices': ('tofile','dryrun','execute')})
         swarp_parameters = Dict({},help="A list of parameters to pass to SWarp",
@@ -104,9 +103,9 @@ class Job(BaseJob):
         """ Pre-wash of inputs, some of these are only needed when run as script"""
 
         # Re-construct the names in case not present
-        if 'FILEPATH_LOCAL_ME' not in self.ctx.assoc.keys():
-            self.logger.info("(Re)-constructing assoc[FILEPATH_LOCAL_ME] from assoc[FILEPATH_LOCAL]")
-            self.ctx.assoc['FILEPATH_LOCAL_ME'] = contextDefs.define_me_names(self.ctx)
+        if 'FILEPATH_INPUT_RED' not in self.ctx.assoc.keys():
+            self.logger.info("(Re)-constructing assoc[FILEPATH_INPUT_RED] from assoc[FILEPATH_LOCAL]")
+            self.ctx.assoc['FILEPATH_INPUT_RED'] = contextDefs.define_red_names(self.ctx)
 
         # Re-cast the ctx.assoc as dictionary of arrays instead of lists
         self.ctx.assoc  = utils.dict2arrays(self.ctx.assoc)
@@ -183,7 +182,7 @@ class Job(BaseJob):
             # extracting the list
             idx = numpy.where(self.ctx.assoc['BAND'] == BAND)[0]
             magzero       = self.ctx.assoc['MAG_ZERO'][idx]
-            swarp_inputs  = self.ctx.assoc['FILEPATH_LOCAL_ME'][idx]
+            swarp_inputs  = self.ctx.assoc['FILEPATH_INPUT_RED'][idx]
             flxscale      = 10.0**(0.4*(self.input.magbase - magzero))
 
             # writing the lists to files using tableio.put_data()

@@ -31,17 +31,10 @@ class Job(BaseJob):
 
         ######################
         # Required inputs
-        # 1. Association file and assoc dictionary
-        #assoc      = Dict(None,help="The Dictionary containing the association file",argparse=False)
-        #assoc_file = CUnicode('',help="Input association file with CCDs information",input_file=True,
-        #                      argparse={ 'argtype': 'positional', })
-
         # Super-alignment options
         catlist      = Dict(None,help="The Dictionary containing input CCD-level catalog list ",argparse=False)
         cats_file    = CUnicode('',help="Name of the output ASCII catalog list storing the information for scamp", input_file=True,
                                 argparse={ 'argtype': 'positional', })
-        #super_align  = Bool(False, help=("Run super-aligment of tile using scamp"))
-
         execution_mode_head  = CUnicode("tofile",help="head prepare files excution mode",
                                               argparse={'choices': ('tofile','dryrun','execute')})
         MP_head = CInt(1, help = ("Run using multi-process, 0=automatic, 1=single-process [default]"))
@@ -53,12 +46,15 @@ class Job(BaseJob):
         tiledir     = Unicode(None, help="The output directory for this tile")
 
         local_archive     = Unicode(None, help="The local filepath where the input fits files (will) live")
-        local_archive_me  = Unicode(None, help=('The path to the me prepared files archive.'))
-        extension_me      = CUnicode('_me', help=(" extension to add to me-prepared file names."))
+        extension_me      = CUnicode('me', help=("The extension to add to me-prepared file names."))
         
         doBANDS          = List(['all'],help="BANDS to processs (default=all)",argparse={'nargs':'+',})
         detname          = CUnicode(DETNAME,help="File label for detection image, default=%s." % DETNAME)
 
+        # In case we want to override defaults
+        flabel_red = CUnicode('',  help="The F_LABEL for the red/single-epoch ccd images (i.e.: immasked)")
+        flabel_cat = CUnicode('',  help="The F_LABEL for the finalcut SEx catalogs")
+        
         # Logging -- might be factored out
         stdoutloglevel = CUnicode('INFO', help="The level with which logging info is streamed to stdout",
                                   argparse={'choices': ('DEBUG','INFO','CRITICAL')} )
@@ -91,14 +87,25 @@ class Job(BaseJob):
         # Re-cast the ctx.assoc/ctx.catlist as dictionary of arrays instead of lists
         self.ctx.catlist  = utils.dict2arrays(self.ctx.catlist)
 
+        # Find the flabels if not presents
+        # flabel-cat
+        if not self.ctx.get('flabel_cat') or self.ctx.get('flabel_cat') == '':  
+            self.ctx.update(contextDefs.get_flabel(self.ctx.catlist, flabel='flabel_cat', logger=self.logger))
+
+        # flabel-red
+        if not self.ctx.get('flabel_red') or self.ctx.get('flabel_red') == '':  
+            try:
+                self.ctx.update(contextDefs.get_flabel(self.ctx.assoc, flabel='flabel_red', logger=self.logger))
+            except:
+                self.logger.info("Could not determine flabel for flable_red")
+            
         # Re-construct the head names in case not present
-        if 'FILEPATH_LOCAL_HEAD' not in self.ctx.catlist.keys():
-            self.logger.info("(Re)-constructing catlist[FILEPATH_LOCAL_HEAD] from assoc[FILEPATH_LOCAL]")
-            self.ctx.catlist['FILEPATH_LOCAL_HEAD'] = contextDefs.define_head_names(self.ctx)
-            print self.ctx.catlist['FILEPATH_LOCAL_HEAD']
+        if 'FILEPATH_INPUT_HEAD' not in self.ctx.catlist.keys():
+            self.logger.info("(Re)-constructing catlist[FILEPATH_INPUT_HEAD] from catlist[FILEPATH_LOCAL]")
+            self.ctx.catlist['FILEPATH_INPUT_HEAD'] = contextDefs.define_head_names(self.ctx)
 
         # now make sure all paths exist
-        for path in self.ctx.catlist['FILEPATH_LOCAL_HEAD']:
+        for path in self.ctx.catlist['FILEPATH_INPUT_HEAD']:
             if not os.path.exists(os.path.split(path)[0]):
                 self.logger.debug("Creating path for: %s" % path)
                 os.makedirs(os.path.split(path)[0])

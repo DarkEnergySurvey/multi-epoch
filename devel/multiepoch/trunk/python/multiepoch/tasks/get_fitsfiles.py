@@ -143,7 +143,7 @@ class Job(BaseJob):
                 logger.info("Getting:  %s (%s/%s)" % (url,k+1,Nfiles))
                 sys.stdout.flush()
                 # Get a file using the $HOME/.desservices.ini credentials
-                http_requests.download_file_des(url,localfile,section)
+                http_requests.download_file_des(url,localfile,section=section)
             else:
                 logger.info("Skipping: %s (%s/%s) -- file exists" % (url,k+1,Nfiles))
 
