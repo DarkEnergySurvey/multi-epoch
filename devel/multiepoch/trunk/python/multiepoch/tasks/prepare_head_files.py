@@ -44,9 +44,9 @@ class Job(BaseJob):
         tilename    = Unicode(None, help="The Name of the Tile Name to query",argparse=True)
         tilename_fh = CUnicode('',  help="Alternative tilename handle for unique identification default=TILENAME")
         tiledir     = Unicode(None, help="The output directory for this tile")
-
-        local_archive     = Unicode(None, help="The local filepath where the input fits files (will) live")
-        extension_me      = CUnicode('me', help=("The extension to add to me-prepared file names."))
+        
+        local_archive = CUnicode("", help="The local filepath where the input fits files (will) live")
+        extension_me  = CUnicode('me', help=("The extension to add to me-prepared file names."))
         
         doBANDS          = List(['all'],help="BANDS to processs (default=all)",argparse={'nargs':'+',})
         detname          = CUnicode(DETNAME,help="File label for detection image, default=%s." % DETNAME)

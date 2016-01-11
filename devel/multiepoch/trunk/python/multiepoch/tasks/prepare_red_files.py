@@ -52,8 +52,8 @@ class Job(BaseJob):
         clobber_me   = Bool(False, help="Cloober the existing me-ready files.")
         extension_me = CUnicode('me', help=(" extension to add to me-prepared file names."))
         MP_me        = CInt(1, help = ("Run using multi-process, 0=automatic, 1=single-process [default]"))
-        
-        local_archive     = Unicode(None, help=("The local filepath where the input fits files (will) live"))
+
+        local_archive = CUnicode("", help="The local filepath where the input fits files (will) live")
         execution_mode_red = CUnicode("dryrun",help="me_prepare excution mode",
                                            argparse={'choices': ('tofile','dryrun','execute')})
         # Logging -- might be factored out

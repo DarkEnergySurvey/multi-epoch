@@ -40,7 +40,8 @@ class Job(BaseJob):
                               argparse={ 'argtype': 'positional', })
 
         clobber_inputs = Bool(False, help='clobber input files and retrieve again?') 
-        local_archive  = Unicode('', help='The path to the local des archive.')
+        local_archive  = CUnicode("", help="The local filepath where the input fits files (will) live")
+
         archive_name   = CUnicode("prodbeta",help="DataBase Archive Name section",
                                  argparse={'choices': ('prodbeta','desar2home')} )
         http_section = Unicode('http-desarchive',help='The corresponding section in the .desservices.ini file.')
@@ -83,11 +84,16 @@ class Job(BaseJob):
             if self.catlist and not self.super_align:
                 logger.info("Updating super_align value to True")
                 self.super_align = True
-            
+
+
             # Check for valid local_archive if not in the NCSA cosmology cluster
-            if not utils.inDESARcluster() and self.local_archive == '': 
-                mess = 'If not in cosmology cluster local_archive canot be empty [""]'
+            if not utils.inDESARcluster(logger=logger) and not self.local_archive: 
+                mess = 'If not in cosmology cluster local_archive cannot be empty [""]'
                 raise IO_ValidationError(mess)
+            
+            #if not utils.inDESARcluster() and self.local_archive == '': 
+            #    mess = 'If not in cosmology cluster local_archive canot be empty [""]'
+            #    raise IO_ValidationError(mess)
 
 
     def run(self):
@@ -109,7 +115,8 @@ class Job(BaseJob):
             self.ctx.catlist['FILEPATH_HTTPS'] = contextDefs.define_https_by_name(self.ctx,name='catlist',logger=self.logger)
 
         # Create the directory -- if it doesn't exist.
-        utils.create_local_archive(self.ctx.local_archive)
+        if self.ctx.local_archive != "":
+            utils.create_local_archive(self.ctx.local_archive)
 
         # Transfer the files images and catalogs (optional)
         self.transfer_input_files(self.ctx.assoc, clobber=self.ctx.clobber_inputs, section=self.ctx.http_section, logger=self.logger)

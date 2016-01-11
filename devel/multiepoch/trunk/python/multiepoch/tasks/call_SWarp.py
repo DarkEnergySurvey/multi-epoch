@@ -49,7 +49,6 @@ class Job(BaseJob):
         tilename_fh = CUnicode('',  help="Alternative tilename handle for unique identification default=TILENAME")
         tiledir     = Unicode(None, help="The output directory for this tile")
 
-        local_archive     = Unicode(None, help="The local filepath where the input fits files (will) live")
         
         detecBANDS       = List(DETEC_BANDS_DEFAULT, help="List of bands used to build the Detection Image, default=%s." % DETEC_BANDS_DEFAULT,
                                 argparse={'nargs':'+',})
@@ -60,8 +59,9 @@ class Job(BaseJob):
         swarp_parameters = Dict({},help="A list of parameters to pass to SWarp",
                                 argparse={'nargs':'+',})
 
-        doBANDS          = List(['all'],help="BANDS to processs (default=all)",argparse={'nargs':'+',})
-        detname          = CUnicode(DETNAME,help="File label for detection image, default=%s." % DETNAME)
+        local_archive = CUnicode("", help="The local filepath where the input fits files (will) live")
+        doBANDS       = List(['all'],help="BANDS to processs (default=all)",argparse={'nargs':'+',})
+        detname       = CUnicode(DETNAME,help="File label for detection image, default=%s." % DETNAME)
 
         # We want to make these options visible as command-line arguments. The full suite of options can be passed as
         # swarp_parameters which will override these defaults

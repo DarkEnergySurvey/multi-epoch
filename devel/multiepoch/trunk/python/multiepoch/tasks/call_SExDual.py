@@ -131,7 +131,7 @@ class Job(BaseJob):
 
 
         # 4. Clean up psfcat files
-        if self.input.cleanupPSFcats:
+        if self.input.cleanupPSFcats and execute_mode == 'execute':
             self.cleanup_PSFcats(execute=True)
         return
 
