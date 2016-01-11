@@ -53,6 +53,7 @@ class Job(BaseJob):
                                          argparse={'choices': ('tofile','dryrun','execute')})
         scamp_parameters = Dict({},help="A list of parameters to pass to scamp",
                                 argparse={'nargs':'+',})
+        scamp_conf = CUnicode(help="Optional scamp configuration file")
 
         # Logging -- might be factored out
         stdoutloglevel = CUnicode('INFO', help="The level with which logging info is streamed to stdout",
@@ -177,13 +178,15 @@ class Job(BaseJob):
         pars = self.get_scamp_parameter_set(**self.input.scamp_parameters)
         pars["XML_NAME"] = "%s" % fh.get_scamp_xml_file(tiledir, tilename_fh)
         
-        # The default scamp configuration file
-        # FIXME : this only works in the eeups context where MULTIEPOCH_DIR is set ..
-        scamp_conf = os.path.join(os.environ['MULTIEPOCH_DIR'],'etc','default.scamp.coadd')
+        # The Scamp configuration file
+        if self.input.scamp_conf == '':
+            self.ctx.scamp_conf = os.path.join(os.environ['MULTIEPOCH_DIR'],'etc','default.scamp.coadd')
+            self.logger.info("Will use scamp default configuration file: %s" % self.ctx.scamp_conf)
+
         cmd = []
         cmd.append(SCAMP_EXE)
         cmd.append("@%s" % fh.get_expcat_list_file(tiledir, tilename_fh))
-        cmd.append("-c %s" % scamp_conf)
+        cmd.append("-c %s" % self.ctx.scamp_conf)
         for param,value in pars.items():
             cmd.append("-%s %s" % (param,value))
         return cmd
