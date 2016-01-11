@@ -52,6 +52,7 @@ class Job(BaseJob):
         execution_mode_psfex  = CUnicode("tofile",help="psfex excution mode",
                                           argparse={'choices': ('tofile','dryrun','execute')})
         psfex_parameters       = Dict({},help="A list of parameters to pass to SExtractor",argparse={'nargs':'+',})
+        psfex_conf = CUnicode(help="Optional psfex configuration file")
 
         doBANDS  = List(['all'],help="BANDS to processs (default=all)",argparse={'nargs':'+',})
         detname  = CUnicode(DETNAME,help="File label for detection image, default=%s." % DETNAME)
@@ -184,8 +185,10 @@ class Job(BaseJob):
         tiledir  = self.input.tiledir
         tilename_fh = self.input.tilename_fh
 
-        # psfex default configuration
-        psfex_conf = os.path.join(os.environ['MULTIEPOCH_DIR'],'etc','default.psfex')
+        # The psfex configuration file
+        if self.input.psfex_conf == '':
+            self.ctx.psfex_conf = os.path.join(os.environ['MULTIEPOCH_DIR'],'etc','default.psfex')
+            self.logger.info("Will use SEx for psf default configuration file: %s" % self.ctx.psfex_conf)
         
         # The updated parameters set for psfex
         pars = self.get_psfex_parameter_set(**self.input.psfex_parameters)
@@ -203,7 +206,7 @@ class Job(BaseJob):
             cmd = []
             cmd.append("%s" % PSFEX_EXE)
             cmd.append("%s" % psfcat)
-            cmd.append("-c %s" % psfex_conf)
+            cmd.append("-c %s" % self.ctx.psfex_conf)
             for param,value in pars.items():
                 cmd.append("-%s %s" % (param,value))
             psfex_cmd[BAND] = cmd

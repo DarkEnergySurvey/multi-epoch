@@ -50,6 +50,8 @@ class Job(BaseJob):
                                           argparse={'choices': ('tofile','dryrun','execute')})
         SExpsf_parameters       = Dict({},help="A list of parameters to pass to SExtractor",
                                        argparse={'nargs':'+',})
+        SExpsf_conf = CUnicode(help="Optional SExtractor for psf configuration file")
+        
         MP_SEx        = CInt(1,help="run using multi-process, 0=automatic, 1=single-process [default]")
         doBANDS       = List(['all'],help="BANDS to processs (default=all)",argparse={'nargs':'+',})
         detname       = CUnicode(DETNAME,help="File label for detection image, default=%s." % DETNAME)
@@ -216,9 +218,10 @@ class Job(BaseJob):
         # The updated parameters set for SEx
         pars = self.get_SExpsf_parameter_set(**self.input.SExpsf_parameters)
 
-        # SEx default configuration
-        # FIXME : this only works in the eeups context where MULTIEPOCH_DIR is set ..
-        sex_conf = os.path.join(os.environ['MULTIEPOCH_DIR'],'etc','default.sex')
+        # The SEx for psf configuration file
+        if self.input.SExpsf_conf == '':
+            self.ctx.SExpsf_conf = os.path.join(os.environ['MULTIEPOCH_DIR'],'etc','default.sex')
+            self.logger.info("Will use SEx for psf default configuration file: %s" % self.ctx.SExpsf_conf)
 
         SExpsf_cmd = {}
         # Loop over all bands and Detection
@@ -231,7 +234,7 @@ class Job(BaseJob):
             cmd = []
             cmd.append("%s" % SEX_EXE)
             cmd.append("%s'[%s]'" % (fh.get_mef_file(tiledir,tilename_fh, BAND), utils.SCI_HDU))
-            cmd.append("-c %s" % sex_conf)
+            cmd.append("-c %s" % self.ctx.SExpsf_conf)
             for param,value in pars.items():
                 cmd.append("-%s %s" % (param,value))
             SExpsf_cmd[BAND] = cmd

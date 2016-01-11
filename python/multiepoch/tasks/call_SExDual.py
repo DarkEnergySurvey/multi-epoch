@@ -50,7 +50,9 @@ class Job(BaseJob):
 
         execution_mode_SExDual = CUnicode("tofile",help="SExtractor Dual excution mode",
                                           argparse={'choices': ('tofile','dryrun','execute')})
-        SExDual_parameters     = Dict({},help="A list of parameters to pass to SExtractor", argparse={'nargs':'+',})
+        SExDual_parameters = Dict({},help="A list of parameters to pass to SExtractor", argparse={'nargs':'+',})
+        SExDual_conf       = CUnicode(help="Optional SExtractor Dual mode configuration file")
+
         MP_SEx        = CInt(1,help="run using multi-process, 0=automatic, 1=single-process [default]")
         doBANDS       = List(['all'],help="BANDS to processs (default=all)",argparse={'nargs':'+',})
         detname       = CUnicode(DETNAME,help="File label for detection image, default=%s." % DETNAME)
@@ -229,7 +231,9 @@ class Job(BaseJob):
         self.logger.info('assembling commands for SEx Dual call')
 
         # SEx default configuration
-        sex_conf = os.path.join(os.environ['MULTIEPOCH_DIR'],'etc','default.sex')
+        if self.input.SExDual_conf == '':
+            self.ctx.SExDual_conf = os.path.join(os.environ['MULTIEPOCH_DIR'],'etc','default.sex')
+            self.logger.info("Will use SEx Dual default configuration file: %s" % self.ctx.SExDual_conf)
 
         # The updated parameters set for SEx
         pars = self.get_SExDual_parameter_set(**self.input.SExDual_parameters)
@@ -262,7 +266,7 @@ class Job(BaseJob):
             cmd = []
             cmd.append("%s" % SEX_EXE)
             cmd.append("%s,%s" % (sci_comb_det,sci_comb))
-            cmd.append("-c %s" % sex_conf)
+            cmd.append("-c %s" % self.ctx.SExDual_conf)
             for param,value in pars.items():
                 cmd.append("-%s %s" % (param,value))
             SExDual_cmd[BAND] = cmd

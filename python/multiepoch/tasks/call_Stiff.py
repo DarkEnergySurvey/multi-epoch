@@ -50,6 +50,7 @@ class Job(BaseJob):
                                          argparse={'choices': ('tofile','dryrun','execute')})
         stiff_parameters      = Dict({},help="A list of parameters to pass to Stiff",
                                      argparse={'nargs':'+',})
+        stiff_conf = CUnicode(help="Optional Stiff configuration file")
 
         doBANDS  = List(['all'],help="BANDS to processs (default=all)",argparse={'nargs':'+',})
         detname  = CUnicode(DETNAME,help="File label for detection image, default=%s." % DETNAME)
@@ -197,8 +198,11 @@ class Job(BaseJob):
         pars = self.get_stiff_parameter_set(**self.input.stiff_parameters)
         # Set the output name of the color tiff file
         pars["OUTFILE_NAME"] = fh.get_color_file(self.input.tiledir, self.input.tilename_fh)
-        # The default stiff configuration file
-        stiff_conf = os.path.join(os.environ['MULTIEPOCH_DIR'],'etc','default.stiff')
+
+        # The Stiff configuration file
+        if self.input.stiff_conf == '':
+            self.ctx.stiff_conf = os.path.join(os.environ['MULTIEPOCH_DIR'],'etc','default.stiff')
+            self.logger.info("Will use Stiff default configuration file: %s" % self.ctx.stiff_conf)
         
         cmd_list = []
         cmd_list.append("%s" % STIFF_EXE)
@@ -206,7 +210,7 @@ class Job(BaseJob):
             sci_fits = fh.get_mef_file(self.input.tiledir,self.input.tilename_fh,BAND)
             cmd_list.append( "%s'[%s]'" % (sci_fits,utils.SCI_HDU))
 
-        cmd_list.append("-c %s" % stiff_conf)
+        cmd_list.append("-c %s" % self.ctx.stiff_conf)
         for param,value in pars.items():
             cmd_list.append("-%s %s" % (param,value))
         return cmd_list

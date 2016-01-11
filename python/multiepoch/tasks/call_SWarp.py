@@ -58,6 +58,7 @@ class Job(BaseJob):
                                           argparse={'choices': ('tofile','dryrun','execute')})
         swarp_parameters = Dict({},help="A list of parameters to pass to SWarp",
                                 argparse={'nargs':'+',})
+        swarp_conf = CUnicode(help="Optional SWarp configuration file")
 
         local_archive = CUnicode("", help="The local filepath where the input fits files (will) live")
         doBANDS       = List(['all'],help="BANDS to processs (default=all)",argparse={'nargs':'+',})
@@ -210,10 +211,11 @@ class Job(BaseJob):
         # Update and Set the SWarp options 
         pars = self.get_swarp_parameter_set(**self.input.swarp_parameters)
 
-        # The default swarp configuration file
-        # FIXME : this only works in the eeups context where MULTIEPOCH_DIR is set ..
-        swarp_conf = os.path.join(os.environ['MULTIEPOCH_DIR'],'etc','default.swarp')
-        
+        # The SWarp configuration file
+        if self.input.swarp_conf == '':
+            self.ctx.swarp_conf = os.path.join(os.environ['MULTIEPOCH_DIR'],'etc','default.swarp')
+            self.logger.info("Will use SWarp default configuration file: %s" % self.ctx.swarp_conf)
+            
         swarp_cmd = {} # To create the science image we'll keep
 
         # Loop over all filters
@@ -238,7 +240,7 @@ class Job(BaseJob):
             cmd = []
             cmd.append(SWARP_EXE)
             cmd.append("@%s" % fh.get_sci_list_file(tiledir,tilename_fh, BAND))
-            cmd.append("-c %s" % swarp_conf)
+            cmd.append("-c %s" % self.ctx.swarp_conf)
             for param,value in pars.items():
                 cmd.append("-%s %s" % (param,value))
             swarp_cmd[BAND] = cmd
@@ -272,7 +274,7 @@ class Job(BaseJob):
 
         swarp_cmd[BAND] = [SWARP_EXE, ]
         swarp_cmd[BAND].append("%s" % " ".join(det_scilists))
-        swarp_cmd[BAND].append("-c %s" % swarp_conf)
+        swarp_cmd[BAND].append("-c %s" % self.ctx.swarp_conf)
         for param,value in pars.items():
             swarp_cmd[BAND].append("-%s %s" % (param,value))
 
