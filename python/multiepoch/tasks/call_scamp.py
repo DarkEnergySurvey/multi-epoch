@@ -44,15 +44,15 @@ class Job(BaseJob):
         tilename_fh = CUnicode('',  help="Alternative tilename handle for unique identification default=TILENAME")
         tiledir     = Unicode(None, help="The output directory for this tile")
 
-        local_archive         = Unicode(None, help="The local filepath where the input fits files (will) live")
+        doBANDS  = List(['all'],help="BANDS to processs (default=all)",argparse={'nargs':'+',})
+        detname  = CUnicode(DETNAME,help="File label for detection image, default=%s." % DETNAME)
+        nthreads = CInt(1,help="Number of threads to use in stiff/psfex/swarp/scamp")
+        local_archive = CUnicode("", help="The local filepath where the input fits files (will) live")
+
         execution_mode_scamp  = CUnicode("tofile",help="SWarp excution mode",
                                          argparse={'choices': ('tofile','dryrun','execute')})
         scamp_parameters = Dict({},help="A list of parameters to pass to scamp",
                                 argparse={'nargs':'+',})
-
-        doBANDS  = List(['all'],help="BANDS to processs (default=all)",argparse={'nargs':'+',})
-        detname  = CUnicode(DETNAME,help="File label for detection image, default=%s." % DETNAME)
-        nthreads = CInt(1,help="Number of threads to use in stiff/psfex/swarp/scamp")
 
         # Logging -- might be factored out
         stdoutloglevel = CUnicode('INFO', help="The level with which logging info is streamed to stdout",

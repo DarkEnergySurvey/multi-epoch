@@ -134,7 +134,7 @@ class Job(BaseJob):
         else:
             raise ValueError('Execution mode %s not implemented.' % execution_mode)
 
-        if self.input.cleanupSWarp:
+        if self.input.cleanupSWarp and execution_mode == 'execute':
             self.cleanup_SWarpFiles(execute=True)
             
         self.logger.info("MEFs Creation Total time: %s" % elapsed_time(t0))

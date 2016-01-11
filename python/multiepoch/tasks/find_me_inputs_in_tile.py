@@ -193,7 +193,7 @@ class Job(BaseJob):
         cats_file     = CUnicode("", help=("Name of the output ASCII catalog list storing the information for scamp"))
         super_align   = Bool(False, help=("Run super-aligment of tile using scamp"))
         plot_outname  = CUnicode("", help=("Output file name for plot, in case we want to plot"))
-        local_archive = CUnicode("", help=("The local filepath where the input fits files (will) live"))
+        local_archive = CUnicode("", help="The local filepath where the input fits files (will) live")
 
         # Logging -- might be factored out
         stdoutloglevel = CUnicode('INFO', help="The level with which logging info is streamed to stdout",
@@ -220,7 +220,7 @@ class Job(BaseJob):
                 raise IO_ValidationError(mess)
 
             # Check for valid local_archive if not in the NCSA cosmology cluster
-            if not utils.inDESARcluster(logger=logger) and not self.local_archive: 
+            if not utils.inDESARcluster(logger=logger) and self.local_archive == "": 
                 mess = 'If not in cosmology cluster local_archive cannot be empty [""]'
                 raise IO_ValidationError(mess)
 
@@ -271,7 +271,7 @@ class Job(BaseJob):
         # In case we want root_http (for DESDM framework) -- not implemented yet
         #self.ctx.root_https  = querylibs.get_root_http(self.ctx.dbh, archive_name=self.input.archive_name)
             
-        # If in the cosmology archive local_archive=root path and local_archive not defined
+        # If in the cosmology archive local_archive=root and local_archive will be ignored
         if utils.inDESARcluster(logger=LOG) and self.ctx.local_archive == '':
             self.logger.info("In cosmology cluster -- setting local_archive=%s" % self.ctx.root_archive)
             self.ctx.local_archive = self.ctx.root_archive
