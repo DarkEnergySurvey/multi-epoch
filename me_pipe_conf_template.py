@@ -1,15 +1,12 @@
 import os
 
 # Generic template to run a TILENAME using mojo, to run:
-#
-#    mojo run_config ./me_pipe_conf_template.py
-#  or
 #    mojo run_config ./me_pipe_conf_template.py --tilename DES2359+0001 --tiledir ~/TILEBUILDER/DES2359+0001
 # 
 # Most options can be overide from the command-line
 
 # The tilename
-tilename = 'DES2359+0001'
+#tilename = 'DES2359+0001'
 
 # tofile/dryrun/execute
 #EXECUTION_MODE = 'dryrun'
@@ -42,7 +39,7 @@ jobs = [
 MULTIEPOCH_ROOT = os.path.join(os.environ['HOME'],'MULTIEPOCH_ROOT')
 local_archive   = os.path.join(MULTIEPOCH_ROOT,'LOCAL_ARCHIVE')
 # uncomment tiledir if you don't want to use the --tiledir option
-tiledir         = os.path.join(MULTIEPOCH_ROOT,'TILEBUILDER',tilename + "Y2T7")
+#tiledir         = os.path.join(MULTIEPOCH_ROOT,'TILEBUILDER',tilename + "Y2T7_test1")
 
 # GENERIC COMPUTATIONAL SETTINGS 
 NTHREADS = 8
@@ -91,7 +88,6 @@ clobber_me        = False
 MP_me             = NCPU
 execution_mode_red = EXECUTION_MODE
 
-
 # 8. call_SWarp -- The SWarp call 
 swarp_parameters = {
     "NTHREADS"     : NTHREADS,
@@ -103,8 +99,7 @@ detname              = 'det'
 doBANDS              = ['all']
 DETEC_COMBINE_TYPE   = "CHI-MEAN"
 execution_mode_swarp = EXECUTION_MODE
-#swarp_conf = 
-
+#swarp_conf = /path/to/file
 
 # 9. call_coadd_MEF -- Combine the 3 planes SCI/WGT/MSK into a single image, interpolate the SCI and create MSK 
 xblock    = 10
@@ -117,7 +112,7 @@ stiff_parameters = {
     "NTHREADS"    : NTHREADS,
     }
 execution_mode_stiff = EXECUTION_MODE
-#stiff_conf = 
+#stiff_conf = /path/to/file
 
 # 11. call_SExpsf -- make the SEx psf Call
 MP_SEx = NCPU
@@ -136,5 +131,6 @@ SExDual_parameters = {
 MP_SEx                 = NCPU
 execution_mode_SExDual = EXECUTION_MODE
 # SExDual_conf = /path/to/file
+
 
 # END ----
