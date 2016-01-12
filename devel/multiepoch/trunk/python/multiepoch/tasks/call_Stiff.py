@@ -156,6 +156,7 @@ class Job(BaseJob):
             "NTHREADS"        : self.ctx.nthreads,
             "COPYRIGHT"        : "NCSA/DESDM",
             "WRITE_XML"        : "N",
+            "DESCRIPTION" : "'Pseudo Color of coadded image for DES tile %s'" % self.ctx.tilename,
         }
         stiff_parameters.update(kwargs)
         return stiff_parameters
