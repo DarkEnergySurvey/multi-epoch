@@ -23,11 +23,13 @@ class my_install_lib(install_lib):
 
 
 ## -------------
-bin_files = glob.glob("bin/*.py") + glob.glob("bin/*.txt")  
+#bin_files = glob.glob("bin/*.py") + glob.glob("bin/*.txt")
+bin_files = glob.glob("bin/*") 
 etc_files = glob.glob("etc/*.*")
+sql_files = glob.glob("example_queries/*")
 
 setup(name='multiepoch',
-      version='0.1beta',
+      version='0.2.2',
       description='The DESDM multi-epoch pipeline',
       license = "GPL",
       author='Felipe Menanteau',
@@ -38,8 +40,10 @@ setup(name='multiepoch',
           'multiepoch.config',
           ],
       package_dir = {'': 'python'},
-      scripts    = bin_files,           # Clean this up FM
-      data_files = [('etc',etc_files)], # Clean this up FM
+      scripts    = bin_files,           
+      data_files = [('etc',etc_files),
+                    ('example_queries',sql_files),
+                    ], # Clean this up FM
       cmdclass={'install_lib':my_install_lib}, # to use custom install of lib files
       )
 

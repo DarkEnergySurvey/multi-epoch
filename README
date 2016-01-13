@@ -1,6 +1,6 @@
-To EUPS setuo
+To EUPS setup the module from trunk
 
-setup -v -r ~/DESDM-Code/devel/multiepoch/branches/me_mojo
+setup -v -r ~/DESDM-Code/devel/multiepoch/trunk
 
 Code descriptions:
 
@@ -31,7 +31,34 @@ Code descriptions:
 - insert_CCDcorners_toIMAGE_oldSchema.py:
   Script to insert CCD corners into the old DB schema.	
 
+- insert_custom_tile_db.py:
+  inserts a smaller section of the DES2246-4457 tile into the DB
+  for testing purposes.  
+
+- add_test_tile_to_DB.py:
+  Same as above
+
+- create_me_catalog_inputs_table.py:
+  Creates a custom table (in felipe's schema for now) with the
+  relevant meta-data information from catalogs for a given FINALCUT tag.
+
+- create_me_image_inputs_table.py:
+  Same as above, but for images
+
+- coadd_MEF:
+Creates a co-added MEF fits file from a set of single-plane fits containing
+the SCI/MSK/WGT planes. Interpolates the SCI plane using information in the
+'custom'-weight mask, and also creates the MSK plane to be used by SExtractor
+for IMAFLAG_ISO.
+
+
 Libraries/Classes
+
+- multiepoch:
+  Utils and general libraries for the multi-epoch pipeline
+
+- multiepoch.task:
+  The location for each individual task/step for the multi-epoch pipeline
 
 - descoords.py:
   Proto-type class to handle coords in new TEST DB and compute
