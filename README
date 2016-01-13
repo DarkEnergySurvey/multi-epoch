@@ -1,8 +1,12 @@
-To EUPS setup the module from trunk
+* For more documentation see:
+https://opensource.ncsa.illinois.edu/confluence/display/DESDM/Multiepoch+Development+Notes
 
-setup -v -r ~/DESDM-Code/devel/multiepoch/trunk
 
-Code descriptions:
+* To EUPS setup the module from trunk
+
+setup -v -r multiepoch/trunk
+
+Some code descriptions:
 
 - gencoaddtile.tcl:
   Original tck code from Brian Yanny
