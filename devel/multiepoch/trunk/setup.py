@@ -1,7 +1,8 @@
 #!/usr/bin/env python
 
-
-import os, glob, re
+import os
+import glob
+import re
 from distutils.core import setup
 from distutils.command.install_lib import install_lib
 import distutils
@@ -23,27 +24,26 @@ class my_install_lib(install_lib):
 
 
 ## -------------
-#bin_files = glob.glob("bin/*.py") + glob.glob("bin/*.txt")
 bin_files = glob.glob("bin/*") 
 etc_files = glob.glob("etc/*.*")
 sql_files = glob.glob("example_queries/*")
+pipe_files = glob.glob("example_pipes/*")
 
 setup(name='multiepoch',
       version='0.2.2',
-      description='The DESDM multi-epoch pipeline',
+      description='The DESDM multi-epoch development pipeline',
       license = "GPL",
       author='Felipe Menanteau',
       author_email='felipe@illinois.edu',
-      packages=[
-          'multiepoch',
-          'multiepoch.tasks',
-          'multiepoch.config',
-          ],
+      packages=['multiepoch',
+                'multiepoch.tasks',],
       package_dir = {'': 'python'},
       scripts    = bin_files,           
       data_files = [('etc',etc_files),
                     ('example_queries',sql_files),
-                    ], # Clean this up FM
+                    ('example_pipes',pipe_files),
+                    ('', ['README']),
+                    ], 
       cmdclass={'install_lib':my_install_lib}, # to use custom install of lib files
       )
 

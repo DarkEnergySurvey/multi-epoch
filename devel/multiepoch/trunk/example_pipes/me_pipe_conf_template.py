@@ -1,9 +1,12 @@
 import os
 
+#####################################################################################
 # Generic template to run a TILENAME using mojo, to run:
 #    mojo run_config ./me_pipe_conf_template.py --tilename DES2359+0001 --tiledir ~/TILEBUILDER/DES2359+0001
 # 
-# Most options can be overide from the command-line
+# Any of the parameters specified in this config file can be
+# overwritten from the command line call using the --ARGUMENTNAME ARGUMENTVALUE syntax.
+#####################################################################################
 
 # The tilename
 #tilename = 'DES2359+0001'
