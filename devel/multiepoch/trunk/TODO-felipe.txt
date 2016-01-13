@@ -1,7 +1,0 @@
-Things I'd like to add:
-
-- move all queries to querylibs.py
-- merge query_tileinfo.py and find_ccds_in_tile.py into a single task
-- After the mer add ctx.BANDs and dBANDs, etc to the tileinfo.json file
-- Now BANDS is read from the json file and not set-up using the
-  utils.contextDefs.setBANDs() function
