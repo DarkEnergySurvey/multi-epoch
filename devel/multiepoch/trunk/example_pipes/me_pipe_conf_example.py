@@ -44,7 +44,7 @@ jobs = [
 # SETTING UP THE OUTPUT, only tiledir and local_archive need to be defined
 MULTIEPOCH_ROOT = os.path.join(os.environ['HOME'],'MULTIEPOCH_ROOT')
 local_archive   = os.path.join(MULTIEPOCH_ROOT,'LOCAL_ARCHIVE')
-# uncomment tiledir if you don't want to use the --tiledir option
+# comment tiledir if you don't want to use the --tiledir option
 tiledir         = os.path.join(MULTIEPOCH_ROOT,'TILEBUILDER',tilename + "Y2T7")
 
 # GENERIC COMPUTATIONAL SETTINGS 

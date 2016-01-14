@@ -31,21 +31,15 @@ class Job(BaseJob):
 
         ######################
         # Required inputs
-        # 1. Association file and assoc dictionary
-        #assoc      = Dict(None,help="The Dictionary containing the association file",argparse=False)
-        #assoc_file = CUnicode('',help="Input association file with CCDs information",input_file=True,
-        #                      argparse={ 'argtype': 'positional', })
-
-        # Super-alignment options
         catlist      = Dict(None,help="The Dictionary containing input CCD-level catalog list ",argparse=False)
         cats_file    = CUnicode('',help="Name of the output ASCII catalog list storing the information for scamp", input_file=True,
                                 argparse={ 'argtype': 'positional', })
+        ######################
+        # Optional arguments
         execution_mode_scamp_prep  = CUnicode("tofile",help="Scamp prepare files excution mode",
                                               argparse={'choices': ('tofile','dryrun','execute')})
         MP_cats      = CInt(1, help = ("Run using multi-process, 0=automatic, 1=single-process [default]"))
 
-        ######################
-        # Optional arguments
         tilename    = Unicode(None, help="The Name of the Tile Name to query",argparse=True)
         tilename_fh = CUnicode('',  help="Alternative tilename handle for unique identification default=TILENAME")
         tiledir     = Unicode(None, help="The output directory for this tile")
