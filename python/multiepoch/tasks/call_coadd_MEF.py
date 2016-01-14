@@ -40,10 +40,9 @@ class Job(BaseJob):
         assoc      = Dict(None,help="The Dictionary containing the association file",argparse=False)
         assoc_file = CUnicode('',help="Input association file with CCDs information",input_file=True,
                               argparse={ 'argtype': 'positional', })
-        tilename   = Unicode(None, help="The Name of the Tile Name to query",
-                             argparse={ 'argtype': 'positional', })
         #####################
         # Optional Arguments
+        tilename     = Unicode(None, help="The Name of the Tile Name to query",argparse=True)
         tilename_fh  = CUnicode('',  help="Alternative tilename handle for unique identification default=TILENAME")
         tiledir      = Unicode(None, help="The output directory for this tile")
         clobber_MEF  = Bool(False, help="Cloober the existing MEF fits")
