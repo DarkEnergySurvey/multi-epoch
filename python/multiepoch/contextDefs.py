@@ -55,6 +55,9 @@ def extract_flabel(files):
 
     """ Extract and f_label from file and make sures it is unique"""
 
+    # Remove .fz from all files -- if present
+    files = [f.replace('.fits.fz','.fits') for f in files]
+
     flabel_cat = [os.path.splitext(os.path.basename(f))[0].split('_')[-1] for f in files]
     flabs = numpy.unique(flabel_cat)
     if len(flabs) > 1:
@@ -76,6 +79,7 @@ def define_head_names(ctx):
     ext_me   = ctx.extension_me
     ext_head = fh.HEAD_EXT
 
+
     # Get the f_label for file types
     flabel_cat = ctx.get('flabel_cat',extract_flabel(ctx.catlist['FILEPATH_LOCAL']))
     flabel_red = ctx.get('flabel_red','immasked')
@@ -93,10 +97,13 @@ def define_head_names(ctx):
     # 2. Add the input path
     input_head = [os.path.join(input_path,f) for f in input_head]
 
-    # 3 Exchange F_LABELS: _red-fullcat.fits --> _immasked_me.head
+    # 3. Remove the "fz" part:  .fits.fz --> .fits 
+    input_head = [f.replace('.fits.fz','.fits') for f in input_head]
+    
+    # 4 Exchange F_LABELS: _red-fullcat.fits --> _immasked_me.head
     input_head = [f.replace(flabel_cat, flabel_me) for f in input_head]
 
-    # 2. replace  .fits --> '.head'
+    # 5. replace  .fits --> '.head'
     input_head = [f.replace('fits', ext_head) for f in input_head]
     return numpy.array(input_head)
 
