@@ -209,9 +209,9 @@ class Job(BaseJob):
             'DETECT_THRESH'   : 1.5,
             'DEBLEND_MINCONT' : 0.001,
             #'DEBLEND_MINCONT' : 0.005, 
-            'PARAMETERS_NAME' : os.path.join(os.environ['MULTIEPOCH_DIR'],'etc','sex.param'), # Slowest
+            #'PARAMETERS_NAME' : os.path.join(os.environ['MULTIEPOCH_DIR'],'etc','sex.param'), # Slowest
             #'PARAMETERS_NAME' : os.path.join(os.environ['MULTIEPOCH_DIR'],'etc','sex.param_psfonly'), # Faster!!!
-            #'PARAMETERS_NAME' : os.path.join(os.environ['MULTIEPOCH_DIR'],'etc','sex.param_nomodel'), # Way Faster -- no model for tesing!!!
+            'PARAMETERS_NAME' : os.path.join(os.environ['MULTIEPOCH_DIR'],'etc','sex.param_nomodel'), # Way Faster -- no model for tesing!!!
             'VERBOSE_TYPE'    : 'NORMAL',
             'INTERP_TYPE'     : 'NONE',
             }
