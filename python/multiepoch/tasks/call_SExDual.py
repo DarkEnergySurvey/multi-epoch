@@ -209,14 +209,14 @@ class Job(BaseJob):
             'DETECT_THRESH'   : 1.5,
             'DEBLEND_MINCONT' : 0.001,
             #'DEBLEND_MINCONT' : 0.005, 
-            #'PARAMETERS_NAME' : os.path.join(os.environ['MULTIEPOCH_DIR'],'etc','sex.param'),
+            'PARAMETERS_NAME' : os.path.join(os.environ['MULTIEPOCH_DIR'],'etc','sex.param'), # Slowest
             #'PARAMETERS_NAME' : os.path.join(os.environ['MULTIEPOCH_DIR'],'etc','sex.param_psfonly'), # Faster!!!
-            'PARAMETERS_NAME' : os.path.join(os.environ['MULTIEPOCH_DIR'],'etc','sex.param_nomodel'), # Way Faster!!!
+            #'PARAMETERS_NAME' : os.path.join(os.environ['MULTIEPOCH_DIR'],'etc','sex.param_nomodel'), # Way Faster -- no model for tesing!!!
             'VERBOSE_TYPE'    : 'NORMAL',
             'INTERP_TYPE'     : 'NONE',
             }
 
-        # Now update pars with kwargs
+        # Now update pars with kwargs -- with override the above definitions
         SExDual_parameters.update(kwargs)
         return SExDual_parameters
 
@@ -244,9 +244,11 @@ class Job(BaseJob):
 
             # Spell out input and output names
             # From SEx/psfex
-            sexcat = fh.get_cat_file(tiledir, tilename_fh, BAND)
-            psf    = fh.get_psf_file(tiledir, tilename_fh, BAND)
-            seg    = fh.get_seg_file(tiledir, tilename_fh, BAND)
+            sexcat  = fh.get_cat_file(tiledir, tilename_fh, BAND)
+	    psf_det = fh.get_psf_file(tiledir, tilename_fh, dBAND)
+            psf     = fh.get_psf_file(tiledir, tilename_fh, BAND)
+            seg     = fh.get_seg_file(tiledir, tilename_fh, BAND)
+
             # Combined images and weights
             sci_comb     = "%s'[%s]'" % (fh.get_mef_file(tiledir, tilename_fh, BAND),  utils.SCI_HDU)
             sci_comb_det = "%s'[%s]'" % (fh.get_mef_file(tiledir, tilename_fh, dBAND), utils.SCI_HDU)
@@ -256,7 +258,7 @@ class Job(BaseJob):
             
             pars['MAG_ZEROPOINT']   =  self.ctx.magbase 
             pars['CATALOG_NAME']    =  sexcat           
-            pars['PSF_NAME']        =  psf
+            pars['PSF_NAME']        =  "%s,%s" % (psf_det,psf)
             pars['CHECKIMAGE_NAME'] =  seg
             pars['FLAG_IMAGE']      =  msk_comb
             pars['WEIGHT_IMAGE']    =  "%s,%s" % (wgt_comb_det, wgt_comb)
