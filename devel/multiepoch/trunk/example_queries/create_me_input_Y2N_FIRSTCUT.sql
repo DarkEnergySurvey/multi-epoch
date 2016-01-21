@@ -3,7 +3,9 @@ create table me_inputs_Y2N_FIRSTCUT as
          file_archive_info.FILENAME,
 	 file_archive_info.COMPRESSION,
          file_archive_info.PATH,
+         wgb.UNITNAME,wgb.REQNUM,wgb.ATTNUM,
          image.BAND,
+         image.CCDNUM,
 	 image.RA_CENT,image.DEC_CENT,
          image.RAC1,  image.RAC2,  image.RAC3,  image.RAC4,
          image.DECC1, image.DECC2, image.DECC3, image.DECC4
