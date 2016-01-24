@@ -48,6 +48,7 @@ class Job(BaseJob):
 
         # Optional inputs -- postional arguments
         weight_for_mask  = Bool(False, help="Create coadded weight for mask creation")
+        ignore_red_corrupt   = Bool(False, help="Ignore red corrupted files")
         clobber_me   = Bool(False, help="Cloober the existing me-ready files.")
         extension_me = CUnicode('me', help=(" extension to add to me-prepared file names."))
         MP_me        = CInt(1, help = ("Run using multi-process, 0=automatic, 1=single-process [default]"))
@@ -171,7 +172,15 @@ class Job(BaseJob):
                 self.logger.info("Preparing:  %s (%s/%s)" % (cmd_list[k][1].split()[1],k+1,N))
                 status = subprocess.call(cmd,shell=True,stdout=log, stderr=log)
                 if status > 0:
-                    raise RuntimeError("\n***\nERROR while running me_prepare, check logfile: %s\n***" % logfile)
+                    # If failed me_prepare, then remove from the assoc 
+                    if self.ctx.ignore_red_corrupt: 
+                        print "\n***\nERROR while running me_prepare, check logfile: %s\n***" % logfile
+                        failed_red = cmd_list[k][2].split()[1]
+                        ik = numpy.where( self.ctx.assoc['FILEPATH_INPUT_RED'] == failed_red)
+                        self.clean_assoc(ik)
+                        print "Removing: %s" % failed_red
+                    else:
+                        raise RuntimeError("\n***\nERROR while running me_prepare, check logfile: %s\n***" % logfile)
                 self.logger.info("Done in %s" % elapsed_time(t1))
 
         # Case B -- multi-process in case NP > 1
@@ -196,6 +205,13 @@ class Job(BaseJob):
 
     def __str__(self):
         return 'Prepare input for me processing'
+
+    def clean_assoc(self,ik):
+        for key in self.ctx.assoc.keys():
+            self.ctx.assoc[key] = numpy.delete(self.ctx.assoc[key],ik)
+        return
+        
+
 
 
 if __name__ == "__main__":

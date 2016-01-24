@@ -41,9 +41,12 @@ def write_tileinfo_json(tilename,hdr,json_file):
         'DEC_CENT'    : hdr['DEC_CENT'],
         'CROSSRAZERO' : hdr['CROSSRA0']}
 
-    keys = ['RAC1', 'RAC2', 'RAC3', 'RAC4',
+    keys = ['NAXIS1','NAXIS2',
+            'RAC1', 'RAC2', 'RAC3', 'RAC4',
             'DECC1', 'DECC2', 'DECC3', 'DECC4',
-            'RACMIN','RACMAX','DECCMIN','DECCMAX','PIXELSCALE']
+            'RACMIN','RACMAX','DECCMIN','DECCMAX',
+            'RA_SIZE','DEC_SIZE',
+            'PIXELSCALE',]
     for k in keys:
         dict[k] = hdr[k]
 
@@ -111,6 +114,21 @@ def create_header(**kwargs):
 
     # Update corners
     header = CCD_corners.update_DESDM_corners(header,border=0,get_extent=True,verb=False)
+
+    # We now compute RA_SIZE and DEC_SIZE
+    if header['CROSSRA0'] == 'Y':
+        # Maybe we substract 360 instead?
+        RA_SIZE = abs( header['RACMAX'] - (header['RACMIN']-360))
+    else:
+        RA_SIZE = abs( header['RACMAX'] - header['RACMIN'])
+
+    # And we add them as fitsio records
+    new_record = {'name':'RA_SIZE','value':RA_SIZE}
+    header.add_record(new_record)
+    
+    DEC_SIZE = abs( header['DECCMAX'] - header['DECCMIN'])
+    new_record = {'name':'DEC_SIZE','value':DEC_SIZE}
+    header.add_record(new_record)
     return header
 
 
