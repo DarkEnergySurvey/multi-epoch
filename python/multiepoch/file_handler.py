@@ -318,3 +318,12 @@ def get_scamp_log_file(tiledir, tilename):
     dh = get_tiledir_handler(tiledir)
     filename = "%s_scamp.log" % tilename
     return dh.place_file(filename, 'log')
+
+
+
+# Default assoc name
+def get_default_assoc_file(tiledir, tilename):
+    dh = get_tiledir_handler(tiledir)
+    filename = "%s.assoc" % tilename
+    return dh.place_file(filename, 'aux')
+

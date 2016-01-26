@@ -132,6 +132,7 @@ from mojo.utils import log as mojo_log
 import multiepoch.utils as utils
 import multiepoch.contextDefs as contextDefs
 import multiepoch.querylibs as querylibs
+from multiepoch import file_handler as fh
 
 # DEFAULT PARAMETER VALUES -- Change from felipe.XXXXX --> XXXXX
 # -----------------------------------------------------------------------------
@@ -179,6 +180,7 @@ class Job(BaseJob):
                 argparse={ 'argtype': 'positional', })
 
         # Optional inputs, also when interfaced to argparse
+        tilename_fh = CUnicode('',  help="Alternative tilename handle for unique identification default=TILENAME")
         db_section    = CUnicode("db-destest",help="DataBase Section to connect", 
                                  argparse={'choices': ('db-desoper','db-destest', )} )
         archive_name  = CUnicode("prodbeta",help="DataBase Archive Name section",
@@ -194,6 +196,8 @@ class Job(BaseJob):
         super_align   = Bool(False, help=("Run super-aligment of tile using scamp"))
         plot_outname  = CUnicode("", help=("Output file name for plot, in case we want to plot"))
         local_archive = CUnicode("", help="The local filepath where the input fits files (will) live")
+        dump_assoc    = Bool(False, help=("Dump the assoc file?"))
+        
 
         # Logging -- might be factored out
         stdoutloglevel = CUnicode('INFO', help="The level with which logging info is streamed to stdout",
@@ -229,6 +233,10 @@ class Job(BaseJob):
                 if self.select_extras[-1] !=",": self.select_extras = self.select_extras+","
             if len(self.from_extras) != 0:
                 if self.from_extras[-1] !=",": self.from_extras = self.from_extras+","
+
+            if self.tilename_fh == '':
+                self.tilename_fh = self.tilename
+
 
     def run(self):
         
@@ -295,6 +303,14 @@ class Job(BaseJob):
             from multiepoch.tasks.plot_ccd_corners_destile import Job as plot_job
             plot = plot_job(ctx=self.ctx)
             plot()
+
+
+        # We might want to spit out the assoc file anyways
+        if self.input.dump_assoc:
+            assoc_default_name = fh.get_default_assoc_file(self.ctx.tiledir, self.ctx.tilename_fh)
+            self.logger.info("Dumping assoc file to:%s" % assoc_default_name)
+            self.write_dict2pandas(self.ctx.assoc,assoc_default_name,names=['FILEPATH_LOCAL','BAND','MAG_ZERO'],logger=self.logger)
+
 
     # -------------------------------------------------------------------------
 
@@ -381,7 +397,7 @@ class Job(BaseJob):
     @staticmethod
     def write_dict2pandas(mydict, file, names=['FILEPATH_LOCAL','BAND','UNITNAME'],sep=' ', logger=None):
 
-        utils.pass_logger_info("Writing information to: %s" % file)
+        utils.pass_logger_info("Writing information to: %s" % file,logger=logger)
         variables = [mydict[name] for name in names]
         df = pd.DataFrame(zip(*variables), columns=names)
         df.to_csv(file,index=False,sep=sep)
