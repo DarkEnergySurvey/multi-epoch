@@ -171,6 +171,7 @@ class Job(BaseJob):
                 cmd  = ' '.join(cmd_list[k])
                 self.logger.info("Preparing:  %s (%s/%s)" % (cmd_list[k][1].split()[1],k+1,N))
                 status = subprocess.call(cmd,shell=True,stdout=log, stderr=log)
+                print "status:%s -- file %s" % (status,cmd_list[k][2].split()[1])
                 if status > 0:
                     # If failed me_prepare, then remove from the assoc 
                     if self.ctx.ignore_red_corrupt: 
