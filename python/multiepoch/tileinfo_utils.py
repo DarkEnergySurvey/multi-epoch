@@ -1,6 +1,7 @@
 from despyastro import CCD_corners
 import fitsio
 import json
+import multiepoch.utils as mutils
 
 def define_tileinfo(tilename,**kwargs):
 
@@ -12,6 +13,7 @@ def define_tileinfo(tilename,**kwargs):
     pixelscale  = kwargs.get('pixelscale',0.263) # in arsec/pixel
     units       = kwargs.get('units','arcmin')
     json_file   = kwargs.get('json_file',None)
+    logger      = kwargs.get('logger',None)
 
     # Get the dimensions
     NAXIS1, NAXIS2 = get_image_size(xsize,ysize, pixelscale=pixelscale, units=units)
@@ -24,19 +26,17 @@ def define_tileinfo(tilename,**kwargs):
     # create hdr and update corners
     header = create_header(**kw)
 
-    # Now we write the json file
-    if json_file:
-        print "# Writing json file to %s" % json_file
-        write_tileinfo_json(tilename,header,json_file)
+    # Now we write the json file (if defined) and get the tileinfo dictionary
+    tileinfo = write_tileinfo_json(tilename,header,json_file,logger)
 
-    return header
+    return tileinfo
 
-def write_tileinfo_json(tilename,hdr,json_file):
+def write_tileinfo_json(tilename,hdr,json_file=None,logger=None):
     
     # TODO:
     # Make all keywords consisten with CCD_corners.update_DESDM_corners definitions
     # these are not consisten and should be fixed in destiling and when generating the tiles definitions
-    dict = {
+    tileinfo = {
         'RA_CENT'     : hdr['RA_CENT'],
         'DEC_CENT'    : hdr['DEC_CENT'],
         'CROSSRAZERO' : hdr['CROSSRA0']}
@@ -48,15 +48,19 @@ def write_tileinfo_json(tilename,hdr,json_file):
             'RA_SIZE','DEC_SIZE',
             'PIXELSCALE',]
     for k in keys:
-        dict[k] = hdr[k]
+        tileinfo[k] = hdr[k]
 
     # Make it a json-like dictionary
-    json_dict = {"tileinfo":dict,
+    json_dict = {"tileinfo":tileinfo,
                  "tilename":tilename}
-    # Now write it
-    with open(json_file, 'w') as outfile:
-        json.dump(json_dict, outfile, sort_keys = True, indent = 4)
-    return
+
+    # Now write if defined
+    if json_file:
+        mutils.pass_logger_info("# Writing json file to %s" % json_file,logger=logger)
+        with open(json_file, 'w') as outfile:
+            json.dump(json_dict, outfile, sort_keys = True, indent = 4)
+
+    return tileinfo
 
 def get_image_size(xsize,ysize, pixelscale=0.263, units='arcmin'):
 
