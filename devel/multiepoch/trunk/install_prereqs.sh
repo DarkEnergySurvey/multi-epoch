@@ -4,7 +4,7 @@ eups distrib install despydb    2.0.1+0 --nolocks
 eups distrib install despyastro 0.3.5+0  --nolocks
 eups distrib install despymisc  1.0.1+0  --nolocks
 eups distrib install despyfitsutils 1.0.1+0 --nolocks
-eups distrib install pixcorrect 0.1.8+0 --nolocks
+eups distrib install pixcorrect 0.1.9+0 --nolocks
 eups distrib install matplotlib 1.3.1+4 --nolocks
 eups distrib install pandas 0.15.2+1 --nolocks
 eups distrib install sextractor 2.19.5+1 --nolocks
