@@ -14,19 +14,22 @@ Felipe Menanteau, Nov 2014.
 
 """
 
-def findEXPOSURES(reqnum,attnum,section='db-destest',exec_name='immask'):
+def findEXPOSURES(tagname,section='db-destest',exec_name='immask'):
 
     """
     Find the original names (DECamXXXXXXX_YY.fits) for a pair or reqnum, attnum
     Returns a set of filenames and exposurename
     """
 
-    regexp = "%" + "r%dp%02d_%s" % (reqnum, attnum, exec_name) + "%"
-    query = """ select filename, 'DECam_'||to_char(expnum,'FM00000000')||'_'||to_char(ccdnum,'FM00')||'.fits'
-                from image where filename like '%s' and filetype='red_immask'""" % regexp
+    query = """ select i.filename, 'DECam_'||to_char(i.expnum,'FM00000000')||'_'||to_char(i.ccdnum,'FM00')||'.fits'
+                from image i, ops_proctag o
+                where
+                i.filetype='red_immask' and
+                i.pfw_attempt_id=o.pfw_attempt_id and o.tag='%s' """ % tagname
+
     print "# Will query \n%s\n" % query
 
-    print "# Will find expnames for filenames in reqnum=%s, attnum=%s" % (reqnum,attnum)
+    print "# Will find expnames for filenames in tagname=%s" % (tagname)
 
     dbh = despydb.desdbi.DesDbi(section=section)
     cur = dbh.cursor()
@@ -37,36 +40,6 @@ def findEXPOSURES(reqnum,attnum,section='db-destest',exec_name='immask'):
     print "# Found %s filename for %s exposurenames" %  (len(filenames),len(exposurenames))
     return filenames,exposurenames
 
-
-def findZEROPOINTS(filenames, exposurenames, section='db-desoper'):
-
-    """ Find the zero points in the old Schema for SVA1_FINALCUL"""
-
-    dbh = despydb.desdbi.DesDbi(section=section)
-    cur = dbh.cursor()
-
-    # Runs '20130717213138_20121124' and '20130712064117_20121207' are
-    # the original ones with the 'SVA1_FINALCUT' tag
-    # To find the runs from SVA1_FINALCUT for el Gordo and RXJ
-    # select RUN from  RUNTAG  where runtag.RUN like '%20121207%' and runtag.tag='SVA1_FINALCUT';
-    # select RUN from  RUNTAG  where runtag.RUN like '%20121124%' and runtag.tag='SVA1_FINALCUT';
-
-    query = """SELECT distinct zeropoint.IMAGEID, image.IMAGENAME, zeropoint.MAG_ZERO
-    from IMAGE, ZEROPOINT, RUNTAG
-    where
-    image.IMAGETYPE = 'red' and
-    image.ID        = zeropoint.IMAGEID and
-    image.RUN       = runtag.RUN and
-    runtag.tag      = 'SVA1_FINALCUT' and
-    image.run in ('20130717213138_20121124','20130712064117_20121207') and
-    image.IMAGENAME='%s' """ 
-    
-    for k in range( len(exposurenames)):
-        cur.execute(query % exposurenames[k])
-        (id, imagename, mag_zero) = cur.fetchone()
-        print exposurenames[k],
-
-    return
 
 def checkTABLENAMEexists(tablename,section):
 
@@ -108,6 +81,7 @@ def createZEROPOINTtable(tablename,section,clobber=False):
     IMAGENAME               VARCHAR2(100),
     MAG_ZERO                NUMBER(22,8),
     IMAGEID                 VARCHAR2(100),
+    TAG                     VARCHAR2(100),
     constraint %s PRIMARY KEY (FILENAME)
     )
     """ % (tablename,tablename.split(".")[1])
@@ -116,8 +90,9 @@ def createZEROPOINTtable(tablename,section,clobber=False):
     comments ="""comment on column %s.IMAGEID     is 'ID from IMAGE.ID'
     comment on column %s.FILENAME    is 'FILENAME from IMAGE.FILENAME'
     comment on column %s.IMAGENAME   is 'IMAGENAME from IMAGE.IMAGENAME old Schema'
-    comment on column %s.MAG_ZERO    is 'MAG_ZERO in counts/s' """
-
+    comment on column %s.MAG_ZERO    is 'MAG_ZERO in counts/s'
+    comment on column %s.TAG         is 'TAG for run'"""
+ 
     # Check if table exists
     table_exist = checkTABLENAMEexists(tablename,section)
 
@@ -146,20 +121,20 @@ def createZEROPOINTtable(tablename,section,clobber=False):
     cur.close()
     return
 
-def insertZEROPOINTS(tablename,reqnum,attnum,section='db-destest',clobber=False):
+def insertZEROPOINTS(tablename,tagname,section='db-destest',clobber=False):
         
     """
     INSERT the ZEROPOINTS to a tablename
     """
-    
 
     # Get the filenames and exposurenames
-    filenames, exposurenames = findEXPOSURES(reqnum=reqnum,attnum=attnum,section=section)
+    filenames, exposurenames = findEXPOSURES(tagname,section=section)
     Nexp = len(exposurenames)
 
     # Make sure that the ZEROPOINT table exists
     createZEROPOINTtable(tablename,section=section,clobber=clobber)
 
+    # Create connections to desoper and target section
     dbh_desoper = despydb.desdbi.DesDbi(section="db-desoper")
     cur_desoper = dbh_desoper.cursor()
     
@@ -177,17 +152,7 @@ def insertZEROPOINTS(tablename,reqnum,attnum,section='db-destest',clobber=False)
        select distinct zeropoint.IMAGEID, myimage.fileNAME, zeropoint.MAG_ZERO from myimage, des_admin.ZEROPOINT where zeropoint.imageid=myimage.id
      """
 
-    # OLD QUERY
-    #"""SELECT distinct zeropoint.IMAGEID, image.IMAGENAME, zeropoint.MAG_ZERO
-    #from des_admin.IMAGE image, des_admin.ZEROPOINT zeropoint
-    #where
-    #image.IMAGETYPE = 'red' and
-    #image.ID        = zeropoint.IMAGEID and
-    #image.run in
-    #   (select distinct image.run from des_admin.IMAGE, des_admin.RUNTAG where (runtag.tag in ('SVA1_FINALCUT','Y1A1_FINALCUT') and image.RUN=runtag.RUN)) and
-    #image.IMAGENAME='%s' """ 
-    
-    cols = "FILENAME,IMAGENAME,MAG_ZERO,IMAGEID"
+    cols = "FILENAME,IMAGENAME,MAG_ZERO,IMAGEID,TAG"
     
     for k in range(Nexp):
 
@@ -198,12 +163,13 @@ def insertZEROPOINTS(tablename,reqnum,attnum,section='db-destest',clobber=False)
         if items is None:
             print "WARNING: Found no ZEROPOINT for: %s\n" % filenames[k]
             continue
-        
+
+        # Unpack query results
         (imageid, imagename, mag_zero) = items
 
-        sys.stdout.write("# Inserting MAG_ZERO for %s (%s/%s)\n" % (exposurenames[k],k+1,Nexp))
+        sys.stdout.write("# Inserting MAG_ZERO for %s--%s (%s/%s)\n" % (filenames[k],exposurenames[k],k+1,Nexp))
         # Now we insert
-        values = (filenames[k], exposurenames[k], mag_zero, imageid)
+        values = (filenames[k], exposurenames[k], mag_zero, imageid, tagname)
         insert_cmd = "INSERT INTO %s (%s) VALUES %s" % (tablename,cols,values)
         cur.execute(insert_cmd)
 
@@ -233,10 +199,8 @@ if __name__ == "__main__":
         prog = os.path.basename(__file__)
         usage = "ERROR: \n USAGE: %s <TAGNAME>\n Example: %s %s\n" % (prog,prog,'Y2T3_FINALCUT')
         sys.exit(usage)
-    # Get The corresponding REQNUM/ATTNUM for a fiven TAG
-    runs = get_REQNUM_ATTNUM(tagname=TAGNAME)
 
-    for run in runs:
-        clobber = False
-        #clobber = True
-        insertZEROPOINTS(tablename='felipe.extraZEROPOINT',reqnum=run['REQNUM'],attnum=run['ATTNUM'],clobber=clobber)
+    #for run in runs:
+    #clobber = False
+    clobber = True
+    insertZEROPOINTS(tablename='felipe.extraZEROPOINT',tagname=TAGNAME,clobber=clobber)
