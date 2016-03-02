@@ -16,23 +16,19 @@ create table {tablename_root}_{tagname} as
      SELECT 
          file_archive_info.FILENAME,
          file_archive_info.PATH,
-         wgb.UNITNAME,
-         wgb.REQNUM,
-         wgb.ATTNUM,
+         cat.PFW_ATTEMPT_ID,
          cat.BAND,
          cat.CCDNUM,
          cat.EXPNUM
      FROM
-         wgb, ops_proctag, file_archive_info, catalog cat
+         ops_proctag, file_archive_info, catalog cat
      WHERE
-         file_archive_info.FILENAME  = wgb.FILENAME  AND
          file_archive_info.FILENAME  = cat.FILENAME AND
-         wgb.FILETYPE    = '{filetype}' AND
-         wgb.REQNUM      = ops_proctag.REQNUM AND
-         wgb.UNITNAME    = ops_proctag.UNITNAME AND
-         wgb.ATTNUM      = ops_proctag.ATTNUM AND
+         cat.PFW_ATTEMPT_ID = ops_proctag.PFW_ATTEMPT_ID AND
+         cat.FILETYPE    = '{filetype}' AND
          ops_proctag.TAG = '{tagname}'
 """
+
 
 def create_table_from_query(tagname,db_section='db-destest',filetype='cat_finalcut',tablename_root='me_catalogs',clobber=False,verb=False):
 
