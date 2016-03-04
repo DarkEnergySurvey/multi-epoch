@@ -12,14 +12,19 @@ import time
 import argparse
 
 CREATE_INPUTS = """
-create table {tablename_root}_{tagname} as
+create table {tablename_root}_{tagname_table} as
      SELECT 
          file_archive_info.FILENAME,
 	 file_archive_info.COMPRESSION,
          file_archive_info.PATH,
          image.PFW_ATTEMPT_ID,
+         ops_proctag.UNITNAME,
          image.BAND,
          image.CCDNUM,
+         image.EXPNUM,
+         image.CROSSRA0,
+         image.RACMIN,image.RACMAX,
+         image.DECCMIN,image.DECCMAX,
 	 image.RA_CENT,image.DEC_CENT,
          image.RAC1,  image.RAC2,  image.RAC3,  image.RAC4,
          image.DECC1, image.DECC2, image.DECC3, image.DECC4
@@ -32,14 +37,18 @@ create table {tablename_root}_{tagname} as
          ops_proctag.TAG = '{tagname}'
 """
 
-def create_table_from_query(tagname,db_section='db-destest',filetype='red_immask',tablename_root='me_images',clobber=False,verb=False):
+def create_table_from_query(tagname,tagname_table=None,db_section='db-destest',filetype='red_immask',tablename_root='me_images',clobber=False,verb=False):
 
     # Get the handle
     dbh = desdbi.DesDbi(section=db_section)
     cur = dbh.cursor()
+
+    # Fall back to default TAGNAME
+    if not tagname_table:
+        tagname_table = tagname
     
     # Check if tablename exists
-    tablename = "%s_%s" % (tablename_root,tagname)
+    tablename = "%s_%s" % (tablename_root,tagname_table)
     table_exists = mutils.checkTABLENAMEexists(tablename,dbh=dbh,verb=verb)
     if table_exists and clobber:
         print "# Dropping table: %s" % tablename
@@ -69,6 +78,8 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Create table with Multi-epoch inputs from coadds and cataloguing")
     parser.add_argument("tagname", action="store",default=None,
                         help="Name of the TAGNAME used to select inputs")
+    parser.add_argument("--tagname_table", action="store",default=None,
+                        help="Optiona Name of the TAGNAME for the table naming, defaul=TAGNAME")
     parser.add_argument("--db_section", action="store", default='db-destest',choices=['db-desoper','db-destest'],
                         help="DB Section to query")
     parser.add_argument("--clobber", action="store_true",default=False,
@@ -76,6 +87,6 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     t0 = time.time()
-    create_table_from_query(args.tagname,db_section=args.db_section,clobber=args.clobber,verb=True)
+    create_table_from_query(args.tagname,tagname_table=args.tagname_table,db_section=args.db_section,clobber=args.clobber,verb=True)
     print "Table Create time: %s" % elapsed_time(t0)
     
