@@ -313,7 +313,7 @@ class Job(BaseJob):
 
             test_file = "%s.assoc_test" % self.ctx.tilename
             self.logger.info("Dumping assoc file to:%s" % test_file)
-            self.write_dict2pandas(self.ctx.assoc,test_file,names=['FILENAME','CROSSRA0','RACMIN','RACMAX','RA_CENT','DEC_CENT'],logger=self.logger)
+            self.write_dict2pandas(self.ctx.assoc,test_file,names=['FILENAME','RA_CENT','DEC_CENT','CROSSRA0','RA_SIZE','DEC_SIZE','RACMIN','RACMAX',],logger=self.logger)
 
 
         # We might want to spit out the assoc file anyways
@@ -353,6 +353,9 @@ class Job(BaseJob):
 
         assoc['RACMIN']     = CCDS['RACMIN']
         assoc['RACMAX']     = CCDS['RACMAX']
+
+        assoc['RA_SIZE']     = CCDS['RA_SIZE']
+        assoc['DEC_SIZE']    = CCDS['DEC_SIZE']
 
         if 'MAG_ZERO'in CCDS.dtype.names:
             assoc['MAG_ZERO']    = CCDS['MAG_ZERO']
