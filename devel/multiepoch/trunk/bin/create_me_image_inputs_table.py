@@ -27,7 +27,9 @@ create table {tablename_root}_{tagname_table} as
          image.DECCMIN,image.DECCMAX,
 	 image.RA_CENT,image.DEC_CENT,
          image.RAC1,  image.RAC2,  image.RAC3,  image.RAC4,
-         image.DECC1, image.DECC2, image.DECC3, image.DECC4
+         image.DECC1, image.DECC2, image.DECC3, image.DECC4,
+         (case when image.CROSSRA0='Y' THEN abs(image.RACMAX - (image.RACMIN-360)) ELSE abs(image.RACMAX - image.RACMIN) END) as RA_SIZE,
+         abs(image.DECCMAX - image.DECCMIN) as DEC_SIZE
      FROM
          ops_proctag, image, file_archive_info
      WHERE
