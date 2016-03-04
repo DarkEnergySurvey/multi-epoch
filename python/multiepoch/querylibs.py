@@ -45,6 +45,7 @@ QUERY_ME_IMAGES_TEMPLATE = """
          me.FILENAME,me.COMPRESSION,me.PATH,me.BAND,me.UNITNAME,
          me.RA_CENT, me.RAC1,  me.RAC2,  me.RAC3,  me.RAC4,
          me.DEC_CENT,me.DECC1, me.DECC2, me.DECC3, me.DECC4,
+         me.CROSSRA0, me.RACMIN, me.RACMAX,
          ABS(me.RAC2  - me.RAC3 )  as RA_SIZE_CCD,
          ABS(me.DECC1 - me.DECC2 ) as DEC_SIZE_CCD	
      FROM
@@ -73,6 +74,7 @@ QUERY_ME_IMAGES_TEMPLATE_RAZERO = """
          me.FILENAME,me.COMPRESSION,me.PATH,me.BAND,me.UNITNAME,
          me.RA_CENT, me.RAC1,  me.RAC2,  me.RAC3,  me.RAC4,
          me.DEC_CENT,me.DECC1, me.DECC2, me.DECC3, me.DECC4,
+         me.CROSSRA0, me.RACMIN, me.RACMAX,
          ABS(me.RAC2  - me.RAC3 )  as RA_SIZE_CCD,
          ABS(me.DECC1 - me.DECC2 ) as DEC_SIZE_CCD	
      FROM
@@ -88,13 +90,12 @@ QUERY_ME_IMAGES_TEMPLATE_RAZERO = """
 QUERY_ME_CATALOGS_TEMPLATE = """
      SELECT 
          {select_extras}
-         distinct cat.FILENAME, cat.PATH, cat.BAND,cat.expnum,cat.CCDNUM,
-         cat.UNITNAME, cat.ATTNUM, cat.REQNUM
+         distinct cat.FILENAME, cat.PATH, cat.BAND,cat.expnum,cat.CCDNUM, cat.UNITNAME
      FROM 
          felipe.me_catalogs_{tagname} cat,
          felipe.me_images_{tagname}   ima
      WHERE
-         ima.unitname = cat.unitname and
+         ima.PFW_ATTEMPT_ID = cat.PFW_ATTEMPT_ID and
          ima.unitname in
        (SELECT 
          distinct me.UNITNAME
@@ -113,8 +114,7 @@ QUERY_ME_CATALOGS_TEMPLATE = """
 QUERY_ME_CATALOGS_TEMPLATE_RAZERO = """
      SELECT 
          {select_extras}
-         distinct cat.FILENAME, cat.PATH, cat.BAND,cat.expnum,cat.CCDNUM,
-         cat.UNITNAME, cat.ATTNUM, cat.REQNUM
+         distinct cat.FILENAME, cat.PATH, cat.BAND,cat.expnum,cat.CCDNUM,cat.UNITNAME
      FROM 
          felipe.me_catalogs_{tagname} cat,
          felipe.me_images_{tagname}   ima

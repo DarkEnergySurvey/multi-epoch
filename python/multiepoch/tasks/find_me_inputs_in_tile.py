@@ -197,7 +197,7 @@ class Job(BaseJob):
         plot_outname  = CUnicode("", help=("Output file name for plot, in case we want to plot"))
         local_archive = CUnicode("", help="The local filepath where the input fits files (will) live")
         dump_assoc    = Bool(False, help=("Dump the assoc file?"))
-        
+        dump_cats     = Bool(False, help=("Dump the catlist?"))
 
         # Logging -- might be factored out
         stdoutloglevel = CUnicode('INFO', help="The level with which logging info is streamed to stdout",
@@ -311,9 +311,19 @@ class Job(BaseJob):
             self.logger.info("Dumping assoc file to:%s" % assoc_default_name)
             self.write_dict2pandas(self.ctx.assoc,assoc_default_name,names=['FILEPATH_LOCAL','BAND','MAG_ZERO'],logger=self.logger)
 
+            test_file = "%s.assoc_test" % self.ctx.tilename
+            self.logger.info("Dumping assoc file to:%s" % test_file)
+            self.write_dict2pandas(self.ctx.assoc,test_file,names=['FILENAME','CROSSRA0','RACMIN','RACMAX','RA_CENT','DEC_CENT'],logger=self.logger)
+
+
+        # We might want to spit out the assoc file anyways
+        if self.input.dump_cats and self.ctx.super_align:
+            cats_default_name = fh.get_default_cats_file(self.ctx.tiledir, self.ctx.tilename_fh)
+            self.logger.info("Dumping catlist file to:%s" % cats_default_name)
+            self.write_dict2pandas(self.ctx.catlist,cats_default_name,names=['FILEPATH_LOCAL','BAND','UNITNAME'],logger=self.logger)
+            
 
     # -------------------------------------------------------------------------
-
     @staticmethod
     def get_tile_edges(tileinfo):
         tile_edges = (tileinfo['RACMIN'], tileinfo['RACMAX'],
@@ -336,6 +346,13 @@ class Job(BaseJob):
         assoc['BAND']        = CCDS['BAND']
         assoc['FILENAME']    = CCDS['FILENAME']
         assoc['COMPRESSION'] = CCDS['COMPRESSION']
+
+        assoc['RA_CENT']     = CCDS['RA_CENT']
+        assoc['DEC_CENT']    = CCDS['DEC_CENT']
+        assoc['CROSSRA0']    = CCDS['CROSSRA0']
+
+        assoc['RACMIN']     = CCDS['RACMIN']
+        assoc['RACMAX']     = CCDS['RACMAX']
 
         if 'MAG_ZERO'in CCDS.dtype.names:
             assoc['MAG_ZERO']    = CCDS['MAG_ZERO']
