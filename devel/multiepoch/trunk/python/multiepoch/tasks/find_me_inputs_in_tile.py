@@ -313,7 +313,7 @@ class Job(BaseJob):
 
             test_file = "%s.assoc_test" % self.ctx.tilename
             self.logger.info("Dumping assoc file to:%s" % test_file)
-            self.write_dict2pandas(self.ctx.assoc,test_file,names=['FILENAME','RA_CENT','DEC_CENT','CROSSRA0','RA_SIZE','DEC_SIZE','RACMIN','RACMAX',],logger=self.logger)
+            self.write_dict2pandas(self.ctx.assoc,test_file,names=['FILENAME','RA_CENT','DEC_CENT','RA_SIZE','DEC_SIZE','RACMIN','RACMAX',],logger=self.logger)
 
 
         # We might want to spit out the assoc file anyways
@@ -349,7 +349,7 @@ class Job(BaseJob):
 
         assoc['RA_CENT']     = CCDS['RA_CENT']
         assoc['DEC_CENT']    = CCDS['DEC_CENT']
-        assoc['CROSSRA0']    = CCDS['CROSSRA0']
+        #assoc['CROSSRA0']    = CCDS['CROSSRA0']
 
         assoc['RACMIN']     = CCDS['RACMIN']
         assoc['RACMAX']     = CCDS['RACMAX']
