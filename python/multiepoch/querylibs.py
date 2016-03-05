@@ -39,7 +39,7 @@ QUERY_ME_NP_TEMPLATE = """
          felipe.me_images_{tagname} me
          """
 
-QUERY_ME_IMAGES_TEMPLATE = """
+QUERY_ME_IMAGES_TEMPLATE_NOSIZE = """
 with me as
     (SELECT /*+ materialize */ 
          me.*,
@@ -64,6 +64,24 @@ with me as
          (ABS(me.DEC_CENT -  {dec_center_tile}) < (0.5*{dec_size_tile} + 0.5*me.DEC_SIZE))
 """
 
+
+QUERY_ME_IMAGES_TEMPLATE = """
+     SELECT
+         {select_extras}
+         me.FILENAME,me.COMPRESSION,me.PATH,me.BAND,me.UNITNAME,
+         me.RACMIN,me.RACMAX,
+         me.DECCMIN,me.DECCMAX,
+         me.RA_SIZE,me.DEC_SIZE,
+         me.RA_CENT, me.RAC1,  me.RAC2,  me.RAC3,  me.RAC4,
+         me.DEC_CENT,me.DECC1, me.DECC2, me.DECC3, me.DECC4
+     FROM
+         {from_extras} 
+         felipe.me_images_{tagname} me
+     WHERE
+         {and_extras}
+         (ABS(me.RA_CENT  -  {ra_center_tile})  < (0.5*{ra_size_tile}  + 0.5*me.RA_SIZE)) AND
+         (ABS(me.DEC_CENT -  {dec_center_tile}) < (0.5*{dec_size_tile} + 0.5*me.DEC_SIZE))
+"""
 
 QUERY_ME_IMAGES_TEMPLATE_RAZERO = """
  with me as 
