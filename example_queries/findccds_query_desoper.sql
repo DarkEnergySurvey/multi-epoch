@@ -5,8 +5,8 @@
          me.FILENAME,
 	 me.RA_CENT,me.DEC_CENT,
          me.CROSSRA0,
-        ABS(me.RAC2  - me.RAC3 )  as RA_SIZE_CCD,
-        ABS(me.DECC1 - me.DECC2 ) as DEC_SIZE_CCD	
+         ABS(me.RAC2  - me.RAC3 )  as RA_SIZE_CCD,
+         ABS(me.DECC1 - me.DECC2 ) as DEC_SIZE_CCD	
      FROM
 --         (select 
 --            abs(me.DECCMAX - me.DECCMIN) as DEC_SIZE_CCD,
