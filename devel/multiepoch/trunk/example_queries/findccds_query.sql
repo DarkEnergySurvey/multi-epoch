@@ -1,14 +1,14 @@
-    SELECT
-         file_archive_info.FILENAME,file_archive_info.PATH, image.BAND
+     SELECT
+         me.FILENAME,me.COMPRESSION,me.PATH,me.BAND,me.UNITNAME,
+         me.RACMIN,me.RACMAX,
+         me.DECCMIN,me.DECCMAX,
+         me.RA_SIZE,me.DEC_SIZE,
+         me.RA_CENT, me.RAC1,  me.RAC2,  me.RAC3,  me.RAC4,
+         me.DEC_CENT,me.DECC1, me.DECC2, me.DECC3, me.DECC4
      FROM
-         file_archive_info, wgb, image, ops_proctag
+         felipe.me_images_Y2A1_FINALCUT_TEST me,
+	 felipe.coaddtile_new tile		     
      WHERE
-         file_archive_info.FILENAME  = image.FILENAME AND
-         file_archive_info.FILENAME  = wgb.FILENAME  AND
-         image.FILETYPE  = 'red' AND
-         wgb.FILETYPE    = 'red' AND
-         wgb.EXEC_NAME   = 'immask' AND
-         wgb.REQNUM      = ops_proctag.REQNUM AND
-         wgb.UNITNAME    = ops_proctag.UNITNAME AND
-         wgb.ATTNUM      = ops_proctag.ATTNUM AND
-         ops_proctag.TAG = 'Y2T_FIRSTCUT';
+	 tile.tilename = 'DES0311-5040' AND
+         (ABS(me.RA_CENT  -  tile.RA_CENT)  < (0.5*tile.RA_SIZE  + 0.5*me.RA_SIZE)) AND
+         (ABS(me.DEC_CENT -  tile.DEC_CENT) < (0.5*tile.DEC_SIZE + 0.5*me.DEC_SIZE));
