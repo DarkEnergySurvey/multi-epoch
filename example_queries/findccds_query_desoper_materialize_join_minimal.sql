@@ -11,25 +11,25 @@ with ima as
          abs(image.DECCMAX - image.DECCMIN) as DEC_SIZE_CCD
          FROM image)
     SELECT
-         file_archive_info.FILENAME,
---	 file_archive_info.COMPRESSION,
---       file_archive_info.PATH,
-	 ima.RA_CENT,ima.DEC_CENT,
-         ima.CROSSRA0,
-	 ima.BAND,
-	 ima.RA_SIZE_CCD,ima.DEC_SIZE_CCD
+	 ima.FILENAME,
+	 ima.BAND
     FROM
-	 ima, ops_proctag, file_archive_info, felipe.coaddtile_new tile
+	 ima, ops_proctag, felipe.coaddtile_new tile
      WHERE
-         file_archive_info.FILENAME  = ima.FILENAME AND
          ima.FILETYPE    = 'red_immask' AND
-	 ima.PFW_ATTEMPT_ID = ops_proctag.PFW_ATTEMPT_ID AND
---	 Change tilename accordingly
+	 ima.PFW_ATTEMPT_ID = ops_proctag.PFW_ATTEMPT_ID AND	
+--	 Change TAG accordlingly	 
+         ops_proctag.TAG = 'Y2A1_FINALCUT' AND
+--       Optionally exclude blacklist
+--	 ima.filename NOT IN (select filename from image i, GRUENDL.MY_BLACKLIST b where i.expnum=b.expnum and i.ccdnum=b.ccdnum) AND
+--	 Change tilename accordingly (examples)
 	 tile.tilename = 'DES0311-5040' AND
 --	 tile.tilename = 'DES0309-5205' AND
 --	 tile.tilename = 'DES0307-5040' AND
 --       tile.tilename = 'DES0306-5123' AND
 --       tile.tilename = 'DES0516-5457' AND         
+--       tile.tilename = 'DES0516-5457' AND         
+--	 tile.tilename = 'DES2247-4414' AND
          (ABS(ima.RA_CENT  -  tile.RA_CENT)  < (0.5*tile.RA_SIZE  + 0.5*ima.RA_SIZE_CCD)) AND
          (ABS(ima.DEC_CENT -  tile.DEC_CENT) < (0.5*tile.DEC_SIZE + 0.5*ima.DEC_SIZE_CCD))
-     order by ima.RA_CENT;
+	 order by ima.BAND;
