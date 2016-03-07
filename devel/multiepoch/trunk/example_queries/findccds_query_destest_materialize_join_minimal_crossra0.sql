@@ -6,7 +6,8 @@ with ima as
     	 image.PFW_ATTEMPT_ID,
          image.BAND,
          image.CCDNUM,
-	 image.RA_CENT,image.DEC_CENT,
+	 image.DEC_CENT,
+	 (case when image.RA_CENT > 180. THEN image.RA_CENT-360. ELSE image.RA_CENT END) as RA_CENT,
          (case when image.CROSSRA0='Y' THEN abs(image.RACMAX - (image.RACMIN-360)) ELSE abs(image.RACMAX - image.RACMIN) END) as RA_SIZE_CCD,
          abs(image.DECCMAX - image.DECCMIN) as DEC_SIZE_CCD
          FROM image)
@@ -27,8 +28,9 @@ with ima as
 --	 Change tilename accordingly (examples)
 --       tile.tilename = 'DES0516-5457' AND    
 --	 tile.tilename = 'DES2359+0043' AND
-	 tile.tilename = 'DES2247-4414' AND
-         (ABS(ima.RA_CENT  -  tile.RA_CENT)  < (0.5*tile.RA_SIZE  + 0.5*ima.RA_SIZE_CCD)) AND
+--	 tile.tilename = 'DES2247-4414' AND
+	 tile.tilename = 'DES2359+0001' AND
+         (ABS(ima.RA_CENT  -  (tile.RA_CENT-360))  < (0.5*tile.RA_SIZE  + 0.5*ima.RA_SIZE_CCD)) AND
          (ABS(ima.DEC_CENT -  tile.DEC_CENT) < (0.5*tile.DEC_SIZE + 0.5*ima.DEC_SIZE_CCD))
 	 order by ima.BAND;
 
