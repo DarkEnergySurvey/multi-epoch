@@ -39,38 +39,10 @@ QUERY_ME_NP_TEMPLATE = """
          felipe.me_images_{tagname} me
          """
 
-QUERY_ME_IMAGES_TEMPLATE_NOSIZE = """
-with me as
-    (SELECT /*+ materialize */ 
-         me.*,
-         (case when me.CROSSRA0='Y' THEN abs(me.RACMAX - (me.RACMIN-360)) ELSE abs(me.RACMAX - me.RACMIN) END) as RA_SIZE,
-         abs(me.DECCMAX - me.DECCMIN) as DEC_SIZE
-         FROM felipe.me_images_Y2A1_FINALCUT_TEST me)
-     SELECT
-         {select_extras}
-         me.FILENAME,me.COMPRESSION,me.PATH,me.BAND,me.UNITNAME,
-         me.CROSSRA0,
-         me.RACMIN,me.RACMAX,
-         me.DECCMIN,me.DECCMAX,
-         me.RA_SIZE,me.DEC_SIZE,
-         me.RA_CENT, me.RAC1,  me.RAC2,  me.RAC3,  me.RAC4,
-         me.DEC_CENT,me.DECC1, me.DECC2, me.DECC3, me.DECC4
-     FROM
-         {from_extras} 
-         me
-     WHERE
-         {and_extras}
-         (ABS(me.RA_CENT  -  {ra_center_tile})  < (0.5*{ra_size_tile}  + 0.5*me.RA_SIZE)) AND
-         (ABS(me.DEC_CENT -  {dec_center_tile}) < (0.5*{dec_size_tile} + 0.5*me.DEC_SIZE))
-"""
-
-
 QUERY_ME_IMAGES_TEMPLATE = """
      SELECT
          {select_extras}
          me.FILENAME,me.COMPRESSION,me.PATH,me.BAND,me.UNITNAME,
-         me.RACMIN,me.RACMAX,
-         me.DECCMIN,me.DECCMAX,
          me.RA_SIZE,me.DEC_SIZE,
          me.RA_CENT, me.RAC1,  me.RAC2,  me.RAC3,  me.RAC4,
          me.DEC_CENT,me.DECC1, me.DECC2, me.DECC3, me.DECC4
@@ -87,8 +59,6 @@ QUERY_ME_IMAGES_TEMPLATE_RAZERO = """
  with me as 
     (SELECT /*+ materialize */
          FILENAME,COMPRESSION,PATH,BAND,UNITNAME,
-         RACMIN,RACMAX,
-         DECCMIN,DECCMAX,
          RA_SIZE,DEC_SIZE,
          (case when RA_CENT > 180. THEN RA_CENT-360. ELSE RA_CENT END) as RA_CENT, 
          (case when RAC1 > 180.    THEN RAC1-360.    ELSE RAC1 END) as RAC1,	  
@@ -100,6 +70,7 @@ QUERY_ME_IMAGES_TEMPLATE_RAZERO = """
   SELECT 
          {select_extras}
          me.FILENAME,me.COMPRESSION,me.PATH,me.BAND,me.UNITNAME,
+         me.RA_SIZE,me.DEC_SIZE,
          me.RA_CENT, me.RAC1,  me.RAC2,  me.RAC3,  me.RAC4,
          me.DEC_CENT,me.DECC1, me.DECC2, me.DECC3, me.DECC4
      FROM
@@ -107,8 +78,8 @@ QUERY_ME_IMAGES_TEMPLATE_RAZERO = """
          me
      WHERE
          {and_extras}
-         (ABS(me.RA_CENT  -  {ra_center_tile})  < (0.5*{ra_size_tile}  + 0.5*ABS(me.RAC2 - me.RAC3) )) AND
-         (ABS(me.DEC_CENT -  {dec_center_tile}) < (0.5*{dec_size_tile} + 0.5*ABS(me.DECC1- me.DECC2)))
+         (ABS(me.RA_CENT  -  {ra_center_tile})  < (0.5*{ra_size_tile}  + 0.5*me.RA_SIZE)) AND
+         (ABS(me.DEC_CENT -  {dec_center_tile}) < (0.5*{dec_size_tile} + 0.5*me.DEC_SIZE))
 """
 
 
@@ -129,8 +100,8 @@ QUERY_ME_CATALOGS_TEMPLATE = """
          felipe.me_images_{tagname} me
         WHERE
          {and_extras}
-         (ABS(me.RA_CENT  -  {ra_center_tile})  < (0.5*{ra_size_tile}  + 0.5*ABS(me.RAC2 - me.RAC3) )) AND
-         (ABS(me.DEC_CENT -  {dec_center_tile}) < (0.5*{dec_size_tile} + 0.5*ABS(me.DECC1- me.DECC2)))
+         (ABS(me.RA_CENT  -  {ra_center_tile})  < (0.5*{ra_size_tile}  + 0.5*me.RA_SIZE)) AND
+         (ABS(me.DEC_CENT -  {dec_center_tile}) < (0.5*{dec_size_tile} + 0.5*me.DEC_SIZE))
          )
          order by cat.FILENAME
 """
@@ -150,6 +121,7 @@ QUERY_ME_CATALOGS_TEMPLATE_RAZERO = """
          with me as 
           (SELECT /*+ materialize */ 
             FILENAME, COMPRESSION, PATH, BAND, UNITNAME,
+            RA_SIZE,DEC_SIZE,
             (case when RA_CENT > 180. THEN RA_CENT-360. ELSE RA_CENT END) as RA_CENT, 
             (case when RAC1 > 180.    THEN RAC1-360.    ELSE RAC1 END) as RAC1,	  
             (case when RAC2 > 180.    THEN RAC2-360.    ELSE RAC2 END) as RAC2,		
@@ -165,15 +137,15 @@ QUERY_ME_CATALOGS_TEMPLATE_RAZERO = """
          me
         WHERE
          {and_extras}
-         (ABS(me.RA_CENT  -  {ra_center_tile})  < (0.5*{ra_size_tile}  + 0.5*ABS(me.RAC2 - me.RAC3) )) AND
-         (ABS(me.DEC_CENT -  {dec_center_tile}) < (0.5*{dec_size_tile} + 0.5*ABS(me.DECC1- me.DECC2)))
+         (ABS(me.RA_CENT  -  {ra_center_tile})  < (0.5*{ra_size_tile}  + 0.5*me.RA_SIZE)) AND
+         (ABS(me.DEC_CENT -  {dec_center_tile}) < (0.5*{dec_size_tile} + 0.5*me.DEC_SIZE))
          )
          
          order by cat.FILENAME
 """
 
 
-# To be deprecated
+# The corner's method
 QUERY_ME_CORNERS = """
      SELECT
          {select_extras}

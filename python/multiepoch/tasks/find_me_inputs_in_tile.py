@@ -311,9 +311,10 @@ class Job(BaseJob):
             self.logger.info("Dumping assoc file to:%s" % assoc_default_name)
             self.write_dict2pandas(self.ctx.assoc,assoc_default_name,names=['FILEPATH_LOCAL','BAND','MAG_ZERO'],logger=self.logger)
 
-            test_file = "%s.assoc_test" % self.ctx.tilename
-            self.logger.info("Dumping assoc file to:%s" % test_file)
-            self.write_dict2pandas(self.ctx.assoc,test_file,names=['FILENAME','RA_CENT','DEC_CENT','RA_SIZE','DEC_SIZE','RACMIN','RACMAX',],logger=self.logger)
+            # Testing assoc file -- remove
+            #test_file = "%s.assoc_test" % self.ctx.tilename
+            #self.logger.info("Dumping assoc file to:%s" % test_file)
+            #self.write_dict2pandas(self.ctx.assoc,test_file,names=['FILENAME','RA_CENT','DEC_CENT','RA_SIZE','DEC_SIZE'],logger=self.logger)
 
 
         # We might want to spit out the assoc file anyways
@@ -351,8 +352,8 @@ class Job(BaseJob):
         assoc['DEC_CENT']    = CCDS['DEC_CENT']
         #assoc['CROSSRA0']    = CCDS['CROSSRA0']
 
-        assoc['RACMIN']     = CCDS['RACMIN']
-        assoc['RACMAX']     = CCDS['RACMAX']
+        #assoc['RACMIN']     = CCDS['RACMIN']
+        #assoc['RACMAX']     = CCDS['RACMAX']
 
         assoc['RA_SIZE']     = CCDS['RA_SIZE']
         assoc['DEC_SIZE']    = CCDS['DEC_SIZE']
