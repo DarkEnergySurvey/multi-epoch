@@ -85,23 +85,23 @@ QUERY_ME_IMAGES_TEMPLATE = """
 
 QUERY_ME_IMAGES_TEMPLATE_RAZERO = """
  with me as 
-    (SELECT /*+ materialize */ 
-          FILENAME, COMPRESSION, PATH, BAND, UNITNAME,
-          (case when RA_CENT > 180. THEN RA_CENT-360. ELSE RA_CENT END) as RA_CENT, 
-          (case when RAC1 > 180.    THEN RAC1-360.    ELSE RAC1 END) as RAC1,	  
-          (case when RAC2 > 180.    THEN RAC2-360.    ELSE RAC2 END) as RAC2,		
-          (case when RAC3 > 180.    THEN RAC3-360.    ELSE RAC3 END) as RAC3,
-          (case when RAC4 > 180.    THEN RAC4-360.    ELSE RAC4 END) as RAC4,
-          DEC_CENT, DECC1, DECC2, DECC3, DECC4
+    (SELECT /*+ materialize */
+         FILENAME,COMPRESSION,PATH,BAND,UNITNAME,
+         RACMIN,RACMAX,
+         DECCMIN,DECCMAX,
+         RA_SIZE,DEC_SIZE,
+         (case when RA_CENT > 180. THEN RA_CENT-360. ELSE RA_CENT END) as RA_CENT, 
+         (case when RAC1 > 180.    THEN RAC1-360.    ELSE RAC1 END) as RAC1,	  
+         (case when RAC2 > 180.    THEN RAC2-360.    ELSE RAC2 END) as RAC2,		
+         (case when RAC3 > 180.    THEN RAC3-360.    ELSE RAC3 END) as RAC3,
+         (case when RAC4 > 180.    THEN RAC4-360.    ELSE RAC4 END) as RAC4,
+         DEC_CENT, DECC1, DECC2, DECC3, DECC4
      FROM felipe.me_images_{tagname})
   SELECT 
          {select_extras}
          me.FILENAME,me.COMPRESSION,me.PATH,me.BAND,me.UNITNAME,
          me.RA_CENT, me.RAC1,  me.RAC2,  me.RAC3,  me.RAC4,
-         me.DEC_CENT,me.DECC1, me.DECC2, me.DECC3, me.DECC4,
-         me.CROSSRA0, me.RACMIN, me.RACMAX,
-         ABS(me.RAC2  - me.RAC3 )  as RA_SIZE_CCD,
-         ABS(me.DECC1 - me.DECC2 ) as DEC_SIZE_CCD	
+         me.DEC_CENT,me.DECC1, me.DECC2, me.DECC3, me.DECC4
      FROM
          {from_extras} 
          me
