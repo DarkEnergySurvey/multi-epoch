@@ -130,9 +130,8 @@ class Job(BaseJob):
         else:
             raise ValueError('Execution mode %s not implemented.' % execution_mode)
 
-
         # 4. Clean up psfcat files
-        if self.input.cleanupPSFcats and execute_mode == 'execute':
+        if self.input.cleanupPSFcats and execution_mode == 'execute':
             self.cleanup_PSFcats(execute=True)
         return
 
