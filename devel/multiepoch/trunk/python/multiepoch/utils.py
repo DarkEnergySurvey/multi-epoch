@@ -249,9 +249,10 @@ def update_tileinfo_RAZERO(tileinfo):
     if tileinfo['CROSSRAZERO'] == 'Y':
         for key in keys:
             if tileinfo[key] > 180: tileinfo[key] -= 360 
-            #else: tileinfo[key] += 180 
     return tileinfo
 
+# Update the RAs for the CCDS query
+# NOTE: We only use this when calculating distance using numpy
 def update_CCDS_RAZERO(CCDS,crossrazero=False):
     import numpy
     keys = ['RA_CENT','RAC1','RAC2','RAC3','RAC4']

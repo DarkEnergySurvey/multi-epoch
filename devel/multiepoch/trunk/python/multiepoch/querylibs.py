@@ -42,7 +42,7 @@ QUERY_ME_NP_TEMPLATE = """
 QUERY_ME_IMAGES_TEMPLATE = """
      SELECT
          {select_extras}
-         me.FILENAME,me.COMPRESSION,me.PATH,me.BAND,me.UNITNAME,
+         me.FILENAME,me.COMPRESSION,me.PATH,me.BAND,me.UNITNAME,me.EXPNUM,
          me.RA_SIZE,me.DEC_SIZE,
          me.RA_CENT, me.RAC1,  me.RAC2,  me.RAC3,  me.RAC4,
          me.DEC_CENT,me.DECC1, me.DECC2, me.DECC3, me.DECC4
@@ -58,7 +58,7 @@ QUERY_ME_IMAGES_TEMPLATE = """
 QUERY_ME_IMAGES_TEMPLATE_RAZERO = """
  with me as 
     (SELECT /*+ materialize */
-         FILENAME,COMPRESSION,PATH,BAND,UNITNAME,
+         FILENAME,COMPRESSION,PATH,BAND,UNITNAME,EXPNUM,
          RA_SIZE,DEC_SIZE,
          (case when RA_CENT > 180. THEN RA_CENT-360. ELSE RA_CENT END) as RA_CENT, 
          (case when RAC1 > 180.    THEN RAC1-360.    ELSE RAC1 END) as RAC1,	  
@@ -69,7 +69,7 @@ QUERY_ME_IMAGES_TEMPLATE_RAZERO = """
      FROM felipe.me_images_{tagname})
   SELECT 
          {select_extras}
-         me.FILENAME,me.COMPRESSION,me.PATH,me.BAND,me.UNITNAME,
+         me.FILENAME,me.COMPRESSION,me.PATH,me.BAND,me.UNITNAME,EXPNUM,
          me.RA_SIZE,me.DEC_SIZE,
          me.RA_CENT, me.RAC1,  me.RAC2,  me.RAC3,  me.RAC4,
          me.DEC_CENT,me.DECC1, me.DECC2, me.DECC3, me.DECC4
@@ -86,7 +86,7 @@ QUERY_ME_IMAGES_TEMPLATE_RAZERO = """
 QUERY_ME_CATALOGS_TEMPLATE = """
      SELECT 
          {select_extras}
-         distinct cat.FILENAME, cat.PATH, cat.BAND,cat.expnum,cat.CCDNUM, cat.UNITNAME
+         distinct cat.FILENAME, cat.PATH, cat.BAND,cat.CCDNUM, cat.UNITNAME,cat.EXPNUM
      FROM 
          felipe.me_catalogs_{tagname} cat,
          felipe.me_images_{tagname}   ima
@@ -110,7 +110,7 @@ QUERY_ME_CATALOGS_TEMPLATE = """
 QUERY_ME_CATALOGS_TEMPLATE_RAZERO = """
      SELECT 
          {select_extras}
-         distinct cat.FILENAME, cat.PATH, cat.BAND,cat.expnum,cat.CCDNUM,cat.UNITNAME
+         distinct cat.FILENAME, cat.PATH, cat.BAND,cat.CCDNUM,cat.UNITNAME,cat.EXPNUM
      FROM 
          felipe.me_catalogs_{tagname} cat,
          felipe.me_images_{tagname}   ima
@@ -149,16 +149,40 @@ QUERY_ME_CATALOGS_TEMPLATE_RAZERO = """
 QUERY_ME_CORNERS = """
      SELECT
          {select_extras}
-         me.FILENAME,me.COMPRESSION,me.PATH,me.BAND,
+         me.FILENAME,me.COMPRESSION,me.PATH,me.BAND,me.UNITNAME,
          me.RA_CENT, me.RAC1,  me.RAC2,  me.RAC3,  me.RAC4,
-         me.DEC_CENT,me.DECC1, me.DECC2, me.DECC3, me.DECC4,
-         ABS(me.RAC2  - me.RAC3 )  as RA_SIZE_CCD,
-         ABS(me.DECC1 - me.DECC2 ) as DEC_SIZE_CCD	
+         me.DEC_CENT,me.DECC1, me.DECC2, me.DECC3, me.DECC4
      FROM
          {from_extras} 
          felipe.me_images_{tagname} me
      WHERE
          {and_extras}
+         {and_corners}
+"""
+
+QUERY_ME_CORNERS_RAZERO = """
+ with me as 
+    (SELECT /*+ materialize */
+         FILENAME,COMPRESSION,PATH,BAND,UNITNAME,
+         RA_SIZE,DEC_SIZE,
+         (case when RA_CENT > 180. THEN RA_CENT-360. ELSE RA_CENT END) as RA_CENT, 
+         (case when RAC1 > 180.    THEN RAC1-360.    ELSE RAC1 END) as RAC1,	  
+         (case when RAC2 > 180.    THEN RAC2-360.    ELSE RAC2 END) as RAC2,		
+         (case when RAC3 > 180.    THEN RAC3-360.    ELSE RAC3 END) as RAC3,
+         (case when RAC4 > 180.    THEN RAC4-360.    ELSE RAC4 END) as RAC4,
+         DEC_CENT, DECC1, DECC2, DECC3, DECC4
+     FROM felipe.me_images_{tagname})
+     SELECT
+         {select_extras}
+         me.FILENAME,me.COMPRESSION,me.PATH,me.BAND,me.UNITNAME,
+         me.RA_CENT, me.RAC1,  me.RAC2,  me.RAC3,  me.RAC4,
+         me.DEC_CENT,me.DECC1, me.DECC2, me.DECC3, me.DECC4
+     FROM
+         {from_extras} 
+         me
+     WHERE
+         {and_extras}
+         {and_corners}
 """
 
 # ----------------
@@ -241,6 +265,9 @@ def get_CCDS_from_db_distance_sql(dbh, **kwargs):
     return CCDS 
 
 
+
+
+
 def get_CCDS_from_db_distance_np(dbh, **kwargs): 
     """
     Execute the database query that returns the ccds and store them in a numpy record array
@@ -300,25 +327,35 @@ def get_CCDS_from_db_corners(dbh, tile_edges, **kwargs):
     ***********
     """
 
-    QUERY_CCDS = QUERY_ME_CORNERS
-    logger = kwargs.pop('logger', None)
+    logger        = kwargs.pop('logger', None)
+    tagname       = kwargs.get('tagname')
+    tileinfo      = kwargs.get('tileinfo') 
+    select_extras = kwargs.get('select_extras','')
+    from_extras   = kwargs.get('from_extras','')
+    and_extras    = kwargs.get('and_extras','') 
 
     utils.pass_logger_debug("Building and running the query to find the CCDS",logger)
 
-    corners_and = [
-        "((image.RAC1 BETWEEN %.10f AND %.10f) AND (image.DECC1 BETWEEN %.10f AND %.10f))\n" % tile_edges,
-        "((image.RAC2 BETWEEN %.10f AND %.10f) AND (image.DECC2 BETWEEN %.10f AND %.10f))\n" % tile_edges,
-        "((image.RAC3 BETWEEN %.10f AND %.10f) AND (image.DECC3 BETWEEN %.10f AND %.10f))\n" % tile_edges,
-        "((image.RAC4 BETWEEN %.10f AND %.10f) AND (image.DECC4 BETWEEN %.10f AND %.10f))\n" % tile_edges,
+    # Decide the template to use
+    if tileinfo['CROSSRAZERO'] == 'Y':
+        QUERY_CCDS = QUERY_ME_CORNERS_RAZERO
+    else:
+        QUERY_CCDS = QUERY_ME_CORNERS
+
+    corners_list = [
+        "((me.RAC1 BETWEEN %.10f AND %.10f) AND (me.DECC1 BETWEEN %.10f AND %.10f))\n" % tile_edges,
+        "((me.RAC2 BETWEEN %.10f AND %.10f) AND (me.DECC2 BETWEEN %.10f AND %.10f))\n" % tile_edges,
+        "((me.RAC3 BETWEEN %.10f AND %.10f) AND (me.DECC3 BETWEEN %.10f AND %.10f))\n" % tile_edges,
+        "((me.RAC4 BETWEEN %.10f AND %.10f) AND (me.DECC4 BETWEEN %.10f AND %.10f))\n" % tile_edges,
         ]
 
     ccd_query = QUERY_CCDS.format(
-        tagname       = kwargs.get('tagname'),
-        select_extras = kwargs.get('select_extras'),
-        from_extras   = kwargs.get('from_extras'),
-        and_extras    = kwargs.get('and_extras') + ' AND\n (' + ' OR '.join(corners_and) + ')'
+        tagname       = tagname,
+        select_extras = select_extras,
+        from_extras   = from_extras,
+        and_extras    = and_extras,
+        and_corners   = '(\n' + ' OR '.join(corners_list) + '\n)'
         )
-
     utils.pass_logger_debug("Will execute the query:\n%s\n" %  ccd_query,logger)
     
     # Get the ccd images that are part of the DESTILE
@@ -327,10 +364,10 @@ def get_CCDS_from_db_corners(dbh, tile_edges, **kwargs):
 
     # Here we fix 'COMPRESSION' from None --> '' if present
     if 'COMPRESSION' in CCDS.dtype.names:
-        CCDS['COMPRESSION'] = numpy.where(CCDS['COMPRESSION'],CCDS['COMPRESSION'],'')
+        compression = [ '' if c is None else c for c in CCDS['COMPRESSION'] ]
+        CCDS['COMPRESSION'] = numpy.array(compression)
+
     return CCDS 
-
-
 
 def get_CATS_from_db_distance_sql(dbh, **kwargs): 
     """

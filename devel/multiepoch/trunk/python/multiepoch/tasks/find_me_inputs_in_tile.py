@@ -250,7 +250,7 @@ class Job(BaseJob):
         # Put the inputs as kwargs
         input_kw = self.input.as_dict()
 
-        # Update tileinfo -- does nothing if we do not cross RA=0
+        # Update tileinfo RA values -- does nothing if we do not cross RA=0
         self.ctx.tileinfo = utils.update_tileinfo_RAZERO(self.ctx.tileinfo)
 
         # Corner's method -- only works if CCDs are smaller than the TILE
@@ -261,10 +261,11 @@ class Job(BaseJob):
         # Distance method -- the more general case
         # Numpy version
         #self.ctx.CCDS = querylibs.get_CCDS_from_db_distance_np(DBH, logger=LOG,**input_kw)
-        # Get the input images
+
+        # SQL Template version
         self.ctx.CCDS = querylibs.get_CCDS_from_db_distance_sql(DBH, logger=LOG,**input_kw)
 
-        # Optinal: Get the input catalogs if we want to run scamp for super-alignment
+        # Optional: Get the input catalogs if we want to run scamp for super-alignment
         if self.ctx.super_align:
             self.ctx.CATS = querylibs.get_CATS_from_db_distance_sql(DBH, logger=LOG,**input_kw)
             # Make sure that we find the same number of exposure/unitnames
@@ -311,7 +312,7 @@ class Job(BaseJob):
             self.logger.info("Dumping assoc file to:%s" % assoc_default_name)
             self.write_dict2pandas(self.ctx.assoc,assoc_default_name,names=['FILEPATH_LOCAL','BAND','MAG_ZERO'],logger=self.logger)
 
-            # Testing assoc file -- remove
+            ## Testing assoc file -- remove
             #test_file = "%s.assoc_test" % self.ctx.tilename
             #self.logger.info("Dumping assoc file to:%s" % test_file)
             #self.write_dict2pandas(self.ctx.assoc,test_file,names=['FILENAME','RA_CENT','DEC_CENT','RA_SIZE','DEC_SIZE'],logger=self.logger)
@@ -348,15 +349,15 @@ class Job(BaseJob):
         assoc['FILENAME']    = CCDS['FILENAME']
         assoc['COMPRESSION'] = CCDS['COMPRESSION']
 
-        assoc['RA_CENT']     = CCDS['RA_CENT']
-        assoc['DEC_CENT']    = CCDS['DEC_CENT']
+        #assoc['RA_CENT']     = CCDS['RA_CENT']
+        #assoc['DEC_CENT']    = CCDS['DEC_CENT']
         #assoc['CROSSRA0']    = CCDS['CROSSRA0']
 
         #assoc['RACMIN']     = CCDS['RACMIN']
         #assoc['RACMAX']     = CCDS['RACMAX']
 
-        assoc['RA_SIZE']     = CCDS['RA_SIZE']
-        assoc['DEC_SIZE']    = CCDS['DEC_SIZE']
+        #assoc['RA_SIZE']     = CCDS['RA_SIZE']
+        #assoc['DEC_SIZE']    = CCDS['DEC_SIZE']
 
         if 'MAG_ZERO'in CCDS.dtype.names:
             assoc['MAG_ZERO']    = CCDS['MAG_ZERO']
