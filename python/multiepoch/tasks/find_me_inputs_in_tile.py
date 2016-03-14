@@ -255,15 +255,15 @@ class Job(BaseJob):
 
         # Corner's method -- only works if CCDs are smaller than the TILE
         # Create the tile_edges tuple structure and query the database
-        #tile_edges = self.get_tile_edges(self.ctx.tileinfo)
-        #self.ctx.CCDS = querylibs.get_CCDS_from_db_corners(DBH, tile_edges,logger=LOG,**self.input.as_dict())
+        tile_edges = self.get_tile_edges(self.ctx.tileinfo)
+        self.ctx.CCDS = querylibs.get_CCDS_from_db_corners(DBH, tile_edges,logger=LOG,**self.input.as_dict())
 
         # Distance method -- the more general case
         # Numpy version
         #self.ctx.CCDS = querylibs.get_CCDS_from_db_distance_np(DBH, logger=LOG,**input_kw)
 
         # SQL Template version
-        self.ctx.CCDS = querylibs.get_CCDS_from_db_distance_sql(DBH, logger=LOG,**input_kw)
+        #self.ctx.CCDS = querylibs.get_CCDS_from_db_distance_sql(DBH, logger=LOG,**input_kw)
 
         # Optional: Get the input catalogs if we want to run scamp for super-alignment
         if self.ctx.super_align:
