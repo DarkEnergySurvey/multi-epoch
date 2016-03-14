@@ -10,6 +10,7 @@ import despyastro
 from despyastro import astrometry
 from despyastro import wcsutil
 import numpy
+import pandas as pd
 
 class DEStiling:
     
@@ -29,13 +30,28 @@ class DEStiling:
     def __init__ (self, pixscale=0.263,
                   NAXIS1=10000,
                   NAXIS2=10000,
+                  CTYPE1='RA---TAN', # do not change unless you know what you're doing!
+                  CTYPE2='DEC--TAN', # do not change unless you know what you're doing!
                   tileprefix='DES'):
 
         self.pixelscale = pixscale
         self.NAXIS1     = NAXIS1
         self.NAXIS2     = NAXIS2
         self.tileprefix = tileprefix
+        self.CTYPE1     = CTYPE1
+        self.CTYPE2     = CTYPE2
 
+    def read_old_IDs(self):
+
+        """
+        Read in the pandas format file with the previous
+        desadmin.coaddtile table that contains the ID for each tilename
+        """
+        filename = os.path.join(os.environ['MULTIEPOCH_DIR'],'etc','COADDTILE_from_desoper_20160314.tab')
+        print "# Reading old IDs from file: %s" % filename
+        self.coaddtile_ids = pd.read_csv(filename,sep=' ')
+        self.coaddtile_idmax = self.coaddtile_ids['COADDTILE_ID'].max()
+        self.coaddtile_idmin = self.coaddtile_ids['COADDTILE_ID'].min()
 
     def get_tilename(self):
 
@@ -47,6 +63,15 @@ class DEStiling:
         else:
             self.tilename = "%s%s+%s" % (self.tileprefix,RA,DEC)
         return
+
+    def get_ID(self):
+        try:
+            id =  self.coaddtile_ids['COADDTILE_ID'][self.coaddtile_ids['TILENAME']==self.tilename].tolist()
+            self.coaddtile_id = id[0]
+        except:
+            print "# Could not find COADDTILE_ID in old table"
+            self.coaddtile_id    =  self.coaddtile_idmax + 1
+            self.coaddtile_idmax = self.coaddtile_id
 
     @staticmethod
     def get_overlap(dec):
@@ -221,6 +246,7 @@ class DEStiling:
         # Create command
         create = """
         create table %s (
+        COADDTILE_ID            NUMBER(22,6),
         TILENAME                VARCHAR2(50),
         RA_CENT                 NUMBER(15,10),
         DEC_CENT                NUMBER(15,10),
@@ -242,7 +268,7 @@ class DEStiling:
         URAU                    NUMBER(15,10),
         UDECL                   NUMBER(15,10),
         UDECU                   NUMBER(15,10),
-        CROSSRAZERO             CHAR(1) check (CROSSRAZERO in ('N','Y')),
+        CROSSRA0                CHAR(1) check (CROSSRA0 in ('N','Y')),
         PIXELSCALE              NUMBER(10,5),
         NAXIS1                  NUMBER(6),
         NAXIS2                  NUMBER(6),
@@ -254,13 +280,17 @@ class DEStiling:
         CD1_2                   NUMBER(15,10),
         CD2_1                   NUMBER(15,10),
         CD2_2                   NUMBER(15,10),
-        constraint %s PRIMARY KEY (TILENAME)
+        CTYPE1                  CHAR(12),
+        CTYPE2                  CHAR(12),
+        constraint %s PRIMARY KEY (COADDTILE_ID)
         )
         """ % (table,table.split(".")[1])
         
         # -- Add description of columns
-        comments ="""comment on column %s.DEC_CENT    is 'DEC  center of DES tile (deg)' 
+        comments ="""comment on column %s.COADDTILE_ID    is 'Unique TILENAME ID'
+        comment on column %s.TILENAME    is 'Unique DES TILENAME identifier'
         comment on column %s.RA_CENT  is 'RA center of DES file (deg)'
+        comment on column %s.DEC_CENT is 'DEC  center of DES tile (deg)' 
         comment on column %s.RAC1     is 'Corner 1 RA of DES tile (deg)'
         comment on column %s.RAC2     is 'Corner 2 RA of DES tile (deg)'
         comment on column %s.RAC3     is 'Corner 3 RA of DES tile (deg)'
@@ -279,7 +309,20 @@ class DEStiling:
         comment on column %s.URAU     is 'Unique RA upper (deg)'
         comment on column %s.UDECL    is 'Unique DEC lower (deg)'
         comment on column %s.UDECU    is 'Unique DEC upper (deg)'
-        comment on column %s.CROSSRAZERO  is 'DES tile crosses RA=0 [Y/N]'"""
+        comment on column %s.CROSSRA0 is 'DES tile crosses RA=0 [Y/N]'
+        comment on column %s.PIXELSCALE is 'Pixel-scale in arcsec/pixel'
+        comment on column %s.NAXIS1   is 'Number of pixels along this axis 1'
+        comment on column %s.NAXIS2   is 'Number of pixels along this axis 2'
+        comment on column %s.CRPIX1   is 'World coordinate on axis 1'
+        comment on column %s.CRPIX2   is 'World coordinate on axis 2'
+        comment on column %s.CRVAL1   is 'Reference pixel on axis 1'
+        comment on column %s.CRVAL2   is 'Reference pixel on axis 2'
+        comment on column %s.CD1_1    is 'Linear projection matrix[1,1]'
+        comment on column %s.CD1_2    is 'Linear projection matrix[1,2]'
+        comment on column %s.CD2_1    is 'Linear projection matrix[2,1]'
+        comment on column %s.CD2_2    is 'Linear projection matrix[2,2]'
+        comment on column %s.CTYPE1   is 'WCS projection type for this axis 1'
+        comment on column %s.CTYPE2   is 'WCS projection type for this axis 2'"""
 
         print "# Will create new COADDTILE table: %s" % table
         try:
@@ -318,7 +361,8 @@ class DEStiling:
         
         dbh = self.dbh
 
-        columns = ('TILENAME',
+        columns = ('COADDTILE_ID',
+                   'TILENAME',
                    'RA_CENT',
                    'DEC_CENT',
                    'RAC1',
@@ -339,7 +383,7 @@ class DEStiling:
                    'URAU',
                    'UDECL',
                    'UDECU',
-                   'CROSSRAZERO',
+                   'CROSSRA0',
                    'PIXELSCALE',
                    'NAXIS1',
                    'NAXIS2',
@@ -350,9 +394,13 @@ class DEStiling:
                    'CD1_1',
                    'CD1_2',
                    'CD2_1',
-                   'CD2_2')
+                   'CD2_2',
+                   'CTYPE1',
+                   'CTYPE2'
+                   )
 
-        values = (self.tilename,
+        values = (self.coaddtile_id,
+                  self.tilename,
                   self.ra_center,
                   self.dec_center,
                   self.RAC1,
@@ -384,11 +432,12 @@ class DEStiling:
                   self.header['CD1_1'],
                   self.header['CD1_2'],
                   self.header['CD2_1'],
-                  self.header['CD2_2'])
+                  self.header['CD2_2'],
+                  self.header['CTYPE1'],
+                  self.header['CTYPE2'])
 
         cols = ",".join(columns)
         insert_cmd = "INSERT INTO %s (%s) VALUES %s" % (table,cols,values)
-
         sys.stdout.write("\r# Inserting %s to %s" % (self.tilename,table))
         sys.stdout.flush()
 
@@ -411,7 +460,10 @@ class DEStiling:
         This is the ugly and unelengant loop to reproduce the *exact*
         DES tile arrangment on the sky.
         """
-        
+
+        # Get the old IDs
+        self.read_old_IDs()
+
         # The final RA
         ra_end = ra_ini + ra_range
 
@@ -472,6 +524,11 @@ class DEStiling:
                 self.get_tilename()
                 #print "# Computing TILE: %s" % self.tilename
 
+                # Get the ID for the tilename
+                self.get_ID()
+                #print self.tilename
+                #print self.coaddtile_id[0]
+
                 # Fix values > 360 for unique edges
                 if self.ural > 360:
                     self.ural = self.ural - 360
@@ -518,6 +575,7 @@ class DEStiling:
             print ""
 
         return
+
 
 ############ DESTILE Header example #####################################
 #NAXIS   =                    2 /
