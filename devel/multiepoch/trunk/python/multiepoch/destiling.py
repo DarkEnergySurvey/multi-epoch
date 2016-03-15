@@ -246,51 +246,52 @@ class DEStiling:
         # Create command
         create = """
         create table %s (
-        COADDTILE_ID            NUMBER(22,6),
-        TILENAME                VARCHAR2(50),
-        RA_CENT                 NUMBER(15,10),
-        DEC_CENT                NUMBER(15,10),
-        RAC1			NUMBER(15,10),
-        RAC2			NUMBER(15,10),
-        RAC3			NUMBER(15,10),
-        RAC4			NUMBER(15,10),
-        DECC1			NUMBER(15,10),
-        DECC2			NUMBER(15,10),
-        DECC3			NUMBER(15,10),
-        DECC4			NUMBER(15,10),
-        RACMIN                  NUMBER(15,10),
-        RACMAX                  NUMBER(15,10),
-        DECCMIN                 NUMBER(15,10),
-        RA_SIZE                 NUMBER(15,10),
-        DEC_SIZE                NUMBER(15,10),
-        DECCMAX                 NUMBER(15,10),
-        URAL                    NUMBER(15,10),
-        URAU                    NUMBER(15,10),
-        UDECL                   NUMBER(15,10),
-        UDECU                   NUMBER(15,10),
-        CROSSRA0                CHAR(1) check (CROSSRA0 in ('N','Y')),
-        PIXELSCALE              NUMBER(10,5),
-        NAXIS1                  NUMBER(6),
-        NAXIS2                  NUMBER(6),
-        CRPIX1                  NUMBER(15,10),
-        CRPIX2                  NUMBER(15,10),
-        CRVAL1                  NUMBER(15,10),
-        CRVAL2                  NUMBER(15,10),
-        CD1_1                   NUMBER(15,10),
-        CD1_2                   NUMBER(15,10),
-        CD2_1                   NUMBER(15,10),
-        CD2_2                   NUMBER(15,10),
-        CTYPE1                  CHAR(12),
-        CTYPE2                  CHAR(12),
-        constraint %s PRIMARY KEY (COADDTILE_ID)
+        ID            NUMBER(22,6) NOT NULL,
+        TILENAME                VARCHAR2(50) NOT NULL,
+        RA_CENT                 NUMBER(15,10) NOT NULL,
+        DEC_CENT                NUMBER(15,10) NOT NULL,
+        RAC1			NUMBER(15,10) NOT NULL,
+        RAC2			NUMBER(15,10) NOT NULL,
+        RAC3			NUMBER(15,10) NOT NULL,
+        RAC4			NUMBER(15,10) NOT NULL,
+        DECC1			NUMBER(15,10) NOT NULL,
+        DECC2			NUMBER(15,10) NOT NULL,
+        DECC3			NUMBER(15,10) NOT NULL,
+        DECC4			NUMBER(15,10) NOT NULL,
+        RACMIN                  NUMBER(15,10) NOT NULL,
+        RACMAX                  NUMBER(15,10) NOT NULL,
+        DECCMIN                 NUMBER(15,10) NOT NULL,
+        RA_SIZE                 NUMBER(15,10) NOT NULL,
+        DEC_SIZE                NUMBER(15,10) NOT NULL,
+        DECCMAX                 NUMBER(15,10) NOT NULL,
+        URAMIN                  NUMBER(15,10) NOT NULL,
+        URAMAX                  NUMBER(15,10) NOT NULL,
+        UDECMIN                 NUMBER(15,10) NOT NULL,
+        UDECMAX                 NUMBER(15,10) NOT NULL,
+        CROSSRA0                CHAR(1) check (CROSSRA0 in ('N','Y')) NOT NULL,
+        PIXELSCALE              NUMBER(10,5) NOT NULL,
+        NAXIS1                  NUMBER(6) NOT NULL,
+        NAXIS2                  NUMBER(6) NOT NULL,
+        CRPIX1                  NUMBER(15,10) NOT NULL,
+        CRPIX2                  NUMBER(15,10) NOT NULL,
+        CRVAL1                  NUMBER(15,10) NOT NULL,
+        CRVAL2                  NUMBER(15,10) NOT NULL,
+        CD1_1                   NUMBER(15,10) NOT NULL,
+        CD1_2                   NUMBER(15,10) NOT NULL,
+        CD2_1                   NUMBER(15,10) NOT NULL,
+        CD2_2                   NUMBER(15,10) NOT NULL,
+        CTYPE1                  CHAR(12) NOT NULL,
+        CTYPE2                  CHAR(12) NOT NULL,
+        constraint %s PRIMARY KEY (ID),
+        constraint %s_unique UNIQUE(TILENAME)
         )
-        """ % (table,table.split(".")[1])
+        """ % (table,table.split(".")[1],table.split(".")[1])
         
         # -- Add description of columns
-        comments ="""comment on column %s.COADDTILE_ID    is 'Unique TILENAME ID'
+        comments ="""comment on column %s.ID    is 'Unique TILENAME ID'
         comment on column %s.TILENAME    is 'Unique DES TILENAME identifier'
         comment on column %s.RA_CENT  is 'RA center of DES file (deg)'
-        comment on column %s.DEC_CENT is 'DEC  center of DES tile (deg)' 
+        comment on column %s.DEC_CENT is 'DEC center of DES tile (deg)' 
         comment on column %s.RAC1     is 'Corner 1 RA of DES tile (deg)'
         comment on column %s.RAC2     is 'Corner 2 RA of DES tile (deg)'
         comment on column %s.RAC3     is 'Corner 3 RA of DES tile (deg)'
@@ -305,10 +306,10 @@ class DEStiling:
         comment on column %s.DECCMAX  is 'Maximum DEC[1-4] corner (deg)'
         comment on column %s.RA_SIZE  is 'RA  Size of DES tile (deg)'
         comment on column %s.DEC_SIZE is 'DEC Size of DES tile (deg)'
-        comment on column %s.URAL     is 'Unique RA lower (deg)'
-        comment on column %s.URAU     is 'Unique RA upper (deg)'
-        comment on column %s.UDECL    is 'Unique DEC lower (deg)'
-        comment on column %s.UDECU    is 'Unique DEC upper (deg)'
+        comment on column %s.URAMIN   is 'Unique RA lower (deg)'
+        comment on column %s.URAMAX   is 'Unique RA upper (deg)'
+        comment on column %s.UDECMIN  is 'Unique DEC lower (deg)'
+        comment on column %s.UDECMAX  is 'Unique DEC upper (deg)'
         comment on column %s.CROSSRA0 is 'DES tile crosses RA=0 [Y/N]'
         comment on column %s.PIXELSCALE is 'Pixel-scale in arcsec/pixel'
         comment on column %s.NAXIS1   is 'Number of pixels along this axis 1'
@@ -361,7 +362,7 @@ class DEStiling:
         
         dbh = self.dbh
 
-        columns = ('COADDTILE_ID',
+        columns = ('ID',
                    'TILENAME',
                    'RA_CENT',
                    'DEC_CENT',
@@ -379,10 +380,10 @@ class DEStiling:
                    'DECCMAX',
                    'RA_SIZE',
                    'DEC_SIZE',
-                   'URAL',
-                   'URAU',
-                   'UDECL',
-                   'UDECU',
+                   'URAMIN',
+                   'URAMAX',
+                   'UDECMIN',
+                   'UDECMAX',
                    'CROSSRA0',
                    'PIXELSCALE',
                    'NAXIS1',
@@ -417,10 +418,10 @@ class DEStiling:
                   self.DECCMAX,
                   self.RA_SIZE,
                   self.DEC_SIZE,
-                  self.ural,
-                  self.urau,
-                  self.udecl,
-                  self.udecu,
+                  self.URAMIN,
+                  self.URAMAX,
+                  self.UDECMIN,
+                  self.UDECMAX,
                   self.crossRAzero,
                   self.pixelscale,
                   self.header['NAXIS1'],
@@ -557,6 +558,26 @@ class DEStiling:
 
                 # Compute the new corners RAC[1,4] and DEC[1,4] -- needs a header dictionary
                 self.computeCornersTilename()
+
+                # Assign URAMIN,URAMAX,UDECMIN,UDECMAX
+                if self.ural > self.urau and self.crossRAzero=='Y':
+                    self.URAMIN = self.urau
+                    self.URAMAX = self.ural
+                else:
+                    self.URAMIN = self.ural
+                    self.URAMAX = self.urau
+
+                self.UDECMIN = self.udecl
+                self.UDECMAX = self.udecu
+
+                # Make sure that there are no inconsistencies
+                if  self.URAMIN > self.URAMAX:
+                    print "# Incosistem URAs: %s -- crossra0 = %s" % (self.tilename, self.crossRAzero)
+                    print self.URAMIN, self.URAMAX
+                    
+                if  self.UDECMIN > self.UDECMAX:
+                    print "# Incosistem UDECs: %s -- crossra0 = %s" % (self.tilename,self.crossRAzero)
+                    print self.UDECMIN, self.UDECMAX
                 
                 # Here we might want to add the module that will add entroies to a DB
                 if writeDB: self.insertCOADDTILE(table=tablename)
