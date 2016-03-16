@@ -195,7 +195,7 @@ class DEStiling:
         COADDTILE_from_desar_20140517.csv
         """
         
-        cur = self.dbh.cursor()
+        cur = self.dbh_oper.cursor()
         
         # ------------- DB Section ------------------------
         # Query the COADDTILE table to compare results
@@ -213,10 +213,13 @@ class DEStiling:
          URALL, URAUR, UDECLL, UDECUR) = cur.fetchone()
         # ------------- DB Section ------------------------
 
+        d2r = math.pi/180. # degrees to radians shorthand
+        RAtol = 1e-5/math.cos(DEC*d2r)
+        DECtol= 1e-5
         # Check for variations in the centroid
         dRA  = abs(self.ra_center  - RA)
         dDEC = abs(self.dec_center - DEC)
-        if dRA > 1e-3 or dDEC > 1e-3:
+        if dRA > RAtol or dDEC > DECtol:
             print "RA,DEC problem for %s, %s %s" % (self.tilename, dRA, dDEC)
             
         # Check (U)pper and (L)ower RAs
@@ -224,13 +227,13 @@ class DEStiling:
         if URAUR > 360: URAUR = URAUR - 360 # 
         dURAL = abs(URALL - self.ural)
         dURAU = abs(URAUR - self.urau)
-        if dURAL > 1e-3 or dURAU > 1e-3:
+        if dURAL > RAtol or dURAU > RAtol:
             print "URA[L,U] problem for %s, %s %s" % (self.tilename, dURAL, dURAU)
 
         # Check (U)pper and (L)ower DECs
         dUDECL = abs(UDECLL-self.udecl)
         dUDECU = abs(UDECUR-self.udecu)
-        if dUDECL > 1e-3 or dUDECU > 1e-3:
+        if dUDECL > DECtol or dUDECU > DECtol:
             print "UDEC[L,U] problem for %s, %s %s" % (self.tilename, dUDECL, dUDECU)
 
         cur.close()
@@ -306,10 +309,10 @@ class DEStiling:
         comment on column %s.DECCMAX  is 'Maximum DEC[1-4] corner (deg)'
         comment on column %s.RA_SIZE  is 'RA  Size of DES tile (deg)'
         comment on column %s.DEC_SIZE is 'DEC Size of DES tile (deg)'
-        comment on column %s.URAMIN   is 'Unique RA lower (deg)'
-        comment on column %s.URAMAX   is 'Unique RA upper (deg)'
-        comment on column %s.UDECMIN  is 'Unique DEC lower (deg)'
-        comment on column %s.UDECMAX  is 'Unique DEC upper (deg)'
+        comment on column %s.URAMIN   is 'Unique RA min (deg)'
+        comment on column %s.URAMAX   is 'Unique RA max (deg)'
+        comment on column %s.UDECMIN  is 'Unique DEC min (deg)'
+        comment on column %s.UDECMAX  is 'Unique DEC max (deg)'
         comment on column %s.CROSSRA0 is 'DES tile crosses RA=0 [Y/N]'
         comment on column %s.PIXELSCALE is 'Pixel-scale in arcsec/pixel'
         comment on column %s.NAXIS1   is 'Number of pixels along this axis 1'
@@ -469,8 +472,13 @@ class DEStiling:
         ra_end = ra_ini + ra_range
 
         # Connect if we'd like to check against DB
-        if checkDB or writeDB:
+        if writeDB:
             self.dbh = despydb.desdbi.DesDbi(section=sectionDB)
+
+        # Connect to desoper we'd like to check against DB
+        if checkDB:
+            self.dbh_oper = despydb.desdbi.DesDbi(section='db-desoper')
+
 
         # if write DB, initialize the table
         if writeDB: self.createCOADDTILE(table=tablename)
@@ -560,18 +568,13 @@ class DEStiling:
                 self.computeCornersTilename()
 
                 # Assign URAMIN,URAMAX,UDECMIN,UDECMAX
-                if self.ural > self.urau and self.crossRAzero=='Y':
-                    self.URAMIN = self.urau
-                    self.URAMAX = self.ural
-                else:
-                    self.URAMIN = self.ural
-                    self.URAMAX = self.urau
-
+                self.URAMIN = self.ural
+                self.URAMAX = self.urau
                 self.UDECMIN = self.udecl
                 self.UDECMAX = self.udecu
 
                 # Make sure that there are no inconsistencies
-                if  self.URAMIN > self.URAMAX:
+                if  self.URAMIN > self.URAMAX and self.crossRAzero=='N':
                     print "# Incosistem URAs: %s -- crossra0 = %s" % (self.tilename, self.crossRAzero)
                     print self.URAMIN, self.URAMAX
                     
