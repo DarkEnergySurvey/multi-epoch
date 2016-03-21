@@ -1,5 +1,6 @@
 
 from mojo.utils import directory_handler
+import os
 
 # DIRECTORIES
 # -----------------------------------------------------------------------------
@@ -349,11 +350,17 @@ def get_default_scampheads_file(tiledir, tilename):
     filename = "%s_scampheads.list" % tilename
     return dh.place_file(filename, 'aux')
 
-
 def get_scamp_plots(tiledir, tilename,plotnames):
     dh = get_tiledir_handler(tiledir)
     filenames = []
     for plotname in plotnames:
         filename = "%s_%s" % (tilename,plotname)
         filenames.append(dh.place_file(filename, 'qa'))
+    return filenames
+
+def get_scamp_plots_relative(tilename,plotnames):
+    filenames = []
+    for plotname in plotnames:
+        filename = "%s_%s" % (tilename,plotname)
+        filenames.append(os.path.join('qa',filename))
     return filenames
