@@ -24,7 +24,7 @@ from mojo.utils import log as mojo_log
 # JOB INTERNAL CONFIGURATION
 SCAMP_EXE = 'scamp'
 DETNAME = 'det'
-BKLINE = "\\\n"
+BKLINE = " \\\n"
 class Job(BaseJob):
 
     class Input(IO):
@@ -211,10 +211,19 @@ class Job(BaseJob):
         self.logger.info("Will write to logfile: %s" % logfile)
         t0 = time.time()
 
+        current_cwd = os.getcwd()
+        self.logger.info("Moving to the TILEDIR directory for execution")
+        os.chdir(self.ctx.tiledir)
+        
+
         cmd  = ' '.join(cmd_list)
         self.logger.info("Executing scamp super-alignment for tile:%s" % self.ctx.tilename_fh)
         self.logger.info("%s " % cmd)
         status = subprocess.call(cmd,shell=True,stdout=log, stderr=log)
+
+        # Move back to current dir
+        self.logger.info("Moving back to current dir")
+        os.chdir(current)
         if status > 0:
             raise RuntimeError("\n***\nERROR while running scamp, check logfile: %s\n***" % logfile)
         self.logger.info("Total scamp time: %s" % elapsed_time(t0))
@@ -260,7 +269,7 @@ class Job(BaseJob):
         with kwargs to this function.
         """
         checkplot_type = "astr_pixerror1d,astr_referror1d,fgroups,astr_referror2d,astr_refsysmap,distortion"
-        checkplot_name = ",".join( fh.get_scamp_plots(self.input.tiledir, self.input.tilename_fh, checkplot_type.split(',')))
+        checkplot_name = ",".join( fh.get_scamp_plots_relative(self.input.tilename_fh, checkplot_type.split(',')))
         scamp_parameters = {
             "CHECKPLOT_TYPE"  : checkplot_type,
             "CHECKPLOT_NAME"  : checkplot_name,
@@ -283,8 +292,17 @@ class Job(BaseJob):
 
         self.logger.info("Will write combine_cats call to: %s" % cmdfile)
         with open(cmdfile, mode) as fid:
+            fid.write("#!/usr/bin/env bash\n\n")
+            fid.write('# Save current pwd\n')
+            fid.write("current=`pwd`\n")
+            fid.write("cd %s\n" % self.ctx.tiledir)
             fid.write(bkline.join(cmd_list)+'\n')
             fid.write('\n\n')
+            fid.write('# Get back to prev directory\n')
+            fid.write('cd $current\n')
+            fid.write('\n\n')
+
+        os.chmod(cmdfile, 0755)
         return
 
     # -------------------------------------------------------------------------
