@@ -167,7 +167,7 @@ class Job(BaseJob):
                 self.logger.info("Executing SExDual for BAND:%s" % band)
                 self.logger.info("%s " % cmd)
                 status = subprocess.call(cmd,shell=True,stdout=log, stderr=log)
-                if status > 0:
+                if status != 0:
                     raise RuntimeError("\n***\nERROR while running SExDual, check logfile: %s\n***" % logfile)
                 self.logger.info("Done band %s in %s" % (band,elapsed_time(t1)))
             

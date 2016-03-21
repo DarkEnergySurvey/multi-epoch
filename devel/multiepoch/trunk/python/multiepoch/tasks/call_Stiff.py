@@ -135,7 +135,7 @@ class Job(BaseJob):
             self.logger.info("Executing stiff for tile:%s " % self.input.tilename_fh)
             self.logger.info("%s " % cmd)
             status = subprocess.call(cmd,shell=True,stdout=log, stderr=log)
-            if status > 0:
+            if status != 0:
                 raise ValueError(" ERROR while running Stiff, check logfile: %s " % logfile)
             self.logger.info("Total stiff time %s" % elapsed_time(t0))
         else:
