@@ -329,7 +329,7 @@ class Job(BaseJob):
             self.logger.info("Executing SWarp SCI for tile:%s, BAND:%s" % (self.ctx.tilename_fh,band))
             self.logger.info("%s " % cmd)
             status = subprocess.call(cmd,shell=True,stdout=log, stderr=log)
-            if status > 0:
+            if status != 0:
                 raise RuntimeError("\n***\nERROR while running SWarp, check logfile: %s\n***" % logfile)
             self.logger.info("Done in %s" % elapsed_time(t1))
 

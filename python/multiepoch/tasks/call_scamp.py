@@ -156,7 +156,7 @@ class Job(BaseJob):
         self.logger.info("Executing scamp super-alignment for tile:%s" % self.ctx.tilename_fh)
         self.logger.info("%s " % cmd)
         status = subprocess.call(cmd,shell=True,stdout=log, stderr=log)
-        if status > 0:
+        if status != 0:
             raise RuntimeError("\n***\nERROR while running scamp, check logfile: %s\n***" % logfile)
         self.logger.info("Total scamp time: %s" % elapsed_time(t0))
         log.write("Total scamp time: %s\n" % elapsed_time(t0))

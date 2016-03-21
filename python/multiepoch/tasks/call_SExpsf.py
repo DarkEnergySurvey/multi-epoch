@@ -162,7 +162,7 @@ class Job(BaseJob):
                 self.logger.info("Executing SEx/psf for BAND:%s" % band)
                 self.logger.info("%s " % cmd)
                 status = subprocess.call(cmd,shell=True,stdout=log, stderr=log)
-                if status > 0:
+                if status != 0:
                     raise RuntimeError("\n***\nERROR while running SExpsf, check logfile: %s\n***" % logfile)
                 self.logger.info("Done band %s in %s\n" % (band,elapsed_time(t1)))
             
