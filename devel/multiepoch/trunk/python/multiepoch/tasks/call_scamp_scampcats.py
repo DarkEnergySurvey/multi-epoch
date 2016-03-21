@@ -38,6 +38,13 @@ class Job(BaseJob):
         cats_file    = CUnicode('',help="Name of the output ASCII catalog list storing the information for scamp", input_file=True,
                                 argparse={ 'argtype': 'positional', })
 
+        scampcats_file  = CUnicode('',help="Name of the output ASCII catalog list storing the information for scampcats", input_file=True)
+        scampcatlist    = Dict({},help="The Dictionary containing scampcat catalog list ",argparse=False)
+
+        scampheads_file = CUnicode('',help="Name of the output ASCII catalog list storing the information for scampheads", input_file=True)
+        scampheadlist   = Dict({},help="The Dictionary containing scamphead catalog list ",argparse=False)
+
+
         ######################
         # Optional arguments
         tilename    = Unicode(None, help="The Name of the Tile Name to query",argparse=True)
@@ -55,6 +62,9 @@ class Job(BaseJob):
                                 argparse={'nargs':'+',})
         scamp_conf = CUnicode(help="Optional scamp configuration file")
 
+        # Use scampcats
+        use_scampcats = Bool(False, help=("Use finalcut scampcats for super-alignment"))
+
         # Logging -- might be factored out
         stdoutloglevel = CUnicode('INFO', help="The level with which logging info is streamed to stdout",
                                   argparse={'choices': ('DEBUG','INFO','CRITICAL')} )
@@ -65,6 +75,18 @@ class Job(BaseJob):
             mydict = {}
             df = pd.read_csv(self.cats_file,sep=' ')
             mydict['catlist'] = {col: df[col].values.tolist() for col in df.columns}
+            return mydict
+
+        def _read_scampcats_file(self):
+            mydict = {}
+            df = pd.read_csv(self.cats_file,sep=' ')
+            mydict['scampcatlist'] = {col: df[col].values.tolist() for col in df.columns}
+            return mydict
+
+        def _read_scampheads_file(self):
+            mydict = {}
+            df = pd.read_csv(self.cats_file,sep=' ')
+            mydict['scampheadlist'] = {col: df[col].values.tolist() for col in df.columns}
             return mydict
 
         def _validate_conditional(self):
@@ -83,7 +105,10 @@ class Job(BaseJob):
         """ Pre-wash of inputs, some of these are only needed when run as script"""
 
         # Re-cast the ctx.assoc/ctx.catlist as dictionary of arrays instead of lists
-        self.ctx.catlist  = utils.dict2arrays(self.ctx.catlist)
+        self.ctx.catlist       = utils.dict2arrays(self.ctx.catlist)
+        if self.ctx.use_scampcats:
+            self.ctx.scampcatlist  = utils.dict2arrays(self.ctx.scampcatlist)
+            self.ctx.scampheadlist = utils.dict2arrays(self.ctx.scampheadlist)
 
         # Get the BANDs information in the context if they are not present
         if self.ctx.get('gotBANDS'):
@@ -108,6 +133,10 @@ class Job(BaseJob):
 
         # 2. Write the scamp input list of expcats
         self.write_scamp_input_list_file()
+
+        # Soft link the scampcat file (fits and head)
+        if self.ctx.use_scampcats:
+            self.copy_scampcat_files()
         
         # 3. Get the list of command lines
         cmdlist = self.get_scamp_cmd_list()
@@ -139,6 +168,32 @@ class Job(BaseJob):
         tableio.put_data(fh.get_expcat_list_file(tiledir, tilename_fh),(expcats,),format="%s")
         return
 
+    # Copy and rename the scampcat fits and head files
+    def copy_scampcat_files(self,clobber=True):
+        """
+        Copy/rename/soft links the scampcat input files to the align directory
+        """
+        # Sortcuts for less typing
+        tiledir     = self.input.tiledir
+        tilename_fh = self.input.tilename_fh
+        self.logger.info('Copying scampcat input file list to input folder')
+        for UNITNAME in self.ctx.unitnames:
+
+            # Scampcat fits catalogs
+            expcat_name   = fh.get_expcat_file(tiledir, tilename_fh, UNITNAME)
+            scampcat_name = self.ctx.scampcatlist['FILEPATH_LOCAL'][self.ctx.scampcatlist['UNITNAME'] == UNITNAME][0]
+            self.logger.debug("Linking:%s --> %s" % (scampcat_name,expcat_name))
+            utils.symlink_force(scampcat_name,expcat_name)
+
+            # Scampcat head catalogs --> ahead catalogs
+            exphead_name   = fh.get_expahead_file(tiledir, tilename_fh, UNITNAME)
+            scamphead_name = self.ctx.scampheadlist['FILEPATH_LOCAL'][self.ctx.scampheadlist['UNITNAME'] == UNITNAME][0]
+            self.logger.debug("Linking:%s --> %s" % (scamphead_name,exphead_name))
+            utils.symlink_force(scamphead_name,exphead_name)
+            
+        return
+
+
     # Run scamp
     # -------------------------------------------------------------------------
     def run_scamp(self,cmd_list):
@@ -146,7 +201,11 @@ class Job(BaseJob):
         Run scamp
         """
 
-        logfile = fh.get_scamp_log_file(self.input.tiledir, self.input.tilename_fh)
+        if self.ctx.use_scampcats:
+            logfile = fh.get_scamp_log_file(self.input.tiledir, self.input.tilename_fh,suffix='scamp_scampcats')
+        else:
+            logfile = fh.get_scamp_log_file(self.input.tiledir, self.input.tilename_fh,suffix='scamp_finalcats')
+
         log = open(logfile,"w")
         self.logger.info("Will proceed to run scamp now:")
         self.logger.info("Will write to logfile: %s" % logfile)
@@ -163,7 +222,7 @@ class Job(BaseJob):
         log.close()
         return
 
-    # Assemble the command
+    # Assemble the command for finalcut catalogs
     # -------------------------------------------------------------------------
     def get_scamp_cmd_list(self):
         """
@@ -177,6 +236,9 @@ class Job(BaseJob):
         # Update and Set the SWarp options 
         pars = self.get_scamp_parameter_set(**self.input.scamp_parameters)
         pars["XML_NAME"] = "%s" % fh.get_scamp_xml_file(tiledir, tilename_fh)
+
+        if self.ctx.use_scampcats:
+            pars["AHEADER_SUFFIX"] = ".ahead"
         
         # The Scamp configuration file
         if self.input.scamp_conf == '':
@@ -190,6 +252,7 @@ class Job(BaseJob):
         for param,value in pars.items():
             cmd.append("-%s %s" % (param,value))
         return cmd
+
 
     def get_scamp_parameter_set(self, **kwargs):
         """
@@ -209,6 +272,7 @@ class Job(BaseJob):
         scamp_parameters.update(kwargs)
         return scamp_parameters
 
+
     # 'EXECUTION' FUNCTIONS
     # -------------------------------------------------------------------------
     def writeCall_scamp(self,cmd_list,mode='w'):
@@ -227,6 +291,7 @@ class Job(BaseJob):
 
     def __str__(self):
         return 'Creates the call to scamp'
+
 
 if __name__ == '__main__':
     from mojo.utils import main_runner

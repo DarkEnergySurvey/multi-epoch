@@ -189,11 +189,14 @@ class Job(BaseJob):
         and_extras    = CUnicode(AND_EXTRAS,help="string with extra AND for query",)
         from_extras   = CUnicode(FROM_EXTRAS,help="string with extra FROM for query",)
 
-        tagname       = CUnicode('Y2T4_FINALCUT',help="TAGNAME for images in the database",)
+        tagname       = CUnicode('Y2T9_FINALCUT',help="TAGNAME for images in the database",)
         
         assoc_file    = CUnicode("", help=("Name of the output ASCII association file where we will store the cccds information for coadd"))
         cats_file     = CUnicode("", help=("Name of the output ASCII catalog list storing the information for scamp"))
         super_align   = Bool(False, help=("Run super-aligment of tile using scamp"))
+        use_scampcats = Bool(False, help=("Use finalcut scampcats for super-alignment"))
+        
+
         plot_outname  = CUnicode("", help=("Output file name for plot, in case we want to plot"))
         local_archive = CUnicode("", help="The local filepath where the input fits files (will) live")
         dump_assoc    = Bool(False, help=("Dump the assoc file?"))
@@ -253,17 +256,18 @@ class Job(BaseJob):
         # Update tileinfo RA values -- does nothing if we do not cross RA=0
         self.ctx.tileinfo = utils.update_tileinfo_RAZERO(self.ctx.tileinfo)
 
+        ####################################################################
         # Corner's method -- only works if CCDs are smaller than the TILE
         # Create the tile_edges tuple structure and query the database
-        tile_edges = self.get_tile_edges(self.ctx.tileinfo)
-        self.ctx.CCDS = querylibs.get_CCDS_from_db_corners(DBH, tile_edges,logger=LOG,**self.input.as_dict())
-
+        #tile_edges = self.get_tile_edges(self.ctx.tileinfo)
+        #self.ctx.CCDS = querylibs.get_CCDS_from_db_corners(DBH, tile_edges,logger=LOG,**self.input.as_dict())
         # Distance method -- the more general case
         # Numpy version
         #self.ctx.CCDS = querylibs.get_CCDS_from_db_distance_np(DBH, logger=LOG,**input_kw)
-
-        # SQL Template version
-        #self.ctx.CCDS = querylibs.get_CCDS_from_db_distance_sql(DBH, logger=LOG,**input_kw)
+        ####################################################################
+        
+        # SQL Template version distance method
+        self.ctx.CCDS = querylibs.get_CCDS_from_db_distance_sql(DBH, logger=LOG,**input_kw)
 
         # Optional: Get the input catalogs if we want to run scamp for super-alignment
         if self.ctx.super_align:
@@ -273,6 +277,10 @@ class Job(BaseJob):
             UNITNAMES_CATS = numpy.unique(self.ctx.CATS['UNITNAME'])
             if len(UNITNAMES_CCDS) != len(UNITNAMES_CATS):
                 sys.exit("ERROR: Number of UNITNAMES do not match")
+
+        # Get the finalcut large exposure-based scamp cats.
+        if self.ctx.use_scampcats and self.ctx.super_align:
+            self.ctx.SCAMPCATS = querylibs.get_SCAMPCATS_from_db_distance_sql(DBH, logger=LOG,**input_kw)
                 
         # Get root_https from from the DB with a query
         self.ctx.root_https   = querylibs.get_root_https(DBH,logger=LOG, archive_name=self.input.archive_name)
@@ -299,7 +307,20 @@ class Job(BaseJob):
                                                            self.ctx.local_archive,
                                                            self.ctx.root_https,
                                                            logger=self.logger)
-        # do we plot as well?
+
+        if self.ctx.super_align and self.ctx.use_scampcats:
+            self.ctx.scampcatlist = self.get_catalogs_locations(self.ctx.SCAMPCATS,
+                                                                self.ctx.local_archive,
+                                                                self.ctx.root_https,
+                                                                logger=self.logger,
+                                                                filename_key='FILENAME_SCAMPCAT')
+
+            self.ctx.scampheadlist = self.get_catalogs_locations(self.ctx.SCAMPCATS,
+                                                                self.ctx.local_archive,
+                                                                self.ctx.root_https,
+                                                                logger=self.logger,
+                                                                filename_key='FILENAME_SCAMPHEAD')
+        # do we want to plot as well
         if self.input.plot_outname !="":
             from multiepoch.tasks.plot_ccd_corners_destile import Job as plot_job
             plot = plot_job(ctx=self.ctx)
@@ -312,17 +333,23 @@ class Job(BaseJob):
             self.logger.info("Dumping assoc file to:%s" % assoc_default_name)
             self.write_dict2pandas(self.ctx.assoc,assoc_default_name,names=['FILEPATH_LOCAL','BAND','MAG_ZERO'],logger=self.logger)
 
-            ## Testing assoc file -- remove
-            #test_file = "%s.assoc_test" % self.ctx.tilename
-            #self.logger.info("Dumping assoc file to:%s" % test_file)
-            #self.write_dict2pandas(self.ctx.assoc,test_file,names=['FILENAME','RA_CENT','DEC_CENT','RA_SIZE','DEC_SIZE'],logger=self.logger)
-
-
-        # We might want to spit out the assoc file anyways
+        # and catlist
         if self.input.dump_cats and self.ctx.super_align:
             cats_default_name = fh.get_default_cats_file(self.ctx.tiledir, self.ctx.tilename_fh)
             self.logger.info("Dumping catlist file to:%s" % cats_default_name)
             self.write_dict2pandas(self.ctx.catlist,cats_default_name,names=['FILEPATH_LOCAL','BAND','UNITNAME'],logger=self.logger)
+
+        # and scampcatlist
+        if self.input.dump_cats and self.ctx.super_align and self.ctx.use_scampcats:
+            cats_default_name = fh.get_default_scampcats_file(self.ctx.tiledir, self.ctx.tilename_fh)
+            self.logger.info("Dumping catlist file to:%s" % cats_default_name)
+            self.write_dict2pandas(self.ctx.scampcatlist,cats_default_name,names=['FILEPATH_LOCAL','BAND','UNITNAME'],logger=self.logger)
+
+        # and scampheadlist
+        if self.input.dump_cats and self.ctx.super_align and self.ctx.use_scampcats:
+            cats_default_name = fh.get_default_scampheads_file(self.ctx.tiledir, self.ctx.tilename_fh)
+            self.logger.info("Dumping catlist file to:%s" % cats_default_name)
+            self.write_dict2pandas(self.ctx.scampheadlist,cats_default_name,names=['FILEPATH_LOCAL','BAND','UNITNAME'],logger=self.logger)
             
 
     # -------------------------------------------------------------------------
@@ -349,16 +376,6 @@ class Job(BaseJob):
         assoc['FILENAME']    = CCDS['FILENAME']
         assoc['COMPRESSION'] = CCDS['COMPRESSION']
 
-        #assoc['RA_CENT']     = CCDS['RA_CENT']
-        #assoc['DEC_CENT']    = CCDS['DEC_CENT']
-        #assoc['CROSSRA0']    = CCDS['CROSSRA0']
-
-        #assoc['RACMIN']     = CCDS['RACMIN']
-        #assoc['RACMAX']     = CCDS['RACMAX']
-
-        #assoc['RA_SIZE']     = CCDS['RA_SIZE']
-        #assoc['DEC_SIZE']    = CCDS['DEC_SIZE']
-
         if 'MAG_ZERO'in CCDS.dtype.names:
             assoc['MAG_ZERO']    = CCDS['MAG_ZERO']
         else:
@@ -380,22 +397,22 @@ class Job(BaseJob):
 
 
     @staticmethod
-    def get_catalogs_locations(CATS, local_archive, root_https, logger=None):
+    def get_catalogs_locations(CATS, local_archive, root_https, logger=None,filename_key='FILENAME'):
         """ Find the location of the catalog files in the des archive and https urls
         """
 
         # Number of images/filenames
-        Nimages = len(CATS['FILENAME'])
+        Nimages = len(CATS[filename_key])
 
         # 1. Construct an new dictionary that will store the
         # information required to associate files for co-addition
         catlist = {}
         catlist['BAND']        = CATS['BAND']
-        catlist['FILENAME']    = CATS['FILENAME']
+        catlist['FILENAME']    = CATS[filename_key]
         catlist['UNITNAME']    = CATS['UNITNAME']
 
         # In line loop creation
-        filepaths = [os.path.join(CATS['PATH'][k],CATS['FILENAME'][k]) for k in range(Nimages)]
+        filepaths = [os.path.join(CATS['PATH'][k],CATS[filename_key][k]) for k in range(Nimages)]
 
         # 2. Create the archive locations for each file
         catlist['FILEPATH_LOCAL'] = numpy.array([os.path.join(local_archive,filepath) for filepath in filepaths])
@@ -403,7 +420,6 @@ class Job(BaseJob):
         # 3. Create the https locations for each file
         catlist['FILEPATH_HTTPS'] = numpy.array([os.path.join(root_https,filepath) for filepath in filepaths])
         return catlist
-
 
 
     # -------------------------------------------------------------------------

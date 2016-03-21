@@ -39,7 +39,7 @@ def write_tileinfo_json(tilename,hdr,json_file=None,logger=None):
     tileinfo = {
         'RA_CENT'     : hdr['RA_CENT'],
         'DEC_CENT'    : hdr['DEC_CENT'],
-        'CROSSRAZERO' : hdr['CROSSRA0']}
+        'CROSSRA0'    : hdr['CROSSRA0']}
 
     keys = ['NAXIS1','NAXIS2',
             'RAC1', 'RAC2', 'RAC3', 'RAC4',

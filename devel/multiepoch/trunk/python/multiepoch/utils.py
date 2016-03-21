@@ -246,7 +246,7 @@ def pass_logger_info(mess,logger=None):
 def update_tileinfo_RAZERO(tileinfo):
     keys = ['RA_CENT','RAC1','RAC2','RAC3','RAC4','RACMIN','RACMAX']
     # We move the tile to RA=-180/+180
-    if tileinfo['CROSSRAZERO'] == 'Y':
+    if tileinfo['CROSSRA0'] == 'Y':
         for key in keys:
             if tileinfo[key] > 180: tileinfo[key] -= 360 
     return tileinfo
@@ -263,3 +263,24 @@ def update_CCDS_RAZERO(CCDS,crossrazero=False):
     return CCDS
 # ----------------------------------------
 
+
+def symlink_force(target, link_name,clobber=True):
+    import os, errno
+    try:
+        os.symlink(target, link_name)
+    except OSError, e:
+        if e.errno == errno.EEXIST and clobber:
+            os.remove(link_name)
+            os.symlink(target, link_name)
+        else:
+            raise e
+    return
+
+def symlink_clobber(target, link_name, clobber=True):
+    import os, errno
+
+    if os.path.exists(link_name) and clobber:
+        os.remove(link_name)
+    else:
+        os.symlink(target, link_name)
+    return
