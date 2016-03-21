@@ -21,7 +21,7 @@ QUERY_GEOM = """
         RAC1, RAC2, RAC3, RAC4,
         DECC1, DECC2, DECC3, DECC4,
         RACMIN,RACMAX,DECCMIN,DECCMAX,
-        CROSSRAZERO
+        CROSSRA0
     FROM {coaddtile_table}
     WHERE tilename='{tilename}'
 """
@@ -83,7 +83,7 @@ QUERY_ME_IMAGES_TEMPLATE_RAZERO = """
 """
 
 
-QUERY_ME_CATALOGS_TEMPLATE = """
+QUERY_ME_CATALOGS_TEMPLATE_OLD = """
      SELECT 
          {select_extras}
          distinct cat.FILENAME, cat.PATH, cat.BAND,cat.CCDNUM, cat.UNITNAME,cat.EXPNUM
@@ -106,32 +106,48 @@ QUERY_ME_CATALOGS_TEMPLATE = """
          order by cat.FILENAME
 """
 
+QUERY_ME_CATALOGS_TEMPLATE = """
+     SELECT 
+         {select_extras}
+         cat.FILENAME, cat.PATH, cat.BAND,cat.CCDNUM, cat.UNITNAME,cat.EXPNUM
+     FROM 
+         felipe.me_catalogs_{tagname} cat
+     WHERE
+         cat.EXPNUM in
+       (SELECT 
+         distinct me.EXPNUM
+        FROM
+         {select_extras}
+         felipe.me_images_{tagname} me
+        WHERE
+         {and_extras}
+         (ABS(me.RA_CENT  -  {ra_center_tile})  < (0.5*{ra_size_tile}  + 0.5*me.RA_SIZE)) AND
+         (ABS(me.DEC_CENT -  {dec_center_tile}) < (0.5*{dec_size_tile} + 0.5*me.DEC_SIZE))
+         )
+         order by cat.FILENAME
+"""
+
+
 
 QUERY_ME_CATALOGS_TEMPLATE_RAZERO = """
      SELECT 
          {select_extras}
-         distinct cat.FILENAME, cat.PATH, cat.BAND,cat.CCDNUM,cat.UNITNAME,cat.EXPNUM
+         cat.FILENAME, cat.PATH, cat.BAND,cat.CCDNUM,cat.UNITNAME,cat.EXPNUM
      FROM 
-         felipe.me_catalogs_{tagname} cat,
-         felipe.me_images_{tagname}   ima
+         felipe.me_catalogs_{tagname} cat
      WHERE
-         ima.unitname = cat.unitname and
-         ima.unitname in
+         cat.expnum in
        (
          with me as 
           (SELECT /*+ materialize */ 
-            FILENAME, COMPRESSION, PATH, BAND, UNITNAME,
+            EXPNUM,
             RA_SIZE,DEC_SIZE,
             (case when RA_CENT > 180. THEN RA_CENT-360. ELSE RA_CENT END) as RA_CENT, 
-            (case when RAC1 > 180.    THEN RAC1-360.    ELSE RAC1 END) as RAC1,	  
-            (case when RAC2 > 180.    THEN RAC2-360.    ELSE RAC2 END) as RAC2,		
-            (case when RAC3 > 180.    THEN RAC3-360.    ELSE RAC3 END) as RAC3,
-            (case when RAC4 > 180.    THEN RAC4-360.    ELSE RAC4 END) as RAC4,
-            DEC_CENT, DECC1, DECC2, DECC3, DECC4
+            DEC_CENT
           FROM felipe.me_images_{tagname})
 
        SELECT 
-         distinct me.UNITNAME
+         distinct me.EXPNUM
         FROM
          {from_extras} 
          me
@@ -142,6 +158,62 @@ QUERY_ME_CATALOGS_TEMPLATE_RAZERO = """
          )
          
          order by cat.FILENAME
+"""
+
+QUERY_ME_SCAMPCAT_TEMPLATE = """
+     SELECT 
+         {select_extras}
+         cat.FILENAME_SCAMPCAT,
+         cat.FILENAME_SCAMPHEAD,
+         cat.PATH, cat.BAND, cat.UNITNAME,cat.EXPNUM
+     FROM 
+         felipe.me_scampcat_{tagname} cat
+     WHERE
+        cat.EXPNUM in
+       (SELECT 
+         distinct me.EXPNUM
+        FROM
+         {select_extras}
+         felipe.me_images_{tagname} me
+        WHERE
+         {and_extras}
+         (ABS(me.RA_CENT  -  {ra_center_tile})  < (0.5*{ra_size_tile}  + 0.5*me.RA_SIZE)) AND
+         (ABS(me.DEC_CENT -  {dec_center_tile}) < (0.5*{dec_size_tile} + 0.5*me.DEC_SIZE))
+         )
+         order by cat.BAND
+"""
+
+QUERY_ME_SCAMPCAT_TEMPLATE_RAZERO = """
+     SELECT 
+         {select_extras}
+         cat.FILENAME_SCAMPCAT,
+         cat.FILENAME_SCAMPHEAD,
+         cat.PATH, cat.BAND, cat.UNITNAME,cat.EXPNUM
+     FROM
+         felipe.me_scampcat_{tagname} cat
+     WHERE
+         cat.EXPNUM in
+       (
+         with me as 
+          (SELECT /*+ materialize */ 
+            EXPNUN,
+            RA_SIZE,DEC_SIZE,
+            (case when RA_CENT > 180. THEN RA_CENT-360. ELSE RA_CENT END) as RA_CENT, 
+            DEC_CENT
+          FROM felipe.me_images_{tagname})
+
+       SELECT 
+         distinct me.EXPNUM
+        FROM
+         {from_extras} 
+         me
+        WHERE
+         {and_extras}
+         (ABS(me.RA_CENT  -  {ra_center_tile})  < (0.5*{ra_size_tile}  + 0.5*me.RA_SIZE)) AND
+         (ABS(me.DEC_CENT -  {dec_center_tile}) < (0.5*{dec_size_tile} + 0.5*me.DEC_SIZE))
+         )
+         
+         order by cat.BAND
 """
 
 
@@ -228,7 +300,7 @@ def get_CCDS_from_db_distance_sql(dbh, **kwargs):
     utils.pass_logger_debug("Building and running the query to find the CCDS",logger)
 
     # Decide the template to use
-    if tileinfo['CROSSRAZERO'] == 'Y':
+    if tileinfo['CROSSRA0'] == 'Y':
         QUERY_CCDS = QUERY_ME_IMAGES_TEMPLATE_RAZERO
     else:
         QUERY_CCDS = QUERY_ME_IMAGES_TEMPLATE
@@ -302,7 +374,7 @@ def get_CCDS_from_db_distance_np(dbh, **kwargs):
     # Get the ccd images that are part of the DESTILE
     t0 = time.time()
     CCDS = despyastro.query2rec(ccd_query, dbhandle=dbh)
-    CCDS = utils.update_CCDS_RAZERO(CCDS,crossrazero=tileinfo['CROSSRAZERO'])
+    CCDS = utils.update_CCDS_RAZERO(CCDS,crossrazero=tileinfo['CROSSRA0'])
     CCDS = find_distance(CCDS,tileinfo)
 
     if CCDS is False:
@@ -337,7 +409,7 @@ def get_CCDS_from_db_corners(dbh, tile_edges, **kwargs):
     utils.pass_logger_debug("Building and running the query to find the CCDS",logger)
 
     # Decide the template to use
-    if tileinfo['CROSSRAZERO'] == 'Y':
+    if tileinfo['CROSSRA0'] == 'Y':
         QUERY_CCDS = QUERY_ME_CORNERS_RAZERO
     else:
         QUERY_CCDS = QUERY_ME_CORNERS
@@ -386,10 +458,10 @@ def get_CATS_from_db_distance_sql(dbh, **kwargs):
     from_extras   = kwargs.get('from_extras','')
     and_extras    = kwargs.get('and_extras','') 
 
-    utils.pass_logger_debug("Building and running the query to find the CCDS",logger)
+    utils.pass_logger_debug("Building and running the query to find the finalcut catalogs",logger)
 
     # Decide the template to use
-    if tileinfo['CROSSRAZERO'] == 'Y':
+    if tileinfo['CROSSRA0'] == 'Y':
         QUERY_CATS = QUERY_ME_CATALOGS_TEMPLATE_RAZERO
     else:
         QUERY_CATS = QUERY_ME_CATALOGS_TEMPLATE
@@ -420,6 +492,56 @@ def get_CATS_from_db_distance_sql(dbh, **kwargs):
     return CATS
 
 
+
+def get_SCAMPCATS_from_db_distance_sql(dbh, **kwargs): 
+    """
+    Execute the database query that returns the ccds and store them in a numpy record array
+    kwargs: exec_name, tagname, select_extras, and_extras, from_extras
+
+    This is a more general query, that will work on case that the TILE
+    is smaller than the input CCDS
+    """
+
+    # Get params from kwargs
+    logger        = kwargs.get('logger', None)
+    tagname       = kwargs.get('tagname')
+    tileinfo      = kwargs.get('tileinfo') 
+    select_extras = kwargs.get('select_extras','')
+    from_extras   = kwargs.get('from_extras','')
+    and_extras    = kwargs.get('and_extras','') 
+
+    utils.pass_logger_debug("Building and running the query to find the SCAMPCAT and HEAD catalogs",logger)
+
+    # Decide the template to use
+    if tileinfo['CROSSRA0'] == 'Y':
+        QUERY_SCAMPCATS = QUERY_ME_SCAMPCAT_TEMPLATE_RAZERO
+    else:
+        QUERY_SCAMPCATS = QUERY_ME_SCAMPCAT_TEMPLATE
+
+    # Format the SQL query string
+    cat_query = QUERY_SCAMPCATS.format(
+        tagname         = tagname,
+        ra_center_tile  = tileinfo['RA_CENT'],
+        dec_center_tile = tileinfo['DEC_CENT'],
+        ra_size_tile    = tileinfo['RA_SIZE'],
+        dec_size_tile   = tileinfo['DEC_SIZE'],
+        select_extras   = select_extras,
+        from_extras     = from_extras,
+        and_extras      = and_extras,
+        )
+    utils.pass_logger_info("Will execute the query:\n%s\n" %  cat_query,logger)
+    
+    # Get the ccd images that are part of the DESTILE
+    t0 = time.time()
+    SCAMPCATS = despyastro.query2rec(cat_query, dbhandle=dbh)
+    if SCAMPCATS is False:
+        utils.pass_logger_info("No input images found", logger)
+        return SCAMPCATS
+    
+    utils.pass_logger_info("Query time for catalogs: %s" % elapsed_time(t0),logger)
+    utils.pass_logger_info("Found %s input scampcat catalogs" %  len(SCAMPCATS),logger)
+
+    return SCAMPCATS
 
 # --------------------------------------------------------
 # QUERY methods for root names -- available to all tasks

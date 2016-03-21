@@ -18,6 +18,7 @@ TILEDIR_SUBDIRECTORIES = {
         'align': 'align',
         'coadd': 'coadd',
         'inputs': 'inputs',
+        'qa': 'qa',
         }
 
 def get_tiledir_handler(tiledir, logger=None):
@@ -44,11 +45,12 @@ SEXSEG_TYPE = 'seg'
 SCAMP_TYPE  = 'scamp'
 SCAMPCAT_TYPE  = 'scampcat'
 
-FITS_EXT = 'fits'
-HEAD_EXT = 'head'
-LIST_EXT = 'list'
-PSF_EXT  = 'psf'
-XML_EXT  = 'xml'
+FITS_EXT  = 'fits'
+HEAD_EXT  = 'head'
+AHEAD_EXT = 'ahead'
+LIST_EXT  = 'list'
+PSF_EXT   = 'psf'
+XML_EXT   = 'xml'
 
 # MULTIEPOCH FILENAME GENERATORS
 _GENERIC_FILENAMEPATTERN          = "{base}_{band}_{ftype}.{ext}"
@@ -286,6 +288,13 @@ def get_exphead_file(tiledir, tilename, exposure):
     fnkwargs = {'base':tilename, 'exposure':exposure, 'ftype':SCAMPCAT_TYPE, 'ext':HEAD_EXT}
     return dh.place_file(_me_exposure_fn(**fnkwargs), 'align') 
 
+# The scamp output for the combined exposure-based head file
+def get_expahead_file(tiledir, tilename, exposure):
+    dh = get_tiledir_handler(tiledir)
+    fnkwargs = {'base':tilename, 'exposure':exposure, 'ftype':SCAMPCAT_TYPE, 'ext':AHEAD_EXT}
+    return dh.place_file(_me_exposure_fn(**fnkwargs), 'align') 
+
+
 # The scamp input list of exposure-based catalogs
 def get_expcat_list_file(tiledir, tilename):
     dh = get_tiledir_handler(tiledir)
@@ -314,9 +323,9 @@ def get_scamp_cmd_file(tiledir, tilename):
     filename = "%s_call_scamp.cmd" % tilename
     return dh.place_file(filename, 'aux')
 
-def get_scamp_log_file(tiledir, tilename):
+def get_scamp_log_file(tiledir, tilename,suffix='scamp'):
     dh = get_tiledir_handler(tiledir)
-    filename = "%s_scamp.log" % tilename
+    filename = "%s_%s.log" % (tilename,suffix)
     return dh.place_file(filename, 'log')
 
 # Default assoc name catlist
@@ -330,3 +339,21 @@ def get_default_cats_file(tiledir, tilename):
     filename = "%s_cats.list" % tilename
     return dh.place_file(filename, 'aux')
 
+def get_default_scampcats_file(tiledir, tilename):
+    dh = get_tiledir_handler(tiledir)
+    filename = "%s_scampcats.list" % tilename
+    return dh.place_file(filename, 'aux')
+
+def get_default_scampheads_file(tiledir, tilename):
+    dh = get_tiledir_handler(tiledir)
+    filename = "%s_scampheads.list" % tilename
+    return dh.place_file(filename, 'aux')
+
+
+def get_scamp_plots(tiledir, tilename,plotnames):
+    dh = get_tiledir_handler(tiledir)
+    filenames = []
+    for plotname in plotnames:
+        filename = "%s_%s" % (tilename,plotname)
+        filenames.append(dh.place_file(filename, 'qa'))
+    return filenames

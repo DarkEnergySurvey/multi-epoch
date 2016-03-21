@@ -49,9 +49,17 @@ class Job(BaseJob):
                                 argparse={'choices': ('db-desoper','db-destest', )} )
 
         # Super-alignment options
-        cats_file    = CUnicode('',help="Name of the output ASCII catalog list storing the information for scamp", input_file=True)
-        catlist      = Dict({},help="The Dictionary containing input CCD-level catalog list ",argparse=False)
-        super_align  = Bool(False, help=("Run super-aligment of tile using scamp"))
+        super_align   = Bool(False, help=("Run super-aligment of tile using scamp"))
+        use_scampcats = Bool(False, help=("Use finalcut scampcats for super-alignment"))
+
+        cats_file       = CUnicode('',help="Name of the output ASCII catalog list storing the information for scamp", input_file=True)
+        catlist         = Dict({},help="The Dictionary containing input CCD-level catalog list ",argparse=False)
+
+        scampcats_file  = CUnicode('',help="Name of the output ASCII catalog list storing the information for scampcats", input_file=True)
+        scampcatlist    = Dict({},help="The Dictionary containing scampcat catalog list ",argparse=False)
+
+        scampheads_file = CUnicode('',help="Name of the output ASCII catalog list storing the information for scampheads", input_file=True)
+        scampheadlist   = Dict({},help="The Dictionary containing scamphead catalog list ",argparse=False)
 
         # Logging -- might be factored out
         stdoutloglevel = CUnicode('INFO', help="The level with which logging info is streamed to stdout",
@@ -72,6 +80,19 @@ class Job(BaseJob):
             mydict['catlist'] = {col: df[col].values.tolist() for col in df.columns}
             return mydict
 
+        def _read_scampcats_file(self):
+            mydict = {}
+            df = pd.read_csv(self.cats_file,sep=' ')
+            mydict['scampcatlist'] = {col: df[col].values.tolist() for col in df.columns}
+            return mydict
+
+        def _read_scampheads_file(self):
+            mydict = {}
+            df = pd.read_csv(self.cats_file,sep=' ')
+            mydict['scampheadlist'] = {col: df[col].values.tolist() for col in df.columns}
+            return mydict
+
+
         def _validate_conditional(self):
             
             # Get logger
@@ -85,6 +106,9 @@ class Job(BaseJob):
                 logger.info("Updating super_align value to True")
                 self.super_align = True
 
+            if self.scampcatlist and not self.super_align:
+                logger.info("Updating super_align value to True")
+                self.super_align = True
 
             # Check for valid local_archive if not in the NCSA cosmology cluster
             if not utils.inDESARcluster(logger=logger) and not self.local_archive: 
@@ -118,10 +142,14 @@ class Job(BaseJob):
         if self.ctx.local_archive != "":
             utils.create_local_archive(self.ctx.local_archive)
 
-        # Transfer the files images and catalogs (optional)
+        # Transfer the files images and catalogs
         self.transfer_input_files(self.ctx.assoc, clobber=self.ctx.clobber_inputs, section=self.ctx.http_section, logger=self.logger)
-        if self.ctx.super_align:
+        if self.ctx.super_align and not self.ctx.use_scampcats:
             self.transfer_input_files(self.ctx.catlist, clobber=self.ctx.clobber_inputs, section=self.ctx.http_section, logger=self.logger)
+
+        if self.ctx.super_align and self.ctx.use_scampcats:
+            self.transfer_input_files(self.ctx.scampcatlist,  clobber=self.ctx.clobber_inputs, section=self.ctx.http_section, logger=self.logger)
+            self.transfer_input_files(self.ctx.scampheadlist, clobber=self.ctx.clobber_inputs, section=self.ctx.http_section, logger=self.logger)
 
         # Make FILEPATH_LOCAL a np-char array to pass on
         self.ctx.assoc['FILEPATH_LOCAL'] = numpy.array(self.ctx.assoc['FILEPATH_LOCAL'])
