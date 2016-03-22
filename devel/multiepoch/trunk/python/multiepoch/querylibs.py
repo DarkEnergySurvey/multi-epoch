@@ -196,7 +196,7 @@ QUERY_ME_SCAMPCAT_TEMPLATE_RAZERO = """
        (
          with me as 
           (SELECT /*+ materialize */ 
-            EXPNUN,
+            EXPNUM,
             RA_SIZE,DEC_SIZE,
             (case when RA_CENT > 180. THEN RA_CENT-360. ELSE RA_CENT END) as RA_CENT, 
             DEC_CENT
