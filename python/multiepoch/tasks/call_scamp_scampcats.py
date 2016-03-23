@@ -63,7 +63,7 @@ class Job(BaseJob):
         scamp_conf = CUnicode(help="Optional scamp configuration file")
 
         # Use scampcats
-        use_scampcats = Bool(False, help=("Use finalcut scampcats for super-alignment"))
+        use_scampcats = Bool(False, help=("Use finalcut scampcats for super-alignment[Default=False]"))
 
         # Logging -- might be factored out
         stdoutloglevel = CUnicode('INFO', help="The level with which logging info is streamed to stdout",
@@ -95,6 +95,17 @@ class Job(BaseJob):
             logger = mojo_log.get_logger({})
             if self.tilename_fh == '':
                 self.tilename_fh = self.tilename
+
+            # Check for valid input scampcats_file
+            if self.mojo_execution_mode == 'job as script' and self.use_scampcats and self.scampcats_file == "":
+                mess = 'If job is run standalone and use_scampcats=True, then scampcats_file cannot be ""'
+                raise IO_ValidationError(mess)
+
+            # Check for valid input scampheads_file
+            if self.mojo_execution_mode == 'job as script' and self.use_scampcats and self.scampheads_file == "":
+                mess = 'If job is run standalone and use_scampcats=True, then scamphead_file cannot be ""'
+                raise IO_ValidationError(mess)
+                
 
         # To also accept comma-separeted input lists
         def _argparse_postproc_doBANDS(self, v):
@@ -204,7 +215,7 @@ class Job(BaseJob):
         if self.ctx.use_scampcats:
             logfile = fh.get_scamp_log_file(self.input.tiledir, self.input.tilename_fh,suffix='scamp_scampcats')
         else:
-            logfile = fh.get_scamp_log_file(self.input.tiledir, self.input.tilename_fh,suffix='scamp_finalcats')
+            logfile = fh.get_scamp_log_file(self.input.tiledir, self.input.tilename_fh,suffix='scamp')
 
         log = open(logfile,"w")
         self.logger.info("Will proceed to run scamp now:")
