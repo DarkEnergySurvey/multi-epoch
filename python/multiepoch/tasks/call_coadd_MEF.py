@@ -110,7 +110,7 @@ class Job(BaseJob):
         
         # Build the args dictionary for all BANDS
         args = self.assemble_args()
-        
+
         if execution_mode == 'execute':
             for BAND in self.ctx.dBANDS:
                 self.logger.info("Making MEF file for BAND:%s --> %s" % (BAND,args[BAND]['outname']))
@@ -140,6 +140,7 @@ class Job(BaseJob):
         return
 
     def get_merge_cmd(self,args):
+
         cmd = []
         cmd.append(COADD_MEF_EXE)
         cmd.append("--%s %s" % ('sci_file',args['sci_file']))
@@ -149,7 +150,12 @@ class Job(BaseJob):
         cmd.append("--%s %s" % ('outname',args['outname']))
         if args['clobber']:
             cmd.append("--%s " % 'clobber')
+        if args['add_noise']:
+            cmd.append("--%s " % 'add_noise')
+        if args['xblock']:
+            cmd.append("--%s %s" % ('xblock',args['xblock']))
         return cmd
+
 
     def assemble_args(self):
         """ Build the args dictionary to be pass as **kwrgs or comand-line """
