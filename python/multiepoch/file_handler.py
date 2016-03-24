@@ -45,6 +45,7 @@ SEXCAT_TYPE = 'cat'
 SEXSEG_TYPE = 'seg'
 SCAMP_TYPE  = 'scamp'
 SCAMPCAT_TYPE  = 'scampcat'
+PSFEX_STARS_TYPE = 'psfex-starlist'
 
 FITS_EXT  = 'fits'
 HEAD_EXT  = 'head'
@@ -183,6 +184,11 @@ def get_sexpsf_log_file(tiledir, tilename,band=None):
 
 # -----------------------------------------
 #    ****** PSFEX FILES *****
+
+def get_psfex_stars_file(tiledir, tilename, band):
+    dh = get_tiledir_handler(tiledir)
+    fnkwargs = {'base':tilename, 'band':band, 'ftype':PSFEX_STARS_TYPE, 'ext':FITS_EXT}
+    return dh.place_file(_me_fn(**fnkwargs), 'coadd')
 
 def get_psfxml_file(tiledir, tilename, band):
     dh = get_tiledir_handler(tiledir)
