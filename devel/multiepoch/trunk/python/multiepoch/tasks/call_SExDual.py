@@ -121,7 +121,7 @@ class Job(BaseJob):
             
         elif execution_mode == 'dryrun':
             self.logger.info("For now we only print the commands (dry-run)")
-            for band in self.ctx.doBANDS:
+            for band in self.ctx.dBANDS:
                 self.logger.info(' '.join(cmd_list[band]))
 
         elif execution_mode == 'execute':
@@ -144,7 +144,7 @@ class Job(BaseJob):
         cmdfile = fh.get_SExdual_cmd_file(self.input.tiledir, self.input.tilename_fh)
         self.logger.info("Will write SExDual call to: %s" % cmdfile)
         with open(cmdfile, 'w') as fid:
-            for band in self.ctx.doBANDS:
+            for band in self.ctx.dBANDS:
                 fid.write(bkline.join(cmd_list[band])+'\n')
                 fid.write('\n')
         return
@@ -161,7 +161,7 @@ class Job(BaseJob):
             log = open(logfile,"w")
             self.logger.info("Will write to logfile: %s" % logfile)
 
-            for band in self.ctx.doBANDS:
+            for band in self.ctx.dBANDS:
                 t1 = time.time()
                 cmd  = ' '.join(cmd_list[band])
                 self.logger.info("Executing SExDual for BAND:%s" % band)
@@ -176,7 +176,7 @@ class Job(BaseJob):
             self.logger.info("Will Use %s processors" % NP)
             cmds = []
             logs = []
-            for band in self.ctx.doBANDS:
+            for band in self.ctx.dBANDS:
                 cmds.append(' '.join(cmd_list[band]))
                 logfile = fh.get_SExdual_log_file(self.input.tiledir, self.input.tilename_fh,band)
                 logs.append(logfile)
@@ -239,7 +239,7 @@ class Job(BaseJob):
         SExDual_cmd = {}
         # Loop over all bands 
         dBAND = self.ctx.detBAND
-        for BAND in self.ctx.doBANDS:
+        for BAND in self.ctx.dBANDS:
 
             # Spell out input and output names
             # From SEx/psfex

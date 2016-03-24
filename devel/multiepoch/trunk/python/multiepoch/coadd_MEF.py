@@ -45,8 +45,10 @@ def build_parser():
                         help="Clobber output MEF fits file")
     parser.add_argument("--add_noise", action='store_true', default=False,
                         help="Add Poisson Noise to the zipper")
-    parser.add_argument("--xblock", default=1, 
+    parser.add_argument("--xblock", default=1, type=int,
                         help="Block size of zipper in x-direction")
+    parser.add_argument("--band", default=None, type=str, required=False,
+                        help="Add BAND to SCI header if not present")
     return parser
 
 def cmdline():
@@ -92,6 +94,7 @@ def merge(**kwargs):
     interp_mask = kwargs.get('interp_mask',1)
     #BADPIX_INTERP = kwargs.get('BADPIX_INTERP',maskbits.BADPIX_INTERP)
     BADPIX_INTERP = kwargs.get('BADPIX_INTERP',None)
+    BAND          = kwargs.get('band',None)
 
     if not logger:
         logger = create_logger(level=logging.NOTSET)
@@ -130,6 +133,11 @@ def merge(**kwargs):
     sci_hdr = DESImage.update_hdr_compression(sci_hdr,'SCI')
     msk_hdr = DESImage.update_hdr_compression(msk_hdr,'MSK')
     wgt_hdr = DESImage.update_hdr_compression(wgt_hdr,'WGT')
+
+    # Add BAND if present
+    if BAND:
+        band_record={'name':'BAND', 'value':BAND, 'comment':'Short name for filter'}
+        sci_hdr.add_record(band_record)
 
     # Add to image history
     sci_hdr['HISTORY'] = time.asctime(time.localtime()) + \

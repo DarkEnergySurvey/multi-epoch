@@ -143,17 +143,13 @@ class Job(BaseJob):
 
         cmd = []
         cmd.append(COADD_MEF_EXE)
-        cmd.append("--%s %s" % ('sci_file',args['sci_file']))
-        cmd.append("--%s %s" % ('wgt_file',args['wgt_file']))
-        if self.input.weight_for_mask:
-            cmd.append("--%s %s" % ('msk_file',args['msk_file']))
-        cmd.append("--%s %s" % ('outname',args['outname']))
-        if args['clobber']:
-            cmd.append("--%s " % 'clobber')
-        if args['add_noise']:
-            cmd.append("--%s " % 'add_noise')
-        if args['xblock']:
-            cmd.append("--%s %s" % ('xblock',args['xblock']))
+        for key in args.keys():
+            if key == 'logger':
+                continue
+            if args[key] == True:
+                cmd.append("--%s" % key)
+            elif args[key]:
+                cmd.append("--%s %s" % (key,args[key]))
         return cmd
 
 
@@ -175,6 +171,8 @@ class Job(BaseJob):
             if self.input.weight_for_mask:
                 args[BAND]['msk_file'] = fh.get_msk_fits_file(tiledir, tilename_fh, BAND)
 
+            if BAND == 'det':
+                args[BAND]['band'] = BAND
             
         return args
 

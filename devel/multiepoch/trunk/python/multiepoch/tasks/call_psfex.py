@@ -166,8 +166,8 @@ class Job(BaseJob):
         options to overwrite them with kwargs to this function.
         """
         psfex_parameters = {
-            'WRITE_XML' : 'Y',
-            "NTHREADS"  : self.ctx.nthreads,
+            'WRITE_XML'  : 'Y',
+            "NTHREADS"   : self.ctx.nthreads,
         }
         # Now update pars with kwargs
         psfex_parameters.update(kwargs)
@@ -198,8 +198,12 @@ class Job(BaseJob):
             # input and output
             psfcat = fh.get_psfcat_file(tiledir,tilename_fh, BAND)
             psfxml = fh.get_psfxml_file(tiledir,tilename_fh, BAND)
+            psfex_stars = fh.get_psfex_stars_file(tiledir,tilename_fh, BAND)
 
-            pars['XML_NAME'] = psfxml
+            pars['XML_NAME']    = psfxml
+            pars['OUTCAT_NAME'] = psfex_stars
+            pars['OUTCAT_TYPE'] = 'FITS_LDAC'
+            
             # Build the call
             cmd = []
             cmd.append("%s" % PSFEX_EXE)
