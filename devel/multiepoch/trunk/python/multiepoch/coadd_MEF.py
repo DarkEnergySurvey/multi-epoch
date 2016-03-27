@@ -13,7 +13,9 @@ from despyfits import DESImage
 from despyfits import compressionhdu as chdu
 from despyastro import astrometry
 from despyastro import zipper_interp as zipp
-from despymisc.miscutils import elapsed_time
+from despymisc.miscutils import elapsed_tim
+from despyastro import CCD_corners 
+
 
 
 # Translator for DES_EXT, being nice.
@@ -48,7 +50,9 @@ def build_parser():
     parser.add_argument("--xblock", default=1, type=int,
                         help="Block size of zipper in x-direction")
     parser.add_argument("--band", default=None, type=str, required=False,
-                        help="Add BAND to SCI header if not present")
+                        help="Add (optional) BAND to SCI header if not present")
+    parser.add_argument("--magzero", default=None, type=float, required=False,
+                        help="Add (optional) MAGZERO to SCI header")
     return parser
 
 def cmdline():
@@ -95,6 +99,7 @@ def merge(**kwargs):
     #BADPIX_INTERP = kwargs.get('BADPIX_INTERP',maskbits.BADPIX_INTERP)
     BADPIX_INTERP = kwargs.get('BADPIX_INTERP',None)
     BAND          = kwargs.get('band',None)
+    MAGZERO       = kwargs.get('magzero',None)
 
     if not logger:
         logger = create_logger(level=logging.NOTSET)
@@ -134,10 +139,20 @@ def merge(**kwargs):
     msk_hdr = DESImage.update_hdr_compression(msk_hdr,'MSK')
     wgt_hdr = DESImage.update_hdr_compression(wgt_hdr,'WGT')
 
+
+    # Add corners, centers and extend
+    sci_hdr = CCD_corners.update_DESDM_corners(sci_hdr,get_extent=True, verb=False)
+    msk_hdr = CCD_corners.update_DESDM_corners(msk_hdr,get_extent=True, verb=False)
+
     # Add BAND if present
     if BAND:
         band_record={'name':'BAND', 'value':BAND, 'comment':'Short name for filter'}
         sci_hdr.add_record(band_record)
+
+    # Add MAGZERO if present
+    if MAGZERO:
+        magzero_record={'name':'MAGZERO', 'value':BAND, 'comment':'Mag Zero-point in magnitudes/s'}
+        sci_hdr.add_record(magzero_record)
 
     # Add to image history
     sci_hdr['HISTORY'] = time.asctime(time.localtime()) + \
