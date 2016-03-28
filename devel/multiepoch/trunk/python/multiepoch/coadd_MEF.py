@@ -151,7 +151,7 @@ def merge(**kwargs):
 
     # Add MAGZERO if present
     if MAGZERO:
-        magzero_record={'name':'MAGZERO', 'value':BAND, 'comment':'Mag Zero-point in magnitudes/s'}
+        magzero_record={'name':'MAGZERO', 'value':MAGZERO, 'comment':'Mag Zero-point in magnitudes/s'}
         sci_hdr.add_record(magzero_record)
 
     # Add to image history
