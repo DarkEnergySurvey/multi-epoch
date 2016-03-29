@@ -13,7 +13,6 @@ from despyfits import DESImage
 from despyfits import compressionhdu as chdu
 from despyastro import astrometry
 from despyastro import zipper_interp as zipp
-from despymisc.miscutils import elapsed_tim
 from despyastro import CCD_corners 
 
 
@@ -49,10 +48,16 @@ def build_parser():
                         help="Add Poisson Noise to the zipper")
     parser.add_argument("--xblock", default=1, type=int,
                         help="Block size of zipper in x-direction")
+    # Header options
     parser.add_argument("--band", default=None, type=str, required=False,
                         help="Add (optional) BAND to SCI header if not present")
     parser.add_argument("--magzero", default=None, type=float, required=False,
                         help="Add (optional) MAGZERO to SCI header")
+    parser.add_argument("--tilename", default=None, type=str, required=False,
+                        help="Add (optional) TILENAME to SCI header")
+    parser.add_argument("--tileid", default=None, type=int, required=False,
+                        help="Add (optional) TILE_ID to SCI header")
+
     return parser
 
 def cmdline():
@@ -98,8 +103,11 @@ def merge(**kwargs):
     interp_mask = kwargs.get('interp_mask',1)
     #BADPIX_INTERP = kwargs.get('BADPIX_INTERP',maskbits.BADPIX_INTERP)
     BADPIX_INTERP = kwargs.get('BADPIX_INTERP',None)
-    BAND          = kwargs.get('band',None)
-    MAGZERO       = kwargs.get('magzero',None)
+    # Header options (all optional)
+    BAND        = kwargs.get('band',None)
+    MAGZERO     = kwargs.get('magzero',None)
+    TILENAME    = kwargs.get('tilename',None)
+    TILEID      = kwargs.get('tileid',None)
 
     if not logger:
         logger = create_logger(level=logging.NOTSET)
@@ -139,20 +147,30 @@ def merge(**kwargs):
     msk_hdr = DESImage.update_hdr_compression(msk_hdr,'MSK')
     wgt_hdr = DESImage.update_hdr_compression(wgt_hdr,'WGT')
 
-
     # Add corners, centers and extend
     sci_hdr = CCD_corners.update_DESDM_corners(sci_hdr,get_extent=True, verb=False)
     msk_hdr = CCD_corners.update_DESDM_corners(msk_hdr,get_extent=True, verb=False)
 
     # Add BAND if present
     if BAND:
-        band_record={'name':'BAND', 'value':BAND, 'comment':'Short name for filter'}
-        sci_hdr.add_record(band_record)
+        record={'name':'BAND', 'value':BAND, 'comment':'Short name for filter'}
+        sci_hdr.add_record(record)
 
     # Add MAGZERO if present
     if MAGZERO:
-        magzero_record={'name':'MAGZERO', 'value':MAGZERO, 'comment':'Mag Zero-point in magnitudes/s'}
-        sci_hdr.add_record(magzero_record)
+        record={'name':'MAGZERO', 'value':MAGZERO, 'comment':'Mag Zero-point in magnitudes/s'}
+        sci_hdr.add_record(record)
+
+    # Add TILENAME if present
+    if TILENAME:
+        record={'name':'TILENAME', 'value':TILENAME, 'comment':'DES Tilename'}
+        sci_hdr.add_record(record)
+
+    # Add TILEID if present
+    if TILEID:
+        record={'name':'TILEID', 'value':TILEID, 'comment':'Tile ID for DES Tilename'}
+        sci_hdr.add_record(record)
+
 
     # Add to image history
     sci_hdr['HISTORY'] = time.asctime(time.localtime()) + \
