@@ -66,7 +66,7 @@ class Job(BaseJob):
 
         # We want to make these options visible as command-line arguments. The full suite of options can be passed as
         # swarp_parameters which will override these defaults
-        COMBINE_TYPE_detec = CUnicode('AVERAGE',  help="COMBINE type for detection coadd image")
+        COMBINE_TYPE_detec = CUnicode('WEIGHTED', help="COMBINE type for detection coadd image")
         COMBINE_TYPE       = CUnicode('CHI-MEAN', help="COMBINE type for band coadd image")
         nthreads           = CInt(1,help="Number of threads to use in stiff/psfex/swarp/scamp")
 
@@ -271,7 +271,7 @@ class Job(BaseJob):
         pars['RESAMPLE'] = 'N' # We do not need to resample them, they are on the same pixel coordinates
         self.logger.info("Will use COMBINE_TYPE=%s for detection image" % self.ctx.COMBINE_TYPE_detec)
         pars['COMBINE_TYPE']  = self.ctx.COMBINE_TYPE_detec
-        pars['COPY_KEYWORDS'] = "OBJECT,EXPTIME" # Avoid FILTER and BAND
+        pars['COPY_KEYWORDS'] = "OBJECT,BUNIT" # Avoid FILTER and BAND
 
         swarp_cmd[BAND] = [SWARP_EXE, ]
         swarp_cmd[BAND].append("%s" % " ".join(det_scilists))
@@ -296,7 +296,7 @@ class Job(BaseJob):
             "IMAGE_SIZE"      : "%s,%d" % (self.ctx.tileinfo['NAXIS1'],self.ctx.tileinfo['NAXIS2']),
             "CENTER"          : "%s,%s" % (self.ctx.tileinfo['RA_CENT'],self.ctx.tileinfo['DEC_CENT']),
             "WRITE_XML"       : "N",
-            "COPY_KEYWORDS"   : "OBJECT,EXPTIME,FILTER,BAND",
+            "COPY_KEYWORDS"   : "OBJECT,BUNIT,FILTER,BAND",
             }
         swarp_parameters.update(kwargs)
         return swarp_parameters
