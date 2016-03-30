@@ -16,22 +16,23 @@ import pandas as pd
 import multiepoch.utils as utils
 import multiepoch.contextDefs as contextDefs
 from multiepoch import file_handler as fh
-from multiepoch import coadd_MEF 
+from despyfits import coadd_assemble 
 
 DETNAME = 'det'
-COADD_MEF_EXE = 'coadd_MEF'
+COADD_ASSEMBLE_EXE = 'coadd_assemble'
 BKLINE = "\\\n"
+MAGBASE = 30.0
 
 class Job(BaseJob):
 
     """
-    Create the MEF files based on the comb_sci and comb_wht files
+    Create the MEF files based on the comb_sci, comb_msk and comb_wgt files
     """
 
     class Input(IO):
         
         """
-        Create MEF for the coadded fits files
+        Create and prepare MEF for the coadded fits files
         """
 
         ######################
@@ -51,6 +52,7 @@ class Job(BaseJob):
                                        argparse={'choices': ('tofile','dryrun','execute')})
         doBANDS       = List(['all'],help="BANDS to processs (default=all)",argparse={'nargs':'+',})
         detname       = CUnicode(DETNAME,help="File label for detection image, default=%s." % DETNAME)
+        magbase       = CFloat(MAGBASE, help="Zero point magnitude base for SWarp, default=%s." % MAGBASE)
 
         # Weight for mask
         weight_for_mask  = Bool(False, help="Create coadded weight for mask creation")
@@ -114,7 +116,7 @@ class Job(BaseJob):
         if execution_mode == 'execute':
             for BAND in self.ctx.dBANDS:
                 self.logger.info("Making MEF file for BAND:%s --> %s" % (BAND,args[BAND]['outname']))
-                coadd_MEF.merge(**args[BAND])
+                coadd_assemble.merge(**args[BAND])
 
         elif execution_mode == 'dryrun':
             for BAND in self.ctx.dBANDS:
@@ -124,7 +126,7 @@ class Job(BaseJob):
         elif execution_mode == 'tofile':
             bkline  = self.ctx.get('breakline',BKLINE)
             cmdfile = fh.get_mef_cmd_file(self.input.tiledir, self.input.tilename_fh)
-            self.logger.info("Will write coadd_MEF call to: %s" % cmdfile)
+            self.logger.info("Will write coadd_assemble call to: %s" % cmdfile)
             with open(cmdfile, "w") as fid:
                 for BAND in self.ctx.dBANDS:
                     cmd = self.get_merge_cmd(args[BAND])
@@ -142,7 +144,7 @@ class Job(BaseJob):
     def get_merge_cmd(self,args):
 
         cmd = []
-        cmd.append(COADD_MEF_EXE)
+        cmd.append(COADD_ASSEMBLE_EXE)
         for key in args.keys():
             if key == 'logger':
                 continue
@@ -167,6 +169,8 @@ class Job(BaseJob):
                           'clobber' : self.ctx.clobber_MEF,
                           'xblock'  : self.ctx.xblock,
                           'add_noise' : self.ctx.add_noise,
+                          'magzero' : self.ctx.magbase,
+                          'tilename' : self.ctx.tilename,
                           }
             if self.input.weight_for_mask:
                 args[BAND]['msk_file'] = fh.get_msk_fits_file(tiledir, tilename_fh, BAND)
@@ -201,7 +205,7 @@ class Job(BaseJob):
         return
 
     def __str__(self):
-        return 'Create MEF file for a coadded TILE fron SCI/MSK/WGT image planes using coadd_MEF'
+        return 'Create MEF file for a coadded TILE fron SCI/MSK/WGT image planes using coadd_assemble'
  
 if __name__ == '__main__':
     from mojo.utils import main_runner
