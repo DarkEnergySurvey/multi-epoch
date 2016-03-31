@@ -344,13 +344,6 @@ class Job(BaseJob):
             self.write_dict2pandas(self.ctx.scampheadlist,cats_default_name,names=['FILEPATH_LOCAL','BAND','UNITNAME'],logger=self.logger)
             
 
-    # -------------------------------------------------------------------------
-    #@staticmethod
-    #def get_tile_edges(tileinfo):
-    #    tile_edges = (tileinfo['RACMIN'], tileinfo['RACMAX'],
-    #                  tileinfo['DECCMIN'], tileinfo['DECCMAX'])
-    #    return tile_edges
-
     @staticmethod
     def get_fitsfile_locations(CCDS, local_archive, root_https, logger=None):
         """ Find the location of the files in the des archive and https urls
