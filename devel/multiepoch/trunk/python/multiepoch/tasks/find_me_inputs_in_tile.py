@@ -142,7 +142,8 @@ from multiepoch import file_handler as fh
 # Changing default to empty strings for now
 SELECT_EXTRAS = ""
 FROM_EXTRAS   = ""
-AND_EXTRAS    = "" 
+AND_EXTRAS    = ""
+SEARCH_TYPE   = "distance"
 # -----------------------------------------------------------------------------
 
 
@@ -188,7 +189,8 @@ class Job(BaseJob):
         select_extras = CUnicode(SELECT_EXTRAS,help="string with extra SELECT for query",)
         and_extras    = CUnicode(AND_EXTRAS,help="string with extra AND for query",)
         from_extras   = CUnicode(FROM_EXTRAS,help="string with extra FROM for query",)
-
+        search_type   = CUnicode(SEARCH_TYPE,help="Search type to perform (distances or corners)",
+                                 argparse={'choices': ('distance','corners')} )
         tagname       = CUnicode('Y2T9_FINALCUT',help="TAGNAME for images in the database",)
         
         assoc_file    = CUnicode("", help=("Name of the output ASCII association file where we will store the cccds information for coadd"))
@@ -255,23 +257,13 @@ class Job(BaseJob):
 
         # Update tileinfo RA values -- does nothing if we do not cross RA=0
         self.ctx.tileinfo = utils.update_tileinfo_RAZERO(self.ctx.tileinfo)
-
-        ####################################################################
-        # Corner's method -- only works if CCDs are smaller than the TILE
-        # Create the tile_edges tuple structure and query the database
-        #tile_edges = self.get_tile_edges(self.ctx.tileinfo)
-        #self.ctx.CCDS = querylibs.get_CCDS_from_db_corners(DBH, tile_edges,logger=LOG,**self.input.as_dict())
-        # Distance method -- the more general case
-        # Numpy version
-        #self.ctx.CCDS = querylibs.get_CCDS_from_db_distance_np(DBH, logger=LOG,**input_kw)
-        ####################################################################
         
-        # SQL Template version distance method
-        self.ctx.CCDS = querylibs.get_CCDS_from_db_distance_sql(DBH, logger=LOG,**input_kw)
+        # SQL Template version general method
+        self.ctx.CCDS = querylibs.get_CCDS_from_db_general_sql(DBH, logger=LOG,**input_kw)
 
         # Optional: Get the input catalogs if we want to run scamp for super-alignment
         if self.ctx.super_align:
-            self.ctx.CATS = querylibs.get_CATS_from_db_distance_sql(DBH, logger=LOG,**input_kw)
+            self.ctx.CATS = querylibs.get_CATS_from_db_general_sql(DBH, logger=LOG,**input_kw)
             # Make sure that we find the same number of exposure/unitnames
             UNITNAMES_CCDS = numpy.unique(self.ctx.CCDS['UNITNAME'])
             UNITNAMES_CATS = numpy.unique(self.ctx.CATS['UNITNAME'])
@@ -280,7 +272,7 @@ class Job(BaseJob):
 
         # Get the finalcut large exposure-based scamp cats.
         if self.ctx.use_scampcats and self.ctx.super_align:
-            self.ctx.SCAMPCATS = querylibs.get_SCAMPCATS_from_db_distance_sql(DBH, logger=LOG,**input_kw)
+            self.ctx.SCAMPCATS = querylibs.get_SCAMPCATS_from_db_general_sql(DBH, logger=LOG,**input_kw)
                 
         # Get root_https from from the DB with a query
         self.ctx.root_https   = querylibs.get_root_https(DBH,logger=LOG, archive_name=self.input.archive_name)
@@ -353,11 +345,11 @@ class Job(BaseJob):
             
 
     # -------------------------------------------------------------------------
-    @staticmethod
-    def get_tile_edges(tileinfo):
-        tile_edges = (tileinfo['RACMIN'], tileinfo['RACMAX'],
-                      tileinfo['DECCMIN'], tileinfo['DECCMAX'])
-        return tile_edges
+    #@staticmethod
+    #def get_tile_edges(tileinfo):
+    #    tile_edges = (tileinfo['RACMIN'], tileinfo['RACMAX'],
+    #                  tileinfo['DECCMIN'], tileinfo['DECCMAX'])
+    #    return tile_edges
 
     @staticmethod
     def get_fitsfile_locations(CCDS, local_archive, root_https, logger=None):
