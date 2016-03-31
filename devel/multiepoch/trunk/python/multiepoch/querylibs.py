@@ -119,8 +119,12 @@ QUERY_ME_CATALOGS_TEMPLATE_RAZERO = """
           (SELECT /*+ materialize */ 
             EXPNUM,
             RA_SIZE,DEC_SIZE,
-            (case when RA_CENT > 180. THEN RA_CENT-360. ELSE RA_CENT END) as RA_CENT, 
-            DEC_CENT
+            (case when RA_CENT > 180. THEN RA_CENT-360. ELSE RA_CENT END) as RA_CENT,
+            (case when RAC1 > 180.    THEN RAC1-360.    ELSE RAC1 END) as RAC1,
+            (case when RAC2 > 180.    THEN RAC2-360.    ELSE RAC2 END) as RAC2, 	 
+            (case when RAC3 > 180.    THEN RAC3-360.    ELSE RAC3 END) as RAC3,
+            (case when RAC4 > 180.    THEN RAC4-360.    ELSE RAC4 END) as RAC4,
+            DEC_CENT, DECC1, DECC2, DECC3, DECC4
           FROM felipe.me_images_{tagname})
 
        SELECT 
@@ -173,8 +177,12 @@ QUERY_ME_SCAMPCAT_TEMPLATE_RAZERO = """
           (SELECT /*+ materialize */ 
             EXPNUM,
             RA_SIZE,DEC_SIZE,
-            (case when RA_CENT > 180. THEN RA_CENT-360. ELSE RA_CENT END) as RA_CENT, 
-            DEC_CENT
+            (case when RA_CENT > 180. THEN RA_CENT-360. ELSE RA_CENT END) as RA_CENT,
+            (case when RAC1 > 180.    THEN RAC1-360.    ELSE RAC1 END) as RAC1,
+            (case when RAC2 > 180.    THEN RAC2-360.    ELSE RAC2 END) as RAC2, 	 
+            (case when RAC3 > 180.    THEN RAC3-360.    ELSE RAC3 END) as RAC3,
+            (case when RAC4 > 180.    THEN RAC4-360.    ELSE RAC4 END) as RAC4,
+            DEC_CENT, DECC1, DECC2, DECC3, DECC4
           FROM felipe.me_images_{tagname})
 
        SELECT 
