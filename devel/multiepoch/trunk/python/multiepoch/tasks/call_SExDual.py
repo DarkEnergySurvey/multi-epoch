@@ -65,11 +65,6 @@ class Job(BaseJob):
         fileloglevel   = CUnicode('INFO', help="The level with which logging info is written to the logfile",
                                   argparse={'choices': ('DEBUG','INFO','CRITICAL')} )
 
-        # TODO
-        # Make the SEx configuration (-c option) file visible as a commandline options
-        
-        # Function to read ASCII/panda framework file (instead of json)
-        # Comment if you want to use json files
         def _read_assoc_file(self):
             mydict = {}
             df = pd.read_csv(self.assoc_file,sep=' ')
@@ -201,7 +196,6 @@ class Job(BaseJob):
             'CATALOG_TYPE'    : "FITS_LDAC",
             'FILTER_NAME'     : os.path.join(os.environ['MULTIEPOCH_DIR'],'etc','gauss_3.0_7x7.conv'),
             'STARNNW_NAME'    : os.path.join(os.environ['MULTIEPOCH_DIR'],'etc','sex.nnw'),
-            'CATALOG_TYPE'    :   'FITS_1.0',
             'WEIGHT_TYPE'     : 'MAP_WEIGHT',
             'MEMORY_BUFSIZE'  : 2048,
             'CHECKIMAGE_TYPE' : 'SEGMENTATION',
