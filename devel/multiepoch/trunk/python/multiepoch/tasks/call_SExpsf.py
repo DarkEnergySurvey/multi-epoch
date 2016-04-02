@@ -218,7 +218,7 @@ class Job(BaseJob):
 
         # The SEx for psf configuration file
         if self.input.SExpsf_conf == '':
-            self.ctx.SExpsf_conf = os.path.join(os.environ['MULTIEPOCH_DIR'],'etc','default.sex')
+            self.ctx.SExpsf_conf = fh.get_configfile('sex')
             self.logger.info("Will use SEx for psf default configuration file: %s" % self.ctx.SExpsf_conf)
 
         SExpsf_cmd = {}
