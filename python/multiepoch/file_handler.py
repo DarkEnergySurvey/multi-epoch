@@ -49,6 +49,7 @@ PSFEX_STARS_TYPE = 'psfex-starlist'
 
 FITS_EXT  = 'fits'
 HEAD_EXT  = 'head'
+OHEAD_EXT = 'ohead'
 AHEAD_EXT = 'ahead'
 LIST_EXT  = 'list'
 PSF_EXT   = 'psf'
