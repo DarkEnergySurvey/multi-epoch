@@ -193,20 +193,12 @@ class Job(BaseJob):
 
         # General pars, BAND-independent
         SExDual_parameters = {
-            'CATALOG_TYPE'    : "FITS_LDAC",
+            'MAG_ZEROPOINT'   : self.ctx.magbase,
             'FILTER_NAME'     : os.path.join(os.environ['MULTIEPOCH_DIR'],'etc','gauss_3.0_7x7.conv'),
             'STARNNW_NAME'    : os.path.join(os.environ['MULTIEPOCH_DIR'],'etc','sex.nnw'),
-            'WEIGHT_TYPE'     : 'MAP_WEIGHT',
-            'MEMORY_BUFSIZE'  : 2048,
-            'CHECKIMAGE_TYPE' : 'SEGMENTATION',
-            'DETECT_THRESH'   : 1.5,
-            'DEBLEND_MINCONT' : 0.001,
-            #'DEBLEND_MINCONT' : 0.005, 
             #'PARAMETERS_NAME' : os.path.join(os.environ['MULTIEPOCH_DIR'],'etc','sex.param'), # Slowest
             #'PARAMETERS_NAME' : os.path.join(os.environ['MULTIEPOCH_DIR'],'etc','sex.param_psfonly'), # Faster!!!
             'PARAMETERS_NAME' : os.path.join(os.environ['MULTIEPOCH_DIR'],'etc','sex.param_nomodel'), # Way Faster -- no model for tesing!!!
-            'VERBOSE_TYPE'    : 'NORMAL',
-            'INTERP_TYPE'     : 'NONE',
             }
 
         # Now update pars with kwargs -- with override the above definitions
@@ -249,7 +241,6 @@ class Job(BaseJob):
             wgt_comb_det = "%s'[%s]'" % (fh.get_mef_file(tiledir, tilename_fh, dBAND), utils.WGT_HDU)
             msk_comb     = "%s'[%s]'" % (fh.get_mef_file(tiledir, tilename_fh, BAND),  utils.MSK_HDU)
             
-            pars['MAG_ZEROPOINT']   =  self.ctx.magbase 
             pars['CATALOG_NAME']    =  sexcat           
             pars['PSF_NAME']        =  "%s,%s" % (psf_det,psf)
             pars['CHECKIMAGE_NAME'] =  seg

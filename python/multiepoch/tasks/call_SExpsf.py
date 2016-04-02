@@ -191,13 +191,12 @@ class Job(BaseJob):
 
         SExpsf_parameters = {
             'CATALOG_TYPE'    : "FITS_LDAC",
-            'WEIGHT_TYPE'     : 'MAP_WEIGHT',
             'PARAMETERS_NAME' : os.path.join(os.environ['MULTIEPOCH_DIR'],'etc','sex.param_psfex'),
             'FILTER_NAME'     : os.path.join(os.environ['MULTIEPOCH_DIR'],'etc','sex.conv'),
             'STARNNW_NAME'    : os.path.join(os.environ['MULTIEPOCH_DIR'],'etc','sex.nnw'),
             'SATUR_LEVEL'     : 65000,
-            'VERBOSE_TYPE'    : 'NORMAL',
-            'DETECT_MINAREA'  : 3, # WHY??????????? son small!!!!
+            'DETECT_MINAREA'  : 3,
+            'DETECT_THRESH'   : 5.0, 
             }
 
         # Now update pars with kwargs

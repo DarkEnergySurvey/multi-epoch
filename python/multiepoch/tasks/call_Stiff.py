@@ -150,10 +150,7 @@ class Job(BaseJob):
         overwrite them with kwargs to this function.
         """
         stiff_parameters = {
-            "COMPRESSION_TYPE" : "JPEG",
-            "NTHREADS"        : self.ctx.nthreads,
-            "COPYRIGHT"        : "NCSA/DESDM",
-            "WRITE_XML"        : "N",
+            "NTHREADS"    : self.ctx.nthreads,
             "DESCRIPTION" : "'Pseudo Color of coadded image for DES tile %s'" % self.ctx.tilename,
         }
         stiff_parameters.update(kwargs)
@@ -200,7 +197,7 @@ class Job(BaseJob):
 
         # The Stiff configuration file
         if self.input.stiff_conf == '':
-            self.ctx.stiff_conf = os.path.join(os.environ['MULTIEPOCH_DIR'],'etc','default.stiff')
+            self.ctx.stiff_conf = fh.get_configfile('stiff')
             self.logger.info("Will use Stiff default configuration file: %s" % self.ctx.stiff_conf)
         
         cmd_list = []

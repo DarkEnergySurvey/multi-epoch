@@ -101,6 +101,9 @@ class Job(BaseJob):
         t0 = time.time()
         self.ctx.tileinfo = querylibs.get_tileinfo_from_db(self.ctx.dbh,logger=self.logger,
                                                            **self.input.as_dict())
+
+        # Make tileID visible
+        self.ctx.tileid = int(self.ctx.tileinfo['ID'])
         self.logger.info("Query completed in %s" % elapsed_time(t0))
 
     def __str__(self):
