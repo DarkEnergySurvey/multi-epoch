@@ -151,7 +151,7 @@ class Job(BaseJob):
 
         cmd_list = []
         for idx, me_file in enumerate(self.ctx.assoc['FILEPATH_INPUT_RED']):
-            head_file = me_file.replace('.fits','.head')
+            head_file = me_file.replace('.fits','.%s' % fh.OHEAD_EXT)
             if os.path.exists(me_file) and not self.input.clobber_me:
                 self.logger.debug('Skipping creation of %s, exists already.' % me_file)
             else:
