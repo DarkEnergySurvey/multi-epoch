@@ -77,7 +77,7 @@ def define_head_names(ctx):
 
     # Short-cuts
     ext_me   = ctx.extension_me
-    ext_head = fh.HEAD_EXT
+    ext_head = fh.OHEAD_EXT
 
 
     # Get the f_label for file types
