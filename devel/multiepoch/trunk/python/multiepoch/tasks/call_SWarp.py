@@ -213,7 +213,7 @@ class Job(BaseJob):
 
         # The SWarp configuration file
         if self.input.swarp_conf == '':
-            self.ctx.swarp_conf = os.path.join(os.environ['MULTIEPOCH_DIR'],'etc','default.swarp')
+            self.ctx.swarp_conf = fh.get_configfile('swarp')
             self.logger.info("Will use SWarp default configuration file: %s" % self.ctx.swarp_conf)
             
         swarp_cmd = {} # To create the science image we'll keep
@@ -288,15 +288,10 @@ class Job(BaseJob):
         """
         swarp_parameters = {
             "COMBINE_TYPE"    : self.ctx.COMBINE_TYPE,
-            "WEIGHT_TYPE"     : "MAP_WEIGHT",
             "PIXEL_SCALE"     : "%.3f"  % self.ctx.tileinfo['PIXELSCALE'],
-            "PIXELSCALE_TYPE" : "MANUAL",
             "NTHREADS"        : self.ctx.nthreads,
-            "CENTER_TYPE"     : "MANUAL",
             "IMAGE_SIZE"      : "%s,%d" % (self.ctx.tileinfo['NAXIS1'],self.ctx.tileinfo['NAXIS2']),
             "CENTER"          : "%s,%s" % (self.ctx.tileinfo['RA_CENT'],self.ctx.tileinfo['DEC_CENT']),
-            "WRITE_XML"       : "N",
-            "COPY_KEYWORDS"   : "OBJECT,BUNIT,FILTER,BAND",
             }
         swarp_parameters.update(kwargs)
         return swarp_parameters

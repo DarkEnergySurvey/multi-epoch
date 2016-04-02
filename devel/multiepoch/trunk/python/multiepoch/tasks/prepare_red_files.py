@@ -24,8 +24,8 @@ import pandas as pd
 from multiepoch import file_handler as fh
 from despymisc.miscutils import elapsed_time
 
-ROWINTERP_NULLWEIGHT_EXE = 'rowinterp_nullweight_me'
-ROWINTERP_NULLWEIGHT_OPTIONS = "--interp_mask TRAIL,BPM --invalid_mask EDGE --max_cols 50 --null_mask BPM,BADAMP,EDGEBLEED,EDGE,CRAY,SSXTALK,STREAK,TRAIL -v"
+COADD_NWGINT_EXE = 'coadd_nwgint'
+COADD_NWGINT_OPTIONS = "--interp_mask TRAIL,BPM --invalid_mask EDGE --max_cols 50 --null_mask BPM,BADAMP,EDGEBLEED,EDGE,CRAY,SSXTALK,STREAK,TRAIL -v"
 BKLINE = "\\\n"
 
 class Job(BaseJob):
@@ -43,6 +43,7 @@ class Job(BaseJob):
                               argparse={ 'argtype': 'positional', })
         # Optional Arguments
         tilename    = Unicode(None, help="The Name of the Tile Name to query",argparse=True)
+        tileid      = CInt(-1,    help="The COADDTILE_ID for the Tile Name")
         tilename_fh = CUnicode('',  help="Alternative tilename handle for unique identification default=TILENAME")
         tiledir     = Unicode(None, help='The output directory for this tile.')
 
@@ -131,19 +132,34 @@ class Job(BaseJob):
     def get_me_prepare_cmd_list(self):
         
         """ Figure out which ME files need to be created"""
+
+        # We'll make this a ctx variable, although we probably don't need to access it
+        self.ctx.coadd_nwgint_conf = fh.get_configfile('coadd_nwgint')
+        self.logger.info("Will use coadd_ngwint default configuration file: %s" % self.ctx.coadd_nwgint_conf)
+
+
+        # option for all images
+        cmd_tile = []
+        cmd_tile.append("%s" % COADD_NWGINT_OPTIONS)
+        # In case we want to create special weight for mask
+        if self.input.weight_for_mask:
+            cmd_tile.append("--custom_weight")
+        cmd_tile.append("--hdupcfg %s" % self.ctx.coadd_nwgint_conf)
+        cmd_tile.append("--tilename %s" % self.ctx.tilename)
+        if self.ctx.tileid > 0:
+            cmd_tile.append("--tileid %s" % self.ctx.tileid)
+
         cmd_list = []
         for idx, me_file in enumerate(self.ctx.assoc['FILEPATH_INPUT_RED']):
+            head_file = me_file.replace('.fits','.head')
             if os.path.exists(me_file) and not self.input.clobber_me:
                 self.logger.debug('Skipping creation of %s, exists already.' % me_file)
             else:
-                cmd = [ROWINTERP_NULLWEIGHT_EXE]
+                cmd = [COADD_NWGINT_EXE]
                 cmd.append("-i %s" % self.ctx.assoc['FILEPATH_LOCAL'][idx])
                 cmd.append("-o %s" % me_file)
-                # In case we want to create special weight for mask
-                if self.input.weight_for_mask:
-                    cmd.append("%s --me_prepare" % ROWINTERP_NULLWEIGHT_OPTIONS)
-                else:
-                    cmd.append("%s" % ROWINTERP_NULLWEIGHT_OPTIONS)
+                cmd.append("--headfile %s" % head_file)
+                cmd = cmd + cmd_tile
                 cmd_list.append(cmd)
 
         return cmd_list
@@ -152,7 +168,7 @@ class Job(BaseJob):
     def run_me_prepare(self, cmd_list, MP):
         """ Create the me input files"""
         
-        self.logger.info("Will proceed to run: %s" % ROWINTERP_NULLWEIGHT_EXE)
+        self.logger.info("Will proceed to run: %s" % COADD_NWGINT_EXE)
         t0 = time.time()
         NP = utils.get_NP(MP)  # Figure out NP to use, 0=automatic
         logfile = fh.get_me_prepare_log_file(self.input.tiledir, self.input.tilename_fh)

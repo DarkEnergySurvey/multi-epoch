@@ -15,7 +15,7 @@ from multiepoch import utils
 
 # The query template used to get the geometry of the tile
 QUERY_GEOM = """
-    SELECT PIXELSCALE, NAXIS1, NAXIS2,
+    SELECT ID,PIXELSCALE, NAXIS1, NAXIS2,
         RA_CENT, DEC_CENT,
         RA_SIZE,DEC_SIZE,
         RAC1, RAC2, RAC3, RAC4,

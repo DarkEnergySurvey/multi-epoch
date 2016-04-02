@@ -166,7 +166,6 @@ class Job(BaseJob):
         options to overwrite them with kwargs to this function.
         """
         psfex_parameters = {
-            'WRITE_XML'  : 'Y',
             "NTHREADS"   : self.ctx.nthreads,
         }
         # Now update pars with kwargs
@@ -202,7 +201,6 @@ class Job(BaseJob):
 
             pars['XML_NAME']    = psfxml
             pars['OUTCAT_NAME'] = psfex_stars
-            pars['OUTCAT_TYPE'] = 'FITS_LDAC'
             
             # Build the call
             cmd = []

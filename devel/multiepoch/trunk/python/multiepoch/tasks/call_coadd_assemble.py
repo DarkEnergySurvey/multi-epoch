@@ -46,6 +46,7 @@ class Job(BaseJob):
         tilename     = Unicode(None, help="The Name of the Tile Name to query",argparse=True)
         tilename_fh  = CUnicode('',  help="Alternative tilename handle for unique identification default=TILENAME")
         tiledir      = Unicode(None, help="The output directory for this tile")
+        tileid       = CInt(-1,    help="The COADDTILE_ID for the Tile Name")
         clobber_MEF  = Bool(False, help="Cloober the existing MEF fits")
         cleanupSWarp = Bool(False, help="Clean-up SWarp files")
         execution_mode_MEF  = CUnicode("tofile",help="excution mode",
@@ -169,8 +170,9 @@ class Job(BaseJob):
                           'clobber' : self.ctx.clobber_MEF,
                           'xblock'  : self.ctx.xblock,
                           'add_noise' : self.ctx.add_noise,
-                          'magzero' : self.ctx.magbase,
+                          'magzero'  : self.ctx.magbase,
                           'tilename' : self.ctx.tilename,
+                          'tileid' : self.ctx.tileid,
                           }
             if self.input.weight_for_mask:
                 args[BAND]['msk_file'] = fh.get_msk_fits_file(tiledir, tilename_fh, BAND)

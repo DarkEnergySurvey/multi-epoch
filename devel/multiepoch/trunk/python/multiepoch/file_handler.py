@@ -370,3 +370,12 @@ def get_scamp_plots_relative(tilename,plotnames):
         filename = "%s_%s" % (tilename,plotname)
         filenames.append(os.path.join('qa',filename))
     return filenames
+
+
+def get_configfile(exec_name,date=None):
+
+    if date:
+        CONFIG_DATE = date
+    else:
+        CONFIG_DATE = os.environ['MULTIEPOCH_CONFIG_DATE']
+    return os.path.join(os.environ['MULTIEPOCH_DIR'],'etc','%s_%s.config' % (CONFIG_DATE,exec_name))
