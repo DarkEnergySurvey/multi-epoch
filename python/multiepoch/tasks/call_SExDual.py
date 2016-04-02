@@ -216,7 +216,7 @@ class Job(BaseJob):
 
         # SEx default configuration
         if self.input.SExDual_conf == '':
-            self.ctx.SExDual_conf = os.path.join(os.environ['MULTIEPOCH_DIR'],'etc','default.sex')
+            self.ctx.SExDual_conf = fh.get_configfile('sex')
             self.logger.info("Will use SEx Dual default configuration file: %s" % self.ctx.SExDual_conf)
 
         # The updated parameters set for SEx

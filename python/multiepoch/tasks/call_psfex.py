@@ -184,7 +184,7 @@ class Job(BaseJob):
 
         # The psfex configuration file
         if self.input.psfex_conf == '':
-            self.ctx.psfex_conf = os.path.join(os.environ['MULTIEPOCH_DIR'],'etc','default.psfex')
+            self.ctx.psfex_conf = fh.get_configfile('psfex')
             self.logger.info("Will use SEx for psf default configuration file: %s" % self.ctx.psfex_conf)
         
         # The updated parameters set for psfex
