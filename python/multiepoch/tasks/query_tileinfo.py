@@ -77,7 +77,7 @@ class Job(BaseJob):
         # we set required to True because we need this if executed as
         # script, even though argument will be declared with -- and
         # only then we use the parser
-        coaddtile_table    = CUnicode("felipe.coaddtile_new", help="Database table with COADDTILE information",
+        coaddtile_table    = CUnicode("felipe.coaddtile_geom", help="Database table with COADDTILE information",
                                       argparse=True)
 
         # Logging -- might be factored out
@@ -103,7 +103,8 @@ class Job(BaseJob):
                                                            **self.input.as_dict())
 
         # Make tileID visible
-        self.ctx.tileid = int(self.ctx.tileinfo['ID'])
+        self.ctx.tileinfo['ID'] = int(self.ctx.tileinfo['ID'])
+        self.ctx.tileid = self.ctx.tileinfo['ID']
         self.logger.info("Query completed in %s" % elapsed_time(t0))
 
     def __str__(self):
