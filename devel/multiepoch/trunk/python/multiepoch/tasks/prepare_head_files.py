@@ -97,7 +97,9 @@ class Job(BaseJob):
             try:
                 self.ctx.update(contextDefs.get_flabel(self.ctx.assoc, flabel='flabel_red', logger=self.logger))
             except:
-                self.logger.info("Could not determine flabel for flable_red")
+                self.logger.info("Could not determine flabel for flabel_red")
+                self.logger.info("Removing flabel_red from context")
+                del self.ctx.flabel_red 
             
         # Re-construct the head names in case not present
         if 'FILEPATH_INPUT_HEAD' not in self.ctx.catlist.keys():

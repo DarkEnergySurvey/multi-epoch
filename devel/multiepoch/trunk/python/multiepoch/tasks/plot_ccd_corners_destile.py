@@ -69,7 +69,7 @@ class Job(base_job.BaseJob):
             filepath = self.input.plot_outname
         else:
             # Use file-handler to set the name
-            filepath = fh.get_ccd_plot_file(self.input.tiledir, self.input.tilename)
+            filepath = fh.get_ccd_plot_file(self.ctx.tiledir, self.ctx.tilename,self.ctx.search_type)
 
         # Make sure that the filepath exists
         utils.check_filepath_exist(filepath,logger=self.logger.debug)

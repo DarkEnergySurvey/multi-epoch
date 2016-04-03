@@ -191,7 +191,7 @@ class Job(BaseJob):
         from_extras   = CUnicode(FROM_EXTRAS,help="string with extra FROM for query",)
         search_type   = CUnicode(SEARCH_TYPE,help="Search type to perform (distances or corners)",
                                  argparse={'choices': ('distance','corners')} )
-        tagname       = CUnicode('Y2T9_FINALCUT',help="TAGNAME for images in the database",)
+        tagname       = CUnicode('Y2T9_FINALCUT_V2',help="TAGNAME for images in the database",)
         
         assoc_file    = CUnicode("", help=("Name of the output ASCII association file where we will store the cccds information for coadd"))
         cats_file     = CUnicode("", help=("Name of the output ASCII catalog list storing the information for scamp"))
