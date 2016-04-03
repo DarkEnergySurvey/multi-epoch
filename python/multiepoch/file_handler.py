@@ -267,7 +267,7 @@ def get_me_prepare_log_file(tiledir, tilename):
 def get_ccd_plot_file(tiledir, tilename, search_type=None):
     dh = get_tiledir_handler(tiledir)
     if search_type:
-        filename = "%s_%s_overlap.pdf" % (tilename,search_type)
+        filename = "%s_overlap_%s.pdf" % (tilename,search_type)
     else:
         filename = "%s_overlap.pdf" % tilename
     return dh.place_file(filename, 'aux')
