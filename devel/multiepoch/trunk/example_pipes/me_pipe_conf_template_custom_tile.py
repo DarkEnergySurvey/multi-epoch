@@ -7,8 +7,8 @@ tilename = 'RXJ2248'
 
 # tofile/dryrun/execute
 #EXECUTION_MODE = 'dryrun'
-EXECUTION_MODE = 'tofile'
 #EXECUTION_MODE = 'execute'
+EXECUTION_MODE = 'tofile'
 
 # Clean up files True/False
 cleanupPSFcats = True
