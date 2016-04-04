@@ -54,7 +54,6 @@ class Job(BaseJob):
         MP_SEx        = CInt(1,help="run using multi-process, 0=automatic, 1=single-process [default]")
         doBANDS       = List(['all'],help="BANDS to processs (default=all)",argparse={'nargs':'+',})
         detname       = CUnicode(DETNAME,help="File label for detection image, default=%s." % DETNAME)
-        
 
         # Logging -- might be factored out
         stdoutloglevel = CUnicode('INFO', help="The level with which logging info is streamed to stdout",
@@ -62,11 +61,6 @@ class Job(BaseJob):
         fileloglevel   = CUnicode('INFO', help="The level with which logging info is written to the logfile",
                                   argparse={'choices': ('DEBUG','INFO','CRITICAL')} )
 
-        # TODO
-        # Make the configuration visible as a commandline options
-
-        # Function to read ASCII/panda framework file (instead of json)
-        # Comment if you want to use json files
         def _read_assoc_file(self):
             mydict = {}
             df = pd.read_csv(self.assoc_file,sep=' ')
@@ -126,6 +120,7 @@ class Job(BaseJob):
             self.runSExpsf(cmd_list,MP=MP)
         else:
             raise ValueError('Execution mode %s not implemented.' % execution_mode)
+
         return
 
     def writeCall(self,cmd_list):
@@ -196,7 +191,8 @@ class Job(BaseJob):
             'STARNNW_NAME'    : os.path.join(os.environ['MULTIEPOCH_DIR'],'etc','sex.nnw'),
             'SATUR_LEVEL'     : 65000,
             'DETECT_MINAREA'  : 3,
-            'DETECT_THRESH'   : 5.0, 
+            'DETECT_THRESH'   : 5.0,
+            'INTERP_TYPE'     : 'ALL',
             }
 
         # Now update pars with kwargs

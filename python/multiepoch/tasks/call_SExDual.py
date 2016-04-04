@@ -56,7 +56,6 @@ class Job(BaseJob):
         doBANDS       = List(['all'],help="BANDS to processs (default=all)",argparse={'nargs':'+',})
         detname       = CUnicode(DETNAME,help="File label for detection image, default=%s." % DETNAME)
         magbase       = CFloat(MAGBASE, help="Zero point magnitude base for SWarp, default=%s." % MAGBASE)
-
         cleanupPSFcats = Bool(False, help="Clean-up PSFcat.fits files")
         
         # Logging -- might be factored out
@@ -125,9 +124,10 @@ class Job(BaseJob):
         else:
             raise ValueError('Execution mode %s not implemented.' % execution_mode)
 
-        # 4. Clean up psfcat files
+        # 3. Clean up psfcat files
         if self.input.cleanupPSFcats and execution_mode == 'execute':
             self.cleanup_PSFcats(execute=True)
+
         return
 
     def writeCall(self,cmd_list):
@@ -257,12 +257,11 @@ class Job(BaseJob):
 
         return SExDual_cmd
 
-
     def cleanup_PSFcats(self,execute=False):
+        """ Clean up the *_psfcat.fits files"""
 
         for BAND in self.ctx.dBANDS:
-
-            psfcat = fh.get_psf_file(self.ctx.tiledir, self.ctx.tilename_fh, BAND)
+            psfcat = fh.get_psfcat_file(self.ctx.tiledir, self.ctx.tilename_fh, BAND)
             self.logger.info("Cleaning up %s" % psfcat)
             if execute:
                 try:
@@ -270,7 +269,6 @@ class Job(BaseJob):
                 except:
                     self.logger.info("Warning: cannot remove %s" % psfcat)
         return
-
 
     def __str__(self):
         return 'Creates the SExtractor call for dual detection'
