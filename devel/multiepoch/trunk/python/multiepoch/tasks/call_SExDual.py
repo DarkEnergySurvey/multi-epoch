@@ -190,7 +190,6 @@ class Job(BaseJob):
         Set the SEx default options for dual SExtrator run and have the
         options to overwrite them with kwargs to this function.
         """
-
         # General pars, BAND-independent
         SExDual_parameters = {
             'MAG_ZEROPOINT'   : self.ctx.magbase,
