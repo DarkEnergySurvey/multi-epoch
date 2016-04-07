@@ -279,7 +279,10 @@ class Job(BaseJob):
         Set the scamp default options for all band in a tile and overwrite them
         with kwargs to this function.
         """
-        checkplot_type = "astr_pixerror1d,astr_referror1d,fgroups,astr_referror2d,astr_refsysmap,distortion"
+        # older way, most plots
+        #checkplot_type = "astr_pixerror1d,astr_referror1d,fgroups,astr_referror2d,astr_refsysmap,distortion"
+        # Only general ones
+        checkplot_type = "astr_referror1d,astr_referror2d,fgroups"
         checkplot_name = ",".join( fh.get_scamp_plots_relative(self.input.tilename_fh, checkplot_type.split(',')))
         scamp_parameters = {
             "CHECKPLOT_TYPE"  : checkplot_type,
