@@ -149,9 +149,9 @@ class Job(BaseJob):
         for key in args.keys():
             if key == 'logger':
                 continue
-            if args[key] == True:
+            if args[key] is True:
                 cmd.append("--%s" % key)
-            elif args[key]:
+            elif args[key] is not False:
                 cmd.append("--%s %s" % (key,args[key]))
         return cmd
 
