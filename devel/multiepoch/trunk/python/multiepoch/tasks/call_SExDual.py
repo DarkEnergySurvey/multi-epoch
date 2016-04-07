@@ -193,6 +193,7 @@ class Job(BaseJob):
         # General pars, BAND-independent
         SExDual_parameters = {
             'MAG_ZEROPOINT'   : self.ctx.magbase,
+            'CHECKIMAGE_TYPE' : 'SEGMENTATION',
             'FILTER_NAME'     : os.path.join(os.environ['MULTIEPOCH_DIR'],'etc','gauss_3.0_7x7.conv'),
             'STARNNW_NAME'    : os.path.join(os.environ['MULTIEPOCH_DIR'],'etc','sex.nnw'),
             'PARAMETERS_NAME' : os.path.join(os.environ['MULTIEPOCH_DIR'],'etc','sex.param_diskonly'), # disk-only psf
