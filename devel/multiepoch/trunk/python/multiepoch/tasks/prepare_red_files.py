@@ -25,7 +25,10 @@ from multiepoch import file_handler as fh
 from despymisc.miscutils import elapsed_time
 
 COADD_NWGINT_EXE = 'coadd_nwgint'
-COADD_NWGINT_OPTIONS = "--interp_mask TRAIL,BPM --invalid_mask EDGE --max_cols 50 --null_mask BPM,BADAMP,EDGEBLEED,EDGE,CRAY,SSXTALK,STREAK,TRAIL -v"
+COADD_NWGINT_OPTIONS = "--max_cols 50 -v"
+INTERP_MASK   = 'TRAIL,BPM'
+INVALID_MASK  = 'EDGE'
+NULL_MASK     = 'BPM,BADAMP,EDGEBLEED,EDGE,CRAY,SSXTALK,STREAK,TRAIL'
 BKLINE = "\\\n"
 
 class Job(BaseJob):
@@ -46,6 +49,12 @@ class Job(BaseJob):
         tileid      = CInt(-1,    help="The COADDTILE_ID for the Tile Name")
         tilename_fh = CUnicode('',  help="Alternative tilename handle for unique identification default=TILENAME")
         tiledir     = Unicode(None, help='The output directory for this tile.')
+
+        # nwgint options
+        interp_mask   = CUnicode(INTERP_MASK,  help="The mask bits to interpolate over")
+        invalid_mask  = CUnicode(INVALID_MASK,  help="The mask bits to set as invalid")
+        null_mask     = CUnicode(NULL_MASK, help="The mask bits to null (zero)")
+        
 
         # Optional inputs -- postional arguments
         weight_for_mask  = Bool(False, help="Create coadded weight for mask creation")
@@ -140,7 +149,12 @@ class Job(BaseJob):
 
         # option for all images
         cmd_tile = []
+
+        # The nwgint options
         cmd_tile.append("%s" % COADD_NWGINT_OPTIONS)
+        cmd_tile.append("--interp_mask %s"   % self.ctx.interp_mask)
+        cmd_tile.append("--invalid_mask %s"  % self.ctx.invalid_mask)
+        cmd_tile.append("--null_mask %s"     % self.ctx.null_mask)
         # In case we want to create special weight for mask
         if self.input.weight_for_mask:
             cmd_tile.append("--custom_weight")
