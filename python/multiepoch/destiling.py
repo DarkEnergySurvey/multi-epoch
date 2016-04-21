@@ -246,10 +246,15 @@ class DEStiling:
         # make sure we delete before we created
         drop = "drop   table %s purge" % table
 
+        # ------
+        # NOTE:
+        # The format for most colummns should be NUMBER(9,6) and not NUMBER(15,10)
+        # ------
+
         # Create command
         create = """
         create table %s (
-        ID            NUMBER(22,6) NOT NULL,
+        ID                      NUMBER(6) NOT NULL,
         TILENAME                VARCHAR2(50) NOT NULL,
         RA_CENT                 NUMBER(15,10) NOT NULL,
         DEC_CENT                NUMBER(15,10) NOT NULL,
