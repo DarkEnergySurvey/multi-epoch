@@ -102,7 +102,7 @@ def create_header(**kwargs):
         'CUNIT2'  : 'deg',                   #/ Axis unit
         'CRVAL1'  :  RA_CENT,         #/ World coordinate on this axis
         'CRPIX1'  :  (NAXIS1+1)/2.0,    #/ Reference pixel on this axis
-        'CD1_1'   :  pixelscale/3600., #/ Linear projection matrix -- CD1_1 is negative
+        'CD1_1'   :  -pixelscale/3600., #/ Linear projection matrix -- CD1_1 is negative
         'CD1_2'   :  0,                      #/ Linear projection matrix -- CD1_2 is zero, no rotation
         'CRVAL2'  :  DEC_CENT,        #/ World coordinate on this axis
         'CRPIX2'  :  (NAXIS2+1)/2.0,    #/ Reference pixel on this axis
