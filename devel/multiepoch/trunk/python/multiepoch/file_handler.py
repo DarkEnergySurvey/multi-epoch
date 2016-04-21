@@ -264,6 +264,17 @@ def get_me_prepare_log_file(tiledir, tilename):
 
 # -------------------------------------------------
 
+def get_plot_depth_file(tiledir, tilename):
+    dh = get_tiledir_handler(tiledir)
+    filename = "%s_depth.pdf" % tilename
+    return dh.place_file(filename, 'aux')
+
+def get_plot_depth_fraction(tiledir, tilename):
+    dh = get_tiledir_handler(tiledir)
+    filename = "%s_depth.json" % tilename
+    return dh.place_file(filename, 'aux')
+
+
 def get_ccd_plot_file(tiledir, tilename, search_type=None):
     dh = get_tiledir_handler(tiledir)
     if search_type:
@@ -271,6 +282,15 @@ def get_ccd_plot_file(tiledir, tilename, search_type=None):
     else:
         filename = "%s_overlap.pdf" % tilename
     return dh.place_file(filename, 'aux')
+
+def get_ccd_plot_file_image(tiledir, tilename, search_type=None):
+    dh = get_tiledir_handler(tiledir)
+    if search_type:
+        filename = "%s_overlap_image_%s.pdf" % (tilename,search_type)
+    else:
+        filename = "%s_overlap_image.pdf" % tilename
+    return dh.place_file(filename, 'aux')
+
 
 
 #  ***** SCAMP FILES *****
