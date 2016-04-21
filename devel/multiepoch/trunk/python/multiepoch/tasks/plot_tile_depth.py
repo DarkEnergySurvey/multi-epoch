@@ -56,34 +56,33 @@ class Job(base_job.BaseJob):
     def run(self):
 
         #print self.ctx.CCDS.dtype.names
-        
 
-        # Get self.ctx.tile_header
-        self.build_header()
+        # Get self.ctx.tile_header_depth
+        self.build_header_depth(binning=10)
         
         # Get the WCS for the tile -- we'll use it everywhere
-        self.ctx.wcs = wcsutil.WCS(self.ctx.tile_header)
+        self.ctx.wcs = wcsutil.WCS(self.ctx.tile_header_depth)
 
         # Get the filters we found
         self.ctx.BANDS  = numpy.unique(self.ctx.CCDS['BAND'])
         #self.ctx.BANDS  = ['r']
         self.ctx.NBANDS = len(self.ctx.BANDS)
 
-        # # Re-pack the tile corners
-        # tile_racs  = numpy.array([self.ctx.tileinfo['RAC1'], self.ctx.tileinfo['RAC2'],
-        #                           self.ctx.tileinfo['RAC3'], self.ctx.tileinfo['RAC4']])
-        # tile_deccs = numpy.array([self.ctx.tileinfo['DECC1'], self.ctx.tileinfo['DECC2'],
-        #                           self.ctx.tileinfo['DECC3'], self.ctx.tileinfo['DECC4']])
-        #
-        # # Get the corners in images coordinates -- redudant as these are 1,NAXIS1 1,NAXIS2
-        # tile_xs,tile_ys = self.ctx.wcs.sky2image(tile_racs,tile_deccs)
-        # tile_xs = tile_xs.astype(int)
-        # tile_ys = tile_ys.astype(int)
-        # print tile_xs
-        # print tile_ys
+        # Re-pack the tile corners
+        tile_racs  = numpy.array([self.ctx.tileinfo['RAC1'], self.ctx.tileinfo['RAC2'],
+                                  self.ctx.tileinfo['RAC3'], self.ctx.tileinfo['RAC4']])
+        tile_deccs = numpy.array([self.ctx.tileinfo['DECC1'], self.ctx.tileinfo['DECC2'],
+                                  self.ctx.tileinfo['DECC3'], self.ctx.tileinfo['DECC4']])
         
-        tile_xs = numpy.array([0,self.ctx.tileinfo['NAXIS1']-1,self.ctx.tileinfo['NAXIS1']-1,0])
-        tile_ys = numpy.array([0,0,self.ctx.tileinfo['NAXIS2']-1,self.ctx.tileinfo['NAXIS2']-1])
+        # Get the corners in images coordinates -- redudant as these are 1,NAXIS1 1,NAXIS2
+        tile_xs,tile_ys = self.ctx.wcs.sky2image(tile_racs,tile_deccs)
+        tile_xs = tile_xs.astype(int)
+        tile_ys = tile_ys.astype(int)
+        #print tile_xs
+        #print tile_ys
+        
+        #tile_xs = numpy.array([0,self.ctx.tileinfo['NAXIS1']-1,self.ctx.tileinfo['NAXIS1']-1,0])
+        #tile_ys = numpy.array([0,0,self.ctx.tileinfo['NAXIS2']-1,self.ctx.tileinfo['NAXIS2']-1])
         
         figure = self.plot_CCDcornersDESTILEsubplot_xy(tile_xs, tile_ys)
 
@@ -93,7 +92,7 @@ class Job(base_job.BaseJob):
         #else:
         #    # Use file-handler to set the name
         #    filepath = fh.get_ccd_plot_file(self.ctx.tiledir, self.ctx.tilename,self.ctx.search_type)
-        filepath = 'test.pdf'
+        filepath = '%s_xy_coverage.pdf' % self.ctx.tilename
 
         # Make sure that the filepath exists
         utils.check_filepath_exist(filepath,logger=self.logger.debug)
@@ -102,18 +101,24 @@ class Job(base_job.BaseJob):
         self.logger.info("Wrote: %s" % filepath)
 
 
-    def build_header(self):
+    def build_header_depth(self,binning=1):
+
         """ Construct the header of the tile """
-        # TODO: We might want to change the NAXIS/pixscale
+
+        # Binning
+        xsize_arcsec = self.ctx.tileinfo['PIXELSCALE']*self.ctx.tileinfo['NAXIS1']
+        NAXIS1 = int(self.ctx.tileinfo['NAXIS1']/binning)
+        NAXIS2 = int(self.ctx.tileinfo['NAXIS2']/binning)
+        pixelscale = xsize_arcsec/NAXIS1
+
         kw = {
-            'pixelscale' : self.ctx.tileinfo['PIXELSCALE'],
-            'NAXIS1'     : self.ctx.tileinfo['NAXIS1'],
-            'NAXIS2'     : self.ctx.tileinfo['NAXIS2'],
+            'pixelscale' : pixelscale,
+            'NAXIS1'     : NAXIS1,
+            'NAXIS2'     : NAXIS2,
             'ra_cent'    : self.ctx.tileinfo['RA_CENT'],
             'dec_cent'   : self.ctx.tileinfo['DEC_CENT'],
             }
-        self.ctx.tile_header = tileinfo_utils.create_header(**kw)
-
+        self.ctx.tile_header_depth = tileinfo_utils.create_header(**kw)
 
     def plot_CCDcornersDESTILEsubplot_xy(self, tile_xs, tile_ys, **kwargs):
         """ Plot the CCDs overlaping the DESTILENAME using subplots on image coordinates"""
@@ -148,12 +153,14 @@ class Job(base_job.BaseJob):
         y1 = x1
         y2 = x2
 
+        NAXIS1 = self.ctx.tile_header_depth['NAXIS1']
+        NAXIS2 = self.ctx.tile_header_depth['NAXIS2']
         tile_depth = {}
         
         kplot = 1
         for BAND in BANDS:
 
-            tile_depth[BAND] = numpy.zeros((self.ctx.tileinfo['NAXIS1'],self.ctx.tileinfo['NAXIS2']),dtype=numpy.int)
+            tile_depth[BAND] = numpy.zeros((NAXIS1,NAXIS2),dtype=numpy.int)
 
             plt.subplot(nrows,ncols,kplot)
             ax = plt.gca()
@@ -191,10 +198,10 @@ class Job(base_job.BaseJob):
             ####################################
             # OPTIONAL
             # Write a fits file
-            #outname  = 'depth_%s.fits' % BAND
-            #ofits = fitsio.FITS(outname,'rw',clobber=True)
-            #ofits.write(tile_depth[BAND],extname='SCI',header=self.ctx.tile_header)
-            #print "Wrote: %s" %  outname
+            outname  = '%s_%s_depth.fits' % (self.ctx.tilename,BAND)
+            ofits = fitsio.FITS(outname,'rw',clobber=True)
+            ofits.write(tile_depth[BAND],extname='SCI',header=self.ctx.tile_header_depth)
+            print "Wrote: %s" %  outname
             ###################################
             print "%s - %s" % (BAND,numpy.median(tile_depth[BAND]))
 
