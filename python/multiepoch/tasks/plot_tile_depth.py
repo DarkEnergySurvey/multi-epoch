@@ -11,17 +11,18 @@ matplotlib.use('Agg')
 
 from matplotlib import pyplot as plt
 from matplotlib.patches import Polygon
+from mpl_toolkits.axes_grid1 import make_axes_locatable
 
-from traitlets import Dict, Instance, CUnicode, Unicode
+from traitlets import Dict, Instance, CUnicode, Unicode, CInt, CBool, Bool
 from mojo.jobs import base_job 
 
 from multiepoch import file_handler as fh
-import multiepoch.utils as utils
-
 from multiepoch import tileinfo_utils
+import multiepoch.utils as utils
 from despyastro import wcsutil
 
 import fitsio
+import json
 
 D2R = math.pi/180. # degrees to radians shorthand
 
@@ -45,61 +46,124 @@ class Job(base_job.BaseJob):
         CCDS = Instance(numpy.core.records.recarray, ([], 'int'), 
                 help='The CCDS we want to plot.')
 
-        plot_band    = CUnicode('', help='Plot single band only.')
-        plot_outname = Unicode(None, help="Output file name for plot")
+        binning        = CInt(100, help='Binning fraction')
+        plot_ccds  = Bool(False, help="Plot CCDS")
+        plot_depth = Bool(False, help="Plot depth")
+        outname_ccds_plot  = Unicode('', help="Output file name for ccds plot")
+        outname_depth_plot = Unicode('', help="Output file name for depth plot")
+        outname_fraction = Unicode('', help="Output file name for depth json file with fraction")
 
-        def _validate_conditional(self):
-            if self.tiledir == '' and self.plot_outname is None:
-                mess = 'Need to define either tilename of plot_outname'
-                raise IO_ValidationError(mess)
 
     def run(self):
 
-        #print self.ctx.CCDS.dtype.names
-
         # Get self.ctx.tile_header_depth
-        self.build_header_depth(binning=10)
+        self.build_header_depth(binning=self.ctx.binning)
         
         # Get the WCS for the tile -- we'll use it everywhere
         self.ctx.wcs = wcsutil.WCS(self.ctx.tile_header_depth)
 
         # Get the filters we found
         self.ctx.BANDS  = numpy.unique(self.ctx.CCDS['BAND'])
-        #self.ctx.BANDS  = ['r']
         self.ctx.NBANDS = len(self.ctx.BANDS)
 
-        # Re-pack the tile corners
+        # Get the tile xy coordinates
+        tile_xs,tile_ys = self.get_tile_xy_corners()
+
+        # Estimate depth and fraction @ depth  and store in dictionary
+        tile_depth = {}
+        fraction = {}
+        for BAND in self.ctx.BANDS:
+            tile_depth[BAND], fraction[BAND] = self.get_tile_depth(tile_xs, tile_ys, BAND)
+
+        # Write the fractions to a json file
+        if self.ctx.outname_fraction == '':
+            self.ctx.outname_fraction = fh.get_plot_depth_fraction(self.ctx.tiledir, self.ctx.tilename)
+        with open(self.ctx.outname_fraction, 'w') as fp:
+            fp.write(json.dumps(fraction,sort_keys=False,indent=4))
+        self.logger.info("Wrote depth fractions to: %s" % self.ctx.outname_fraction)
+        
+        # Plot the depth per band in subplots
+        if self.ctx.plot_depth:
+            self.logger.info("Plotting Depth")
+            figure_depth = self.plot_depth_subplot(tile_depth)
+            if self.ctx.outname_depth_plot == '':
+                self.ctx.outname_depth_plot = fh.get_plot_depth_file(self.ctx.tiledir, self.ctx.tilename)
+            utils.check_filepath_exist(self.ctx.outname_depth_plot,logger=self.logger.debug)
+            figure_depth.savefig(self.ctx.outname_depth_plot)
+            plt.close()
+            self.logger.info("Wrote: %s" % self.ctx.outname_depth_plot)
+
+        # Plotting overlap in xy
+        if self.ctx.plot_ccds:
+            self.logger.info("Plotting CCDS in image coordinates")
+            figure_ccds = self.plot_CCDcornersDESTILEsubplot_xy(tile_xs, tile_ys)
+            if self.ctx.outname_ccds_plot  == '':
+                self.ctx.outname_ccds_plot  = fh.get_ccd_plot_file_image(self.ctx.tiledir, self.ctx.tilename,self.ctx.search_type)
+            utils.check_filepath_exist(self.ctx.outname_ccds_plot ,logger=self.logger.debug)
+            figure_ccds.savefig(self.ctx.outname_ccds_plot)
+            plt.close()
+            self.logger.info("Wrote: %s" % self.ctx.outname_ccds_plot)
+
+
+    def plot_depth_subplot(self, tile_depth, **kwargs):
+        """ Plot the CCDs overlaping the DESTILENAME using subplots on image coordinates"""
+
+        # Get kwargs and set defaults...
+        FIGNUMBER    = kwargs.get('fignumber', 1)
+        FIGSIZE      = kwargs.get('figsize',  18)
+
+        # Figure out the layout depending on the number of filters
+        # found in the overlapping ares
+        BANDS  = self.ctx.BANDS
+        NBANDS = self.ctx.NBANDS
+        ncols = 3
+        if NBANDS > 3:
+            nrows = 2
+        else:
+            nrows = 1
+
+        # Figure out the aspects ratios for the main and sub-plots
+        plot_aspect    = float(nrows)/float(ncols)
+        subplot_aspect = 1
+
+        # The main figure
+        fig = plt.figure(FIGNUMBER,figsize=(FIGSIZE, FIGSIZE*plot_aspect))
+
+        kplot = 1
+        for BAND in BANDS:
+
+            plt.subplot(nrows,ncols,kplot)
+            ax = plt.gca()
+            plt.imshow(tile_depth[BAND], origin='lower', cmap="gray")
+            plt.title("%s - %s band" % (self.ctx.tilename, BAND))
+            plt.xlabel("X (pixels)")
+            plt.ylabel("Y (pixels)")
+
+            # Make color-bar same height
+            divider = make_axes_locatable(ax)
+            cax = divider.append_axes("right", size="5%", pad=0.05)
+            cbar = plt.colorbar(cax=cax)
+            # Fixes lines in the colorbar
+            cbar.solids.set_rasterized(True)
+            cbar.solids.set_edgecolor("face")
+            ax.set_aspect(subplot_aspect)
+            kplot = kplot + 1
+
+        fig.set_tight_layout(True) # This avoids backend warnings.
+        return fig
+
+
+    def get_tile_xy_corners(self):
+
+        # Re-pack the tile corners and get the x,y edges of the tiles in the new wcs reference frame
         tile_racs  = numpy.array([self.ctx.tileinfo['RAC1'], self.ctx.tileinfo['RAC2'],
                                   self.ctx.tileinfo['RAC3'], self.ctx.tileinfo['RAC4']])
         tile_deccs = numpy.array([self.ctx.tileinfo['DECC1'], self.ctx.tileinfo['DECC2'],
                                   self.ctx.tileinfo['DECC3'], self.ctx.tileinfo['DECC4']])
-        
-        # Get the corners in images coordinates -- redudant as these are 1,NAXIS1 1,NAXIS2
         tile_xs,tile_ys = self.ctx.wcs.sky2image(tile_racs,tile_deccs)
         tile_xs = tile_xs.astype(int)
         tile_ys = tile_ys.astype(int)
-        #print tile_xs
-        #print tile_ys
-        
-        #tile_xs = numpy.array([0,self.ctx.tileinfo['NAXIS1']-1,self.ctx.tileinfo['NAXIS1']-1,0])
-        #tile_ys = numpy.array([0,0,self.ctx.tileinfo['NAXIS2']-1,self.ctx.tileinfo['NAXIS2']-1])
-        
-        figure = self.plot_CCDcornersDESTILEsubplot_xy(tile_xs, tile_ys)
-
-        # FileName of the plot
-        #if self.input.plot_outname:
-        #    filepath = self.input.plot_outname
-        #else:
-        #    # Use file-handler to set the name
-        #    filepath = fh.get_ccd_plot_file(self.ctx.tiledir, self.ctx.tilename,self.ctx.search_type)
-        filepath = '%s_xy_coverage.pdf' % self.ctx.tilename
-
-        # Make sure that the filepath exists
-        utils.check_filepath_exist(filepath,logger=self.logger.debug)
-                             
-        figure.savefig(filepath)
-        self.logger.info("Wrote: %s" % filepath)
-
+        return tile_xs,tile_ys
 
     def build_header_depth(self,binning=1):
 
@@ -110,7 +174,6 @@ class Job(base_job.BaseJob):
         NAXIS1 = int(self.ctx.tileinfo['NAXIS1']/binning)
         NAXIS2 = int(self.ctx.tileinfo['NAXIS2']/binning)
         pixelscale = xsize_arcsec/NAXIS1
-
         kw = {
             'pixelscale' : pixelscale,
             'NAXIS1'     : NAXIS1,
@@ -119,6 +182,48 @@ class Job(base_job.BaseJob):
             'dec_cent'   : self.ctx.tileinfo['DEC_CENT'],
             }
         self.ctx.tile_header_depth = tileinfo_utils.create_header(**kw)
+
+
+    def get_tile_depth(self, tile_xs, tile_ys, BAND, **kwargs):
+        
+        """ Get the tile depth """
+
+        depths = kwargs.get('depths',[1,2,3,4,5,6])
+        
+        NAXIS1 = self.ctx.tile_header_depth['NAXIS1']
+        NAXIS2 = self.ctx.tile_header_depth['NAXIS2']
+        tile_depth = numpy.zeros((NAXIS1,NAXIS2),dtype=numpy.int)
+
+        idx = numpy.where(self.ctx.CCDS['BAND'] == BAND)[0]
+        filenames = self.ctx.CCDS['FILENAME'][idx]
+        NCCDs = len(filenames)
+        for filename in filenames:
+
+            # Get the CCD corners in the image coordinate system
+            ras, decs = self.repackCCDcorners(filename)
+            xs, ys = self.ctx.wcs.sky2image(ras,decs)
+            # Get the overlapping region
+            xs = xs - 1
+            ys = ys - 1
+            X1 = int(max( xs.min(), tile_xs.min()))
+            X2 = int(min( xs.max(), tile_xs.max()))
+            Y1 = int(max( ys.min(), tile_ys.min()))
+            Y2 = int(min( ys.max(), tile_ys.max()))
+            # We might want to change this to t_eff * exposure_time/survey_exposure_time
+            tile_depth[Y1:Y2,X1:X2] += 1
+            ####################################
+            # OPTIONAL WRITE
+            # Write a fits file
+            #outname  = '%s_%s_depth.fits' % (self.ctx.tilename,BAND)
+            #ofits = fitsio.FITS(outname,'rw',clobber=True)
+            #ofits.write(tile_depth[BAND],extname='SCI',header=self.ctx.tile_header_depth)
+            #print "Wrote: %s" %  outname
+            ###################################
+
+        self.logger.info("Median depth for %s:  %s" % (BAND,numpy.median(tile_depth)))
+        fraction = fraction_greater_than(tile_depth,depths=depths)
+        return tile_depth, fraction
+
 
     def plot_CCDcornersDESTILEsubplot_xy(self, tile_xs, tile_ys, **kwargs):
         """ Plot the CCDs overlaping the DESTILENAME using subplots on image coordinates"""
@@ -129,11 +234,8 @@ class Job(base_job.BaseJob):
 
         # Figure out the layout depending on the number of filters
         # found in the overlapping ares
-
-        # Get the filters we found
         BANDS  = self.ctx.BANDS
         NBANDS = self.ctx.NBANDS
-
         ncols = 3
         if NBANDS > 3:
             nrows = 2
@@ -153,14 +255,8 @@ class Job(base_job.BaseJob):
         y1 = x1
         y2 = x2
 
-        NAXIS1 = self.ctx.tile_header_depth['NAXIS1']
-        NAXIS2 = self.ctx.tile_header_depth['NAXIS2']
-        tile_depth = {}
-        
         kplot = 1
         for BAND in BANDS:
-
-            tile_depth[BAND] = numpy.zeros((NAXIS1,NAXIS2),dtype=numpy.int)
 
             plt.subplot(nrows,ncols,kplot)
             ax = plt.gca()
@@ -168,7 +264,7 @@ class Job(base_job.BaseJob):
             filenames = self.input.CCDS['FILENAME'][idx]
             NCCDs = len(filenames)
 
-            self.logger.info("Found %s CCDimages for filter %s overlaping " % (NCCDs, BAND))
+            self.logger.info("Plotting %s CCDimages for filter %s overlaping " % (NCCDs, BAND))
             for filename in filenames:
 
                 ras, decs = self.repackCCDcorners(filename)
@@ -185,26 +281,6 @@ class Job(base_job.BaseJob):
                 y1 = min(y1, ys.min())
                 y2 = max(y2, ys.max())
 
-                # Get the overlapping region
-                xs = xs - 1
-                ys = ys - 1
-                X1 = int(max( xs.min(), tile_xs.min()))
-                X2 = int(min( xs.max(), tile_xs.max()))
-                Y1 = int(max( ys.min(), tile_ys.min()))
-                Y2 = int(min( ys.max(), tile_ys.max()))
-                #if filename == 'D00155284_r_c29_r2323p01_immasked.fits':
-                tile_depth[BAND][Y1:Y2,X1:X2] += 1
-
-            ####################################
-            # OPTIONAL
-            # Write a fits file
-            outname  = '%s_%s_depth.fits' % (self.ctx.tilename,BAND)
-            ofits = fitsio.FITS(outname,'rw',clobber=True)
-            ofits.write(tile_depth[BAND],extname='SCI',header=self.ctx.tile_header_depth)
-            print "Wrote: %s" %  outname
-            ###################################
-            print "%s - %s" % (BAND,numpy.median(tile_depth[BAND]))
-
             # Draw the TILE footprint at the end
             P = Polygon(zip(tile_xs, tile_ys),
                         closed=True, Fill=False, hatch='',lw=1.0, color='r')
@@ -219,61 +295,8 @@ class Job(base_job.BaseJob):
             ax.set_aspect(subplot_aspect)
             kplot = kplot + 1
 
-        self.ctx.BANDS = BANDS
         fig.set_tight_layout(True) # This avoids backend warnings.
         return fig
-
-    
-    def plot_CCDcornersDESTILEsingle(self, BAND, tile_racs, tile_deccs, **kwargs):
-        """ Plot the CCD corners of overlapping images for the tilename """
-
-        # Get kwargs and set defaults...
-        FIGNUMBER = kwargs.get('fignumber', 1)
-        FIGSIZE   = kwargs.get('figsize',  10)
-
-        aspect = math.cos(D2R*self.input.tileinfo['DEC'])
-        fig = plt.figure(FIGNUMBER,figsize=(FIGSIZE,FIGSIZE*aspect))
-        ax = plt.gca()
-
-        idx = numpy.where(self.input.CCDS['BAND'] == BAND)[0]
-        filenames = self.input.CCDS['FILENAME'][idx]
-        NCCDs = len(filenames)
-
-        # Initialize limits
-        x1 =  1e10
-        x2 = -1e10
-        y1 = x1
-        y2 = x2
-
-        self.logger.info("Found %s CCDimages for filter %s overlaping " % (NCCDs, BAND))
-        for filename in filenames:
-            ras, decs = self.repackCCDcorners(filename)
-            P1 = Polygon( zip(ras,decs), closed=True, hatch='',lw=0.2,alpha=0.1,Fill=True,color='k')
-            P2 = Polygon( zip(ras,decs), closed=True, hatch='',lw=0.2,Fill=False,color='k') 
-            ax.add_patch(P1)
-            ax.add_patch(P2)
-
-            # Keep track of the limits as Polygon as trouble
-            x1 = min(x1,ras.min())
-            x2 = max(x2,ras.max())
-            y1 = min(y1,decs.min())
-            y2 = max(y2,decs.max())
-
-        # Draw the TILE footprint at the end
-        P = Polygon(zip(tile_racs, tile_deccs),
-                    closed=True, Fill=False, hatch='',lw=1.0, color='r')
-        ax.add_patch(P)
-        
-        # Fix range
-        plt.xlim(x1,x2)
-        plt.ylim(y1,y2)
-        plt.title("%s - %s band (%s images)" % (self.input.tilename, BAND, NCCDs))
-        plt.xlabel("RA (degrees)")
-        plt.ylabel("Decl. (degrees)")
-
-        fig.set_tight_layout(True) # This avoids backend warnings.
-        return fig
-
 
     def repackCCDcorners(self, filename):
         """
@@ -289,3 +312,13 @@ class Job(base_job.BaseJob):
 
     def __str__(self):
         return 'plot the ccd corners for a DES tile'
+
+def fraction_greater_than(image,depths=[1,2,3,4,5]):
+
+    Npixels = image.shape[0]*image.shape[1]
+    fraction = {}
+    for N in depths:
+        Ngreater = len(numpy.where(image>=N)[0])
+        fraction[N] = float(Ngreater)/float(Npixels)
+    return fraction
+    
