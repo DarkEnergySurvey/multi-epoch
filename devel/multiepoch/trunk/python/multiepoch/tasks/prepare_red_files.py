@@ -25,10 +25,14 @@ from multiepoch import file_handler as fh
 from despymisc.miscutils import elapsed_time
 
 COADD_NWGINT_EXE = 'coadd_nwgint'
-COADD_NWGINT_OPTIONS = "--max_cols 50 -v"
+#COADD_NWGINT_OPTIONS = "--max_cols 50 -v --add_noise --block_size 5"
+COADD_NWGINT_OPTIONS = "--max_cols 50 -v --block_size 5"
 INTERP_MASK   = 'TRAIL,BPM'
 INVALID_MASK  = 'EDGE'
 NULL_MASK     = 'BPM,BADAMP,EDGEBLEED,EDGE,CRAY,SSXTALK,STREAK,TRAIL'
+#NULL_MASK     = 'BPM,BADAMP,EDGEBLEED,EDGE,CRAY,SSXTALK,STREAK,TRAIL,STAR'
+ME_WGT_KEEPMASK = 'STAR'
+BLOCK_SIZE = 1
 BKLINE = "\\\n"
 
 class Job(BaseJob):
@@ -54,7 +58,7 @@ class Job(BaseJob):
         interp_mask   = CUnicode(INTERP_MASK,  help="The mask bits to interpolate over")
         invalid_mask  = CUnicode(INVALID_MASK,  help="The mask bits to set as invalid")
         null_mask     = CUnicode(NULL_MASK, help="The mask bits to null (zero)")
-        
+        me_wgt_keepmask = CUnicode(BLOCK_SIZE,  help="Block size of zipper in x-direction (row)")
 
         # Optional inputs -- postional arguments
         weight_for_mask  = Bool(False, help="Create coadded weight for mask creation")
@@ -152,12 +156,13 @@ class Job(BaseJob):
 
         # The nwgint options
         cmd_tile.append("%s" % COADD_NWGINT_OPTIONS)
-        cmd_tile.append("--interp_mask %s"   % self.ctx.interp_mask)
-        cmd_tile.append("--invalid_mask %s"  % self.ctx.invalid_mask)
-        cmd_tile.append("--null_mask %s"     % self.ctx.null_mask)
+        cmd_tile.append("--interp_mask %s"     % self.ctx.interp_mask)
+        cmd_tile.append("--invalid_mask %s"    % self.ctx.invalid_mask)
+        cmd_tile.append("--null_mask %s"       % self.ctx.null_mask)
+        cmd_tile.append("--me_wgt_keepmask %s" % self.ctx.me_wgt_keepmask)
         # In case we want to create special weight for mask
-        if self.input.weight_for_mask:
-            cmd_tile.append("--custom_weight")
+        #if self.input.weight_for_mask:
+        #    cmd_tile.append("--custom_weight")
         cmd_tile.append("--hdupcfg %s" % self.ctx.coadd_nwgint_conf)
         cmd_tile.append("--tilename %s" % self.ctx.tilename)
         if self.ctx.tileid > 0:

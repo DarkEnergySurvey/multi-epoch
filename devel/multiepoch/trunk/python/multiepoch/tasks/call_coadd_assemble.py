@@ -58,6 +58,9 @@ class Job(BaseJob):
         # Weight for mask
         weight_for_mask  = Bool(False, help="Create coadded weight for mask creation")
 
+        # image to use to interpolate
+        interp_image = Unicode('MSK', help="Image to use to define interpolation (MSK or WGT)",
+                               argparse={'choices': ('MSK','WGT')})
         # zipper params
         xblock    = CInt(1, help="Block size of zipper in x-direction")
         add_noise = Bool(False,help="Add Poisson Noise to the zipper")
@@ -170,6 +173,7 @@ class Job(BaseJob):
                           'clobber' : self.ctx.clobber_MEF,
                           'xblock'  : self.ctx.xblock,
                           'add_noise' : self.ctx.add_noise,
+                          'interp_image': self.ctx.interp_image,
                           'magzero'  : self.ctx.magbase,
                           'tilename' : self.ctx.tilename,
                           'tileid' : self.ctx.tileid,
