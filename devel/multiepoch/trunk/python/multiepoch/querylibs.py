@@ -88,7 +88,7 @@ QUERY_ME_IMAGES_TEMPLATE_RAZERO = """
 
 QUERY_ME_CATALOGS_TEMPLATE = """
      SELECT 
-         {select_extras}
+         {cats_select_extras}
          cat.FILENAME, cat.PATH, cat.BAND,cat.CCDNUM, cat.UNITNAME,cat.EXPNUM
      FROM 
          felipe.me_catalogs_{tagname} cat
@@ -97,10 +97,10 @@ QUERY_ME_CATALOGS_TEMPLATE = """
        (SELECT 
          distinct me.EXPNUM
         FROM
-         {select_extras}
+         {cats_select_extras}
          felipe.me_images_{tagname} me
         WHERE
-         {and_extras}
+         {cats_and_extras}
          {search_method}
          )
          order by cat.FILENAME
@@ -108,7 +108,7 @@ QUERY_ME_CATALOGS_TEMPLATE = """
 
 QUERY_ME_CATALOGS_TEMPLATE_RAZERO = """
      SELECT 
-         {select_extras}
+         {cats_select_extras}
          cat.FILENAME, cat.PATH, cat.BAND,cat.CCDNUM,cat.UNITNAME,cat.EXPNUM
      FROM 
          felipe.me_catalogs_{tagname} cat
@@ -130,10 +130,10 @@ QUERY_ME_CATALOGS_TEMPLATE_RAZERO = """
        SELECT 
          distinct me.EXPNUM
         FROM
-         {from_extras} 
+         {cats_from_extras} 
          me
         WHERE
-         {and_extras}
+         {cats_and_extras}
          {search_method}
          )
          
@@ -142,7 +142,7 @@ QUERY_ME_CATALOGS_TEMPLATE_RAZERO = """
 
 QUERY_ME_SCAMPCAT_TEMPLATE = """
      SELECT 
-         {select_extras}
+         {cats_select_extras}
          cat.FILENAME_SCAMPCAT,
          cat.FILENAME_SCAMPHEAD,
          cat.PATH, cat.BAND, cat.UNITNAME,cat.EXPNUM
@@ -153,10 +153,10 @@ QUERY_ME_SCAMPCAT_TEMPLATE = """
        (SELECT 
          distinct me.EXPNUM
         FROM
-         {select_extras}
+         {cats_select_extras}
          felipe.me_images_{tagname} me
         WHERE
-         {and_extras}
+         {cats_and_extras}
          {search_method}
          )
          order by cat.BAND
@@ -339,9 +339,9 @@ def get_CATS_from_db_general_sql(dbh, **kwargs):
     logger        = kwargs.get('logger', None)
     tagname       = kwargs.get('tagname')
     tileinfo      = kwargs.get('tileinfo') 
-    select_extras = kwargs.get('select_extras','')
-    from_extras   = kwargs.get('from_extras','')
-    and_extras    = kwargs.get('and_extras','') 
+    cats_select_extras = kwargs.get('cats_select_extras','')
+    cats_from_extras   = kwargs.get('cats_from_extras','')
+    cats_and_extras    = kwargs.get('cats_and_extras','') 
     search_type   = kwargs.get('search_type','distance')
 
     utils.pass_logger_debug("Building and running the query to find the finalcut catalogs",logger)
@@ -355,10 +355,10 @@ def get_CATS_from_db_general_sql(dbh, **kwargs):
     # Format the SQL query string
     cat_query = QUERY_CATS.format(
         tagname         = tagname,
-        select_extras   = select_extras,
-        from_extras     = from_extras,
+        cats_select_extras   = cats_select_extras,
+        cats_from_extras     = cats_from_extras,
+        cats_and_extras      = cats_and_extras,
         search_method   = get_search_method(search_type,tileinfo),
-        and_extras      = and_extras,
         )
     utils.pass_logger_info("Will execute the query:\n%s\n" %  cat_query,logger)
     
