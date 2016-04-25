@@ -117,7 +117,7 @@ Author: Felipe Menanteau, NCSA, Nov 2014.
 import json
 import numpy
 import time
-import os
+import os,sys
 import pandas as pd
 import despyastro
 
@@ -143,6 +143,9 @@ from multiepoch import file_handler as fh
 SELECT_EXTRAS = ""
 FROM_EXTRAS   = ""
 AND_EXTRAS    = ""
+CATS_SELECT_EXTRAS = ""
+CATS_FROM_EXTRAS   = ""
+CATS_AND_EXTRAS    = ""
 SEARCH_TYPE   = "distance"
 # -----------------------------------------------------------------------------
 
@@ -198,6 +201,10 @@ class Job(BaseJob):
         super_align   = Bool(False, help=("Run super-aligment of tile using scamp"))
         use_scampcats = Bool(False, help=("Use finalcut scampcats for super-alignment"))
         
+        # extras for the cats' queries -- separated from the CCDs as we do not want to match those for scamp 
+        cats_select_extras = CUnicode(CATS_SELECT_EXTRAS,help="string with extra SELECT for query",)
+        cats_and_extras    = CUnicode(CATS_AND_EXTRAS,help="string with extra AND for query",)
+        cats_from_extras   = CUnicode(CATS_FROM_EXTRAS,help="string with extra FROM for query",)
 
         plot_outname  = CUnicode("", help=("Output file name for plot, in case we want to plot"))
         local_archive = CUnicode("", help="The local filepath where the input fits files (will) live")
@@ -268,7 +275,7 @@ class Job(BaseJob):
             UNITNAMES_CCDS = numpy.unique(self.ctx.CCDS['UNITNAME'])
             UNITNAMES_CATS = numpy.unique(self.ctx.CATS['UNITNAME'])
             if len(UNITNAMES_CCDS) != len(UNITNAMES_CATS):
-                sys.exit("ERROR: Number of UNITNAMES do not match")
+                self.logger.info("WARNING: Number of UNITNAMES do not match between CCDS and CATS")
 
         # Get the finalcut large exposure-based scamp cats.
         if self.ctx.use_scampcats and self.ctx.super_align:
