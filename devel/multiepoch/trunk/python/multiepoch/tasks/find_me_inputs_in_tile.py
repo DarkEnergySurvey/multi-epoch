@@ -134,11 +134,7 @@ import multiepoch.contextDefs as contextDefs
 import multiepoch.querylibs as querylibs
 from multiepoch import file_handler as fh
 
-# DEFAULT PARAMETER VALUES -- Change from felipe.XXXXX --> XXXXX
 # -----------------------------------------------------------------------------
-#SELECT_EXTRAS = "felipe.extraZEROPOINT.MAG_ZERO,"
-#FROM_EXTRAS   = "felipe.extraZEROPOINT"
-#AND_EXTRAS    = "felipe.extraZEROPOINT.FILENAME = me.FILENAME AND" 
 # Changing default to empty strings for now
 SELECT_EXTRAS = ""
 FROM_EXTRAS   = ""
@@ -147,8 +143,9 @@ CATS_SELECT_EXTRAS = ""
 CATS_FROM_EXTRAS   = ""
 CATS_AND_EXTRAS    = ""
 SEARCH_TYPE   = "distance"
+ZP_SOURCE  = "GCM"
+ZP_VERSION = "Y1A1_gruendlhack"
 # -----------------------------------------------------------------------------
-
 
 class Job(BaseJob):
 
@@ -189,6 +186,13 @@ class Job(BaseJob):
                                  argparse={'choices': ('db-desoper','db-destest', )} )
         archive_name  = CUnicode("prodbeta",help="DataBase Archive Name section",
                                  argparse={'choices': ('prodbeta','desar2home')} )
+
+        # Blacklist and zeropoint
+        no_blacklist  = Bool(False, help=("Do not Black list images"))
+        no_zeropoint  = Bool(False, help=("Do not get ZP for images"))
+        zp_source     = CUnicode(ZP_SOURCE,help="ZEROPOINT.SOURCE",)
+        zp_version    = CUnicode(ZP_VERSION,help="ZEROPOINT.VERSION",)
+
         select_extras = CUnicode(SELECT_EXTRAS,help="string with extra SELECT for query",)
         and_extras    = CUnicode(AND_EXTRAS,help="string with extra AND for query",)
         from_extras   = CUnicode(FROM_EXTRAS,help="string with extra FROM for query",)
@@ -267,6 +271,10 @@ class Job(BaseJob):
         
         # SQL Template version general method
         self.ctx.CCDS = querylibs.get_CCDS_from_db_general_sql(DBH, logger=LOG,**input_kw)
+        if self.ctx.CCDS is False:
+            self.logger.info("ERROR: No CCDS found to overlap tile:%s for the query" % self.ctx.tilename)
+            self.logger.info("Exiting...Bye")
+            exit(1)
 
         # Optional: Get the input catalogs if we want to run scamp for super-alignment
         if self.ctx.super_align:
@@ -274,6 +282,8 @@ class Job(BaseJob):
             # Make sure that we find the same number of exposure/unitnames
             UNITNAMES_CCDS = numpy.unique(self.ctx.CCDS['UNITNAME'])
             UNITNAMES_CATS = numpy.unique(self.ctx.CATS['UNITNAME'])
+
+
             if len(UNITNAMES_CCDS) != len(UNITNAMES_CATS):
                 self.logger.info("WARNING: Number of UNITNAMES do not match between CCDS and CATS")
 

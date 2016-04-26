@@ -31,7 +31,7 @@ class Job(BaseJob):
     Required INPUT from context (ctx):
     ``````````````````````````````````
     - tilename :        string, default_value=None
-    - coaddtile_table : string, default_value="felipe.coaddtile_new"
+    - coaddtile_table : string, default_value="coaddtile_geom"
     - db_section:       string, default_balue="db-desoper"
 
     Writes as OUTPUT to context (ctx):
@@ -77,9 +77,8 @@ class Job(BaseJob):
         # we set required to True because we need this if executed as
         # script, even though argument will be declared with -- and
         # only then we use the parser
-        coaddtile_table    = CUnicode("felipe.coaddtile_geom", help="Database table with COADDTILE information",
+        coaddtile_table    = CUnicode("coaddtile_geom", help="Database table with COADDTILE information",
                                       argparse=True)
-
         # Logging -- might be factored out
         stdoutloglevel     = CUnicode('INFO', help="The level with which logging info is streamed to stdout",
                                       argparse={'choices': ('DEBUG','INFO','CRITICAL')} )

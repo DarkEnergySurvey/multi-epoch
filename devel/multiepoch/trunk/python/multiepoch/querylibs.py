@@ -15,7 +15,7 @@ from multiepoch import utils
 
 # The query template used to get the geometry of the tile
 QUERY_GEOM = """
-    SELECT ID,PIXELSCALE, NAXIS1, NAXIS2,
+    SELECT ID, PIXELSCALE, NAXIS1, NAXIS2,
         RA_CENT, DEC_CENT,
         RA_SIZE,DEC_SIZE,
         RAC1, RAC2, RAC3, RAC4,
@@ -44,18 +44,23 @@ DISTANCE_METHOD = """
          (ABS(me.DEC_CENT -  {dec_center_tile}) < (0.5*{dec_size_tile} + 0.5*me.DEC_SIZE))
 """
 
+
 QUERY_ME_IMAGES_TEMPLATE = """
      SELECT
          {select_extras}
+         {select_zeropoint}
          me.FILENAME,me.COMPRESSION,me.PATH,me.BAND,me.UNITNAME,me.EXPNUM,
          me.RA_SIZE,me.DEC_SIZE,
          me.RA_CENT, me.RAC1,  me.RAC2,  me.RAC3,  me.RAC4,
          me.DEC_CENT,me.DECC1, me.DECC2, me.DECC3, me.DECC4
      FROM
-         {from_extras} 
+         {from_extras}
+         {from_zeropoint}
          felipe.me_images_{tagname} me
      WHERE
          {and_extras}
+         {and_blacklist}
+         {and_zeropoint}
          {search_method}
 """
 
@@ -69,19 +74,25 @@ QUERY_ME_IMAGES_TEMPLATE_RAZERO = """
          (case when RAC2 > 180.    THEN RAC2-360.    ELSE RAC2 END) as RAC2,		
          (case when RAC3 > 180.    THEN RAC3-360.    ELSE RAC3 END) as RAC3,
          (case when RAC4 > 180.    THEN RAC4-360.    ELSE RAC4 END) as RAC4,
-         DEC_CENT, DECC1, DECC2, DECC3, DECC4
+         (case when RACMIN > 180.  THEN RACMIN-360.  ELSE RACMIN END) as RACMIN,
+         (case when RACMAX > 180.  THEN RACMAX-360.  ELSE RACMIN END) as RACMAX,
+         DEC_CENT, DECC1, DECC2, DECC3, DECC4, DECCMIN, DECCMAX
      FROM felipe.me_images_{tagname})
   SELECT 
          {select_extras}
-         me.FILENAME,me.COMPRESSION,me.PATH,me.BAND,me.UNITNAME,EXPNUM,
+         {select_zeropoint}
+         me.FILENAME,me.COMPRESSION,me.PATH,me.BAND,me.UNITNAME,me.EXPNUM,
          me.RA_SIZE,me.DEC_SIZE,
          me.RA_CENT, me.RAC1,  me.RAC2,  me.RAC3,  me.RAC4,
          me.DEC_CENT,me.DECC1, me.DECC2, me.DECC3, me.DECC4
      FROM
-         {from_extras} 
+         {from_extras}
+         {from_zeropoint}
          me
      WHERE
          {and_extras}
+         {and_blacklist}
+         {and_zeropoint}
          {search_method}
 """
 
@@ -124,7 +135,9 @@ QUERY_ME_CATALOGS_TEMPLATE_RAZERO = """
             (case when RAC2 > 180.    THEN RAC2-360.    ELSE RAC2 END) as RAC2, 	 
             (case when RAC3 > 180.    THEN RAC3-360.    ELSE RAC3 END) as RAC3,
             (case when RAC4 > 180.    THEN RAC4-360.    ELSE RAC4 END) as RAC4,
-            DEC_CENT, DECC1, DECC2, DECC3, DECC4
+            (case when RACMIN > 180.  THEN RACMIN-360.  ELSE RACMIN END) as RACMIN,
+            (case when RACMAX > 180.  THEN RACMAX-360.  ELSE RACMIN END) as RACMAX,
+            DEC_CENT, DECC1, DECC2, DECC3, DECC4, DECCMIN, DECCMAX
           FROM felipe.me_images_{tagname})
 
        SELECT 
@@ -238,6 +251,11 @@ def get_CCDS_from_db_general_sql(dbh, **kwargs):
     from_extras   = kwargs.get('from_extras','')
     and_extras    = kwargs.get('and_extras','') 
     search_type   = kwargs.get('search_type','distance')
+    no_zeropoint  = kwargs.get('no_zeropoint',False)
+    no_blacklist  = kwargs.get('no_blacklist',False) 
+    zp_source     = kwargs.get('zp_source')
+    zp_version    = kwargs.get('zp_version') 
+    tilename      = kwargs.get('tilename') 
 
     utils.pass_logger_debug("Building and running the query to find the CCDS",logger)
 
@@ -246,7 +264,11 @@ def get_CCDS_from_db_general_sql(dbh, **kwargs):
         QUERY_CCDS = QUERY_ME_IMAGES_TEMPLATE_RAZERO
     else:
         QUERY_CCDS = QUERY_ME_IMAGES_TEMPLATE
-    
+
+    # Get extra query strings for blacklist and zeropoint
+    query_zeropoint = get_zeropoint_query(zp_source=zp_source,zp_version=zp_version,no_zeropoint=no_zeropoint)
+    query_blacklist = get_blacklist_query(tagname,no_blacklist=no_blacklist)
+
     # Format the SQL query string
     ccd_query = QUERY_CCDS.format(
         tagname         = tagname,
@@ -254,6 +276,10 @@ def get_CCDS_from_db_general_sql(dbh, **kwargs):
         from_extras     = from_extras,
         search_method   = get_search_method(search_type,tileinfo),
         and_extras      = and_extras,
+        select_zeropoint = query_zeropoint['select_zeropoint'],
+        from_zeropoint  = query_zeropoint['from_zeropoint'],
+        and_zeropoint   = query_zeropoint['and_zeropoint'],
+        and_blacklist   = query_blacklist['and_blacklist'],
         )
     utils.pass_logger_info("Will execute the query:\n%s\n" %  ccd_query,logger)
     
@@ -262,11 +288,12 @@ def get_CCDS_from_db_general_sql(dbh, **kwargs):
     CCDS = despyastro.query2rec(ccd_query, dbhandle=dbh)
     
     if CCDS is False:
+        utils.pass_logger_info("Found 0 input images for %s " %  tilename,logger)
         utils.pass_logger_info("No input images found", logger)
         return CCDS
     
     utils.pass_logger_info("Query time for CCDs: %s" % elapsed_time(t0),logger)
-    utils.pass_logger_info("Found %s input images" %  len(CCDS),logger)
+    utils.pass_logger_info("Found %s input images for %s " %  (len(CCDS),tilename),logger)
 
     # Here we fix 'COMPRESSION' from None --> '' if present
     if 'COMPRESSION' in CCDS.dtype.names:
@@ -299,6 +326,7 @@ def get_CCDS_from_db_distance_np(dbh, **kwargs):
         tagname       = tagname,
         select_extras = select_extras,
         from_extras   = from_extras,
+        and_zeropoint = get_and_zeropoint(tagname,no_zeropoint),
         )
 
     # If and_extras whe need to add the WHERE statement
@@ -519,15 +547,45 @@ def get_search_method(search_type,tileinfo):
             dec_size_tile   = tileinfo['DEC_SIZE'],
             )
     elif search_type == 'corners':
-        tile_edges = get_tile_edges(tileinfo)
-        corners_list = [
-            "((me.RAC1 BETWEEN %.10f AND %.10f) AND (me.DECC1 BETWEEN %.10f AND %.10f))\n" % tile_edges,
-            "((me.RAC2 BETWEEN %.10f AND %.10f) AND (me.DECC2 BETWEEN %.10f AND %.10f))\n" % tile_edges,
-            "((me.RAC3 BETWEEN %.10f AND %.10f) AND (me.DECC3 BETWEEN %.10f AND %.10f))\n" % tile_edges,
-            "((me.RAC4 BETWEEN %.10f AND %.10f) AND (me.DECC4 BETWEEN %.10f AND %.10f))\n" % tile_edges,
-            ]
-        search_method = '(\n' + ' OR '.join(corners_list) + '\n)'
+        corners_query = """
+        ((me.RACMIN  BETWEEN {tile_racmin} AND {tile_racmax}) OR (me.RACMAX  BETWEEN {tile_racmin} AND {tile_racmax})) AND
+        ((me.DECCMIN BETWEEN {tile_deccmin} AND {tile_deccmax}) OR (me.DECCMAX BETWEEN {tile_deccmin} AND {tile_deccmax}))
+        """
+        search_method = corners_query.format(tile_racmin=tileinfo['RACMIN'],
+                                             tile_racmax=tileinfo['RACMAX'],
+                                             tile_deccmin=tileinfo['DECCMIN'],
+                                             tile_deccmax=tileinfo['DECCMAX'])
     else:
         exit("ERROR: Search method is not supported")
 
     return search_method
+
+
+
+def get_zeropoint_query(zp_source,zp_version,no_zeropoint=False):
+    query = {}
+    if no_zeropoint:
+        query['and_zeropoint'] = ''
+        query['select_zeropoint'] = ''
+        query['from_zeropoint'] = ''
+    else:
+        query['and_zeropoint'] = """
+        ZEROPOINT.IMAGENAME = me.filename AND
+        ZEROPOINT.SOURCE  = '%s' AND
+        ZEROPOINT.VERSION = '%s' AND """ % (zp_source,zp_version)
+        query['select_zeropoint'] = "ZEROPOINT.MAG_ZERO,"
+        query['from_zeropoint'] = "ZEROPOINT,"
+    return query
+
+
+def get_blacklist_query(tagname,no_blacklist=False):
+    query = {}
+    if no_blacklist:
+        query['and_blacklist'] = ''
+    else:
+        query['and_blacklist'] = """
+        me.filename NOT IN
+        (select filename from felipe.me_images_%s me, BLACKLIST where
+        me.expnum=blacklist.expnum and me.ccdnum=blacklist.ccdnum) AND """ % tagname
+    return query
+
