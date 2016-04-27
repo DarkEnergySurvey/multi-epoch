@@ -3,6 +3,7 @@ Plot the CCDs overlaping the DESTILENAME using subplots or single BAND
 """
 
 import os
+import sys
 import math
 import numpy
 
@@ -16,10 +17,12 @@ from mpl_toolkits.axes_grid1 import make_axes_locatable
 from traitlets import Dict, Instance, CUnicode, Unicode, CInt, CBool, Bool
 from mojo.jobs import base_job 
 
+import multiepoch
 from multiepoch import file_handler as fh
 from multiepoch import tileinfo_utils
 import multiepoch.utils as utils
 from despyastro import wcsutil
+from multiepoch import depth_utils
 
 import fitsio
 import json
@@ -49,12 +52,20 @@ class Job(base_job.BaseJob):
         binning        = CInt(100, help='Binning fraction')
         plot_ccds  = Bool(False, help="Plot CCDS")
         plot_depth = Bool(False, help="Plot depth")
+        depth_table = Unicode('felipe.tiledepth', help="Name of the Oracle table_name with depths")
+        depth_table_clobber = Bool(False, help="Clobber depth table name and re-create")
+        depth_table_insert  = Bool(False, help="Insert into depth table")
         outname_ccds_plot  = Unicode('', help="Output file name for ccds plot")
         outname_depth_plot = Unicode('', help="Output file name for depth plot")
         outname_fraction = Unicode('', help="Output file name for depth json file with fraction")
 
-
     def run(self):
+
+
+        # Create table if we want to do insertions
+        if self.ctx.depth_table_insert:
+            self.ctx = utils.check_dbh(self.ctx, logger=self.logger)
+            create_depth_table(self.ctx.depth_table,self.ctx.dbh,logger=self.logger,clobber=self.ctx.depth_table_clobber)
 
         # Get self.ctx.tile_header_depth
         self.build_header_depth(binning=self.ctx.binning)
@@ -70,22 +81,27 @@ class Job(base_job.BaseJob):
         tile_xs,tile_ys = self.get_tile_xy_corners()
 
         # Estimate depth and fraction @ depth  and store in dictionary
-        tile_depth = {}
-        fraction = {}
+        self.ctx.tile_depth = {}
+        self.ctx.fraction = {}
         for BAND in self.ctx.BANDS:
-            tile_depth[BAND], fraction[BAND] = self.get_tile_depth(tile_xs, tile_ys, BAND)
+            self.ctx.tile_depth[BAND], self.ctx.fraction[BAND] = self.get_tile_depth(tile_xs, tile_ys, BAND)
+
+        # Insert into DB
+        if self.ctx.depth_table_insert:
+            version = "v%s,%s" % (multiepoch.version,self.ctx.zp_version)
+            self.insert_depth_fraction(version=version)
 
         # Write the fractions to a json file
         if self.ctx.outname_fraction == '':
             self.ctx.outname_fraction = fh.get_plot_depth_fraction(self.ctx.tiledir, self.ctx.tilename)
         with open(self.ctx.outname_fraction, 'w') as fp:
-            fp.write(json.dumps(fraction,sort_keys=False,indent=4))
+            fp.write(json.dumps(self.ctx.fraction,sort_keys=False,indent=4))
         self.logger.info("Wrote depth fractions to: %s" % self.ctx.outname_fraction)
         
         # Plot the depth per band in subplots
         if self.ctx.plot_depth:
             self.logger.info("Plotting Depth")
-            figure_depth = self.plot_depth_subplot(tile_depth)
+            figure_depth = self.plot_depth_subplot(self.ctx.tile_depth)
             if self.ctx.outname_depth_plot == '':
                 self.ctx.outname_depth_plot = fh.get_plot_depth_file(self.ctx.tiledir, self.ctx.tilename)
             utils.check_filepath_exist(self.ctx.outname_depth_plot,logger=self.logger.debug)
@@ -188,7 +204,7 @@ class Job(base_job.BaseJob):
         
         """ Get the tile depth """
 
-        depths = kwargs.get('depths',[1,2,3,4,5,6])
+        depths = kwargs.get('depths',[1,2,3,4,5,6,7])
         
         NAXIS1 = self.ctx.tile_header_depth['NAXIS1']
         NAXIS2 = self.ctx.tile_header_depth['NAXIS2']
@@ -310,6 +326,55 @@ class Job(base_job.BaseJob):
         return ras, decs
 
 
+    def insert_depth_fraction(self,version='multiepoch-v0.2.8'):
+
+        cur = self.ctx.dbh.cursor()
+
+        # We could probably get this from a query
+        columns = ('TILENAME',
+                   'BAND',
+                   'D1',
+                   'D2',
+                   'D3',
+                   'D4',
+                   'D5',
+                   'D6',
+                   'D7',
+                   'NEXP',
+                   'NIMA',
+                   'VERSION',
+                   'TAG')
+        cols = ",".join(columns)
+        
+        for BAND in self.ctx.BANDS:
+
+            # The entries in self.ctx.CCDS for BAND
+            ix = numpy.where(self.ctx.CCDS['BAND'] == BAND)[0]
+            # The number of input images
+            NIMA = len(ix)
+            NEXP = len(numpy.unique(self.ctx.CCDS['EXPNUM'][ix]))
+            
+            values = (self.ctx.tilename,
+                      BAND,
+                      self.ctx.fraction[BAND]['D1'],
+                      self.ctx.fraction[BAND]['D2'],
+                      self.ctx.fraction[BAND]['D3'],
+                      self.ctx.fraction[BAND]['D4'],
+                      self.ctx.fraction[BAND]['D5'],
+                      self.ctx.fraction[BAND]['D6'],
+                      self.ctx.fraction[BAND]['D7'],
+                      NIMA,
+                      NEXP,
+                      version,
+                      self.ctx.tagname)
+            insert_cmd = "INSERT INTO %s (%s) VALUES %s" % (self.ctx.depth_table,cols,values)
+            self.logger.info("Inserting %s -- %s to: %s" % (self.ctx.tilename,BAND,self.ctx.depth_table))
+            cur.execute(insert_cmd)
+
+        cur.close()
+        self.ctx.dbh.commit()
+        return
+
     def __str__(self):
         return 'plot the ccd corners for a DES tile'
 
@@ -318,7 +383,84 @@ def fraction_greater_than(image,depths=[1,2,3,4,5]):
     Npixels = image.shape[0]*image.shape[1]
     fraction = {}
     for N in depths:
+        key = 'D%d' % N
         Ngreater = len(numpy.where(image>=N)[0])
-        fraction[N] = float(Ngreater)/float(Npixels)
+        fraction[key] = float(Ngreater)/float(Npixels)
     return fraction
+
+def create_depth_table(table,dbh,logger,clobber=False):
     
+    # Get a cursor
+    cur = dbh.cursor()
+
+    # Check if table exists
+    table_exist = utils.checkTABLENAMEexists(table,dbh=dbh,verb=True,logger=logger)
+    if table_exist and clobber is False:
+        utils.pass_logger_info("Will not drop existing table: %s -- clober=False" % table.upper(),logger)
+        return
+
+    # make sure we delete before we created
+    drop = "drop table %s purge" % table
+
+    # Create command
+    create = """
+    create table %s (
+    TILENAME  VARCHAR2(20) NOT NULL,
+    BAND      VARCHAR2(10) NOT NULL,
+    D1        NUMBER(10,5) NOT NULL,
+    D2        NUMBER(10,5) NOT NULL,
+    D3        NUMBER(10,5) NOT NULL,
+    D4        NUMBER(10,5) NOT NULL,
+    D5        NUMBER(10,5) NOT NULL,
+    D6        NUMBER(10,5) NOT NULL,
+    D7        NUMBER(10,5) NOT NULL,
+    NEXP      NUMBER(6) NOT NULL,
+    NIMA      NUMBER(6) NOT NULL,
+    VERSION   CHAR(25),
+    TAG       CHAR(20) NOT NULL
+    )""" % table
+
+    # -- Add description of columns
+    comments = """comment on column %s.TILENAME is 'Unique DES TILENAME identifier'
+    comment on column %s.BAND     is 'Tilename band pass'
+    comment on column %s.D1       is 'Fraction of tile with depth greater than 1'
+    comment on column %s.D2       is 'Fraction of tile with depth greater than 2'
+    comment on column %s.D3       is 'Fraction of tile with depth greater than 3'
+    comment on column %s.D4       is 'Fraction of tile with depth greater than 4'
+    comment on column %s.D5       is 'Fraction of tile with depth greater than 5'
+    comment on column %s.D6       is 'Fraction of tile with depth greater than 6'
+    comment on column %s.D7       is 'Fraction of tile with depth greater than 7'
+    comment on column %s.NEXP     is 'Number of exposures'
+    comment on column %s.NIMA     is 'Number of images'
+    comment on column %s.VERSION  is 'Version of depth meassurement'
+    comment on column %s.TAG      is 'Tagname'"""
+
+    utils.pass_logger_info("Will create new table: %s" % table,logger)
+    try:
+        utils.pass_logger_info("Dropping table: %s" % table,logger)
+        cur.execute(drop)
+    except:
+        utils.pass_logger_info("Could not drop table: %s -- probably doesn't exist" % table,logger)
+
+    utils.pass_logger_info("Creating table: %s" % table,logger)
+    print create
+    cur.execute(create)
+
+    utils.pass_logger_info("Adding comments to: %s" % table,logger)
+    for comment in comments.split("\n"):
+        print comment % table
+        cur.execute(comment % table)
+
+    # Grand permission
+    roles = ['des_reader','PROD_ROLE','PROD_READER_ROLE']
+    for role in roles:
+        grant = "grant select on %s to %s" % (table.split(".")[1],role)
+        utils.pass_logger_info("Granting permission: %s" % grant,logger)
+        cur.execute(grant)
+        
+    dbh.commit()
+    cur.close()
+    return
+
+
+

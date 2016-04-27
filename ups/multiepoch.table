@@ -3,7 +3,6 @@ setupRequired(mojo       0.2.6+0)
 
 # DESDM python
 setupRequired(despydb    2.0.1+0)
-setupRequired(despyastro 0.3.5+0) 
 setupRequired(despymisc  1.0.1+0) 
 setupRequired(despyfitsutils 1.0.1+0)
 
