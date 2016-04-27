@@ -189,15 +189,20 @@ def checkTABLENAMEexists(tablename,dbh=None,db_section=None,verb=False,logger=No
     Check if exists. Tablename has to be a full owner.table_name format
     """
 
-    mess = "Checking if %s exists." % tablename
-    if logger: logger.info(mess)
-    elif verb: print mess
-    
     # Make sure is all upper case
     tablename = tablename.upper()
 
-    query = """
-    select count (*) from all_tables where table_name='%s'""" % tablename
+    mess = "Checking if %s exists." % tablename
+    if logger: logger.info(mess)
+    elif verb: print mess
+
+    if len(tablename.split("."))>1:
+        TABLE_NAME = tablename.split(".")[1]
+        OWNER = tablename.split(".")[0]
+        query = "select count (*) from all_tables where table_name='%s' and owner='%s'" % (TABLE_NAME,OWNER)
+    else:
+        query = "select count (*) from all_tables where table_name='%s'" % tablename
+        
 
     # Get a dbh if not provided
     if not dbh:
