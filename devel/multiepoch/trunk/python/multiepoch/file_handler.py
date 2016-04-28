@@ -157,6 +157,19 @@ def get_color_file(tiledir, tilename):
     filename = "%s.tiff" % tilename
     return dh.place_file(filename, 'coadd')
 
+# -----------------------------------------------------------------------------
+#    ******* EXTINCTION FILES ********
+def get_extinction_cmd_file(tiledir, tilename):
+    dh = get_tiledir_handler(tiledir)
+    filename = "%s_call_extinction.cmd" % tilename
+    return dh.place_file(filename, 'aux')
+
+def get_extinction_log_file(tiledir, tilename):
+    dh = get_tiledir_handler(tiledir)
+    filename = "%s_extinction.log" % tilename
+    return dh.place_file(filename, 'log')
+
+
 
 # -----------------------------------------------------------------------------
 #     ***** SEX for PSF FILES *****
@@ -241,6 +254,12 @@ def get_mef_file(tiledir, tilename, band):
     dh = get_tiledir_handler(tiledir)
     fnkwargs = {'base':tilename, 'band':band, 'ext':FITS_EXT}
     return dh.place_file(_me_notype_fn(**fnkwargs), 'coadd')
+
+def get_xcorr_file(tiledir, tilename, band):
+    dh = get_tiledir_handler(tiledir)
+    fnkwargs = {'base':tilename, 'band':band, 'ext':FITS_EXT}
+    return dh.place_file(_me_notype_fn(**fnkwargs), 'coadd')
+
 
 def get_mef_cmd_file(tiledir, tilename,band=None):
     dh = get_tiledir_handler(tiledir)
