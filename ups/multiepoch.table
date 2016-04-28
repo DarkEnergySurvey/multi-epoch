@@ -20,10 +20,13 @@ setupRequired(swarp 2.40.0+1)
 setupRequired(psfex 3.17.3+1)
 setupRequired(scamp 2.2.5+2)
 
+# Extintion correction
+setupRequired(extinction 1.2.0+0)
+
 envAppend(PYTHONPATH, ${PRODUCT_DIR}/python)
 envAppend(PATH, ${PRODUCT_DIR}/bin)
 # Add the tasks to the path
 envAppend(PATH, ${PRODUCT_DIR}/python/multiepoch/tasks)
 
 # Config date for Astromatic files
-envPrepend(MULTIEPOCH_CONFIG_DATE,"20160422")
+envSet(MULTIEPOCH_CONFIG_DATE,"20160422")
