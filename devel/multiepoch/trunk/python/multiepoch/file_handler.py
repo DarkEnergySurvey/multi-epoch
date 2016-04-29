@@ -287,11 +287,17 @@ def get_me_prepare_log_file(tiledir, tilename):
     filename = "%s_me_prepare.log" % tilename
     return dh.place_file(filename, 'log')
 
-# -------------------------------------------------
+# ----------------------------------
+#  ******** DEPTH PLOTS ************
 
 def get_plot_depth_file(tiledir, tilename):
     dh = get_tiledir_handler(tiledir)
     filename = "%s_depth.pdf" % tilename
+    return dh.place_file(filename, 'aux')
+
+def get_plot_depth_fits(tiledir, tilename,band):
+    dh = get_tiledir_handler(tiledir)
+    filename = "%s_%s_depth.fits" % (tilename,band)
     return dh.place_file(filename, 'aux')
 
 def get_plot_depth_fraction(tiledir, tilename):
