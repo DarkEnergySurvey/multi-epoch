@@ -51,6 +51,7 @@ class Job(base_job.BaseJob):
         binning        = CInt(100, help='Binning fraction')
         plot_ccds  = Bool(False, help="Plot CCDS")
         plot_depth = Bool(False, help="Plot depth")
+        depth_fits = Bool(False, help="Write fits file with depth")
         depth_table = Unicode('felipe.tiledepth', help="Name of the Oracle table_name with depths")
         depth_table_clobber = Bool(False, help="Clobber depth table name and re-create")
         depth_table_insert  = Bool(False, help="Insert into depth table")
@@ -81,9 +82,12 @@ class Job(base_job.BaseJob):
 
         # Estimate depth and fraction @ depth  and store in dictionary
         self.ctx.tile_depth = {}
+        self.ctx.median_depth = {}
         self.ctx.fraction = {}
         for BAND in self.ctx.BANDS:
             self.ctx.tile_depth[BAND], self.ctx.fraction[BAND] = self.get_tile_depth(tile_xs, tile_ys, BAND)
+            self.ctx.median_depth[BAND] =  numpy.median(self.ctx.tile_depth[BAND])
+            self.logger.info("Median depth for %s:  %s" % (BAND,self.ctx.median_depth[BAND]))
 
         # Insert into DB
         if self.ctx.depth_table_insert:
@@ -119,6 +123,10 @@ class Job(base_job.BaseJob):
             plt.close()
             self.logger.info("Wrote: %s" % self.ctx.outname_ccds_plot)
 
+        # Write fits file
+        if self.ctx.depth_fits:
+            self.write_fits()
+            
 
     def plot_depth_subplot(self, tile_depth, **kwargs):
         """ Plot the CCDs overlaping the DESTILENAME using subplots on image coordinates"""
@@ -226,19 +234,25 @@ class Job(base_job.BaseJob):
             Y2 = int(min( ys.max(), tile_ys.max()))
             # We might want to change this to t_eff * exposure_time/survey_exposure_time
             tile_depth[Y1:Y2,X1:X2] += 1
-            ####################################
-            # OPTIONAL WRITE
-            # Write a fits file
-            #outname  = '%s_%s_depth.fits' % (self.ctx.tilename,BAND)
-            #ofits = fitsio.FITS(outname,'rw',clobber=True)
-            #ofits.write(tile_depth[BAND],extname='SCI',header=self.ctx.tile_header_depth)
-            #print "Wrote: %s" %  outname
-            ###################################
 
-        self.logger.info("Median depth for %s:  %s" % (BAND,numpy.median(tile_depth)))
         fraction = fraction_greater_than(tile_depth,depths=depths)
         return tile_depth, fraction
 
+
+    def write_fits(self):
+        
+        """ Write a fits file of the depth """
+
+        for BAND in self.ctx.BANDS:
+            outname = fh.get_plot_depth_fits(self.ctx.tiledir, self.ctx.tilename,BAND)
+            ofits = fitsio.FITS(outname,'rw',clobber=True)
+            ofits.write(self.ctx.tile_depth[BAND],extname='SCI',header=self.ctx.tile_header_depth)
+            ofits.close()
+            self.logger.info("Wrote: %s" %  outname)
+            
+        return
+
+        
 
     def plot_CCDcornersDESTILEsubplot_xy(self, tile_xs, tile_ys, **kwargs):
         """ Plot the CCDs overlaping the DESTILENAME using subplots on image coordinates"""
@@ -339,6 +353,7 @@ class Job(base_job.BaseJob):
                    'D5',
                    'D6',
                    'D7',
+                   'DMEDIAN',
                    'NEXP',
                    'NIMA',
                    'VERSION',
@@ -362,6 +377,7 @@ class Job(base_job.BaseJob):
                       self.ctx.fraction[BAND]['D5'],
                       self.ctx.fraction[BAND]['D6'],
                       self.ctx.fraction[BAND]['D7'],
+                      self.ctx.median_depth[BAND],
                       NIMA,
                       NEXP,
                       version,
@@ -385,6 +401,7 @@ def fraction_greater_than(image,depths=[1,2,3,4,5]):
         key = 'D%d' % N
         Ngreater = len(numpy.where(image>=N)[0])
         fraction[key] = float(Ngreater)/float(Npixels)
+
     return fraction
 
 def create_depth_table(table,dbh,logger,clobber=False):
@@ -413,6 +430,7 @@ def create_depth_table(table,dbh,logger,clobber=False):
     D5        NUMBER(10,5) NOT NULL,
     D6        NUMBER(10,5) NOT NULL,
     D7        NUMBER(10,5) NOT NULL,
+    DMEDIAN   NUMBER(10,5) NOT NULL,
     NEXP      NUMBER(6) NOT NULL,
     NIMA      NUMBER(6) NOT NULL,
     VERSION   CHAR(25),
@@ -429,6 +447,7 @@ def create_depth_table(table,dbh,logger,clobber=False):
     comment on column %s.D5       is 'Fraction of tile with depth greater than 5'
     comment on column %s.D6       is 'Fraction of tile with depth greater than 6'
     comment on column %s.D7       is 'Fraction of tile with depth greater than 7'
+    comment on column %s.DMEDIAN  is 'The median depth of the tile'
     comment on column %s.NEXP     is 'Number of exposures'
     comment on column %s.NIMA     is 'Number of images'
     comment on column %s.VERSION  is 'Version of depth meassurement'
