@@ -23,6 +23,9 @@ setupRequired(scamp 2.2.5+2)
 # Extintion correction
 setupRequired(extinction 1.2.0+0)
 
+# Healpix
+setupRequired(hpixDB 1.0.1+0)
+
 envAppend(PYTHONPATH, ${PRODUCT_DIR}/python)
 envAppend(PATH, ${PRODUCT_DIR}/bin)
 # Add the tasks to the path

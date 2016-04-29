@@ -169,6 +169,18 @@ def get_extinction_log_file(tiledir, tilename):
     filename = "%s_extinction.log" % tilename
     return dh.place_file(filename, 'log')
 
+# -----------------------------------------------------------------------------
+#    ******* HPIX FILES ********
+def get_hpix_cmd_file(tiledir, tilename):
+    dh = get_tiledir_handler(tiledir)
+    filename = "%s_call_hpix.cmd" % tilename
+    return dh.place_file(filename, 'aux')
+
+def get_hpix_log_file(tiledir, tilename):
+    dh = get_tiledir_handler(tiledir)
+    filename = "%s_hpix.log" % tilename
+    return dh.place_file(filename, 'log')
+
 
 
 # -----------------------------------------------------------------------------
@@ -254,12 +266,6 @@ def get_mef_file(tiledir, tilename, band):
     dh = get_tiledir_handler(tiledir)
     fnkwargs = {'base':tilename, 'band':band, 'ext':FITS_EXT}
     return dh.place_file(_me_notype_fn(**fnkwargs), 'coadd')
-
-def get_xcorr_file(tiledir, tilename, band):
-    dh = get_tiledir_handler(tiledir)
-    fnkwargs = {'base':tilename, 'band':band, 'ext':FITS_EXT}
-    return dh.place_file(_me_notype_fn(**fnkwargs), 'coadd')
-
 
 def get_mef_cmd_file(tiledir, tilename,band=None):
     dh = get_tiledir_handler(tiledir)
