@@ -22,7 +22,6 @@ from multiepoch import file_handler as fh
 from multiepoch import tileinfo_utils
 import multiepoch.utils as utils
 from despyastro import wcsutil
-from multiepoch import depth_utils
 
 import fitsio
 import json
