@@ -1,0 +1,49 @@
+# NOTE: Every "custom" <site> here needs to have a matching site under
+#  the <job_file_mvmt> section.
+
+<site>
+    <destest_computingsite>
+        name = destest_computingsite
+        gridtype = condor
+        batchtype = glidein
+        uiddomain = destest.cosmology.illinois.edu
+        setupeups = /work/apps/RHEL6/dist/eups/desdm_eups_setup.sh
+        jobroot = /cluster_scratch/users/felipe/test
+    </destest_computingsite>
+
+    <descmp4felipe>
+        name      = descmp4felipe
+        sitename  = descmp4felipe
+        gridtype  = condor
+        dynslots  = true
+        batchtype = local
+        loginhost = descmp4.cosmology.illinois.edu
+        setupeups = /work/apps/RHEL6/dev/eups/desdm_eups_setup.sh
+        jobroot = /cluster_scratch/refact/descmp4felipe/jobroot
+    </descmp4felipe>
+</site>
+
+
+# The file transfer movement for the above definitions
+<job_file_mvmt>
+
+    <destest_computingsite>
+        <desar2home>
+            <no_archive>
+                mvmtclass = filemgmt.job_mvmt_http.JobArchiveHttp
+            </no_archive>
+        </desar2home>
+        job_file_mvmtname = destest_computingsite
+    </destest_computingsite>
+
+    <descmp4felipe>
+        <prodbeta>
+            <no_archive>
+                mvmtclass = filemgmt.job_mvmt_http.JobArchiveHttp
+            </no_archive>
+        </prodbeta>
+        job_file_mvmtname = descmp4felipe
+    </descmp4felipe>
+
+
+</job_file_mvmt>

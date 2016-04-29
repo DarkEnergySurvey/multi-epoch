@@ -1,0 +1,37 @@
+<module>
+    <query_tileinfo>
+        wrappername = generic.py
+        #wrapperloop = exposurename
+        modnamepat=${modnamepat_tile_generic}
+        #loopobj = file.raw
+        <file>
+            <json_geom>
+                filetype = config 
+                filepat = tile_generic
+		        flabel = geom
+                fsuffix = json
+                dirpat = me 
+                ops_enddir = aux
+                rundir = aux
+                # bring file back home?
+		        savefiles = true
+            </json_geom>
+        </file>
+        <exec_1>
+            execname = query_tileinfo.py 
+	    cmd_hyphen = alldouble
+            #used = file.raw, file.xtalkcoeff,file.hupdate
+            was_generated_by = file.json_geom
+            #ancestry = file.raw:file.red_xtalked, file.xtalkcoeff:file.red_xtalked,file.hupdate:file.red_xtalked
+            <cmdline>
+                # positional arguments with _num_blabla
+                _01_tilename = ${tilename}
+                # optional arguments
+                json_tileinfo_file = ${file.json_geom.fullname}
+                # do not interface the following optional inputs now ..
+                db_section = ${database_section}
+                #coaddtile_table = ${coaddtile_table}
+            </cmdline>
+        </exec_1>
+    </query_tileinfo>
+</module>
