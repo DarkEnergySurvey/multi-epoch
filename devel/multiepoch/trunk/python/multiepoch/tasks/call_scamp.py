@@ -22,7 +22,6 @@ from mojo.jobs.base_job import BaseJob, IO, IO_ValidationError
 from mojo.utils import log as mojo_log
 
 # JOB INTERNAL CONFIGURATION
-CONFIG_DATE = '20160402'
 SCAMP_EXE = 'scamp'
 DETNAME = 'det'
 BKLINE = " \\\n"
@@ -262,7 +261,7 @@ class Job(BaseJob):
         
         # The Scamp configuration file
         if self.input.scamp_conf == '':
-            self.ctx.scamp_conf = os.path.join(os.environ['MULTIEPOCH_DIR'],'etc','%s_scamp.config' % CONFIG_DATE)
+            self.ctx.scamp_conf = fh.get_configfile('scamp')
             self.logger.info("Will use scamp default configuration file: %s" % self.ctx.scamp_conf)
 
         cmd = []
