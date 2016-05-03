@@ -267,7 +267,7 @@ def get_CCDS_from_db_general_sql(dbh, **kwargs):
 
     # Get extra query strings for blacklist and zeropoint
     query_zeropoint = get_zeropoint_query(zp_source=zp_source,zp_version=zp_version,no_zeropoint=no_zeropoint)
-    query_blacklist = get_blacklist_query(tagname,no_blacklist=no_blacklist)
+    query_blacklist = get_blacklist_query(no_blacklist=no_blacklist)
 
     # Format the SQL query string
     ccd_query = QUERY_CCDS.format(
@@ -286,13 +286,13 @@ def get_CCDS_from_db_general_sql(dbh, **kwargs):
     # Get the ccd images that are part of the DESTILE
     t0 = time.time()
     CCDS = despyastro.query2rec(ccd_query, dbhandle=dbh)
+    utils.pass_logger_info("Query time for CCDs: %s" % elapsed_time(t0),logger)
     
     if CCDS is False:
         utils.pass_logger_info("Found 0 input images for %s " %  tilename,logger)
         utils.pass_logger_info("No input images found", logger)
         return CCDS
     
-    utils.pass_logger_info("Query time for CCDs: %s" % elapsed_time(t0),logger)
     utils.pass_logger_info("Found %s input images for %s " %  (len(CCDS),tilename),logger)
 
     # Here we fix 'COMPRESSION' from None --> '' if present
@@ -578,14 +578,16 @@ def get_zeropoint_query(zp_source,zp_version,no_zeropoint=False):
     return query
 
 
-def get_blacklist_query(tagname,no_blacklist=False):
+def get_blacklist_query(no_blacklist=False):
     query = {}
     if no_blacklist:
         query['and_blacklist'] = ''
     else:
         query['and_blacklist'] = """
-        me.filename NOT IN
-        (select filename from felipe.me_images_%s me, BLACKLIST where
-        me.expnum=blacklist.expnum and me.ccdnum=blacklist.ccdnum) AND """ % tagname
+        not exists (select bl.reason from blacklist bl where bl.expnum=me.expnum and bl.ccdnum=me.ccdnum) AND"""
+        #query['and_blacklist'] = """
+        #me.filename NOT IN
+        #(select filename from felipe.me_images_%s me, BLACKLIST where
+        #me.expnum=blacklist.expnum and me.ccdnum=blacklist.ccdnum) AND """ % tagname
     return query
 

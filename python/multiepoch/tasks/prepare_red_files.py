@@ -26,12 +26,12 @@ from despymisc.miscutils import elapsed_time
 
 COADD_NWGINT_EXE = 'coadd_nwgint'
 #COADD_NWGINT_OPTIONS = "--max_cols 50 -v --add_noise --block_size 5"
-COADD_NWGINT_OPTIONS = "--max_cols 50 -v --block_size 5"
+#COADD_NWGINT_OPTIONS = "--max_cols 50 -v --block_size 5"
+COADD_NWGINT_OPTIONS = "--max_cols 50 -v"
 INTERP_MASK   = 'TRAIL,BPM'
 INVALID_MASK  = 'EDGE'
 NULL_MASK     = 'BPM,BADAMP,EDGEBLEED,EDGE,CRAY,SSXTALK,STREAK,TRAIL'
-#NULL_MASK     = 'BPM,BADAMP,EDGEBLEED,EDGE,CRAY,SSXTALK,STREAK,TRAIL,STAR'
-ME_WGT_KEEPMASK = 'STAR'
+ME_WGT_KEEPMASK = ''
 BLOCK_SIZE = 1
 BKLINE = "\\\n"
 
@@ -58,14 +58,15 @@ class Job(BaseJob):
         interp_mask   = CUnicode(INTERP_MASK,  help="The mask bits to interpolate over")
         invalid_mask  = CUnicode(INVALID_MASK,  help="The mask bits to set as invalid")
         null_mask     = CUnicode(NULL_MASK, help="The mask bits to null (zero)")
-        me_wgt_keepmask = CUnicode(BLOCK_SIZE,  help="Block size of zipper in x-direction (row)")
+        me_wgt_keepmask = CUnicode(ME_WGT_KEEPMASK,  help="Run custom weight and preserve bits and do not write MSK plane for multi-epoch (me)")
+        block_size = CUnicode(BLOCK_SIZE,  help="Block size of zipper in x-direction (row)")
 
         # Optional inputs -- postional arguments
-        weight_for_mask  = Bool(False, help="Create coadded weight for mask creation")
-        ignore_red_corrupt   = Bool(False, help="Ignore red corrupted files")
+        ignore_red_corrupt = Bool(False, help="Ignore red corrupted files")
         clobber_me   = Bool(False, help="Cloober the existing me-ready files.")
         extension_me = CUnicode('me', help=(" extension to add to me-prepared file names."))
         MP_me        = CInt(1, help = ("Run using multi-process, 0=automatic, 1=single-process [default]"))
+        super_align   = Bool(False, help=("Run super-aligment of tile using scamp"))
 
         local_archive = CUnicode("", help="The local filepath where the input fits files (will) live")
         execution_mode_red = CUnicode("dryrun",help="me_prepare excution mode",
@@ -159,14 +160,14 @@ class Job(BaseJob):
         cmd_tile.append("--interp_mask %s"     % self.ctx.interp_mask)
         cmd_tile.append("--invalid_mask %s"    % self.ctx.invalid_mask)
         cmd_tile.append("--null_mask %s"       % self.ctx.null_mask)
-        cmd_tile.append("--me_wgt_keepmask %s" % self.ctx.me_wgt_keepmask)
-        # In case we want to create special weight for mask
-        #if self.input.weight_for_mask:
-        #    cmd_tile.append("--custom_weight")
-        cmd_tile.append("--hdupcfg %s" % self.ctx.coadd_nwgint_conf)
+        cmd_tile.append("--block_size %s"      % self.ctx.block_size)
         cmd_tile.append("--tilename %s" % self.ctx.tilename)
+        if self.ctx.me_wgt_keepmask != '':
+            cmd_tile.append("--me_wgt_keepmask %s" % self.ctx.me_wgt_keepmask)
         if self.ctx.tileid > 0:
             cmd_tile.append("--tileid %s" % self.ctx.tileid)
+        if self.ctx.super_align:
+            cmd_tile.append("--hdupcfg %s" % self.ctx.coadd_nwgint_conf)
 
         cmd_list = []
         for idx, me_file in enumerate(self.ctx.assoc['FILEPATH_INPUT_RED']):
@@ -177,7 +178,8 @@ class Job(BaseJob):
                 cmd = [COADD_NWGINT_EXE]
                 cmd.append("-i %s" % self.ctx.assoc['FILEPATH_LOCAL'][idx])
                 cmd.append("-o %s" % me_file)
-                cmd.append("--headfile %s" % head_file)
+                if self.ctx.super_align:
+                    cmd.append("--headfile %s" % head_file)
                 cmd = cmd + cmd_tile
                 cmd_list.append(cmd)
 
