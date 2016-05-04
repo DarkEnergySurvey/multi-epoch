@@ -21,7 +21,7 @@ setupRequired(psfex 3.17.3+1)
 setupRequired(scamp 2.4.2+0)
 
 # Extintion correction
-setupRequired(extinction 1.2.0+2)
+setupRequired(extinction 1.2.1+0)
 
 # Healpix
 setupRequired(hpixDB 1.0.1+0)
