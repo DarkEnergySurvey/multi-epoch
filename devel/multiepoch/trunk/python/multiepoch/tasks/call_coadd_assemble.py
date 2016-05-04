@@ -64,6 +64,7 @@ class Job(BaseJob):
         # zipper params
         xblock    = CInt(1, help="Block size of zipper in x-direction")
         add_noise = Bool(False,help="Add Poisson Noise to the zipper")
+        ydilate   = CInt(0,help="Dilate pixels in the y-axis")
         
         # Logging -- might be factored out
         stdoutloglevel = CUnicode('INFO', help="The level with which logging info is streamed to stdout",
@@ -172,6 +173,7 @@ class Job(BaseJob):
                           'logger'  : self.logger,
                           'clobber' : self.ctx.clobber_MEF,
                           'xblock'  : self.ctx.xblock,
+                          'ydilate'  : self.ctx.ydilate,
                           'add_noise' : self.ctx.add_noise,
                           'interp_image': self.ctx.interp_image,
                           'magzero'  : self.ctx.magbase,
