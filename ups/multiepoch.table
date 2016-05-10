@@ -7,7 +7,7 @@ setupRequired(despymisc  1.0.2+0)
 setupRequired(despyfitsutils 1.0.1+0)
 
 # Pixcorrect -- loads despyfits/fitsio/imsupport
-setupRequired(pixcorrect 0.2.4+3)
+setupRequired(pixcorrect 0.2.4+4)
 
 # Python core
 setupRequired(matplotlib 1.3.1+4)
