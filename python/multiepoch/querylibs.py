@@ -58,6 +58,7 @@ QUERY_ME_IMAGES_TEMPLATE = """
          {from_zeropoint}
          felipe.me_images_{tagname} me
      WHERE
+         {and_ccdnum}
          {and_extras}
          {and_blacklist}
          {and_zeropoint}
@@ -256,6 +257,7 @@ def get_CCDS_from_db_general_sql(dbh, **kwargs):
     zp_source     = kwargs.get('zp_source')
     zp_version    = kwargs.get('zp_version') 
     tilename      = kwargs.get('tilename') 
+    ccdnum        = kwargs.get('ccdnum',0) 
 
     utils.pass_logger_debug("Building and running the query to find the CCDS",logger)
 
@@ -269,6 +271,12 @@ def get_CCDS_from_db_general_sql(dbh, **kwargs):
     query_zeropoint = get_zeropoint_query(zp_source=zp_source,zp_version=zp_version,no_zeropoint=no_zeropoint)
     query_blacklist = get_blacklist_query(no_blacklist=no_blacklist)
 
+    # Get the optional CCDNUM
+    if ccdnum > 0:
+        and_ccdnum = "me.CCDNUM=%d AND" % ccdnum
+    else:
+        and_ccdnum = ""
+
     # Format the SQL query string
     ccd_query = QUERY_CCDS.format(
         tagname         = tagname,
@@ -280,6 +288,7 @@ def get_CCDS_from_db_general_sql(dbh, **kwargs):
         from_zeropoint  = query_zeropoint['from_zeropoint'],
         and_zeropoint   = query_zeropoint['and_zeropoint'],
         and_blacklist   = query_blacklist['and_blacklist'],
+        and_ccdnum      = and_ccdnum,
         )
     utils.pass_logger_info("Will execute the query:\n%s\n" %  ccd_query,logger)
     
