@@ -8,6 +8,8 @@ def define_tileinfo(tilename,**kwargs):
     # These are all of the inputs
     xsize       = kwargs.get('xsize')
     ysize       = kwargs.get('ysize')
+    xsize_pix   = kwargs.get('xsize_pix',0)
+    ysize_pix   = kwargs.get('ysize_pix',0)
     ra_center   = kwargs.get('ra_cent')
     dec_center  = kwargs.get('dec_cent')
     pixelscale  = kwargs.get('pixelscale',0.263) # in arsec/pixel
@@ -16,7 +18,11 @@ def define_tileinfo(tilename,**kwargs):
     logger      = kwargs.get('logger',None)
 
     # Get the dimensions
-    NAXIS1, NAXIS2 = get_image_size(xsize,ysize, pixelscale=pixelscale, units=units)
+    if xsize_pix > 0 and ysize_pix > 0 :
+        NAXIS1 = xsize_pix
+        NAXIS2 = ysize_pix
+    else:
+        NAXIS1, NAXIS2 = get_image_size(xsize,ysize, pixelscale=pixelscale, units=units)
 
     kw = {'pixelscale' : pixelscale,
           'ra_cent'    : ra_center,
