@@ -250,6 +250,11 @@ class Job(BaseJob):
             if len(self.from_extras) != 0:
                 if self.from_extras[-1] !=",": self.from_extras = self.from_extras+","
 
+            if len(self.cats_from_extras) != 0:
+                if self.cats_from_extras[-1] !=",": self.cats_from_extras = self.cats_from_extras+","
+            if len(self.cats_select_extras) != 0:
+                if self.cats_select_extras[-1] !=",": self.cats_select_extras = self.cats_select_extras+","
+
             if self.tilename_fh == '':
                 self.tilename_fh = self.tilename
 

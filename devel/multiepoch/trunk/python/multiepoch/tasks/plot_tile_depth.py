@@ -215,7 +215,7 @@ class Job(base_job.BaseJob):
         
         NAXIS1 = self.ctx.tile_header_depth['NAXIS1']
         NAXIS2 = self.ctx.tile_header_depth['NAXIS2']
-        tile_depth = numpy.zeros((NAXIS1,NAXIS2),dtype=numpy.int)
+        tile_depth = numpy.zeros((NAXIS2,NAXIS1),dtype=numpy.int)
 
         idx = numpy.where(self.ctx.CCDS['BAND'] == BAND)[0]
         filenames = self.ctx.CCDS['FILENAME'][idx]
@@ -251,8 +251,6 @@ class Job(base_job.BaseJob):
             self.logger.info("Wrote: %s" %  outname)
             
         return
-
-        
 
     def plot_CCDcornersDESTILEsubplot_xy(self, tile_xs, tile_ys, **kwargs):
         """ Plot the CCDs overlaping the DESTILENAME using subplots on image coordinates"""

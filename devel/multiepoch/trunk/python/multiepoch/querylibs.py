@@ -108,7 +108,7 @@ QUERY_ME_CATALOGS_TEMPLATE = """
        (SELECT 
          distinct me.EXPNUM
         FROM
-         {cats_select_extras}
+         {cats_from_extras} 
          felipe.me_images_{tagname} me
         WHERE
          {cats_and_extras}
@@ -584,7 +584,7 @@ def get_blacklist_query(no_blacklist=False):
         query['and_blacklist'] = ''
     else:
         query['and_blacklist'] = """
-        not exists (select bl.reason from blacklist bl where bl.expnum=me.expnum and bl.ccdnum=me.ccdnum) AND"""
+         not exists (select bl.reason from blacklist bl where bl.expnum=me.expnum and bl.ccdnum=me.ccdnum) AND"""
         #query['and_blacklist'] = """
         #me.filename NOT IN
         #(select filename from felipe.me_images_%s me, BLACKLIST where

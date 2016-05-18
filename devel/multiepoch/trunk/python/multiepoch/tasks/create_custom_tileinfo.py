@@ -43,6 +43,8 @@ class Job(BaseJob):
         pixelscale = CFloat(0.263,help="Pixel Scale in arcsec/pixel")
         xsize = CFloat(10,help="X-size of output tile in arcmin")
         ysize = CFloat(10,help="Y-size of output tile in arcmin")
+        xsize_pix = CInt(0,help="X-size of output tile in pixels (optional)")
+        ysize_pix = CInt(0,help="Y-size of output tile in pixels (optional)")
         prefix = CUnicode('DES',help="Prefix to use for TILENAME")
         
         # Logging -- might be factored out
@@ -63,13 +65,16 @@ class Job(BaseJob):
 
             if self.json_tileinfo_file == '':
                 self.json_tileinfo_file  = "%s.json" % self.tilename
-                
+
+
     def run(self):
 
         # Make a dictionary/header for the all columns from COADDTILE table
         t0 = time.time()
         kw = {'xsize' : self.ctx.xsize,
               'ysize' : self.ctx.ysize,
+              'xsize_pix' : self.ctx.xsize_pix,
+              'ysize_pix' : self.ctx.ysize_pix,
               'pixelscale' : self.ctx.pixelscale,
               'ra_cent'    : self.ctx.ra_center,
               'dec_cent'   : self.ctx.dec_center,
