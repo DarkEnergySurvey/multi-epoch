@@ -204,7 +204,7 @@ class Job(BaseJob):
         cmd_list.append("%s" % STIFF_EXE)
         for BAND in CSET:
             sci_fits = fh.get_mef_file(self.input.tiledir,self.input.tilename_fh,BAND)
-            cmd_list.append( "%s'[%s]'" % (sci_fits,utils.SCI_HDU))
+            cmd_list.append( "%s" % sci_fits)
 
         cmd_list.append("-c %s" % self.ctx.stiff_conf)
         for param,value in pars.items():
