@@ -184,11 +184,15 @@ class Job(BaseJob):
         options to overwrite them with kwargs to this function.
         """
 
+        # Short cuts
+        MULTIEPOCH_DIR = os.environ['MULTIEPOCH_DIR']
+        CONFIG_DATE    = os.environ['MULTIEPOCH_CONFIG_DATE']
+
         SExpsf_parameters = {
             'CATALOG_TYPE'    : "FITS_LDAC",
-            'PARAMETERS_NAME' : os.path.join(os.environ['MULTIEPOCH_DIR'],'etc','sex.param_psfex'),
-            'FILTER_NAME'     : os.path.join(os.environ['MULTIEPOCH_DIR'],'etc','sex.conv'),
-            'STARNNW_NAME'    : os.path.join(os.environ['MULTIEPOCH_DIR'],'etc','sex.nnw'),
+            'PARAMETERS_NAME' : os.path.join(MULTIEPOCH_DIR,'etc',CONFIG_DATE+'_sex.param_psfex'),
+            'FILTER_NAME'     : os.path.join(MULTIEPOCH_DIR,'etc','sex.conv'),
+            'STARNNW_NAME'    : os.path.join(MULTIEPOCH_DIR,'etc','sex.nnw'),
             'SATUR_LEVEL'     : 65000,
             'DETECT_MINAREA'  : 3,
             'DETECT_THRESH'   : 5.0,
