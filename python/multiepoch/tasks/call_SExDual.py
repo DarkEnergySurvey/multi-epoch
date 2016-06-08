@@ -190,15 +190,19 @@ class Job(BaseJob):
         Set the SEx default options for dual SExtrator run and have the
         options to overwrite them with kwargs to this function.
         """
+        # Short cuts
+        MULTIEPOCH_DIR = os.environ['MULTIEPOCH_DIR']
+        CONFIG_DATE    = os.environ['MULTIEPOCH_CONFIG_DATE']
+
         # General pars, BAND-independent
         SExDual_parameters = {
             'DEBLEND_MINCONT' : 0.001,
             'MAG_ZEROPOINT'   : self.ctx.magbase,
             'CHECKIMAGE_TYPE' : 'SEGMENTATION',
-            'FILTER_NAME'     : os.path.join(os.environ['MULTIEPOCH_DIR'],'etc','gauss_3.0_7x7.conv'),
-            'STARNNW_NAME'    : os.path.join(os.environ['MULTIEPOCH_DIR'],'etc','sex.nnw'),
-            'PARAMETERS_NAME' : os.path.join(os.environ['MULTIEPOCH_DIR'],'etc','sex.param_diskonly'), # disk-only psf
-            #'PARAMETERS_NAME' : os.path.join(os.environ['MULTIEPOCH_DIR'],'etc','sex.param_nomodel'), # Way Faster -- no model for tesing!!!
+            'FILTER_NAME'     : os.path.join(,'etc','gauss_3.0_7x7.conv'),
+            'STARNNW_NAME'    : os.path.join(MULTIEPOCH_DIR,'etc','sex.nnw'),
+            'PARAMETERS_NAME' : os.path.join(MULTIEPOCH_DIR,'etc',CONFIG_DATE+'_sex.param_diskonly'), # disk-only psf
+            #'PARAMETERS_NAME' : os.path.join(MULTIEPOCH_DIR,'etc',CONFIG_DATE+'_sex.param_nomodel'), # Way Faster -- no model for tesing!!!
             }
 
         # Now update pars with kwargs -- with override the above definitions

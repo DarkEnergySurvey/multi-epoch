@@ -31,4 +31,4 @@ envAppend(PATH, ${PRODUCT_DIR}/bin)
 envAppend(PATH, ${PRODUCT_DIR}/python/multiepoch/tasks)
 
 # Config date for Astromatic files
-envSet(MULTIEPOCH_CONFIG_DATE,"20160422")
+envSet(MULTIEPOCH_CONFIG_DATE,"20160609")
