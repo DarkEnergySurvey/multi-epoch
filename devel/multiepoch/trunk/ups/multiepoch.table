@@ -1,30 +1,29 @@
 # Mojo
-setupRequired(mojo       0.2.6+0)
+setupRequired(mojo       0.2.6+1)
 
 # DESDM python
-setupRequired(despydb    2.0.1+0)
-setupRequired(despymisc  1.0.2+0) 
-setupRequired(despyfitsutils 1.0.1+0)
+setupRequired(despydb    2.0.1+1)
+setupRequired(despyfitsutils 1.0.1+4)
 
 # Pixcorrect -- loads despyfits/fitsio/imsupport
-setupRequired(pixcorrect 0.2.4+4)
+setupRequired(pixcorrect 0.3.0+1)
 
 # Python core
-setupRequired(matplotlib 1.3.1+4)
-setupRequired(pandas 0.15.2+1)
+setupRequired(matplotlib 1.3.1+5)
+setupRequired(pandas 0.15.2+2)
 
 # Astromatic stuff
-setupRequired(sextractor 2.23.2+0)
-setupRequired(stiff 2.1.3+1)
+setupRequired(sextractor 2.23.2+1)
+setupRequired(stiff 2.6.1+0)
 setupRequired(swarp 2.40.0+1)
-setupRequired(psfex 3.17.3+1)
-setupRequired(scamp 2.4.2+0)
+setupRequired(psfex 3.17.3+2)
+setupRequired(scamp 2.4.2+1)
 
 # Extintion correction
-setupRequired(extinction 1.2.1+0)
+setupRequired(extinction 1.2.2+1)
 
 # Healpix
-setupRequired(hpixDB 1.0.1+0)
+setupRequired(hpixDB 1.0.2+1)
 
 envAppend(PYTHONPATH, ${PRODUCT_DIR}/python)
 envAppend(PATH, ${PRODUCT_DIR}/bin)
