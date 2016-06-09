@@ -314,6 +314,7 @@ class Job(BaseJob):
         self.ctx.assoc = self.get_fitsfile_locations(self.ctx.CCDS,
                                                      self.ctx.local_archive,
                                                      self.ctx.root_https,
+                                                     zp_force=self.ctx.zp_force,
                                                      logger=self.logger)
 
         # Now we get the locations, ie the association information for catalogs
@@ -368,7 +369,7 @@ class Job(BaseJob):
             
 
     @staticmethod
-    def get_fitsfile_locations(CCDS, local_archive, root_https, logger=None):
+    def get_fitsfile_locations(CCDS, local_archive, root_https, logger=None, zp_force=None):
         """ Find the location of the files in the des archive and https urls
         """
 
@@ -387,7 +388,7 @@ class Job(BaseJob):
         if 'MAG_ZERO'in CCDS.dtype.names:
             assoc['MAG_ZERO']    = CCDS['MAG_ZERO']
         else:
-            assoc['MAG_ZERO']    = numpy.zeros(Nimages) + self.ctx.zp_force
+            assoc['MAG_ZERO']    = numpy.zeros(Nimages) + zp_force
 
         # Filename with fz if exists
         #assoc['FILENAME'] =  [CCDS['FILENAME'][k]+CCDS['COMPRESSION'][k] for k in range(Nimages)]
