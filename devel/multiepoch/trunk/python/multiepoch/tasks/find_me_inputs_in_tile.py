@@ -192,7 +192,7 @@ class Job(BaseJob):
         no_zeropoint  = Bool(False, help=("Do not get ZP for images"))
         zp_source     = CUnicode(ZP_SOURCE,help="ZEROPOINT.SOURCE",)
         zp_version    = CUnicode(ZP_VERSION,help="ZEROPOINT.VERSION",)
-        zp_force      = CUnicode(32.2,help="Force ZP value if MAG_ZEROP not present [default=32.2]",)
+        zp_force      = CFloat(32.2,help="Force ZP value if MAG_ZEROP not present [default=32.2]",)
 
         select_extras = CUnicode(SELECT_EXTRAS,help="string with extra SELECT for query",)
         and_extras    = CUnicode(AND_EXTRAS,help="string with extra AND for query",)
