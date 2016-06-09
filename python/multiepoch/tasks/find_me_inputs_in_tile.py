@@ -192,6 +192,7 @@ class Job(BaseJob):
         no_zeropoint  = Bool(False, help=("Do not get ZP for images"))
         zp_source     = CUnicode(ZP_SOURCE,help="ZEROPOINT.SOURCE",)
         zp_version    = CUnicode(ZP_VERSION,help="ZEROPOINT.VERSION",)
+        zp_force      = CUnicode(32.2,help="Force ZP value if MAG_ZEROP not present [default=32.2]",)
 
         select_extras = CUnicode(SELECT_EXTRAS,help="string with extra SELECT for query",)
         and_extras    = CUnicode(AND_EXTRAS,help="string with extra AND for query",)
@@ -386,7 +387,7 @@ class Job(BaseJob):
         if 'MAG_ZERO'in CCDS.dtype.names:
             assoc['MAG_ZERO']    = CCDS['MAG_ZERO']
         else:
-            assoc['MAG_ZERO']    = numpy.zeros(Nimages) + 30 
+            assoc['MAG_ZERO']    = numpy.zeros(Nimages) + self.ctx.zp_force
 
         # Filename with fz if exists
         #assoc['FILENAME'] =  [CCDS['FILENAME'][k]+CCDS['COMPRESSION'][k] for k in range(Nimages)]

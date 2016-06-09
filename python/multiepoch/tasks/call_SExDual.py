@@ -199,7 +199,7 @@ class Job(BaseJob):
             'DEBLEND_MINCONT' : 0.001,
             'MAG_ZEROPOINT'   : self.ctx.magbase,
             'CHECKIMAGE_TYPE' : 'SEGMENTATION',
-            'FILTER_NAME'     : os.path.join(,'etc','gauss_3.0_7x7.conv'),
+            'FILTER_NAME'     : os.path.join(MULTIEPOCH_DIR,'etc','gauss_3.0_7x7.conv'),
             'STARNNW_NAME'    : os.path.join(MULTIEPOCH_DIR,'etc','sex.nnw'),
             'PARAMETERS_NAME' : os.path.join(MULTIEPOCH_DIR,'etc',CONFIG_DATE+'_sex.param_diskonly'), # disk-only psf
             #'PARAMETERS_NAME' : os.path.join(MULTIEPOCH_DIR,'etc',CONFIG_DATE+'_sex.param_nomodel'), # Way Faster -- no model for tesing!!!
