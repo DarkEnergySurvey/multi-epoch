@@ -1,0 +1,72 @@
+# defines my environment
+<<include ../michaelgraber_cfg.des>>
+
+<<include ../modulewcl/modnamepat.wcl>>
+<<include ../modulewcl/01-query_tileinfo.wcl>>
+<<include ../modulewcl/02-find_ccds_in_tile.wcl>>
+
+#<<include destest_computingsite.des>>       
+
+tilename = DES2246-4457
+
+project = MHG
+target_site = destest_computingsite
+
+reqnum = 0001
+jira_id = ME-TEST # example 
+label = query_tileinfo,test 
+
+pipeline = me # used in desstat output 
+pipeprod = Y2ME # eups meta package name
+pipever = 1.0+3E # eups meta package version
+#pipever = 0.1beta+0E 
+ops_run_dir = ${project}/${pipeline}/${tilename}-r${reqnum}/p${attnum:2}
+unitname = ${tilename}
+
+database_section = db-destest
+local_filepath = /work/devel/felipe/LOCAL_DESAR
+#blocklist = query_tileinfo
+
+# because we start a python on the remote site with user
+# nobody in this test setup. we need to trick the system
+# to look for the python eggs somewhere else.
+<job_environment>
+   PYTHON_EGG_CACHE =  /cluster_scratch/users/mgraber/secret
+</job_environment>
+
+#blocklist = uptime
+blocklist = query_tileinfo, find_ccds_in_tile, make_SWarp_weights
+
+#<block>
+#    <uptime>
+#	modulelist = uptime 
+#    </uptime>
+#</block>
+
+
+<block>
+    <query_tileinfo>
+        modulelist = query_tileinfo 
+    </query_tileinfo>
+
+    <find_ccds_in_tile>
+        modulelist = find_ccds_in_tile 
+    </find_ccds_in_tile>
+
+    <make_SWarp_weights>
+        modulelist = make_SWarp_weights 
+    </make_SWarp_weights>
+</block>
+
+
+
+# dummy uptime module
+<module>
+    <uptime>
+        wrappername = generic.py
+        modnamepat=${modnamepat_tile_generic}
+        <exec_1>
+            execname = uptime
+        </exec_1>
+    </uptime>
+</module>

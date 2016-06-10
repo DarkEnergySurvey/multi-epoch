@@ -1,0 +1,48 @@
+<module>
+    <call_swarp_customweights>
+        wrappername = generic.py
+        modnamepat=${modnamepat_tile_generic}
+        <file>
+            <json_geom>
+                filetype = config 
+                filepat = tile_generic
+		flabel = geom
+                fsuffix = json
+                dirpat = me 
+                ops_enddir = aux
+                rundir = aux
+                # bring file back home?
+		savefiles = true
+            </json_geom>
+            <json_assoc>
+                filetype = config 
+                filepat = tile_generic
+		flabel = assoc 
+                fsuffix = json
+                dirpat = me 
+                ops_enddir = aux
+                rundir = aux
+                # bring file back home?
+		savefiles = true
+            </json_assoc>
+        </file>
+        <exec_1>
+            execname = call_SWarp_CustomWeights.py 
+            cmd_hyphen = alldouble
+            used = file.json_assoc, file.json_geom
+            # was_generated_by = file.json_assoc,file.json_geom
+            # ancestry = file.json_geom:file.json_assoc
+            <cmdline>
+                # positional arguments with _num_blabla
+                _01_json_assoc = ${file.json_assoc.fullname}
+                _02_json_geom  = ${file.json_geom.fullname}
+                # optional arguments
+		basename = ${swarpbasename}
+                weight_extension = _wgt
+		swarp_execution_mode = tofile
+		#magbase = 30.0
+		swarp_parameters = NTHREADS=8 COMBINE_TYPE=MEAN COPY_KEYWORDS=OBJECT,EXPTIME
+            </cmdline>
+        </exec_1>
+    </call_swarp_customweights>
+</module>
