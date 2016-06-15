@@ -271,7 +271,7 @@ class Job(BaseJob):
         pars['RESAMPLE'] = 'N' # We do not need to resample them, they are on the same pixel coordinates
         self.logger.info("Will use COMBINE_TYPE=%s for detection image" % self.ctx.COMBINE_TYPE_detec)
         pars['COMBINE_TYPE']  = self.ctx.COMBINE_TYPE_detec
-        pars['COPY_KEYWORDS'] = "OBJECT,BUNIT" # Avoid FILTER and BAND
+        pars['COPY_KEYWORDS'] = "BUNIT,TILENAME,TILEID" # Avoid FILTER and BAND
 
         swarp_cmd[BAND] = [SWARP_EXE, ]
         swarp_cmd[BAND].append("%s" % " ".join(det_scilists))

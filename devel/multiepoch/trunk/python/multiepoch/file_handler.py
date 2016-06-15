@@ -363,6 +363,12 @@ def get_expcat_list_file(tiledir, tilename):
     fnkwargs = {'base':tilename, 'ftype':SCAMPCAT_TYPE, 'ext':LIST_EXT}
     return dh.place_file(_me_noband_fn(**fnkwargs), 'list') 
 
+# The scamp input list of exposure-based head output files
+def get_expcat_list_head(tiledir, tilename):
+    dh = get_tiledir_handler(tiledir)
+    fnkwargs = {'base':tilename, 'ftype':SCAMPCAT_TYPE, 'ext':HEAD_EXT}
+    return dh.place_file(_me_noband_fn(**fnkwargs), 'list') 
+
 # The output scamp xml file
 def get_scamp_xml_file(tiledir, tilename):
     dh = get_tiledir_handler(tiledir)
