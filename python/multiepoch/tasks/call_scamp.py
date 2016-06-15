@@ -174,9 +174,16 @@ class Job(BaseJob):
         tilename_fh = self.input.tilename_fh
         self.logger.info('Writing scamp input file list')
         expcats = []
+        exphead = []
         for UNITNAME in self.ctx.unitnames:
             expcats.append(fh.get_expcat_file(tiledir, tilename_fh, UNITNAME))
+            exphead.append(fh.get_exphead_file(tiledir, tilename_fh, UNITNAME))
+
+        # Make sure they are sorted
+        expcats.sort()
+        exphead.sort()
         tableio.put_data(fh.get_expcat_list_file(tiledir, tilename_fh),(expcats,),format="%s")
+        tableio.put_data(fh.get_expcat_list_head(tiledir, tilename_fh),(exphead,),format="%s")
         return
 
     # Copy and rename the scampcat fits and head files
