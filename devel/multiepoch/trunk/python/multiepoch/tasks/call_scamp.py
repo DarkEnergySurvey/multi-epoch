@@ -262,6 +262,7 @@ class Job(BaseJob):
         # Update and Set the SWarp options 
         pars = self.get_scamp_parameter_set(**self.input.scamp_parameters)
         pars["XML_NAME"] = "%s" % fh.get_scamp_xml_file(tiledir, tilename_fh)
+        pars["HEADER_NAME"] = "@%s" % fh.get_expcat_list_head(tiledir, tilename_fh)
 
         if self.ctx.use_scampcats:
             pars["AHEADER_SUFFIX"] = ".ahead"
