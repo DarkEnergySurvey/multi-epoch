@@ -356,7 +356,6 @@ def get_expahead_file(tiledir, tilename, exposure):
     fnkwargs = {'base':tilename, 'exposure':exposure, 'ftype':SCAMPCAT_TYPE, 'ext':AHEAD_EXT}
     return dh.place_file(_me_exposure_fn(**fnkwargs), 'align') 
 
-
 # The scamp input list of exposure-based catalogs
 def get_expcat_list_file(tiledir, tilename):
     dh = get_tiledir_handler(tiledir)

@@ -181,11 +181,18 @@ class Job(BaseJob):
 
         for BAND in self.ctx.doBANDS:
             # extracting the list
+            self.ctx.assoc['BAND'] == BAND
+
             idx = numpy.where(self.ctx.assoc['BAND'] == BAND)[0]
             magzero       = self.ctx.assoc['MAG_ZERO'][idx]
             swarp_inputs  = self.ctx.assoc['FILEPATH_INPUT_RED'][idx]
             flxscale      = 10.0**(0.4*(self.input.magbase - magzero))
 
+            # Now let's sort them by filename
+            isort = numpy.argsort(swarp_inputs)
+            swarp_inputs = swarp_inputs[isort]
+            flxscale = flxscale[isort]
+            
             # writing the lists to files using tableio.put_data()
             tableio.put_data(fh.get_sci_list_file(self.input.tiledir, self.input.tilename_fh, BAND),(swarp_inputs,),  format='%s[0]')
             tableio.put_data(fh.get_wgt_list_file(self.input.tiledir, self.input.tilename_fh, BAND),(swarp_inputs,),  format='%s[2]')
