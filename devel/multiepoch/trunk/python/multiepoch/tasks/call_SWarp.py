@@ -190,6 +190,8 @@ class Job(BaseJob):
 
             # Now let's sort them by filename
             isort = numpy.argsort(swarp_inputs)
+            # Test with shuffle
+            numpy.random.shuffle(isort)
             swarp_inputs = swarp_inputs[isort]
             flxscale = flxscale[isort]
             
