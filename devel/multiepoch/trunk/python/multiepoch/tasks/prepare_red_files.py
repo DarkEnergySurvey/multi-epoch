@@ -60,6 +60,7 @@ class Job(BaseJob):
         null_mask     = CUnicode(NULL_MASK, help="The mask bits to null (zero)")
         me_wgt_keepmask = CUnicode(ME_WGT_KEEPMASK,  help="Run custom weight and preserve bits and do not write MSK plane for multi-epoch (me)")
         block_size = CUnicode(BLOCK_SIZE,  help="Block size of zipper in x-direction (row)")
+        add_noise  = Bool(False, help="Add Poisson Noise to the zipper")
 
         # Optional inputs -- postional arguments
         ignore_red_corrupt = Bool(False, help="Ignore red corrupted files")
@@ -162,6 +163,8 @@ class Job(BaseJob):
         cmd_tile.append("--null_mask %s"       % self.ctx.null_mask)
         cmd_tile.append("--block_size %s"      % self.ctx.block_size)
         cmd_tile.append("--tilename %s" % self.ctx.tilename)
+        if self.ctx.add_noise:
+            cmd_tile.append("--add_noise")
         if self.ctx.me_wgt_keepmask != '':
             cmd_tile.append("--me_wgt_keepmask %s" % self.ctx.me_wgt_keepmask)
         if self.ctx.tileid > 0:
