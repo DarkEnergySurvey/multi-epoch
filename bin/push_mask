@@ -1,0 +1,30 @@
+#!/usr/bin/env python
+
+import argparse
+from multiepoch import metools
+from despymisc.miscutils import elapsed_time
+import time
+
+if __name__ == "__main__":
+
+    parser = argparse.ArgumentParser(description="Push the DECam CCDs shape over a fitsfile")
+    parser.add_argument("filename", default=None, help="Inputs fitsfile")
+    parser.add_argument("outname", default=None,  help="Output Name")
+    parser.add_argument("--extname", default='SCI',  help="EXTNAME to use")
+    parser.add_argument("--hdu", default=None,  type=int, help="HDU Number to use")
+    args = parser.parse_args()
+
+    if args.hdu is not None:
+        hdu = args.hdu
+    else:
+        hdu = metools.gethdu(args.filename,extname=args.extname)
+        if not hdu:
+            hdu = args.hdu
+
+    t0 = time.time()
+    print "# Reading %s" % args.filename
+    metools.addDECamMask(args.filename,args.outname,ext=hdu)
+    print "# Wrote %s" % args.outname
+    print "# Total time: %s" % elapsed_time(t0)
+
+        
