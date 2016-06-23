@@ -63,8 +63,15 @@ class Job(BaseJob):
                                argparse={'choices': ('MSK','WGT')})
         # zipper params
         xblock    = CInt(1, help="Block size of zipper in x-direction")
+        yblock    = CInt(1, help="Block size of zipper in y-direction")
         add_noise = Bool(False,help="Add Poisson Noise to the zipper")
         ydilate   = CInt(0,help="Dilate pixels in the y-axis")
+        maxcols   = CInt(100, help="Widest feature to interpolate.  Default=None means no limit.")
+        mincols   = CInt(1,help="Narrowest feature to interpolate.")
+                        
+        region_file = CUnicode('',help="Write ds9 region file with interpolated region")
+        # Keep zeros in SCI (yes/no)
+        keep_sci_zeros = Bool(False, help="Keep zeros in SCI frame")
         
         # Logging -- might be factored out
         stdoutloglevel = CUnicode('INFO', help="The level with which logging info is streamed to stdout",
@@ -153,7 +160,7 @@ class Job(BaseJob):
         for key in args.keys():
             if key == 'logger':
                 continue
-            if args[key] is True:
+            if isinstance(args[key],bool) and args[key] is True:
                 cmd.append("--%s" % key)
             elif args[key] is not False:
                 cmd.append("--%s %s" % (key,args[key]))
@@ -173,13 +180,21 @@ class Job(BaseJob):
                           'logger'  : self.logger,
                           'clobber' : self.ctx.clobber_MEF,
                           'xblock'  : self.ctx.xblock,
+                          'yblock'  : self.ctx.yblock,
                           'ydilate'  : self.ctx.ydilate,
                           'add_noise' : self.ctx.add_noise,
+                          'mincols'  : self.ctx.mincols,
+                          'maxcols'  : self.ctx.maxcols,
                           'interp_image': self.ctx.interp_image,
                           'magzero'  : self.ctx.magbase,
                           'tilename' : self.ctx.tilename,
                           'tileid' : self.ctx.tileid,
+                          'keep_sci_zeros' : self.ctx.keep_sci_zeros,
                           }
+
+            if self.ctx.keep_sci_zeros is False:
+                args[BAND]['no-keep_sci_zeros'] = True
+
             if self.input.weight_for_mask:
                 args[BAND]['msk_file'] = fh.get_msk_fits_file(tiledir, tilename_fh, BAND)
 
