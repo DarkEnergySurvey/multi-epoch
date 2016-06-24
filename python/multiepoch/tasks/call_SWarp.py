@@ -180,8 +180,9 @@ class Job(BaseJob):
         self.logger.info('Writing swarp input files')
 
         for BAND in self.ctx.doBANDS:
+
             # extracting the list
-            self.ctx.assoc['BAND'] == BAND
+            #self.ctx.assoc['BAND'] == BAND
 
             idx = numpy.where(self.ctx.assoc['BAND'] == BAND)[0]
             magzero       = self.ctx.assoc['MAG_ZERO'][idx]

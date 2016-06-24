@@ -26,7 +26,7 @@ setupRequired(extinction 1.2.2+2)
 setupRequired(hpixDB 1.0.2+1)
 
 # draDECam
-setupRequired(drawDECam 0.2.0+0)
+setupRequired(drawDECam 0.3.0+0)
 
 envAppend(PYTHONPATH, ${PRODUCT_DIR}/python)
 envAppend(PATH, ${PRODUCT_DIR}/bin)
