@@ -17,6 +17,7 @@ import numpy
 # Multi-epoch
 import multiepoch.utils as utils
 import multiepoch.contextDefs as contextDefs
+import multiepoch.querylibs as querylibs
 from multiepoch import file_handler as fh
 
 # JOB INTERNAL CONFIGURATION
@@ -107,6 +108,7 @@ class Job(BaseJob):
         self.write_mangle_input_list_files()
 
         # 3. Get the pol files
+        querylibs.find_pol_files(self.ctx.tileid,self.ctx.dbh,version='Y3A1v1')
 
         # 4. Get the command list
         cmd_list = self.get_mangle_cmd_list()
