@@ -13,13 +13,16 @@ import os
 
 TILEDIR_SUBDIRECTORIES = {
         'aux': 'aux',
-        'list': 'list',        
+        'list': 'list',
+        'list/mangle': 'list/mangle',        
         'ctx': 'ctx',
         'log': 'log',
         'align': 'align',
         'coadd': 'coadd',
         'inputs': 'inputs',
         'qa': 'qa',
+        'qa/mangle': 'qa/mangle',
+        'mangle_tiles':'mangle_tiles',
         }
 
 def get_tiledir_handler(tiledir, logger=None):
@@ -38,6 +41,11 @@ WGT_TYPE = 'wgt'
 FLX_TYPE = 'flx'
 MSK_TYPE = 'msk'
 
+# Mangle type
+POL_EXT     = 'pol'
+MANGLE_TYPE = 'mangle'
+
+
 # Scamp/PSF/psfex/SEx types
 PSFCAT_TYPE = 'psfcat'
 PSFEX_TYPE  = 'psfex'
@@ -54,6 +62,8 @@ AHEAD_EXT = 'ahead'
 LIST_EXT  = 'list'
 PSF_EXT   = 'psf'
 XML_EXT   = 'xml'
+
+
 
 # MULTIEPOCH FILENAME GENERATORS
 _GENERIC_FILENAMEPATTERN          = "{base}_{band}_{ftype}.{ext}"
@@ -431,6 +441,43 @@ def get_scamp_plots_relative(tilename,plotnames):
         filenames.append(os.path.join('qa',filename))
     return filenames
 
+# --------------------
+#    Mangle files
+# --------------------
+
+def get_mangle_list_red(tiledir, tilename, band):
+    dh = get_tiledir_handler(tiledir)
+    fnkwargs = {'base':tilename, 'band':band, 'ftype':'mangle-red', 'ext':LIST_EXT}
+    return dh.place_file(_me_fn(**fnkwargs), 'list/mangle') 
+
+def get_mangle_list_me(tiledir, tilename, band):
+    dh = get_tiledir_handler(tiledir)
+    fnkwargs = {'base':tilename, 'band':band, 'ftype':'mangle-me', 'ext':LIST_EXT}
+    return dh.place_file(_me_fn(**fnkwargs), 'list/mangle') 
+
+def get_poltiles_name(tileid,version='Y3A1v1'):
+    """ Example: Y3A1v1_tiles_10s.124050.pol"""
+    return "%s_tiles_10s.%s.pol" % (version, tileid)
+
+def get_poltolys_name(tileid,version='Y3A1v1'):
+    """ Example: Y3A1v1_tolys_10s.124050.pol"""
+    return "%s_tolys_10s.%s.pol" % (version, tileid)
+
+def get_poltiles(tiledir,tileid,version='Y3A1v1'):
+    dh = get_tiledir_handler(tiledir)
+    filename = get_poltiles_name(tileid,version='Y3A1v1')
+    return dh.place_file(filename, 'mangle_tiles')
+
+def get_poltolys(tiledir,tileid,version='Y3A1v1'):
+    dh = get_tiledir_handler(tiledir)
+    filename = get_poltolys_name(tileid,version='Y3A1v1')
+    return dh.place_file(filename, 'mangle_tiles')
+
+def get_mangle_plot(tiledir,tilename,band,number=None):
+    dh = get_tiledir_handler(tiledir)
+    filename = "%s_%s_mangle-%s.png" % (tilename,band,number)
+    return dh.place_file(filename, 'qa/mangle')
+    
 
 def get_configfile(exec_name,date=None):
 
