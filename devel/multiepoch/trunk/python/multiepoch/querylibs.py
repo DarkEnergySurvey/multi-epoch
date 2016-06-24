@@ -7,7 +7,8 @@ import despyastro
 import numpy
 import time
 from despymisc.miscutils import elapsed_time
-from multiepoch import utils 
+from multiepoch import utils
+from multiepoch import file_handler as fh
 
 # -------------------
 # QUERY STRINGS
@@ -600,3 +601,12 @@ def get_blacklist_query(no_blacklist=False):
         #me.expnum=blacklist.expnum and me.ccdnum=blacklist.ccdnum) AND """ % tagname
     return query
 
+
+
+def find_pol_files(tileid,dbh,version='Y3A1v1'):
+
+    poltile = fh.get_poltiles_name(tileid,version=version)
+    poltoly = fh.get_poltolys_name(tileid,version=version)
+    QUERY = """select PATH, FILENAME from  FILE_ARCHIVE_INFO where filename='{poltile}' or filename='{poltoly}'"""
+    print QUERY.format(poltile=poltile, poltoly=poltoly)
+    return
