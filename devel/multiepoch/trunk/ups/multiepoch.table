@@ -25,6 +25,9 @@ setupRequired(extinction 1.2.2+2)
 # Healpix
 setupRequired(hpixDB 1.0.2+1)
 
+# Mangle
+setupRequired(despymangle 2.1.1+1(
+
 # draDECam
 setupRequired(drawDECam 0.3.0+0)
 
