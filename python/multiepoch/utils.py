@@ -6,6 +6,7 @@ Felipe Menanteau, NCSA Jan 2015.
 """
 
 import os
+import sys
 
 # Define order of HDU for MEF
 SCI_HDU = 0
@@ -290,3 +291,33 @@ def symlink_clobber(target, link_name, clobber=True):
         os.symlink(target, link_name)
     return
 
+
+# -----------------------------------------
+
+def transfer_input_files(infodict, clobber, section, logger=None):
+
+    from despymisc import http_requests
+    
+    """ Transfer the files contained in an info dictionary"""
+    
+    # Now get the files via http
+    Nfiles = len(infodict['FILEPATH_HTTPS'])
+    for k in range(Nfiles):
+            
+        url       = infodict['FILEPATH_HTTPS'][k]
+        localfile = infodict['FILEPATH_LOCAL'][k]
+        
+        # Make sure the file does not already exists exits
+        if not os.path.exists(localfile) or clobber:
+            
+            dirname   = os.path.dirname(localfile)
+            if not os.path.exists(dirname):
+                os.makedirs(dirname)
+                
+            logger.info("Getting:  %s (%s/%s)" % (url,k+1,Nfiles))
+            sys.stdout.flush()
+            # Get a file using the $HOME/.desservices.ini credentials
+            http_requests.download_file_des(url,localfile,section=section)
+        else:
+            logger.info("Skipping: %s (%s/%s) -- file exists" % (url,k+1,Nfiles))
+        

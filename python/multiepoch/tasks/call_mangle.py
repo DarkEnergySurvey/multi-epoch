@@ -23,7 +23,7 @@ from multiepoch import file_handler as fh
 # JOB INTERNAL CONFIGURATION
 MANGLE_EXE = 'mangle_one_tile'
 BKLINE = "\\\n"
-MAGBASE = 30.0
+MAGBASE = 30
 
 class Job(BaseJob):
 
@@ -54,10 +54,11 @@ class Job(BaseJob):
         execution_mode_mangle  = CUnicode("tofile",help="Mangle excution mode",
                                          argparse={'choices': ('tofile','dryrun','execute')})
         mangle_conf = CUnicode(help="Optional Mangle configuration file")
-        pwf_attempt_id  = CUnicode(help="Optional pwf_attemp_id")
+        pwf_attempt_id  = CUnicode(1,help="Optional pwf_attemp_id")
 
         doBANDS  = List(['all'],help="BANDS to processs (default=all)",argparse={'nargs':'+',})
-        magbase  = CFloat(MAGBASE, help="Zero point magnitude base, default=%s." % MAGBASE)
+        #magbase  = CFloat(MAGBASE, help="Zero point magnitude base, default=%s." % MAGBASE)
+        magbase  = CInt(MAGBASE, help="Zero point magnitude base, default=%s." % MAGBASE)
 
         # Logging -- might be factored out
         stdoutloglevel = CUnicode('INFO', help="The level with which logging info is streamed to stdout",
@@ -93,62 +94,50 @@ class Job(BaseJob):
         self.logger.info("doBANDS: %s" % self.ctx.doBANDS)
         self.logger.info("dBANDS:  %s" % self.ctx.dBANDS)
 
+        if self.ctx.get('root_https'):
+            self.logger.info("Found root_https: %s" % self.ctx.root_https)
+        else:
+            self.ctx.root_https = querylibs.get_root_https(self.ctx.dbh,logger=self.logger, archive_name=self.ctx.archive_name)
 
     def run(self):
+
+        execution_mode = self.input.execution_mode_mangle
 
         # 0. Prepare the context
         self.prewash()
 
+        # Check for the db_handle
+        self.ctx = utils.check_dbh(self.ctx, logger=self.logger)
+
         # 1. Get the configuration file
         if self.input.mangle_conf == '':
-            self.ctx.mangle_conf = fh.get_configfile('mangle_Y3A1v1')
+            self.ctx.mangle_conf = fh.get_configfile('mangle_Y3A1v1',ext='params')
             self.logger.info("Will use mangle default configuration file: %s" % self.ctx.mangle_conf)
 
         # 2. Write the lists
         self.write_mangle_input_list_files()
 
-        # 3. Get the pol files
-        querylibs.find_pol_files(self.ctx.tileid,self.ctx.dbh,version='Y3A1v1')
+        # 3. Get the pol files location
+        self.ctx.polfiles = self.get_polfiles_locations(version='Y3A1v1')
+
+        # 4. Transfer
+        # Only transfer and make dire if executing
+        if execution_mode == 'execute':
+            utils.transfer_input_files(self.ctx.polfiles, clobber=True, section=self.ctx.http_section, logger=self.logger)
 
         # 4. Get the command list
         cmd_list = self.get_mangle_cmd_list()
 
-        for BAND in self.ctx.doBANDS:
-            print cmd_list[BAND]
-
-        exit()
-        
-        # 3. check execution mode and write/print/execute commands accordingly --------------
-        execution_mode = self.input.execution_mode_stiff
-
+        # 5. execute cmd_list according to execution_mode 
         if execution_mode == 'tofile':
-            bkline  = self.ctx.get('breakline',BKLINE)
-            # The file where we'll write the commands
-            cmdfile = fh.get_stiff_cmd_file(self.input.tiledir, self.input.tilename_fh)
-            self.logger.info("Will write stiff call to: %s" % cmdfile)
-            with open(cmdfile, 'w') as fid:
-                fid.write(bkline.join(cmd_list)+'\n')
-                fid.write('\n')
+            self.writeCall(cmd_list)
 
         elif execution_mode == 'dryrun':
-           self.logger.info("For now we only print the commands (dry-run)")
-           self.logger.info(' '.join(cmd_list))
+            self.logger.info("For now we only print the commands (dry-run)")
+            [self.logger.info(' '.join(cmd_list[band])) for band in self.ctx.doBANDS]
 
-        elif execution_mode == 'execute':
-            logfile = fh.get_stiff_log_file(self.input.tiledir, self.input.tilename_fh)
-            log = open(logfile,"w")
-            self.logger.info("Will proceed to run the stiff call now:")
-            self.logger.info("Will write to logfile: %s" % logfile)
-            t0 = time.time()
-            cmd  = ' '.join(cmd_list)
-            self.logger.info("Executing stiff for tile:%s " % self.input.tilename_fh)
-            self.logger.info("%s " % cmd)
-            status = subprocess.call(cmd,shell=True,stdout=log, stderr=log)
-            if status != 0:
-                raise ValueError(" ERROR while running Stiff, check logfile: %s " % logfile)
-            self.logger.info("Total stiff time %s" % elapsed_time(t0))
-        else:
-            raise ValueError('Execution mode %s not implemented.' % execution_mode)
+        #elif execution_mode == 'execute':
+        #    raise ValueError('Execution mode %s not implemented.' % execution_mode)
         return
 
 
@@ -220,6 +209,7 @@ class Job(BaseJob):
 
             cmd = []
             cmd.append("%s" % MANGLE_EXE)
+            cmd.append("--db_section %s" % self.ctx.db_section)
             cmd.append("--band %s" % BAND)
             cmd.append("--poltiles %s" % fh.get_poltiles(tiledir,tileid))
             cmd.append("--poltolys %s" % fh.get_poltolys(tiledir,tileid))
@@ -241,6 +231,62 @@ class Job(BaseJob):
             cmd_list[BAND] = cmd
 
         return cmd_list
+
+
+    def get_polfiles_locations(self,version='Y3A1v1'):
+
+        # Get the locations in the DB
+        pols = querylibs.find_mangle_pol_files(self.ctx.tileid,self.ctx.dbh,version=version)
+        Nfiles = len(pols['FILENAME'])
+
+        polfiles = {}
+        polfiles['FILEPATH_HTTPS'] = [os.path.join(self.ctx.root_https,pols['PATH'][k],pols['FILENAME'][k]) for k in range(Nfiles)]
+        polfiles['FILEPATH_LOCAL'] = [fh.get_poltiles(self.ctx.tiledir,self.ctx.tileid),
+                                      fh.get_poltolys(self.ctx.tiledir,self.ctx.tileid)]
+        polfiles['FILEPATH_HTTPS'].sort()
+        polfiles['FILEPATH_LOCAL'].sort()
+        return polfiles
+
+
+    def transfer_polfiles(self,clobber=False):
+
+        """ Transfer the files contained in an info dictionary"""
+        
+        # Now get the files via http
+        polfiles = self.ctx.polfiles
+        Nfiles = len(infodict['FILEPATH_HTTPS'])
+        for k in range(Nfiles):
+            
+            url       = infodict['FILEPATH_HTTPS'][k]
+            localfile = infodict['FILEPATH_LOCAL'][k]
+
+            # Make sure the file does not already exists exits
+            if not os.path.exists(localfile) or clobber:
+                
+                dirname   = os.path.dirname(localfile)
+                if not os.path.exists(dirname):
+                    os.makedirs(dirname)
+                    
+                logger.info("Getting:  %s (%s/%s)" % (url,k+1,Nfiles))
+                sys.stdout.flush()
+                # Get a file using the $HOME/.desservices.ini credentials
+                http_requests.download_file_des(url,localfile,section=section)
+            else:
+                logger.info("Skipping: %s (%s/%s) -- file exists" % (url,k+1,Nfiles))
+
+
+
+    def writeCall(self,cmd_list,mode='w'):
+
+        bkline  = self.ctx.get('breakline',BKLINE)
+        # The file where we'll write the commands
+        cmdfile = fh.get_mangle_cmd_file(self.input.tiledir, self.input.tilename_fh)
+        self.logger.info("Will write mangle call to: %s" % cmdfile)
+        with open(cmdfile, mode) as fid:
+            for band in self.ctx.doBANDS:
+                fid.write(bkline.join(cmd_list[band])+'\n')
+                fid.write('\n\n')
+        return
 
     def __str__(self):
         return 'Creates the call to Mangle'

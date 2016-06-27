@@ -603,10 +603,14 @@ def get_blacklist_query(no_blacklist=False):
 
 
 
-def find_pol_files(tileid,dbh,version='Y3A1v1'):
+def find_mangle_pol_files(tileid,dbh,version='Y3A1v1'):
+
+    """ Find the pol files in the database"""
 
     poltile = fh.get_poltiles_name(tileid,version=version)
     poltoly = fh.get_poltolys_name(tileid,version=version)
     QUERY = """select PATH, FILENAME from  FILE_ARCHIVE_INFO where filename='{poltile}' or filename='{poltoly}'"""
-    print QUERY.format(poltile=poltile, poltoly=poltoly)
-    return
+    q = QUERY.format(poltile=poltile, poltoly=poltoly)
+    print "Executing query:\n\t %s\n" % q
+    pols = despyastro.query2rec(q,dbhandle=dbh)
+    return pols
