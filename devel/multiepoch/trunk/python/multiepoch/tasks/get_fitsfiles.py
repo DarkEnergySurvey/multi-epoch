@@ -20,7 +20,7 @@ import re
 import numpy
 import pandas as pd
 
-from despymisc import http_requests
+#from despymisc import http_requests
 import multiepoch.utils as utils
 import multiepoch.contextDefs as contextDefs
 
@@ -61,6 +61,8 @@ class Job(BaseJob):
         scampheads_file = CUnicode('',help="Name of the output ASCII catalog list storing the information for scampheads", input_file=True)
         scampheadlist   = Dict({},help="The Dictionary containing scamphead catalog list ",argparse=False)
 
+        execution_mode_transfer = CUnicode("tofile",help="Transfer files",
+                                           argparse={'choices': ('tofile','dryrun','execute')})
         # Logging -- might be factored out
         stdoutloglevel = CUnicode('INFO', help="The level with which logging info is streamed to stdout",
                                   argparse={'choices': ('DEBUG','INFO','CRITICAL')} )
@@ -122,6 +124,8 @@ class Job(BaseJob):
 
     def run(self):
 
+        execution_mode = self.input.execution_mode_transfer
+
         # if we have local files, then we'll skip the rest
         if utils.inDESARcluster():
             self.logger.info("Inside DESAR cluster, files assumed to be locally available.")
@@ -138,49 +142,53 @@ class Job(BaseJob):
             self.logger.info("# Re-consrtuncting FILEPATH_HTTPS to ctx.catlist")
             self.ctx.catlist['FILEPATH_HTTPS'] = contextDefs.define_https_by_name(self.ctx,name='catlist',logger=self.logger)
 
-        # Create the directory -- if it doesn't exist.
-        if self.ctx.local_archive != "":
-            utils.create_local_archive(self.ctx.local_archive)
+        # Only transfer and make dire if executing
+        if execution_mode == 'execute':
+            # Create the directory -- if it doesn't exist.
+            if self.ctx.local_archive != "":
+                utils.create_local_archive(self.ctx.local_archive)
 
-        # Transfer the files images and catalogs
-        self.transfer_input_files(self.ctx.assoc, clobber=self.ctx.clobber_inputs, section=self.ctx.http_section, logger=self.logger)
-        if self.ctx.super_align and not self.ctx.use_scampcats:
-            self.transfer_input_files(self.ctx.catlist, clobber=self.ctx.clobber_inputs, section=self.ctx.http_section, logger=self.logger)
+            # Transfer the files images and catalogs
+            utils.transfer_input_files(self.ctx.assoc, clobber=self.ctx.clobber_inputs, section=self.ctx.http_section, logger=self.logger)
+            if self.ctx.super_align and not self.ctx.use_scampcats:
+                utils.transfer_input_files(self.ctx.catlist, clobber=self.ctx.clobber_inputs, section=self.ctx.http_section, logger=self.logger)
 
-        if self.ctx.super_align and self.ctx.use_scampcats:
-            self.transfer_input_files(self.ctx.scampcatlist,  clobber=self.ctx.clobber_inputs, section=self.ctx.http_section, logger=self.logger)
-            self.transfer_input_files(self.ctx.scampheadlist, clobber=self.ctx.clobber_inputs, section=self.ctx.http_section, logger=self.logger)
+            if self.ctx.super_align and self.ctx.use_scampcats:
+                utils.transfer_input_files(self.ctx.scampcatlist,  clobber=self.ctx.clobber_inputs, section=self.ctx.http_section, logger=self.logger)
+                utils.transfer_input_files(self.ctx.scampheadlist, clobber=self.ctx.clobber_inputs, section=self.ctx.http_section, logger=self.logger)
+        else:
+            self.logger.info("Skipping file transfer, execute mode is: '%s'" % execution_mode)
 
         # Make FILEPATH_LOCAL a np-char array to pass on
         self.ctx.assoc['FILEPATH_LOCAL'] = numpy.array(self.ctx.assoc['FILEPATH_LOCAL'])
         if self.ctx.super_align:
             self.ctx.catlist['FILEPATH_LOCAL'] = numpy.array(self.ctx.catlist['FILEPATH_LOCAL'])
 
-    @staticmethod
-    def transfer_input_files(infodict, clobber, section, logger=None):
-
-        """ Transfer the files contained in an info dictionary"""
-        
-        # Now get the files via http
-        Nfiles = len(infodict['FILEPATH_HTTPS'])
-        for k in range(Nfiles):
-            
-            url       = infodict['FILEPATH_HTTPS'][k]
-            localfile = infodict['FILEPATH_LOCAL'][k]
-
-            # Make sure the file does not already exists exits
-            if not os.path.exists(localfile) or clobber:
-                
-                dirname   = os.path.dirname(localfile)
-                if not os.path.exists(dirname):
-                    os.makedirs(dirname)
-                    
-                logger.info("Getting:  %s (%s/%s)" % (url,k+1,Nfiles))
-                sys.stdout.flush()
-                # Get a file using the $HOME/.desservices.ini credentials
-                http_requests.download_file_des(url,localfile,section=section)
-            else:
-                logger.info("Skipping: %s (%s/%s) -- file exists" % (url,k+1,Nfiles))
+    # @staticmethod
+    # def transfer_input_files(infodict, clobber, section, logger=None):
+    #
+    #     """ Transfer the files contained in an info dictionary"""
+    #
+    #     # Now get the files via http
+    #     Nfiles = len(infodict['FILEPATH_HTTPS'])
+    #     for k in range(Nfiles):
+    #
+    #         url       = infodict['FILEPATH_HTTPS'][k]
+    #         localfile = infodict['FILEPATH_LOCAL'][k]
+    #
+    #         # Make sure the file does not already exists exits
+    #         if not os.path.exists(localfile) or clobber:
+    #
+    #             dirname   = os.path.dirname(localfile)
+    #             if not os.path.exists(dirname):
+    #                 os.makedirs(dirname)
+    #
+    #             logger.info("Getting:  %s (%s/%s)" % (url,k+1,Nfiles))
+    #             sys.stdout.flush()
+    #             # Get a file using the $HOME/.desservices.ini credentials
+    #             http_requests.download_file_des(url,localfile,section=section)
+    #         else:
+    #             logger.info("Skipping: %s (%s/%s) -- file exists" % (url,k+1,Nfiles))
 
     def __str__(self):
         return 'Transfer the fits files'

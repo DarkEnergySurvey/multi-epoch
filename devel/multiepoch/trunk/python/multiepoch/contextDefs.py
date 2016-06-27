@@ -217,3 +217,5 @@ def get_ccd_headlist(catlist,unitname):
     ccd_headlist.sort() # Make sure that they are sorted
     return ccd_headlist
 
+
+

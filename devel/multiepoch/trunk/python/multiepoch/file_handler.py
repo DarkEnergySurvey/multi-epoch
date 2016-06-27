@@ -477,13 +477,23 @@ def get_mangle_plot(tiledir,tilename,band,number=None):
     dh = get_tiledir_handler(tiledir)
     filename = "%s_%s_mangle-%s.png" % (tilename,band,number)
     return dh.place_file(filename, 'qa/mangle')
-    
+
+def get_mangle_cmd_file(tiledir, tilename):
+    dh = get_tiledir_handler(tiledir)
+    filename = "%s_call_mangle.cmd" % tilename
+    return dh.place_file(filename, 'aux')
+
+def get_mangle_log_file(tiledir, tilename):
+    dh = get_tiledir_handler(tiledir)
+    filename = "%s_mangle.log" % tilename
+    return dh.place_file(filename, 'mangle')
+
 
 # -----------------------
-def get_configfile(exec_name,date=None):
+def get_configfile(exec_name,date=None,ext='config'):
 
     if date:
         CONFIG_DATE = date
     else:
         CONFIG_DATE = os.environ['MULTIEPOCH_CONFIG_DATE']
-    return os.path.join(os.environ['MULTIEPOCH_DIR'],'etc','%s_%s.config' % (CONFIG_DATE,exec_name))
+    return os.path.join(os.environ['MULTIEPOCH_DIR'],'etc','%s_%s.%s' % (CONFIG_DATE,exec_name,ext))
