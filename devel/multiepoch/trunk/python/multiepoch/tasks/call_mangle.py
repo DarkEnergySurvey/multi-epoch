@@ -152,14 +152,16 @@ class Job(BaseJob):
             idx = numpy.where(self.ctx.assoc['BAND'] == BAND)[0]
             red_inputs  = self.ctx.assoc['FILEPATH_LOCAL'][idx]
             me_inputs   = self.ctx.assoc['FILEPATH_INPUT_RED'][idx]
+            magzero     = self.ctx.assoc['MAG_ZERO'][idx]
             
             # Now let's sort them by filename
             isort = numpy.argsort(red_inputs)
             red_inputs = red_inputs[isort]
             me_inputs  = me_inputs[isort]
+            magzero    = magzero[isort]
             
             # writing the lists to files using tableio.put_data()
-            tableio.put_data(fh.get_mangle_list_red(self.ctx.tiledir, self.ctx.tilename_fh, BAND),(red_inputs,),  format='%s')
+            tableio.put_data(fh.get_mangle_list_red(self.ctx.tiledir, self.ctx.tilename_fh, BAND),(red_inputs,magzero),  format='%s, %s')
             tableio.put_data(fh.get_mangle_list_me(self.ctx.tiledir, self.ctx.tilename_fh, BAND),(me_inputs,),  format='%s')
 
         return
