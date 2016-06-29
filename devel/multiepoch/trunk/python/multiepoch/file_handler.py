@@ -14,11 +14,14 @@ import os
 TILEDIR_SUBDIRECTORIES = {
         'aux': 'aux',
         'list': 'list',
-        'list/mangle': 'list/mangle',        
+        'list/coadd': 'list/coadd',
+        'list/mangle': 'list/mangle',
+        'list/meds': 'list/meds',        
         'ctx': 'ctx',
         'log': 'log',
         'align': 'align',
         'coadd': 'coadd',
+        'meds': 'meds',
         'inputs': 'inputs',
         'qa': 'qa',
         'qa/mangle': 'qa/mangle',
@@ -45,6 +48,8 @@ MSK_TYPE = 'msk'
 POL_EXT     = 'pol'
 MANGLE_TYPE = 'mangle'
 
+# MEDS
+MEDS_TYPE = 'meds'
 
 # Scamp/PSF/psfex/SEx types
 PSFCAT_TYPE = 'psfcat'
@@ -62,7 +67,7 @@ AHEAD_EXT = 'ahead'
 LIST_EXT  = 'list'
 PSF_EXT   = 'psf'
 XML_EXT   = 'xml'
-
+YAML_EXT  = 'yaml'
 
 
 # MULTIEPOCH FILENAME GENERATORS
@@ -97,17 +102,17 @@ def _me_exposure_fn(**kwargs):
 def get_sci_list_file(tiledir, tilename, band):
     dh = get_tiledir_handler(tiledir)
     fnkwargs = {'base':tilename, 'band':band, 'ftype':SCI_TYPE, 'ext':LIST_EXT}
-    return dh.place_file(_me_fn(**fnkwargs), 'list') 
+    return dh.place_file(_me_fn(**fnkwargs), 'list/coadd') 
 
 def get_wgt_list_file(tiledir, tilename, band):
     dh = get_tiledir_handler(tiledir)
     fnkwargs = {'base':tilename, 'band':band, 'ftype':WGT_TYPE, 'ext':LIST_EXT}
-    return dh.place_file(_me_fn(**fnkwargs), 'list')
+    return dh.place_file(_me_fn(**fnkwargs), 'list/coadd')
 
 def get_msk_list_file(tiledir, tilename, band):
     dh = get_tiledir_handler(tiledir)
     fnkwargs = {'base':tilename, 'band':band, 'ftype':MSK_TYPE, 'ext':LIST_EXT}
-    return dh.place_file(_me_fn(**fnkwargs), 'list')
+    return dh.place_file(_me_fn(**fnkwargs), 'list/coadd')
 
 # ------------------------------------
 # 2. Output Coadd Files (sci/wgt/msk)
@@ -138,7 +143,7 @@ def get_gen_fits_file(tiledir, tilename, band, type='gen'):
 def get_flx_list_file(tiledir, tilename, band):
     dh = get_tiledir_handler(tiledir)
     fnkwargs = {'base':tilename, 'band':band, 'ftype':FLX_TYPE, 'ext':LIST_EXT}
-    return dh.place_file(_me_fn(**fnkwargs), 'list')
+    return dh.place_file(_me_fn(**fnkwargs), 'list/coadd')
 
 def get_swarp_log_file(tiledir, tilename):
     dh = get_tiledir_handler(tiledir)
@@ -340,13 +345,13 @@ def get_ccd_plot_file_image(tiledir, tilename, search_type=None):
 def get_catlist_file(tiledir, tilename, exposure):
     dh = get_tiledir_handler(tiledir)
     fnkwargs = {'base':tilename, 'exposure':exposure, 'ftype':SCAMPCAT_TYPE, 'ext':LIST_EXT}
-    return dh.place_file(_me_exposure_fn(**fnkwargs), 'list') 
+    return dh.place_file(_me_exposure_fn(**fnkwargs), 'list/coadd') 
 
 # The list of head CCD associated to the red catalogs
 def get_headlist_file(tiledir, tilename, exposure):
     dh = get_tiledir_handler(tiledir)
     fnkwargs = {'base':tilename, 'exposure':exposure, 'ftype':SCAMP_TYPE, 'ext':LIST_EXT}
-    return dh.place_file(_me_exposure_fn(**fnkwargs), 'list') 
+    return dh.place_file(_me_exposure_fn(**fnkwargs), 'list/coadd') 
 
 # The combined exposure-based set of SEx fits catalogs
 def get_expcat_file(tiledir, tilename, exposure):
@@ -370,13 +375,13 @@ def get_expahead_file(tiledir, tilename, exposure):
 def get_expcat_list_file(tiledir, tilename):
     dh = get_tiledir_handler(tiledir)
     fnkwargs = {'base':tilename, 'ftype':SCAMPCAT_TYPE, 'ext':LIST_EXT}
-    return dh.place_file(_me_noband_fn(**fnkwargs), 'list') 
+    return dh.place_file(_me_noband_fn(**fnkwargs), 'list/coadd') 
 
 # The scamp input list of exposure-based head output files
 def get_expcat_list_head(tiledir, tilename):
     dh = get_tiledir_handler(tiledir)
     fnkwargs = {'base':tilename, 'ftype':SCAMPCAT_TYPE, 'ext':HEAD_EXT}
-    return dh.place_file(_me_noband_fn(**fnkwargs), 'list') 
+    return dh.place_file(_me_noband_fn(**fnkwargs), 'list/coadd') 
 
 # The output scamp xml file
 def get_scamp_xml_file(tiledir, tilename):
@@ -490,6 +495,45 @@ def get_mangle_log_file(tiledir, tilename):
     dh = get_tiledir_handler(tiledir)
     filename = "%s_mangle.log" % tilename
     return dh.place_file(filename, 'mangle')
+
+#  --------------
+#    MEDS file
+#  --------------
+def get_meds_list_nwg(tiledir, tilename, band):
+    dh = get_tiledir_handler(tiledir)
+    fnkwargs = {'base':tilename, 'band':band, 'ftype':'nwg', 'ext':LIST_EXT}
+    return dh.place_file(_me_fn(**fnkwargs), 'list/meds') 
+
+def get_meds_list_bkg(tiledir, tilename, band):
+    dh = get_tiledir_handler(tiledir)
+    fnkwargs = {'base':tilename, 'band':band, 'ftype':'bkg', 'ext':LIST_EXT}
+    return dh.place_file(_me_fn(**fnkwargs), 'list/meds') 
+
+def get_meds_list_seg(tiledir, tilename, band):
+    dh = get_tiledir_handler(tiledir)
+    fnkwargs = {'base':tilename, 'band':band, 'ftype':'seg', 'ext':LIST_EXT}
+    return dh.place_file(_me_fn(**fnkwargs), 'list/meds') 
+
+def get_meds_tileconf(tiledir, tilename, band):
+    dh = get_tiledir_handler(tiledir)
+    fnkwargs = {'base':tilename, 'band':band, 'ftype':'fileconf', 'ext':YAML_EXT}
+    return dh.place_file(_me_fn(**fnkwargs), 'meds')
+
+def get_meds_cmd_file(tiledir, tilename):
+    dh = get_tiledir_handler(tiledir)
+    filename = "%s_call_meds.cmd" % tilename
+    return dh.place_file(filename, 'aux')
+
+def get_meds_log_file(tiledir, tilename):
+    dh = get_tiledir_handler(tiledir)
+    filename = "%s_meds.log" % tilename
+    return dh.place_file(filename, 'log')
+
+def get_meds_output(tiledir, tilename, band):
+    dh = get_tiledir_handler(tiledir)
+    fnkwargs = {'base':tilename, 'band':band, 'ftype':MEDS_TYPE, 'ext':FITS_EXT}
+    return dh.place_file(_me_fn(**fnkwargs), 'meds')
+    
 
 
 # -----------------------
