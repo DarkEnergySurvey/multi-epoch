@@ -524,9 +524,13 @@ def get_meds_cmd_file(tiledir, tilename):
     filename = "%s_call_meds.cmd" % tilename
     return dh.place_file(filename, 'aux')
 
-def get_meds_log_file(tiledir, tilename):
+
+def get_meds_log_file(tiledir, tilename,band=None):
     dh = get_tiledir_handler(tiledir)
-    filename = "%s_meds.log" % tilename
+    if band:
+        filename = "%s_%s_meds.log" % (tilename,band)
+    else:
+        filename = "%s_meds.log" % tilename
     return dh.place_file(filename, 'log')
 
 def get_meds_output(tiledir, tilename, band):
