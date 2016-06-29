@@ -302,6 +302,7 @@ class Job(BaseJob):
             "NTHREADS"        : self.ctx.nthreads,
             "IMAGE_SIZE"      : "%s,%d" % (self.ctx.tileinfo['NAXIS1'],self.ctx.tileinfo['NAXIS2']),
             "CENTER"          : "%s,%s" % (self.ctx.tileinfo['RA_CENT'],self.ctx.tileinfo['DEC_CENT']),
+            "RESAMPLE_DIR"    : os.path.join(self.ctx.tiledir,'coadd'),
             }
         swarp_parameters.update(kwargs)
         return swarp_parameters
