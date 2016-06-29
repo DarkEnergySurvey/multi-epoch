@@ -263,7 +263,8 @@ class Job(BaseJob):
                 logfile = fh.get_meds_log_file(self.input.tiledir, self.input.tilename_fh,band)
                 logs.append(logfile)
                 self.logger.info("Will write to logfile: %s" % logfile)
-                
+
+            sys.stdout.flush()
             pool = multiprocessing.Pool(processes=NP)
             pool.map(utils.work_subprocess_logging, zip(cmds,logs))
 

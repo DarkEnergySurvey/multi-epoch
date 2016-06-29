@@ -12,6 +12,7 @@ import os,sys
 from despymisc.miscutils import elapsed_time
 import time
 import pandas as pd
+from collections import OrderedDict
 
 import multiepoch.utils as utils
 import multiepoch.contextDefs as contextDefs
@@ -26,7 +27,7 @@ MAGBASE = 30.0
 class Job(BaseJob):
 
     """
-    Create the MEF files based on the comb_sci, comb_msk and comb_wgt files
+    Create the MEF files based on the comb_sci, comb_msk and comb_wgt files using coadd_assemble
     """
 
     class Input(IO):
@@ -62,8 +63,8 @@ class Job(BaseJob):
         interp_image = Unicode('MSK', help="Image to use to define interpolation (MSK or WGT)",
                                argparse={'choices': ('MSK','WGT')})
         # zipper params
-        xblock    = CInt(1, help="Block size of zipper in x-direction")
-        yblock    = CInt(1, help="Block size of zipper in y-direction")
+        xblock    = CInt(10, help="Block size of zipper in x-direction")
+        yblock    = CInt(3, help="Block size of zipper in y-direction")
         add_noise = Bool(False,help="Add Poisson Noise to the zipper")
         ydilate   = CInt(0,help="Dilate pixels in the y-axis")
         maxcols   = CInt(100, help="Widest feature to interpolate.  Default=None means no limit.")
@@ -127,7 +128,7 @@ class Job(BaseJob):
 
         if execution_mode == 'execute':
             for BAND in self.ctx.dBANDS:
-                self.logger.info("Making MEF file for BAND:%s --> %s" % (BAND,args[BAND]['outname']))
+                self.logger.info("Running coadd_assemble for BAND:%s --> %s" % (BAND,args[BAND]['outname']))
                 coadd_assemble.merge(**args[BAND])
 
         elif execution_mode == 'dryrun':
@@ -150,13 +151,14 @@ class Job(BaseJob):
         if self.input.cleanupSWarp and execution_mode == 'execute':
             self.cleanup_SWarpFiles(execute=True)
             
-        self.logger.info("MEFs Creation Total time: %s" % elapsed_time(t0))
+        self.logger.info("Coadd Assemble Creation Total time: %s" % elapsed_time(t0))
         return
 
     def get_merge_cmd(self,args):
 
         cmd = []
         cmd.append(COADD_ASSEMBLE_EXE)
+
         for key in args.keys():
             if key == 'logger':
                 continue
@@ -200,7 +202,7 @@ class Job(BaseJob):
 
             if BAND == 'det':
                 args[BAND]['band'] = BAND
-            
+
         return args
 
     def cleanup_SWarpFiles(self,execute=False):

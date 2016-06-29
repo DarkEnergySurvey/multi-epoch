@@ -285,9 +285,9 @@ def get_mef_file(tiledir, tilename, band):
 def get_mef_cmd_file(tiledir, tilename,band=None):
     dh = get_tiledir_handler(tiledir)
     if band:
-        filename = "%s_%s_coadd_merge.cmd" % (tilename,band)
+        filename = "%s_%s_call_coadd_assemble.cmd" % (tilename,band)
     else:
-        filename = "%s_coadd_merge.cmd" % tilename
+        filename = "%s_call_coadd_asseble.cmd" % tilename
     return dh.place_file(filename, 'aux')
 
 
