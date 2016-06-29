@@ -189,7 +189,7 @@ class Job(BaseJob):
 
 
     def __str__(self):
-        return 'Prepares the file for the scamp call'
+        return 'Prepares the files for the scamp call'
 
 if __name__ == '__main__':
     from mojo.utils import main_runner
