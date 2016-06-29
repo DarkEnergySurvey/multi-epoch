@@ -135,7 +135,7 @@ class Job(BaseJob):
 
         elif execution_mode == 'execute':
             MP = self.ctx.MP_meds # MP or single Processs
-            self.runSExDual(cmd_list,MP=MP)
+            self.runMEDS(cmd_list,MP=MP)
         else:
             raise ValueError('Execution mode %s not implemented.' % execution_mode)
 
