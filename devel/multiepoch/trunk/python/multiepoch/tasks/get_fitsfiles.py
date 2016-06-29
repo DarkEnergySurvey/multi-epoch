@@ -38,7 +38,12 @@ class Job(BaseJob):
         assoc      = Dict(None,help="The Dictionary containing the association information.",argparse=False)
         assoc_file = CUnicode('',help="Input association file with CCDs information",input_file=True,
                               argparse={ 'argtype': 'positional', })
-
+        assoc_bkg = Dict(None,help="The Dictionary containing the BKG assoc",argparse=False)
+        bkg_file  = CUnicode('',help="Input association file with BKG information",input_file=True,
+                              argparse={ 'argtype': 'positional', })
+        assoc_seg = Dict(None,help="The Dictionary containing the SEG assoc",argparse=False)
+        seg_file  = CUnicode('',help="Input association file with BKGinformation",input_file=True,
+                              argparse={ 'argtype': 'positional', })
         clobber_inputs = Bool(False, help='clobber input files and retrieve again?') 
         local_archive  = CUnicode("", help="The local filepath where the input fits files (will) live")
 
@@ -63,6 +68,10 @@ class Job(BaseJob):
 
         execution_mode_transfer = CUnicode("tofile",help="Transfer files",
                                            argparse={'choices': ('tofile','dryrun','execute')})
+
+        # MEDS files
+        med_files = Bool(False, help=("Get inputs for MED files"))
+
         # Logging -- might be factored out
         stdoutloglevel = CUnicode('INFO', help="The level with which logging info is streamed to stdout",
                                   argparse={'choices': ('DEBUG','INFO','CRITICAL')} )
@@ -74,6 +83,18 @@ class Job(BaseJob):
             mydict = {}
             df = pd.read_csv(self.assoc_file,sep=' ')
             mydict['assoc'] = {col: df[col].values.tolist() for col in df.columns}
+            return mydict
+
+        def _read_bkg_file(self):
+            mydict = {}
+            df = pd.read_csv(self.bkg_file,sep=' ')
+            mydict['assoc_bkg'] = {col: df[col].values.tolist() for col in df.columns}
+            return mydict
+
+        def _read_seg_file(self):
+            mydict = {}
+            df = pd.read_csv(self.seg_file,sep=' ')
+            mydict['assoc_seg'] = {col: df[col].values.tolist() for col in df.columns}
             return mydict
 
         def _read_cats_file(self):
@@ -156,6 +177,11 @@ class Job(BaseJob):
             if self.ctx.super_align and self.ctx.use_scampcats:
                 utils.transfer_input_files(self.ctx.scampcatlist,  clobber=self.ctx.clobber_inputs, section=self.ctx.http_section, logger=self.logger)
                 utils.transfer_input_files(self.ctx.scampheadlist, clobber=self.ctx.clobber_inputs, section=self.ctx.http_section, logger=self.logger)
+
+            if self.ctx.med_files:
+                utils.transfer_input_files(self.ctx.assoc_bkg,  clobber=self.ctx.clobber_inputs, section=self.ctx.http_section, logger=self.logger)
+                utils.transfer_input_files(self.ctx.assoc_seg,  clobber=self.ctx.clobber_inputs, section=self.ctx.http_section, logger=self.logger)
+                
         else:
             self.logger.info("Skipping file transfer, execute mode is: '%s'" % execution_mode)
 
@@ -163,32 +189,6 @@ class Job(BaseJob):
         self.ctx.assoc['FILEPATH_LOCAL'] = numpy.array(self.ctx.assoc['FILEPATH_LOCAL'])
         if self.ctx.super_align:
             self.ctx.catlist['FILEPATH_LOCAL'] = numpy.array(self.ctx.catlist['FILEPATH_LOCAL'])
-
-    # @staticmethod
-    # def transfer_input_files(infodict, clobber, section, logger=None):
-    #
-    #     """ Transfer the files contained in an info dictionary"""
-    #
-    #     # Now get the files via http
-    #     Nfiles = len(infodict['FILEPATH_HTTPS'])
-    #     for k in range(Nfiles):
-    #
-    #         url       = infodict['FILEPATH_HTTPS'][k]
-    #         localfile = infodict['FILEPATH_LOCAL'][k]
-    #
-    #         # Make sure the file does not already exists exits
-    #         if not os.path.exists(localfile) or clobber:
-    #
-    #             dirname   = os.path.dirname(localfile)
-    #             if not os.path.exists(dirname):
-    #                 os.makedirs(dirname)
-    #
-    #             logger.info("Getting:  %s (%s/%s)" % (url,k+1,Nfiles))
-    #             sys.stdout.flush()
-    #             # Get a file using the $HOME/.desservices.ini credentials
-    #             http_requests.download_file_des(url,localfile,section=section)
-    #         else:
-    #             logger.info("Skipping: %s (%s/%s) -- file exists" % (url,k+1,Nfiles))
 
     def __str__(self):
         return 'Transfer the fits files'
