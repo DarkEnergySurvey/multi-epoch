@@ -47,8 +47,6 @@ class Job(BaseJob):
         clobber_inputs = Bool(False, help='clobber input files and retrieve again?') 
         local_archive  = CUnicode("", help="The local filepath where the input fits files (will) live")
 
-        archive_name   = CUnicode("prodbeta",help="DataBase Archive Name section",
-                                 argparse={'choices': ('prodbeta','desar2home')} )
         http_section = Unicode('http-desarchive',help='The corresponding section in the .desservices.ini file.')
         db_section   = CUnicode("db-destest",help="DataBase Section to connect", 
                                 argparse={'choices': ('db-desoper','db-destest', )} )
