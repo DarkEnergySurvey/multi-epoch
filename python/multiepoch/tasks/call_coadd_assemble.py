@@ -129,6 +129,8 @@ class Job(BaseJob):
         if execution_mode == 'execute':
             for BAND in self.ctx.dBANDS:
                 self.logger.info("Running coadd_assemble for BAND:%s --> %s" % (BAND,args[BAND]['outname']))
+                args[BAND]['DEFAULT_MAXCOLS'] = args[BAND]['maxcols']
+                args[BAND]['DEFAULT_MINCOLS'] = args[BAND]['mincols']
                 coadd_assemble.merge(**args[BAND])
 
         elif execution_mode == 'dryrun':
