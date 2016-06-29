@@ -320,19 +320,18 @@ class Job(BaseJob):
                                                      logger=self.logger)
 
         # Get the SEG map list
-        self.ctx.seglist = self.get_fitsfile_locations(self.ctx.CCDS,
-                                                       self.ctx.local_archive,
-                                                       self.ctx.root_https,
-                                                       zp_force=self.ctx.zp_force,
-                                                       logger=self.logger, imagetype='seg')
-
+        self.ctx.assoc_seg = self.get_fitsfile_locations(self.ctx.CCDS,
+                                                         self.ctx.local_archive,
+                                                         self.ctx.root_https,
+                                                         zp_force=self.ctx.zp_force,
+                                                         logger=self.logger, imagetype='seg')
         # Get the BKG list
-        self.ctx.bkglist = self.get_fitsfile_locations(self.ctx.CCDS,
-                                                       self.ctx.local_archive,
-                                                       self.ctx.root_https,
-                                                       zp_force=self.ctx.zp_force,
-                                                       logger=self.logger, imagetype='bkg')
-
+        self.ctx.assoc_bkg = self.get_fitsfile_locations(self.ctx.CCDS,
+                                                         self.ctx.local_archive,
+                                                         self.ctx.root_https,
+                                                         zp_force=self.ctx.zp_force,
+                                                         logger=self.logger, imagetype='bkg')
+        
         # Now we get the locations, ie the association information for catalogs
         if self.ctx.super_align:
             self.ctx.catlist = self.get_catalogs_locations(self.ctx.CATS,
@@ -382,14 +381,14 @@ class Job(BaseJob):
             self.logger.info("Dumping catlist file to:%s" % cats_default_name)
             self.write_dict2pandas(self.ctx.scampheadlist,cats_default_name,names=['FILEPATH_LOCAL','BAND','UNITNAME'],logger=self.logger)
 
+        # and meds inputs (BKG,SEG)
         if self.input.dump_assoc_meds:
             assoc_default_name = fh.get_default_assoc_file(self.ctx.tiledir, self.ctx.tilename_fh,imagetype='bkg')
             self.logger.info("Dumping assoc file to:%s" % assoc_default_name)
-            self.write_dict2pandas(self.ctx.bkglist,assoc_default_name,names=['FILEPATH_LOCAL','BAND'],logger=self.logger)
+            self.write_dict2pandas(self.ctx.assoc_bkg,assoc_default_name,names=['FILEPATH_LOCAL','BAND'],logger=self.logger)
             assoc_default_name = fh.get_default_assoc_file(self.ctx.tiledir, self.ctx.tilename_fh,imagetype='seg')
             self.logger.info("Dumping assoc file to:%s" % assoc_default_name)
-            self.write_dict2pandas(self.ctx.seglist,assoc_default_name,names=['FILEPATH_LOCAL','BAND'],logger=self.logger)
-
+            self.write_dict2pandas(self.ctx.assoc_seg,assoc_default_name,names=['FILEPATH_LOCAL','BAND'],logger=self.logger)
 
     @staticmethod
     def get_fitsfile_locations(CCDS, local_archive, root_https, logger=None, zp_force=None,imagetype=None):
