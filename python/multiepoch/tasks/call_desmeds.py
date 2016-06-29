@@ -23,6 +23,7 @@ from multiepoch import file_handler as fh
 # JOB INTERNAL CONFIGURATION
 DESMEDS_EXE = 'run_desmeds'
 BKLINE = "\\\n"
+MAGBASE = 30.0
 
 class Job(BaseJob):
 
@@ -50,9 +51,14 @@ class Job(BaseJob):
         tilename     = Unicode(None, help="The Name of the Tile Name to query",argparse=True)
         tilename_fh = CUnicode('',  help="Alternative tilename handle for unique identification default=TILENAME")
         tiledir     = Unicode(None, help='The output directory for this tile')
+        tileid      = CInt(-1,    help="The COADDTILE_ID for the Tile Name")
+        magbase     = CFloat(MAGBASE, help="Zero point magnitude base for SWarp, default=%s." % MAGBASE)
+
+
         execution_mode_meds  = CUnicode("tofile",help="MEDS excution mode",
                                          argparse={'choices': ('tofile','dryrun','execute')})
         medsconf = CUnicode(help="Optional MEDS configuration file (yaml)")
+        MP_meds  = CInt(1,help="run using multi-process, 0=automatic, 1=single-process [default]")
 
         doBANDS  = List(['all'],help="BANDS to processs (default=all)",argparse={'nargs':'+',})
 
@@ -127,10 +133,11 @@ class Job(BaseJob):
             self.logger.info("For now we only print the commands (dry-run)")
             [self.logger.info(' '.join(cmd_list[band])) for band in self.ctx.doBANDS]
 
-        #elif execution_mode == 'execute':
-        #    RUn it
-        #else:
-        #    raise ValueError('Execution mode %s not implemented.' % execution_mode)
+        elif execution_mode == 'execute':
+            MP = self.ctx.MP_meds # MP or single Processs
+            self.runSExDual(cmd_list,MP=MP)
+        else:
+            raise ValueError('Execution mode %s not implemented.' % execution_mode)
 
         return
 
@@ -162,7 +169,7 @@ class Job(BaseJob):
 
         return
 
-    def get_meds_cmd_list(self,execution_mode='dryrun'):
+    def get_meds_cmd_list(self):
 
         """
         Get the meds command list
@@ -174,12 +181,12 @@ class Job(BaseJob):
         --coadd_cat   coadd/DES2246-4457_r_cat.fits \
         --coadd_image coadd/DES2246-4457_r.fits \
         --coadd_seg   coadd/DES2246-4457_r_seg.fits \
-        --nwgint_flist /home/felipe/MULTIEPOCH_ROOT/TILEBUILDER/v0.2.9_test/DES2246-4457/list/DES2246-4457_r_ngwint.list \
-        --seg_flist /home/felipe/MULTIEPOCH_ROOT/TILEBUILDER/v0.2.9_test/DES2246-4457/list/DES2246-4457_r_seg.list \
-        --bkg_flist /home/felipe/MULTIEPOCH_ROOT/TILEBUILDER/v0.2.9_test/DES2246-4457/list/DES2246-4457_r_bkg.list \
-        --meds_output  /home/felipe/tmp/DES2246-4457-r-meds-Y3A1.fits \
-        --tileconf fileconf-r-DES2246-4457.yml\
-        --medsconf meds-desdm-Y3A1.yaml\
+        --nwg_flist   list/DES2246-4457_r_ngwint.list \
+        --seg_flist   list/DES2246-4457_r_seg.list \
+        --bkg_flist   list/DES2246-4457_r_bkg.list \
+        --meds_output DES2246-4457-r-meds-Y3A1.fits \
+        --tileconf    DES2246-4457-r-fileconf.yml\
+        --medsconf    meds-desdm-Y3A1.yaml\
         --dryrun
         """
 
@@ -199,6 +206,8 @@ class Job(BaseJob):
             cmd.append("--coadd_cat %s"    % fh.get_cat_file(tiledir, tilename_fh, BAND))
             cmd.append("--coadd_image %s"  % fh.get_mef_file(tiledir, tilename_fh, BAND))
             cmd.append("--coadd_seg %s"    % fh.get_seg_file(tiledir, tilename_fh, BAND))
+            cmd.append("--coadd_magzp %s"  % self.ctx.magbase)
+            cmd.append("--coadd_image_id %s" %  self.ctx.tileid) ## REVISE!!!!
             cmd.append("--nwg_flist %s" % fh.get_meds_list_nwg(tiledir, tilename_fh, BAND))
             cmd.append("--seg_flist %s"    % fh.get_meds_list_seg(tiledir, tilename_fh, BAND))
             cmd.append("--bkg_flist %s"    % fh.get_meds_list_bkg(tiledir, tilename_fh, BAND))
@@ -220,6 +229,46 @@ class Job(BaseJob):
                 fid.write(bkline.join(cmd_list[band])+'\n')
                 fid.write('\n\n')
         return
+
+    def runMEDS(self,cmd_list,MP):
+
+        self.logger.info("Will proceed to run the MEDS call now:")
+        t0 = time.time()
+        NP = utils.get_NP(MP) # Figure out NP to use, 0=automatic
+        
+        # Case A -- NP=1
+        if NP == 1:
+            logfile = fh.get_meds_log_file(self.input.tiledir, self.input.tilename_fh)
+            log = open(logfile,"w")
+            self.logger.info("Will write MEDS to logfile: %s" % logfile)
+
+            for band in self.ctx.doBANDS:
+                t1 = time.time()
+                cmd  = ' '.join(cmd_list[band])
+                self.logger.info("Executing MEDS for BAND:%s" % band)
+                self.logger.info("%s " % cmd)
+                status = subprocess.call(cmd,shell=True,stdout=log, stderr=log)
+                if status != 0:
+                    raise RuntimeError("\n***\nERROR while running MEDS, check logfile: %s\n***" % logfile)
+                self.logger.info("Done band %s in %s" % (band,elapsed_time(t1)))
+            
+        # Case B -- multi-process in case NP > 1
+        else:
+            self.logger.info("Will Use %s processors" % NP)
+            cmds = []
+            logs = []
+            for band in self.ctx.doBANDS:
+                cmds.append(' '.join(cmd_list[band]))
+                logfile = fh.get_meds_log_file(self.input.tiledir, self.input.tilename_fh,band)
+                logs.append(logfile)
+                self.logger.info("Will write to logfile: %s" % logfile)
+                
+            pool = multiprocessing.Pool(processes=NP)
+            pool.map(utils.work_subprocess_logging, zip(cmds,logs))
+
+        self.logger.info("Total MEDS time %s" % elapsed_time(t0))
+        return
+
 
     def __str__(self):
         return 'Creates the call to MEDS on multiepoch pipeline'
