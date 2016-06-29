@@ -9,6 +9,7 @@ from mojo.context import ContextProvider
 import os
 import sys
 import subprocess
+import multiprocessing
 import time
 from despymisc.miscutils import elapsed_time
 from despyastro import tableio
