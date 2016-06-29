@@ -406,9 +406,12 @@ def get_scamp_log_file(tiledir, tilename,suffix='scamp'):
     return dh.place_file(filename, 'log')
 
 # Default assoc name catlist
-def get_default_assoc_file(tiledir, tilename):
+def get_default_assoc_file(tiledir, tilename,imagetype=None):
     dh = get_tiledir_handler(tiledir)
-    filename = "%s.assoc" % tilename
+    if imagetype:
+        filename = "%s_%s.assoc" % (tilename,imagetype)
+    else:
+        filename = "%s.assoc" % tilename
     return dh.place_file(filename, 'aux')
 
 def get_default_cats_file(tiledir, tilename):
