@@ -13,29 +13,43 @@ import argparse
 
 CREATE_INPUTS = """
 create table {tablename_root}_{tagname_table} as
-     SELECT 
-         file_archive_info.FILENAME,
-	 file_archive_info.COMPRESSION,
-         file_archive_info.PATH,
-         image.PFW_ATTEMPT_ID,
+     SELECT
+     	 image_red.FILENAME,
+	 fai_red.COMPRESSION,
+         fai_red.PATH,
+	 image_bkg.FILENAME as FILENAME_BKG,
+	 fai_bkg.PATH as PATH_BKG,
+         fai_bkg.COMPRESSION as COMPRESSION_BKG,
+	 image_seg.FILENAME as FILENAME_SEG,
+         fai_seg.PATH as PATH_SEG,
+         fai_seg.COMPRESSION as COMPRESSION_SEG,
+         ops_proctag.PFW_ATTEMPT_ID,
          ops_proctag.UNITNAME,
-         image.BAND,
-         image.CCDNUM,
-         image.EXPNUM,
-         image.CROSSRA0,
-         image.RACMIN,image.RACMAX,
-         image.DECCMIN,image.DECCMAX,
-	 image.RA_CENT,image.DEC_CENT,
-         image.RAC1,  image.RAC2,  image.RAC3,  image.RAC4,
-         image.DECC1, image.DECC2, image.DECC3, image.DECC4,
-         (case when image.CROSSRA0='Y' THEN abs(image.RACMAX - (image.RACMIN-360)) ELSE abs(image.RACMAX - image.RACMIN) END) as RA_SIZE,
-         abs(image.DECCMAX - image.DECCMIN) as DEC_SIZE
+         image_red.BAND,
+         image_red.CCDNUM,
+         image_red.EXPNUM,
+         image_red.CROSSRA0,
+         image_red.RACMIN,image_red.RACMAX,
+         image_red.DECCMIN,image_red.DECCMAX,
+	 image_red.RA_CENT,image_red.DEC_CENT,
+         image_red.RAC1,  image_red.RAC2,  image_red.RAC3,  image_red.RAC4,
+         image_red.DECC1, image_red.DECC2, image_red.DECC3, image_red.DECC4,
+         (case when image_red.CROSSRA0='Y' THEN abs(image_red.RACMAX - (image_red.RACMIN-360)) ELSE abs(image_red.RACMAX - image_red.RACMIN) END) as RA_SIZE,
+         abs(image_red.DECCMAX - image_red.DECCMIN) as DEC_SIZE
      FROM
-         ops_proctag, image, file_archive_info
+         ops_proctag, image image_red, image image_bkg, miscfile image_seg, file_archive_info fai_red, file_archive_info fai_bkg, file_archive_info fai_seg
      WHERE
-         file_archive_info.FILENAME  = image.FILENAME AND
-	 image.PFW_ATTEMPT_ID = ops_proctag.PFW_ATTEMPT_ID AND
-         image.FILETYPE  = '{filetype}' AND
+         fai_red.FILENAME  = image_red.FILENAME AND
+         fai_bkg.FILENAME  = image_bkg.FILENAME AND	
+         fai_seg.FILENAME  = image_seg.FILENAME AND	
+	 image_red.PFW_ATTEMPT_ID = ops_proctag.PFW_ATTEMPT_ID AND
+	 image_bkg.PFW_ATTEMPT_ID = ops_proctag.PFW_ATTEMPT_ID AND	
+	 image_seg.PFW_ATTEMPT_ID = ops_proctag.PFW_ATTEMPT_ID AND		
+         image_red.FILETYPE  = '{filetype}' AND
+	 image_bkg.FILETYPE  = 'red_bkg' AND
+	 image_seg.FILETYPE  = 'red_segmap' AND
+	 image_red.CCDNUM = image_bkg.CCDNUM AND
+	 image_bkg.CCDNUM = image_seg.CCDNUM AND
          ops_proctag.TAG = '{tagname}'
 """
 

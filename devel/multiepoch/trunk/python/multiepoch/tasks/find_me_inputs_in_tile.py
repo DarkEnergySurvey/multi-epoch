@@ -203,6 +203,8 @@ class Job(BaseJob):
         tagname       = CUnicode('Y2T9_FINALCUT_V2',help="TAGNAME for images in the database",)
         assoc_file    = CUnicode("", help=("Name of the output ASCII association file where we will store the cccds information for coadd"))
         cats_file     = CUnicode("", help=("Name of the output ASCII catalog list storing the information for scamp"))
+        segs_file     = CUnicode("", help=("Name of the output ASCII catalog list storing the SEG files for meds "))
+        bkgs_file     = CUnicode("", help=("Name of the output ASCII catalog list storing the BKG files for meds "))
         super_align   = Bool(False, help=("Run super-aligment of tile using scamp"))
         use_scampcats = Bool(False, help=("Use finalcut scampcats for super-alignment"))
         
@@ -215,6 +217,7 @@ class Job(BaseJob):
         local_archive = CUnicode("", help="The local filepath where the input fits files (will) live")
         dump_assoc    = Bool(False, help=("Dump the assoc file?"))
         dump_cats     = Bool(False, help=("Dump the catlist?"))
+        dump_assoc_meds = Bool(False, help=("Dump the assocs file for MEDS?"))
 
         # Logging -- might be factored out
         stdoutloglevel = CUnicode('INFO', help="The level with which logging info is streamed to stdout",
@@ -289,7 +292,6 @@ class Job(BaseJob):
             UNITNAMES_CCDS = numpy.unique(self.ctx.CCDS['UNITNAME'])
             UNITNAMES_CATS = numpy.unique(self.ctx.CATS['UNITNAME'])
 
-
             if len(UNITNAMES_CCDS) != len(UNITNAMES_CATS):
                 self.logger.info("WARNING: Number of UNITNAMES do not match between CCDS and CATS")
 
@@ -317,6 +319,20 @@ class Job(BaseJob):
                                                      zp_force=self.ctx.zp_force,
                                                      logger=self.logger)
 
+        # Get the SEG map list
+        self.ctx.seglist = self.get_fitsfile_locations(self.ctx.CCDS,
+                                                       self.ctx.local_archive,
+                                                       self.ctx.root_https,
+                                                       zp_force=self.ctx.zp_force,
+                                                       logger=self.logger, imagetype='seg')
+
+        # Get the BKG list
+        self.ctx.bkglist = self.get_fitsfile_locations(self.ctx.CCDS,
+                                                       self.ctx.local_archive,
+                                                       self.ctx.root_https,
+                                                       zp_force=self.ctx.zp_force,
+                                                       logger=self.logger, imagetype='bkg')
+
         # Now we get the locations, ie the association information for catalogs
         if self.ctx.super_align:
             self.ctx.catlist = self.get_catalogs_locations(self.ctx.CATS,
@@ -342,7 +358,6 @@ class Job(BaseJob):
             plot = plot_job(ctx=self.ctx)
             plot()
 
-
         # We might want to spit out the assoc file anyways
         if self.input.dump_assoc:
             assoc_default_name = fh.get_default_assoc_file(self.ctx.tiledir, self.ctx.tilename_fh)
@@ -366,10 +381,18 @@ class Job(BaseJob):
             cats_default_name = fh.get_default_scampheads_file(self.ctx.tiledir, self.ctx.tilename_fh)
             self.logger.info("Dumping catlist file to:%s" % cats_default_name)
             self.write_dict2pandas(self.ctx.scampheadlist,cats_default_name,names=['FILEPATH_LOCAL','BAND','UNITNAME'],logger=self.logger)
-            
+
+        if self.input.dump_assoc_meds:
+            assoc_default_name = fh.get_default_assoc_file(self.ctx.tiledir, self.ctx.tilename_fh,imagetype='bkg')
+            self.logger.info("Dumping assoc file to:%s" % assoc_default_name)
+            self.write_dict2pandas(self.ctx.bkglist,assoc_default_name,names=['FILEPATH_LOCAL','BAND'],logger=self.logger)
+            assoc_default_name = fh.get_default_assoc_file(self.ctx.tiledir, self.ctx.tilename_fh,imagetype='seg')
+            self.logger.info("Dumping assoc file to:%s" % assoc_default_name)
+            self.write_dict2pandas(self.ctx.seglist,assoc_default_name,names=['FILEPATH_LOCAL','BAND'],logger=self.logger)
+
 
     @staticmethod
-    def get_fitsfile_locations(CCDS, local_archive, root_https, logger=None, zp_force=None):
+    def get_fitsfile_locations(CCDS, local_archive, root_https, logger=None, zp_force=None,imagetype=None):
         """ Find the location of the files in the des archive and https urls
         """
 
@@ -381,20 +404,25 @@ class Job(BaseJob):
         # 1. Construct an new dictionary that will store the
         # information required to associate files for co-addition
         assoc = {}
+
+        # Generic construction to get other image types
+        if imagetype:
+            FTYPE = "_%s" % imagetype.upper()
+        else:
+            FTYPE = ''
+
         assoc['BAND']        = CCDS['BAND']
-        assoc['FILENAME']    = CCDS['FILENAME']
-        assoc['COMPRESSION'] = CCDS['COMPRESSION']
+        assoc['FILENAME']    = CCDS['FILENAME%s' % FTYPE]
+        assoc['COMPRESSION'] = CCDS['COMPRESSION%s' % FTYPE]
+        assoc['PATH']        = CCDS['PATH%s' % FTYPE]
 
         if 'MAG_ZERO'in CCDS.dtype.names:
             assoc['MAG_ZERO']    = CCDS['MAG_ZERO']
         else:
             assoc['MAG_ZERO']    = numpy.zeros(Nimages) + zp_force
 
-        # Filename with fz if exists
-        #assoc['FILENAME'] =  [CCDS['FILENAME'][k]+CCDS['COMPRESSION'][k] for k in range(Nimages)]
-
         # In line loop creation
-        filepaths = [os.path.join(CCDS['PATH'][k],CCDS['FILENAME'][k]+CCDS['COMPRESSION'][k]) for k in range(Nimages)]
+        filepaths = [os.path.join(assoc['PATH'][k],assoc['FILENAME'][k]+assoc['COMPRESSION'][k]) for k in range(Nimages)]
 
         # 2. Create the archive locations for each file
         assoc['FILEPATH_LOCAL'] = numpy.array([os.path.join(local_archive,filepath) for filepath in filepaths])

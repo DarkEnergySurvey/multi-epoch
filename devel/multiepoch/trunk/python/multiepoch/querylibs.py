@@ -50,7 +50,10 @@ QUERY_ME_IMAGES_TEMPLATE = """
      SELECT
          {select_extras}
          {select_zeropoint}
-         me.FILENAME,me.COMPRESSION,me.PATH,me.BAND,me.UNITNAME,me.EXPNUM,
+         me.FILENAME,me.COMPRESSION,me.PATH,
+         me.FILENAME_BKG,me.COMPRESSION_BKG,me.PATH_BKG,
+         me.FILENAME_SEG,me.COMPRESSION_SEG,me.PATH_SEG,
+         me.BAND,me.UNITNAME,me.EXPNUM,
          me.RA_SIZE,me.DEC_SIZE,
          me.RA_CENT, me.RAC1,  me.RAC2,  me.RAC3,  me.RAC4,
          me.DEC_CENT,me.DECC1, me.DECC2, me.DECC3, me.DECC4
@@ -69,7 +72,10 @@ QUERY_ME_IMAGES_TEMPLATE = """
 QUERY_ME_IMAGES_TEMPLATE_RAZERO = """
  with me as 
     (SELECT /*+ materialize */
-         FILENAME,COMPRESSION,PATH,BAND,UNITNAME,EXPNUM,CCDNUM,
+         FILENAME,COMPRESSION,PATH,
+         FILENAME_BKG,COMPRESSION_BKG,PATH_BKG,
+         FILENAME_SEG,COMPRESSION_SEG,PATH_SEG,
+         BAND,UNITNAME,EXPNUM,CCDNUM,
          RA_SIZE,DEC_SIZE,
          (case when RA_CENT > 180. THEN RA_CENT-360. ELSE RA_CENT END) as RA_CENT, 
          (case when RAC1 > 180.    THEN RAC1-360.    ELSE RAC1 END) as RAC1,	  
@@ -83,7 +89,10 @@ QUERY_ME_IMAGES_TEMPLATE_RAZERO = """
   SELECT 
          {select_extras}
          {select_zeropoint}
-         me.FILENAME,me.COMPRESSION,me.PATH,me.BAND,me.UNITNAME,me.EXPNUM,
+         me.FILENAME,me.COMPRESSION,me.PATH,
+         me.FILENAME_BKG,me.COMPRESSION_BKG,me.PATH_BKG,
+         me.FILENAME_SEG,me.COMPRESSION_SEG,me.PATH_SEG,
+         me.BAND,me.UNITNAME,me.EXPNUM,
          me.RA_SIZE,me.DEC_SIZE,
          me.RA_CENT, me.RAC1,  me.RAC2,  me.RAC3,  me.RAC4,
          me.DEC_CENT,me.DECC1, me.DECC2, me.DECC3, me.DECC4
@@ -305,10 +314,18 @@ def get_CCDS_from_db_general_sql(dbh, **kwargs):
     
     utils.pass_logger_info("Found %s input images for %s " %  (len(CCDS),tilename),logger)
 
-    # Here we fix 'COMPRESSION' from None --> '' if present
+    # Here we fix 'COMPRESSION (BKG/SEG)' from None --> '' if present
     if 'COMPRESSION' in CCDS.dtype.names:
         compression = [ '' if c is None else c for c in CCDS['COMPRESSION'] ]
         CCDS['COMPRESSION'] = numpy.array(compression)
+
+    if 'COMPRESSION_BKG' in CCDS.dtype.names:
+        compression = [ '' if c is None else c for c in CCDS['COMPRESSION_BKG'] ]
+        CCDS['COMPRESSION_BKG'] = numpy.array(compression)
+
+    if 'COMPRESSION_SEG' in CCDS.dtype.names:
+        compression = [ '' if c is None else c for c in CCDS['COMPRESSION_SEG'] ]
+        CCDS['COMPRESSION_SEG'] = numpy.array(compression)
 
     return CCDS 
 
