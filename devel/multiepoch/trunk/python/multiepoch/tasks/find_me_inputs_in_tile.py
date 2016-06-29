@@ -184,9 +184,6 @@ class Job(BaseJob):
         tilename_fh = CUnicode('',  help="Alternative tilename handle for unique identification default=TILENAME")
         db_section    = CUnicode("db-destest",help="DataBase Section to connect", 
                                  argparse={'choices': ('db-desoper','db-destest', )} )
-        archive_name  = CUnicode("prodbeta",help="DataBase Archive Name section",
-                                 argparse={'choices': ('prodbeta','desar2home')} )
-
         # Blacklist and zeropoint
         no_blacklist  = Bool(False, help=("Do not Black list images"))
         no_zeropoint  = Bool(False, help=("Do not get ZP for images"))
@@ -262,8 +259,11 @@ class Job(BaseJob):
             if self.tilename_fh == '':
                 self.tilename_fh = self.tilename
 
-
     def run(self):
+
+
+        # Get the archive name
+        self.ctx = utils.check_archive_name(self.ctx, logger=self.logger)
         
         # Check for the db_handle
         self.ctx = utils.check_dbh(self.ctx, logger=self.logger)
@@ -300,10 +300,8 @@ class Job(BaseJob):
             self.ctx.SCAMPCATS = querylibs.get_SCAMPCATS_from_db_general_sql(DBH, logger=LOG,**input_kw)
                 
         # Get root_https from from the DB with a query
-        self.ctx.root_https   = querylibs.get_root_https(DBH,logger=LOG, archive_name=self.input.archive_name)
-        self.ctx.root_archive = querylibs.get_root_archive(DBH,logger=LOG, archive_name=self.input.archive_name)
-        # In case we want root_http (for DESDM framework) -- not implemented yet
-        #self.ctx.root_https  = querylibs.get_root_http(self.ctx.dbh, archive_name=self.input.archive_name)
+        self.ctx.root_https   = querylibs.get_root_https(DBH,logger=LOG, archive_name=self.ctx.archive_name)
+        self.ctx.root_archive = querylibs.get_root_archive(DBH,logger=LOG, archive_name=self.ctx.archive_name)
             
         # If in the cosmology archive local_archive=root and local_archive will be ignored
         if utils.inDESARcluster(logger=LOG) and self.ctx.local_archive == '':

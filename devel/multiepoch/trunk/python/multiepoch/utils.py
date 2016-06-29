@@ -13,6 +13,19 @@ SCI_HDU = 0
 MSK_HDU = 1
 WGT_HDU = 2
 
+ARCHIVE_NAME = {'db-destest':'prodbeta',
+                'db-desoper':'desar2home',
+                }
+
+def check_archive_name(ctx, logger=None):
+
+    if 'archive_name' not in ctx:
+        ctx.archive_name = ARCHIVE_NAME[ctx.db_section]
+        mess = "Getting archive name for: %s, got: %s " % (ctx.db_section, ctx.archive_name)
+        if logger: logger.info(mess)
+        else: print mess
+    return ctx
+
 def read_tileinfo(geomfile,logger=None):
     import json
     mess = "Reading the tile Geometry from file: %s" % geomfile
