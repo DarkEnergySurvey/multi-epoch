@@ -151,7 +151,7 @@ class Job(BaseJob):
 
             idx = numpy.where(self.ctx.assoc['BAND'] == BAND)[0]
             red_inputs  = self.ctx.assoc['FILEPATH_LOCAL'][idx]
-            me_inputs   = self.ctx.assoc['FILEPATH_INPUT_RED'][idx]
+            me_inputs   = self.ctx.assoc['FILEPATH_NWG'][idx]
             magzero     = self.ctx.assoc['MAG_ZERO'][idx]
             
             # Now let's sort them by filename

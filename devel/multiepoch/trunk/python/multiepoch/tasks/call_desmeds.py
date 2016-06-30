@@ -151,7 +151,7 @@ class Job(BaseJob):
         for BAND in self.ctx.doBANDS:
             
             idx = numpy.where(self.ctx.assoc['BAND'] == BAND)[0]
-            nwg_inputs  = self.ctx.assoc['FILEPATH_LOCAL'][idx]
+            nwg_inputs  = self.ctx.assoc['FILEPATH_NWG'][idx]
             bkg_inputs  = self.ctx.assoc_bkg['FILEPATH_LOCAL'][idx]
             seg_inputs  = self.ctx.assoc_seg['FILEPATH_LOCAL'][idx]
             magzero     = self.ctx.assoc['MAG_ZERO'][idx]
