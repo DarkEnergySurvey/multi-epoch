@@ -1,0 +1,40 @@
+#!/usr/bin/env python
+
+import fitsio
+import numpy
+import os
+import sys
+
+if __name__ == '__main__':
+
+    catname1 = sys.argv[1]
+    catname2 = sys.argv[2]
+
+    # Read in the catalogs
+    catdata1 = fitsio.read(catname1)
+    catdata2 = fitsio.read(catname2)
+
+    names1 = catdata1.dtype.names
+    names2 = catdata2.dtype.names
+
+    allsame = True
+    # Make sure all columns are the same
+    if set(names1) == set(names2):
+        print "PASS column names are the same"
+    else:
+        allsame = False
+        print "WARNING: column names are different"
+        
+    # Compare the contents:
+    for name in names1:
+        if numpy.array_equal(catdata1[name],catdata2[name]):
+            print "PASS column: %s" % name
+        else:
+            allsame = True
+            print "WARNING: column: %s are different" % name
+                
+
+    if allsame:
+        print "ALL Test PASS"
+    else:
+        print "NOT ALL Test PASS, see warning"
