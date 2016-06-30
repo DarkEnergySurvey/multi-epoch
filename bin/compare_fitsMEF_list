@@ -1,0 +1,38 @@
+#!/usr/bin/env python
+
+import fitsio
+import numpy
+import os
+import sys
+
+try:
+    file1 = sys.argv[1]
+    file2 = sys.argv[2]
+except:
+    sys.exit("ERROR: Need two files to compare")
+
+exists1 = os.path.exists(file1)
+exists2 = os.path.exists(file2)
+
+if not exists1 or not exists2:
+    print "# WARNING: Files do not exists:"
+    if not exists1: print "# %s: %s" % (file1,exists1)
+    if not exists2: print "# %s: %s" % (file2,exists2)
+    exit(1)
+
+
+
+
+#print "# Reading %s" % file1
+#print "# Reading %s" % file2
+#for hdu in [0,1,2]:
+#    data1 = fitsio.read(file1,ext=hdu)
+#    data2 = fitsio.read(file2,ext=hdu)
+#    diff = data1-data2
+#    ix = numpy.where(diff != 0)
+#    Ndiff = len(ix[0])
+#    if Ndiff > 0:
+#        print "# ***** FILES ARE DIFERENT ******* "
+#    #else:
+#    #    print "%s hdu %s -- %s" % (file1, hdu,Ndiff)
+#        
