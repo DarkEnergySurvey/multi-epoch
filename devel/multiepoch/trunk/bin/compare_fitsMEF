@@ -12,4 +12,4 @@ try:
 except:
     sys.exit("ERROR: Need two files to compare")
 
-metools.compare2fits(file1,file2)
+metools.compare2fits(file1,file2,write=True)
