@@ -94,12 +94,12 @@ class Job(BaseJob):
         """ Pre-wash of inputs, some of these are only needed when run as script"""
 
         # Re-construct the names in case not present
-        if 'FILEPATH_INPUT_RED' not in self.ctx.assoc.keys():
-            self.logger.info("(Re)-constructing assoc[FILEPATH_INPUT_RED] from assoc[FILEPATH_LOCAL]")
-            self.ctx.assoc['FILEPATH_INPUT_RED'] = contextDefs.define_red_names(self.ctx)
+        if 'FILEPATH_NWG' not in self.ctx.assoc.keys():
+            self.logger.info("(Re)-constructing assoc[FILEPATH_NWG] from assoc[FILEPATH_LOCAL]")
+            self.ctx.assoc['FILEPATH_NWG'] = contextDefs.define_red_names(self.ctx)
 
         # now make sure all paths exist
-        for path in self.ctx.assoc['FILEPATH_INPUT_RED']:
+        for path in self.ctx.assoc['FILEPATH_NWG']:
             if not os.path.exists(os.path.split(path)[0]):
                 os.makedirs(os.path.split(path)[0])
 
@@ -126,7 +126,7 @@ class Job(BaseJob):
             raise ValueError('Execution mode %s not implemented.' % execution_mode)
 
         # we prefer it to be a numpy array
-        self.ctx.assoc['FILEPATH_INPUT_RED'] = numpy.array(self.ctx.assoc['FILEPATH_INPUT_RED'])
+        self.ctx.assoc['FILEPATH_NWG'] = numpy.array(self.ctx.assoc['FILEPATH_NWG'])
 
         return
 
@@ -173,7 +173,7 @@ class Job(BaseJob):
             cmd_tile.append("--hdupcfg %s" % self.ctx.coadd_nwgint_conf)
 
         cmd_list = []
-        for idx, me_file in enumerate(self.ctx.assoc['FILEPATH_INPUT_RED']):
+        for idx, me_file in enumerate(self.ctx.assoc['FILEPATH_NWG']):
             head_file = me_file.replace('.fits','.%s' % fh.OHEAD_EXT)
             if os.path.exists(me_file) and not self.input.clobber_me:
                 self.logger.debug('Skipping creation of %s, exists already.' % me_file)
@@ -216,7 +216,7 @@ class Job(BaseJob):
                     if self.ctx.ignore_red_corrupt: 
                         print "\n***\nERROR while running me_prepare, check logfile: %s\n***" % logfile
                         failed_red = cmd_list[k][2].split()[1]
-                        ik = numpy.where( self.ctx.assoc['FILEPATH_INPUT_RED'] == failed_red)
+                        ik = numpy.where( self.ctx.assoc['FILEPATH_NWG'] == failed_red)
                         self.clean_assoc(ik)
                         print "Removing: %s" % failed_red
                     else:

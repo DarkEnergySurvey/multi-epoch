@@ -104,9 +104,9 @@ class Job(BaseJob):
         """ Pre-wash of inputs, some of these are only needed when run as script"""
 
         # Re-construct the names in case not present
-        if 'FILEPATH_INPUT_RED' not in self.ctx.assoc.keys():
-            self.logger.info("(Re)-constructing assoc[FILEPATH_INPUT_RED] from assoc[FILEPATH_LOCAL]")
-            self.ctx.assoc['FILEPATH_INPUT_RED'] = contextDefs.define_red_names(self.ctx)
+        if 'FILEPATH_NWG' not in self.ctx.assoc.keys():
+            self.logger.info("(Re)-constructing assoc[FILEPATH_NWG] from assoc[FILEPATH_LOCAL]")
+            self.ctx.assoc['FILEPATH_NWG'] = contextDefs.define_red_names(self.ctx)
 
         # Re-cast the ctx.assoc as dictionary of arrays instead of lists
         self.ctx.assoc  = utils.dict2arrays(self.ctx.assoc)
@@ -186,7 +186,7 @@ class Job(BaseJob):
 
             idx = numpy.where(self.ctx.assoc['BAND'] == BAND)[0]
             magzero       = self.ctx.assoc['MAG_ZERO'][idx]
-            swarp_inputs  = self.ctx.assoc['FILEPATH_INPUT_RED'][idx]
+            swarp_inputs  = self.ctx.assoc['FILEPATH_NWG'][idx]
             flxscale      = 10.0**(0.4*(self.input.magbase - magzero))
 
             # Now let's sort them by filename
