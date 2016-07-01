@@ -30,11 +30,11 @@ if __name__ == '__main__':
         if numpy.array_equal(catdata1[name],catdata2[name]):
             print "PASS column: %s" % name
         else:
-            allsame = True
+            allsame = False
             print "WARNING: column: %s are different" % name
                 
 
     if allsame:
         print "ALL Test PASS"
     else:
-        print "NOT ALL Test PASS, see warning"
+        print "NOT ALL Test PASS, see warnings"
