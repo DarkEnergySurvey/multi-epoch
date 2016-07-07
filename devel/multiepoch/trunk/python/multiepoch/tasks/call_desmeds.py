@@ -52,7 +52,6 @@ class Job(BaseJob):
         tilename     = Unicode(None, help="The Name of the Tile Name to query",argparse=True)
         tilename_fh = CUnicode('',  help="Alternative tilename handle for unique identification default=TILENAME")
         tiledir     = Unicode(None, help='The output directory for this tile')
-        tileid      = CInt(-1,    help="The COADDTILE_ID for the Tile Name")
         magbase     = CFloat(MAGBASE, help="Zero point magnitude base for SWarp, default=%s." % MAGBASE)
 
 
@@ -192,7 +191,6 @@ class Job(BaseJob):
         """
 
         tiledir     = self.input.tiledir
-        tileid      = self.input.tileid
         tilename    = self.input.tilename
         tilename_fh = self.input.tilename_fh
 
@@ -208,7 +206,6 @@ class Job(BaseJob):
             cmd.append("--coadd_image %s"  % fh.get_mef_file(tiledir, tilename_fh, BAND))
             cmd.append("--coadd_seg %s"    % fh.get_seg_file(tiledir, tilename_fh, BAND))
             cmd.append("--coadd_magzp %s"  % self.ctx.magbase)
-            cmd.append("--coadd_image_id %s" %  self.ctx.tileid) ## REVISE!!!!
             cmd.append("--nwg_flist %s" % fh.get_meds_list_nwg(tiledir, tilename_fh, BAND))
             cmd.append("--seg_flist %s"    % fh.get_meds_list_seg(tiledir, tilename_fh, BAND))
             cmd.append("--bkg_flist %s"    % fh.get_meds_list_bkg(tiledir, tilename_fh, BAND))
