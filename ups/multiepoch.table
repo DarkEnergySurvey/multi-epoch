@@ -29,8 +29,8 @@ setupRequired(hpixDB 1.0.2+1)
 setupRequired(despymangle 2.1.1+1)
 
 # MEDS
-setupRequired(desmeds 0.1.0rc1+0)
-setupRequired(MEPipelineAppIntg  1.0.3+1)
+setupRequired(desmeds 0.1.0rc2+0)
+setupRequired(MEPipelineAppIntg  1.0.4+0)
 
 # draDECam
 setupRequired(drawDECam 0.3.0+0)
