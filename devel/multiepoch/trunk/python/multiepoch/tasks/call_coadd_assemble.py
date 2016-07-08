@@ -15,6 +15,7 @@ import pandas as pd
 from collections import OrderedDict
 
 import multiepoch.utils as utils
+from multiepoch import metools
 import multiepoch.contextDefs as contextDefs
 from multiepoch import file_handler as fh
 from despyfits import coadd_assemble 
@@ -73,6 +74,9 @@ class Job(BaseJob):
         region_file = CUnicode('',help="Write ds9 region file with interpolated region")
         # Keep zeros in SCI (yes/no)
         keep_sci_zeros = Bool(False, help="Keep zeros in SCI frame")
+
+        # Add DECam shape?
+        DECam_mask = Bool(False, help="Push DECam Mask on files")
         
         # Logging -- might be factored out
         stdoutloglevel = CUnicode('INFO', help="The level with which logging info is streamed to stdout",
@@ -154,7 +158,31 @@ class Job(BaseJob):
             self.cleanup_SWarpFiles(execute=True)
             
         self.logger.info("Coadd Assemble Creation Total time: %s" % elapsed_time(t0))
+
+        if self.ctx.DECam_mask:
+            self.push_mask(execution_mode)
+            
         return
+
+    def push_mask(self,execution_mode='tofile'):
+
+        for BAND in self.ctx.doBANDS:
+            tiledir     = self.ctx.tiledir
+            tilename_fh = self.ctx.tilename_fh + 
+            filename  = fh.get_mef_file(tiledir, tilename_fh, BAND)
+            outname   = fh.get_mef_file(tiledir, tilename_fh+"_DECam", BAND)
+
+            if execution_mode == 'execute':
+                metools.addDECamMask(filename,outname,ext=0)
+                
+            elif execution_mode == 'tofile':
+                print "push_mask %s %s --hdu 0" % (filename,outname)
+
+        return
+        
+        
+        
+    
 
     def get_merge_cmd(self,args):
 
