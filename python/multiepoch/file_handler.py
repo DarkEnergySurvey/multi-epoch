@@ -539,6 +539,12 @@ def get_meds_output(tiledir, tilename, band):
     return dh.place_file(_me_fn(**fnkwargs), 'meds')
     
 
+# Push mask DECam
+def get_mask_DECam_cmd_file(tiledir, tilename):
+    dh = get_tiledir_handler(tiledir)
+    filename = "%s_mask_DECam.cmd" % tilename
+    return dh.place_file(filename, 'aux')
+
 
 # -----------------------
 def get_configfile(exec_name,date=None,ext='config'):
