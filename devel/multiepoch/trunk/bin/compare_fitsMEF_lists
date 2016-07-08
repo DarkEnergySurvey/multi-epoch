@@ -41,6 +41,6 @@ for k in range(len(files1)):
         Ndiff = len(ix[0])
         if Ndiff > 0:
             print "# ***** FILES ARE DIFERENT ******* "
-        #else:
-        #    print "%s hdu %s -- %s" % (file1, hdu,Ndiff)
+        else:
+            print "%s hdu %s -- %s" % (file1, hdu,Ndiff)
         

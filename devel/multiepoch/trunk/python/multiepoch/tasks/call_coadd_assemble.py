@@ -157,32 +157,54 @@ class Job(BaseJob):
         if self.input.cleanupSWarp and execution_mode == 'execute':
             self.cleanup_SWarpFiles(execute=True)
             
-        self.logger.info("Coadd Assemble Creation Total time: %s" % elapsed_time(t0))
-
         if self.ctx.DECam_mask:
             self.push_mask(execution_mode)
             
+        self.logger.info("Coadd Assemble Creation Total time: %s" % elapsed_time(t0))
+
         return
 
     def push_mask(self,execution_mode='tofile'):
 
-        for BAND in self.ctx.doBANDS:
-            tiledir     = self.ctx.tiledir
-            tilename_fh = self.ctx.tilename_fh + 
-            filename  = fh.get_mef_file(tiledir, tilename_fh, BAND)
-            outname   = fh.get_mef_file(tiledir, tilename_fh+"_DECam", BAND)
+        """ Push the DECam shape into the coadd_assemble files"""
 
-            if execution_mode == 'execute':
+
+        tiledir     = self.ctx.tiledir
+        tilename_fh = self.ctx.tilename_fh
+
+        if execution_mode == 'execute':
+            for BAND in self.ctx.dBANDS:
+                filename  = fh.get_mef_file(tiledir, tilename_fh, BAND)
+                outname   = fh.get_mef_file(tiledir, tilename_fh+"_DECam", BAND)
+                self.logger.info("Pushing mask for %s" % filename)
                 metools.addDECamMask(filename,outname,ext=0)
+
                 
-            elif execution_mode == 'tofile':
+        elif execution_mode == 'dryrun':
+            for BAND in self.ctx.dBANDS:
+                filename  = fh.get_mef_file(tiledir, tilename_fh, BAND)
+                outname   = fh.get_mef_file(tiledir, tilename_fh+"_DECam", BAND)
                 print "push_mask %s %s --hdu 0" % (filename,outname)
+
+        elif execution_mode == 'tofile':
+            bkline  = self.ctx.get('breakline',BKLINE)
+            cmdfile = fh.get_mask_DECam_cmd_file(tiledir, tilename_fh)
+            self.logger.info("Will write push mask call to: %s" % cmdfile)
+            with open(cmdfile, "w") as fid:
+                for BAND in self.ctx.dBANDS:
+                    cmdlist = ['push_mask']
+                    filename  = fh.get_mef_file(tiledir, tilename_fh, BAND)
+                    outname   = fh.get_mef_file(tiledir, tilename_fh+"_DECam", BAND)
+                    cmdlist.append("%s" % filename)
+                    cmdlist.append("%s" % outname)
+                    cmdlist.append("--hdu 0")
+                    fid.write(bkline.join(cmdlist)+'\n')
+                    fid.write('\n\n')
+        else:
+            raise ValueError('Execution mode %s not implemented.' % execution_mode)
 
         return
         
-        
-        
-    
 
     def get_merge_cmd(self,args):
 

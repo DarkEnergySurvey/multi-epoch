@@ -54,9 +54,11 @@ class Job(BaseJob):
         detname  = CUnicode(DETNAME,help="File label for detection image, default=%s." % DETNAME)
         nthreads = CInt(1,help="Number of threads to use in stiff/psfex/swarp")
         
+        # Add DECam shape?
+        DECam_mask = Bool(False, help="Push DECam Mask on files")
+
         ## TODO
         # Define color set from command-line option
-
         # Logging -- might be factored out
         stdoutloglevel = CUnicode('INFO', help="The level with which logging info is streamed to stdout",
                                   argparse={'choices': ('DEBUG','INFO','CRITICAL')} )
@@ -101,13 +103,20 @@ class Job(BaseJob):
 
 
     def run(self):
-
         # 0. Prepare the context
         self.prewash()
+        # 1. Run stiff
+        self.run_stiff()
+        if self.ctx.DECam_mask:
+            self.logger.info("Will run stiff for DECam mask images")
+            self.run_stiff(DECam_mask=True)
+
+
+    def run_stiff(self,DECam_mask=False):
 
         # 2. get the update stiff parameters  --
         stiff_parameters = self.ctx.get('stiff_parameters', {})
-        cmd_list = self.get_stiff_cmd_list()
+        cmd_list = self.get_stiff_cmd_list(DECam_mask)
         
         # 3. check execution mode and write/print/execute commands accordingly --------------
         execution_mode = self.input.execution_mode_stiff
@@ -115,7 +124,11 @@ class Job(BaseJob):
         if execution_mode == 'tofile':
             bkline  = self.ctx.get('breakline',BKLINE)
             # The file where we'll write the commands
-            cmdfile = fh.get_stiff_cmd_file(self.input.tiledir, self.input.tilename_fh)
+            if DECam_mask:
+                cmdfile = fh.get_stiff_cmd_file(self.input.tiledir, self.input.tilename_fh+"_DECam")
+            else:
+                cmdfile = fh.get_stiff_cmd_file(self.input.tiledir, self.input.tilename_fh)
+
             self.logger.info("Will write stiff call to: %s" % cmdfile)
             with open(cmdfile, 'w') as fid:
                 fid.write(bkline.join(cmd_list)+'\n')
@@ -177,13 +190,18 @@ class Job(BaseJob):
             return 
         return CSET
 
-    def get_stiff_cmd_list(self):
+    def get_stiff_cmd_list(self,DECam_mask=False):
 
         """ Make a color tiff of the TILENAME using stiff"""
+
 
         CSET = self.get_CSET()
 
         self.logger.info("assembling commands for Stiff call")
+        if DECam_mask:
+            self.logger.info("Will use DECam_mask=True")
+
+
         
         if self.ctx.NBANDS < 3:
             self.logger.info("WARINING: Not enough filters to create color image")
@@ -193,7 +211,10 @@ class Job(BaseJob):
         # The update parameters set
         pars = self.get_stiff_parameter_set(**self.input.stiff_parameters)
         # Set the output name of the color tiff file
-        pars["OUTFILE_NAME"] = fh.get_color_file(self.input.tiledir, self.input.tilename_fh)
+        if DECam_mask:
+            pars["OUTFILE_NAME"] = fh.get_color_file(self.input.tiledir, self.input.tilename_fh+'_DEcam')
+        else:
+            pars["OUTFILE_NAME"] = fh.get_color_file(self.input.tiledir, self.input.tilename_fh)
 
         # The Stiff configuration file
         if self.input.stiff_conf == '':
@@ -203,8 +224,12 @@ class Job(BaseJob):
         cmd_list = []
         cmd_list.append("%s" % STIFF_EXE)
         for BAND in CSET:
-            sci_fits = fh.get_mef_file(self.input.tiledir,self.input.tilename_fh,BAND)
+            if DECam_mask:
+                sci_fits = fh.get_mef_file(self.input.tiledir,self.input.tilename_fh+'_DECam',BAND)
+            else:
+                sci_fits = fh.get_mef_file(self.input.tiledir,self.input.tilename_fh,BAND)
             cmd_list.append( "%s" % sci_fits)
+
 
         cmd_list.append("-c %s" % self.ctx.stiff_conf)
         for param,value in pars.items():
