@@ -196,7 +196,9 @@ class Job(BaseJob):
 
         # General pars, BAND-independent
         SExDual_parameters = {
-            'DEBLEND_MINCONT' : 0.001,
+
+            #'DEBLEND_MINCONT' : 0.001,
+            'DEBLEND_MINCONT' : 0.0005,
             'MAG_ZEROPOINT'   : self.ctx.magbase,
             'CHECKIMAGE_TYPE' : 'SEGMENTATION',
             'FILTER_NAME'     : os.path.join(MULTIEPOCH_DIR,'etc','gauss_3.0_7x7.conv'),
