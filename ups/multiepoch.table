@@ -3,37 +3,37 @@ setupRequired(mojo       0.2.6+1)
 
 # DESDM python
 setupRequired(despydb    2.0.1+1)
-setupRequired(despyfitsutils 1.0.1+4)
+setupRequired(despyfitsutils 1.0.1+5)
 
 # Pixcorrect -- loads despyfits/fitsio/imsupport
-setupRequired(pixcorrect 0.5.0+1)
+setupRequired(pixcorrect 0.5.0+2)
 
 # Python core
-setupRequired(matplotlib 1.3.1+5)
-setupRequired(pandas 0.15.2+2)
+setupRequired(matplotlib 1.3.1+6)
+setupRequired(pandas 0.15.2+3)
 
 # Astromatic stuff
-setupRequired(sextractor 2.23.2+1)
-setupRequired(stiff 2.6.1+0)
+setupRequired(sextractor 2.23.2+2)
+setupRequired(stiff 2.7.0+0)
 setupRequired(swarp 2.40.0+1)
-setupRequired(psfex 3.17.3+2)
-setupRequired(scamp 2.4.2+1)
+setupRequired(psfex 3.17.3+3)
+setupRequired(scamp 2.4.2+3)
 
 # Extintion correction
-setupRequired(extinction 1.2.2+2)
+setupRequired(extinction 1.2.2+3)
 
 # Healpix
-setupRequired(hpixDB 1.0.2+1)
+setupRequired(hpixDB 1.0.2+2)
 
 # Mangle
-setupRequired(despymangle 2.1.1+1)
+setupRequired(despymangle 2.1.1+2)
 
 # MEDS
-setupRequired(desmeds 0.1.0rc2+0)
-setupRequired(MEPipelineAppIntg  1.0.4+0)
+setupRequired(desmeds 0.1.0rc1+2)
+setupRequired(MEPipelineAppIntg 1.0.3+2)
 
 # draDECam
-setupRequired(drawDECam 0.3.0+0)
+setupRequired(drawDECam 0.3.0+1)
 
 envAppend(PYTHONPATH, ${PRODUCT_DIR}/python)
 envAppend(PATH, ${PRODUCT_DIR}/bin)
