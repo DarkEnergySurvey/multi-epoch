@@ -172,6 +172,22 @@ def get_color_file(tiledir, tilename):
     filename = "%s.tiff" % tilename
     return dh.place_file(filename, 'coadd')
 
+def get_stiff_ptif_cmd_file(tiledir, tilename):
+    dh = get_tiledir_handler(tiledir)
+    filename = "%s_call_stiff_ptif.cmd" % tilename
+    return dh.place_file(filename, 'aux')
+
+def get_stiff_ptif_log_file(tiledir, tilename):
+    dh = get_tiledir_handler(tiledir)
+    filename = "%s_stiff_ptif.log" % tilename
+    return dh.place_file(filename, 'log')
+
+def get_color_file_ptif(tiledir, tilename):
+    dh = get_tiledir_handler(tiledir)
+    filename = "%s.ptif" % tilename
+    return dh.place_file(filename, 'coadd')
+
+
 # -----------------------------------------------------------------------------
 #    ******* EXTINCTION FILES ********
 def get_extinction_cmd_file(tiledir, tilename):
