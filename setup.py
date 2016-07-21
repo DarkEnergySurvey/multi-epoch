@@ -30,7 +30,7 @@ sql_files = glob.glob("example_queries/*")
 pipe_files = glob.glob("example_pipes/*")
 
 setup(name='multiepoch',
-      version='0.3.0',
+      version='0.3.1',
       description='The DESDM multi-epoch development pipeline',
       license = "GPL",
       author='Felipe Menanteau',
