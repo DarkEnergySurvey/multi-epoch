@@ -1,0 +1,29 @@
+### ABL2014 based on MEC Swanson 2010
+
+cleanup=Y
+release=Y3A1
+project=Y3A1v1
+scheme=s
+res=10
+
+#set snap and multiple intersection tolerances
+snap=-a.0027 -b.0027 -t.0027
+bigsnap=-a.1 -b.1 -t.1
+mtol=-m1e-8
+
+#define survey parameters
+bands=g,r,i,z,Y
+band_dic={'u':'0','g':'1', 'r':'2', 'i':'3', 'z':'4', 'Y':'5'}
+
+asperpix=.263 #size of one pixel in arcsec
+aper=2 #diameter of aperture in which to calculate the magnitude limit, in arcsec
+mzpglobal=30 # global zeropoint
+starmaskval=1
+trailmaskval=2
+edgemaskval=4
+starscale=1.0
+
+dataseca=[1:1024,1:4096]     # Data section from amp A
+datasecb=[1025:2048,1:4096]  # Data section from amp B
+border1 = 15
+border2 = 15
