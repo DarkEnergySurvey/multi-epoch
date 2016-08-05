@@ -265,7 +265,7 @@ class Job(BaseJob):
             # SN PROCTAG
             if self.sn_proctag != '':
                 self.and_extras  = self.and_extras + "PROCTAG.pfw_attempt_id=me.pfw_attempt_id AND PROCTAG.TAG='%s' AND" % self.sn_proctag
-                self.from_extras = self.from_extras + "PROCTAG"
+                self.from_extras = self.from_extras + ", PROCTAG"
                 self.cats_from_extras = self.from_extras
                 self.cats_and_extras = self.and_extras
 
