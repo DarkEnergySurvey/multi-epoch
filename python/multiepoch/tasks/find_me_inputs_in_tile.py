@@ -262,7 +262,7 @@ class Job(BaseJob):
             if self.tilename_fh == '':
                 self.tilename_fh = self.tilename
 
-            # SN PROCTAG
+            # if SN PROCTAG is present we overide the query information to reflect the tag we want
             if self.sn_proctag != '':
                 self.and_extras  = self.and_extras + "PROCTAG.pfw_attempt_id=me.pfw_attempt_id AND PROCTAG.TAG='%s' AND" % self.sn_proctag
                 self.from_extras = self.from_extras + "PROCTAG,"
@@ -270,7 +270,6 @@ class Job(BaseJob):
                 self.cats_and_extras = self.and_extras
 
     def run(self):
-
 
         # Get the archive name
         self.ctx = utils.check_archive_name(self.ctx, logger=self.logger)
