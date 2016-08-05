@@ -210,6 +210,9 @@ class Job(BaseJob):
         cats_and_extras    = CUnicode(CATS_AND_EXTRAS,help="string with extra AND for query",)
         cats_from_extras   = CUnicode(CATS_FROM_EXTRAS,help="string with extra FROM for query",)
 
+        # SN Tag
+        sn_proctag         = CUnicode("", help=("SN PROCTAG.TAG (Optional for SN coadds)"))
+
         plot_outname  = CUnicode("", help=("Output file name for plot, in case we want to plot"))
         local_archive = CUnicode("", help="The local filepath where the input fits files (will) live")
         dump_assoc    = Bool(False, help=("Dump the assoc file?"))
@@ -258,6 +261,13 @@ class Job(BaseJob):
 
             if self.tilename_fh == '':
                 self.tilename_fh = self.tilename
+
+            # SN PROCTAG
+            if self.sn_proctag != '':
+                self.and_extras  = self.and_extras + "PROCTAG.pfw_attempt_id=me.pfw_attempt_id AND AND PROCTAG.TAG='%s' AND" % self.sn_proctag
+                self.from_extras = self.from_extras + "PROCTAG"
+                self.cats_from_extras = self.from_extras
+                self.cats_and_extras = self.and_extras
 
     def run(self):
 
