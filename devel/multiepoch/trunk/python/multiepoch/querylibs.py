@@ -265,7 +265,8 @@ def get_CCDS_from_db_general_sql(dbh, **kwargs):
     no_zeropoint  = kwargs.get('no_zeropoint',False)
     no_blacklist  = kwargs.get('no_blacklist',False) 
     zp_source     = kwargs.get('zp_source')
-    zp_version    = kwargs.get('zp_version') 
+    zp_version    = kwargs.get('zp_version')
+    zp_flag       = kwargs.get('zp_flag') 
     tilename      = kwargs.get('tilename') 
     ccdnum        = kwargs.get('ccdnum',0) 
 
@@ -278,7 +279,7 @@ def get_CCDS_from_db_general_sql(dbh, **kwargs):
         QUERY_CCDS = QUERY_ME_IMAGES_TEMPLATE
 
     # Get extra query strings for blacklist and zeropoint
-    query_zeropoint = get_zeropoint_query(zp_source=zp_source,zp_version=zp_version,no_zeropoint=no_zeropoint)
+    query_zeropoint = get_zeropoint_query(zp_source=zp_source,zp_version=zp_version,zp_flag=zp_flag,no_zeropoint=no_zeropoint)
     query_blacklist = get_blacklist_query(no_blacklist=no_blacklist)
 
     # Get the optional CCDNUM
@@ -589,7 +590,7 @@ def get_search_method(search_type,tileinfo):
 
 
 
-def get_zeropoint_query(zp_source,zp_version,no_zeropoint=False):
+def get_zeropoint_query(zp_source,zp_version,zp_flag,no_zeropoint=False):
     query = {}
     if no_zeropoint:
         query['and_zeropoint'] = ''
@@ -599,7 +600,8 @@ def get_zeropoint_query(zp_source,zp_version,no_zeropoint=False):
         query['and_zeropoint'] = """
         ZEROPOINT.IMAGENAME = me.filename AND
         ZEROPOINT.SOURCE  = '%s' AND
-        ZEROPOINT.VERSION = '%s' AND """ % (zp_source,zp_version)
+        ZEROPOINT.VERSION = '%s' AND
+        ZEROPOINT.FLAG    <  %s AND """ % (zp_source,zp_version,zp_flag)
         query['select_zeropoint'] = "ZEROPOINT.MAG_ZERO,"
         query['from_zeropoint'] = "ZEROPOINT,"
     return query

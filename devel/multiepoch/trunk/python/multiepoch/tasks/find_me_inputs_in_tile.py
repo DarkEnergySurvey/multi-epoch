@@ -145,6 +145,7 @@ CATS_AND_EXTRAS    = ""
 SEARCH_TYPE   = "distance"
 ZP_SOURCE  = "GCM"
 ZP_VERSION = "Y1A1_gruendlhack"
+ZP_FLAG    = 16
 # -----------------------------------------------------------------------------
 
 class Job(BaseJob):
@@ -189,6 +190,7 @@ class Job(BaseJob):
         no_zeropoint  = Bool(False, help=("Do not get ZP for images"))
         zp_source     = CUnicode(ZP_SOURCE,help="ZEROPOINT.SOURCE",)
         zp_version    = CUnicode(ZP_VERSION,help="ZEROPOINT.VERSION",)
+        zp_flag       = CUnicode(ZP_FLAG,help="ZEROPOINT.FLAG",)
         zp_force      = CFloat(32.2,help="Force ZP value if MAG_ZEROP not present [default=32.2]",)
 
         select_extras = CUnicode(SELECT_EXTRAS,help="string with extra SELECT for query",)
