@@ -263,7 +263,8 @@ def get_CCDS_from_db_general_sql(dbh, **kwargs):
     and_extras    = kwargs.get('and_extras','') 
     search_type   = kwargs.get('search_type','distance')
     no_zeropoint  = kwargs.get('no_zeropoint',False)
-    no_blacklist  = kwargs.get('no_blacklist',False) 
+    no_blacklist  = kwargs.get('no_blacklist',False)
+    tb_blacklist  = kwargs.get('tb_blacklist') 
     zp_source     = kwargs.get('zp_source')
     zp_version    = kwargs.get('zp_version')
     zp_flag       = kwargs.get('zp_flag') 
@@ -280,7 +281,7 @@ def get_CCDS_from_db_general_sql(dbh, **kwargs):
 
     # Get extra query strings for blacklist and zeropoint
     query_zeropoint = get_zeropoint_query(zp_source=zp_source,zp_version=zp_version,zp_flag=zp_flag,no_zeropoint=no_zeropoint)
-    query_blacklist = get_blacklist_query(no_blacklist=no_blacklist)
+    query_blacklist = get_blacklist_query(no_blacklist=no_blacklist,tb_blacklist=tb_blacklist)
 
     # Get the optional CCDNUM
     if ccdnum > 0:
@@ -607,17 +608,13 @@ def get_zeropoint_query(zp_source,zp_version,zp_flag,no_zeropoint=False):
     return query
 
 
-def get_blacklist_query(no_blacklist=False):
+def get_blacklist_query(no_blacklist=False,tb_blacklist='blacklist'):
     query = {}
     if no_blacklist:
         query['and_blacklist'] = ''
     else:
         query['and_blacklist'] = """
-         not exists (select bl.reason from blacklist bl where bl.expnum=me.expnum and bl.ccdnum=me.ccdnum) AND"""
-        #query['and_blacklist'] = """
-        #me.filename NOT IN
-        #(select filename from felipe.me_images_%s me, BLACKLIST where
-        #me.expnum=blacklist.expnum and me.ccdnum=blacklist.ccdnum) AND """ % tagname
+        not exists (select bl.reason from %s bl where bl.expnum=me.expnum and bl.ccdnum=me.ccdnum) AND""" % tb_blacklist
     return query
 
 
