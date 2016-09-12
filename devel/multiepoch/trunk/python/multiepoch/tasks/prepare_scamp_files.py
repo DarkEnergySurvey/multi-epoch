@@ -98,8 +98,8 @@ class Job(BaseJob):
         # 0. Prepare the context
         self.prewash_scamp()
 
-        # 1. Get the unitnames for the doBANDS selection
-        self.ctx.unitnames = contextDefs.get_scamp_unitnames(self.ctx)
+        # 1. Get the expnums for the doBANDS selection
+        self.ctx.expnums = contextDefs.get_scamp_expnums(self.ctx)
 
         # 2. Get the list of command lines
         cmdlist = self.get_combine_cats_cmd_list(execution_mode)
@@ -129,12 +129,12 @@ class Job(BaseJob):
         
         if NP > 1 :
             p = mp.Pool(processes=NP)
-        # Loop over all unitnames
-        for UNITNAME in self.ctx.unitnames:
-            self.logger.info("Combining CCD catalogs for %s" % UNITNAME)
-            # The sorted CCD catlist per UNITNAME and the output name for the conbined cat as args
-            args = (','.join(contextDefs.get_ccd_catlist(self.ctx.catlist,UNITNAME)),
-                    fh.get_expcat_file(self.input.tiledir, self.input.tilename_fh, UNITNAME))
+        # Loop over all expnums
+        for EXPNUM in self.ctx.expnums:
+            self.logger.info("Combining CCD catalogs for %s" % EXPNUM)
+            # The sorted CCD catlist per EXPNUM and the output name for the conbined cat as args
+            args = (','.join(contextDefs.get_ccd_catlist(self.ctx.catlist,EXPNUM)),
+                    fh.get_expcat_file(self.input.tiledir, self.input.tilename_fh, EXPNUM))
             kw = {}
             if NP > 1:
                 p.apply_async(fitsutils.combine_cats, args, kw)
@@ -155,22 +155,22 @@ class Job(BaseJob):
         # Sortcuts for less typing
         tiledir     = self.input.tiledir
         tilename_fh = self.input.tilename_fh
-        # The dictionary, keyed to UNITNAMES where we store the commands
+        # The dictionary, keyed to EXPNUM where we store the commands
         combine_cats_cmd = {}
-        for UNITNAME in self.ctx.unitnames:
-            # Get the sorted CCD catlist per UNITNAME
-            ccd_catlist = contextDefs.get_ccd_catlist(self.ctx.catlist,UNITNAME)
+        for EXPNUM in self.ctx.expnums:
+            # Get the sorted CCD catlist per EXPNUM
+            ccd_catlist = contextDefs.get_ccd_catlist(self.ctx.catlist,EXPNUM)
             # Write out the file list containing the input catalogs
             if execute_mode == 'tofile' or execute_mode == 'dryrun':
-                tableio.put_data(fh.get_catlist_file(tiledir, tilename_fh, UNITNAME),(ccd_catlist,),format="%s")
-                self.logger.debug("Writing CCD red catalog list file: %s" % fh.get_catlist_file(tiledir, tilename_fh, UNITNAME))
+                tableio.put_data(fh.get_catlist_file(tiledir, tilename_fh, EXPNUM),(ccd_catlist,),format="%s")
+                self.logger.debug("Writing CCD red catalog list file: %s" % fh.get_catlist_file(tiledir, tilename_fh, EXPNUM))
 
             # Build the cmdline string
             cmd = []
             cmd.append("combine_cats.py")
-            cmd.append("--list  %s" % fh.get_catlist_file(tiledir, tilename_fh, UNITNAME))
-            cmd.append("--outcat %s" % fh.get_expcat_file(tiledir, tilename_fh, UNITNAME))
-            combine_cats_cmd[UNITNAME] = cmd
+            cmd.append("--list  %s" % fh.get_catlist_file(tiledir, tilename_fh, EXPNUM))
+            cmd.append("--outcat %s" % fh.get_expcat_file(tiledir, tilename_fh, EXPNUM))
+            combine_cats_cmd[EXPNUM] = cmd
         return combine_cats_cmd
 
     # 'EXECUTION' FUNCTIONS

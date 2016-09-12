@@ -18,7 +18,6 @@ create table {tablename_root}_{tagname_table} as
 	 catalog.FILENAME as FILENAME_SCAMPCAT,
 	 miscfile.FILENAME as FILENAME_SCAMPHEAD, 
 	 file_archive_info.PATH,
-         ops_proctag.UNITNAME,
          catalog.PFW_ATTEMPT_ID,
 	 catalog.EXPNUM,
          catalog.BAND

@@ -130,8 +130,8 @@ class Job(BaseJob):
         # 0. Prepare the context
         self.prewash_scamp()
 
-        # 1. Get the unitnames for the doBANDS selection
-        self.ctx.unitnames = contextDefs.get_scamp_unitnames(self.ctx)
+        # 1. Get the expnums for the doBANDS selection
+        self.ctx.expnums = contextDefs.get_scamp_expnums(self.ctx)
 
         # 2. Get the list of command lines
         cmdlist = self.get_split_head_cmd_list(execution_mode)
@@ -161,12 +161,12 @@ class Job(BaseJob):
         
         if NP > 1 :
             p = mp.Pool(processes=NP)
-        # Loop over all unitnames
-        for UNITNAME in self.ctx.unitnames:
-            self.logger.info("Splitting head files for %s" % UNITNAME)
-            # The sorted CCD catlist per UNITNAME and the output name for the conbined cat as args
-            args = (fh.get_exphead_file(self.input.tiledir, self.input.tilename_fh, UNITNAME),
-                    ','.join(contextDefs.get_ccd_headlist(self.ctx.catlist,UNITNAME)))
+        # Loop over all expnums
+        for EXPNUM in self.ctx.expnums:
+            self.logger.info("Splitting head files for %s" % EXPNUM)
+            # The sorted CCD catlist per EXPNUM and the output name for the conbined cat as args
+            args = (fh.get_exphead_file(self.input.tiledir, self.input.tilename_fh, EXPNUM),
+                    ','.join(contextDefs.get_ccd_headlist(self.ctx.catlist,EXPNUM)))
             kw = {}
             if NP > 1:
                 p.apply_async(fitsutils.splitScampHead, args, kw)
@@ -187,22 +187,22 @@ class Job(BaseJob):
         # Sortcuts for less typing
         tiledir     = self.input.tiledir
         tilename_fh = self.input.tilename_fh
-        # The dictionary, keyed to UNITNAMES where we store the commands
+        # The dictionary, keyed to EXPNUMS where we store the commands
         cmd_list = {}
-        for UNITNAME in self.ctx.unitnames:
-            # Get the sorted CCD head list per UNITNAME, based on the CCD list of catalogs
-            ccd_headlist = contextDefs.get_ccd_headlist(self.ctx.catlist,UNITNAME)
+        for EXPNUM in self.ctx.expnums:
+            # Get the sorted CCD head list per EXPNUM, based on the CCD list of catalogs
+            ccd_headlist = contextDefs.get_ccd_headlist(self.ctx.catlist,EXPNUM)
             # Write out the file list containing the input catalogs
             if execute_mode == 'tofile' or execute_mode == 'dryrun':
-                tableio.put_data(fh.get_headlist_file(tiledir, tilename_fh, UNITNAME),(ccd_headlist,),format="%s")
-                self.logger.debug("Writing CCD head list file: %s" % fh.get_headlist_file(tiledir, tilename_fh, UNITNAME))
+                tableio.put_data(fh.get_headlist_file(tiledir, tilename_fh, EXPNUM),(ccd_headlist,),format="%s")
+                self.logger.debug("Writing CCD head list file: %s" % fh.get_headlist_file(tiledir, tilename_fh, EXPNUM))
 
             # Build the cmdline string
             cmd = []
             cmd.append("split_head.py")
-            cmd.append("--in    %s" % fh.get_exphead_file(tiledir, tilename_fh, UNITNAME))
-            cmd.append("--list  %s" % fh.get_headlist_file(tiledir, tilename_fh, UNITNAME))
-            cmd_list[UNITNAME] = cmd
+            cmd.append("--in    %s" % fh.get_exphead_file(tiledir, tilename_fh, EXPNUM))
+            cmd.append("--list  %s" % fh.get_headlist_file(tiledir, tilename_fh, EXPNUM))
+            cmd_list[EXPNUM] = cmd
         return cmd_list
 
     # 'EXECUTION' FUNCTIONS

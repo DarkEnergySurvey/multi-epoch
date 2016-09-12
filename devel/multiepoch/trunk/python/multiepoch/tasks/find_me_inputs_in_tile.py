@@ -300,11 +300,11 @@ class Job(BaseJob):
         if self.ctx.super_align:
             self.ctx.CATS = querylibs.get_CATS_from_db_general_sql(DBH, logger=LOG,**input_kw)
             # Make sure that we find the same number of exposure/unitnames
-            UNITNAMES_CCDS = numpy.unique(self.ctx.CCDS['UNITNAME'])
-            UNITNAMES_CATS = numpy.unique(self.ctx.CATS['UNITNAME'])
+            EXPNUMS_CCDS = numpy.unique(self.ctx.CCDS['EXPNUM'])
+            EXPNUMS_CATS = numpy.unique(self.ctx.CATS['EXPNUM'])
 
-            if len(UNITNAMES_CCDS) != len(UNITNAMES_CATS):
-                self.logger.info("WARNING: Number of UNITNAMES do not match between CCDS and CATS")
+            if len(EXPNUMS_CCDS) != len(EXPNUMS_CATS):
+                self.logger.info("WARNING: Number of EXPNUMS do not match between CCDS and CATS")
 
         # Get the finalcut large exposure-based scamp cats.
         if self.ctx.use_scampcats and self.ctx.super_align:
@@ -376,19 +376,19 @@ class Job(BaseJob):
         if self.input.dump_cats and self.ctx.super_align:
             cats_default_name = fh.get_default_cats_file(self.ctx.tiledir, self.ctx.tilename_fh)
             self.logger.info("Dumping catlist file to:%s" % cats_default_name)
-            self.write_dict2pandas(self.ctx.catlist,cats_default_name,names=['FILEPATH_LOCAL','BAND','UNITNAME'],logger=self.logger)
+            self.write_dict2pandas(self.ctx.catlist,cats_default_name,names=['FILEPATH_LOCAL','BAND','EXPNUM'],logger=self.logger)
 
         # and scampcatlist
         if self.input.dump_cats and self.ctx.super_align and self.ctx.use_scampcats:
             cats_default_name = fh.get_default_scampcats_file(self.ctx.tiledir, self.ctx.tilename_fh)
             self.logger.info("Dumping catlist file to:%s" % cats_default_name)
-            self.write_dict2pandas(self.ctx.scampcatlist,cats_default_name,names=['FILEPATH_LOCAL','BAND','UNITNAME'],logger=self.logger)
+            self.write_dict2pandas(self.ctx.scampcatlist,cats_default_name,names=['FILEPATH_LOCAL','BAND','EXPNUM'],logger=self.logger)
 
         # and scampheadlist
         if self.input.dump_cats and self.ctx.super_align and self.ctx.use_scampcats:
             cats_default_name = fh.get_default_scampheads_file(self.ctx.tiledir, self.ctx.tilename_fh)
             self.logger.info("Dumping catlist file to:%s" % cats_default_name)
-            self.write_dict2pandas(self.ctx.scampheadlist,cats_default_name,names=['FILEPATH_LOCAL','BAND','UNITNAME'],logger=self.logger)
+            self.write_dict2pandas(self.ctx.scampheadlist,cats_default_name,names=['FILEPATH_LOCAL','BAND','EXPNUM'],logger=self.logger)
 
         # and meds inputs (BKG,SEG)
         if self.input.dump_assoc_meds:
@@ -454,7 +454,7 @@ class Job(BaseJob):
         catlist = {}
         catlist['BAND']        = CATS['BAND']
         catlist['FILENAME']    = CATS[filename_key]
-        catlist['UNITNAME']    = CATS['UNITNAME']
+        catlist['EXPNUM']    = CATS['EXPNUM']
 
         # In line loop creation
         filepaths = [os.path.join(CATS['PATH'][k],CATS[filename_key][k]) for k in range(Nimages)]
@@ -478,7 +478,7 @@ class Job(BaseJob):
         return
 
     @staticmethod
-    def write_dict2pandas(mydict, file, names=['FILEPATH_LOCAL','BAND','UNITNAME'],sep=' ', logger=None):
+    def write_dict2pandas(mydict, file, names=['FILEPATH_LOCAL','BAND','EXPNUM'],sep=' ', logger=None):
 
         utils.pass_logger_info("Writing information to: %s" % file,logger=logger)
         variables = [mydict[name] for name in names]
@@ -511,6 +511,6 @@ if __name__ == "__main__":
     # For now we'll try to use plain asscii that can be read/write with pandas
     job.write_dict2pandas(job.ctx.assoc,job.ctx.assoc_file,names=['FILEPATH_LOCAL','BAND','MAG_ZERO'])
     if job.ctx.super_align:
-        job.write_dict2pandas(job.ctx.catlist,job.ctx.cats_file,names=['FILEPATH_LOCAL','BAND','UNITNAME'])
+        job.write_dict2pandas(job.ctx.catlist,job.ctx.cats_file,names=['FILEPATH_LOCAL','BAND','EXPNUM'])
         
 

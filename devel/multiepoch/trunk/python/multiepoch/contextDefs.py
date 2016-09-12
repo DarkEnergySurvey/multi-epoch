@@ -192,28 +192,28 @@ def get_BANDS(assoc, detname='det', logger=None, doBANDS=['all']):
     return ctxext 
 
 
-def get_scamp_unitnames(ctx):
+def get_scamp_expnums(ctx):
     import numpy
     """
-    Get the unique set of unitnames that for which we like to
+    Get the unique set of expnums that for which we like to
     merge ccd-based red catalogs and use as inputs for scamp
     """
-    unitnames = []
+    expnums = []
     for BAND in ctx.doBANDS:
-        unitnames = unitnames + numpy.unique(ctx.catlist['UNITNAME'][ctx.catlist['BAND'] == BAND]).tolist()
-    return unitnames
+        expnums = expnums + numpy.unique(ctx.catlist['EXPNUM'][ctx.catlist['BAND'] == BAND]).tolist()
+    return expnums
 
-def get_ccd_catlist(catlist,unitname):
+def get_ccd_catlist(catlist,expnum):
 
-    """ Consistent method to extract ccd catlist from context per unitname"""
-    ccd_catlist = catlist['FILEPATH_LOCAL'][catlist['UNITNAME'] == unitname]
+    """ Consistent method to extract ccd catlist from context per expnum"""
+    ccd_catlist = catlist['FILEPATH_LOCAL'][catlist['EXPNUM'] == expnum]
     ccd_catlist.sort() # Make sure that they are sorted
     return ccd_catlist
 
-def get_ccd_headlist(catlist,unitname):
+def get_ccd_headlist(catlist,expnum):
 
-    """ Consistent method to extract the ccd head list from context per unitname"""
-    ccd_headlist = catlist['FILEPATH_INPUT_HEAD'][catlist['UNITNAME'] == unitname]
+    """ Consistent method to extract the ccd head list from context per expnum"""
+    ccd_headlist = catlist['FILEPATH_INPUT_HEAD'][catlist['EXPNUM'] == expnum]
     ccd_headlist.sort() # Make sure that they are sorted
     return ccd_headlist
 

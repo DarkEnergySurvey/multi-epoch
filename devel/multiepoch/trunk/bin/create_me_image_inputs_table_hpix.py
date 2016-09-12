@@ -19,7 +19,6 @@ create table {me_tablename} as
 	 file_archive_info.COMPRESSION,
          file_archive_info.PATH,
          image.PFW_ATTEMPT_ID,
-         ops_proctag.UNITNAME,
          image.BAND,
          image.CCDNUM,
          image.EXPNUM,
