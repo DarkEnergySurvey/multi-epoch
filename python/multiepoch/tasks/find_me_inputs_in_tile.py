@@ -143,9 +143,11 @@ CATS_SELECT_EXTRAS = ""
 CATS_FROM_EXTRAS   = ""
 CATS_AND_EXTRAS    = ""
 SEARCH_TYPE   = "distance"
-ZP_SOURCE  = "GCM"
-ZP_VERSION = "Y1A1_gruendlhack"
+ZP_SOURCE  = "FGCM"
+ZP_VERSION = "v2.0"
 ZP_FLAG    = 16
+TB_BLACKLIST = "Y3A1_blacklist"
+
 # -----------------------------------------------------------------------------
 
 class Job(BaseJob):
@@ -187,6 +189,7 @@ class Job(BaseJob):
                                  argparse={'choices': ('db-desoper','db-destest', )} )
         # Blacklist and zeropoint
         no_blacklist  = Bool(False, help=("Do not Black list images"))
+        tb_blacklist  = CUnicode(TB_BLACKLIST,help="Name of the blacklist table",)
         no_zeropoint  = Bool(False, help=("Do not get ZP for images"))
         zp_source     = CUnicode(ZP_SOURCE,help="ZEROPOINT.SOURCE",)
         zp_version    = CUnicode(ZP_VERSION,help="ZEROPOINT.VERSION",)
