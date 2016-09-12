@@ -53,7 +53,7 @@ QUERY_ME_IMAGES_TEMPLATE = """
          me.FILENAME,me.COMPRESSION,me.PATH,
          me.FILENAME_BKG,me.COMPRESSION_BKG,me.PATH_BKG,
          me.FILENAME_SEG,me.COMPRESSION_SEG,me.PATH_SEG,
-         me.BAND,me.UNITNAME,me.EXPNUM,
+         me.BAND,me.EXPNUM,
          me.RA_SIZE,me.DEC_SIZE,
          me.RA_CENT, me.RAC1,  me.RAC2,  me.RAC3,  me.RAC4,
          me.DEC_CENT,me.DECC1, me.DECC2, me.DECC3, me.DECC4
@@ -75,7 +75,7 @@ QUERY_ME_IMAGES_TEMPLATE_RAZERO = """
          FILENAME,COMPRESSION,PATH,
          FILENAME_BKG,COMPRESSION_BKG,PATH_BKG,
          FILENAME_SEG,COMPRESSION_SEG,PATH_SEG,
-         BAND,UNITNAME,EXPNUM,CCDNUM,
+         BAND,EXPNUM,CCDNUM,
          RA_SIZE,DEC_SIZE,
          (case when RA_CENT > 180. THEN RA_CENT-360. ELSE RA_CENT END) as RA_CENT, 
          (case when RAC1 > 180.    THEN RAC1-360.    ELSE RAC1 END) as RAC1,	  
@@ -92,7 +92,7 @@ QUERY_ME_IMAGES_TEMPLATE_RAZERO = """
          me.FILENAME,me.COMPRESSION,me.PATH,
          me.FILENAME_BKG,me.COMPRESSION_BKG,me.PATH_BKG,
          me.FILENAME_SEG,me.COMPRESSION_SEG,me.PATH_SEG,
-         me.BAND,me.UNITNAME,me.EXPNUM,
+         me.BAND,me.EXPNUM,
          me.RA_SIZE,me.DEC_SIZE,
          me.RA_CENT, me.RAC1,  me.RAC2,  me.RAC3,  me.RAC4,
          me.DEC_CENT,me.DECC1, me.DECC2, me.DECC3, me.DECC4
@@ -111,9 +111,9 @@ QUERY_ME_IMAGES_TEMPLATE_RAZERO = """
 QUERY_ME_CATALOGS_TEMPLATE = """
      SELECT 
          {cats_select_extras}
-         cat.FILENAME, cat.PATH, cat.BAND,cat.CCDNUM, cat.UNITNAME,cat.EXPNUM
+         cat.FILENAME, cat.PATH, cat.BAND,cat.CCDNUM, cat.EXPNUM
      FROM 
-         felipe.me_catalogs_{tagname} cat
+         felipe.me_cats_{tagname} cat
      WHERE
          cat.EXPNUM in
        (SELECT 
@@ -131,9 +131,9 @@ QUERY_ME_CATALOGS_TEMPLATE = """
 QUERY_ME_CATALOGS_TEMPLATE_RAZERO = """
      SELECT 
          {cats_select_extras}
-         cat.FILENAME, cat.PATH, cat.BAND,cat.CCDNUM,cat.UNITNAME,cat.EXPNUM
+         cat.FILENAME, cat.PATH, cat.BAND,cat.CCDNUM, cat.EXPNUM
      FROM 
-         felipe.me_catalogs_{tagname} cat
+         felipe.me_cats_{tagname} cat
      WHERE
          cat.expnum in
        (
@@ -169,7 +169,7 @@ QUERY_ME_SCAMPCAT_TEMPLATE = """
          {cats_select_extras}
          cat.FILENAME_SCAMPCAT,
          cat.FILENAME_SCAMPHEAD,
-         cat.PATH, cat.BAND, cat.UNITNAME,cat.EXPNUM
+         cat.PATH, cat.BAND, cat.EXPNUM
      FROM 
          felipe.me_scampcat_{tagname} cat
      WHERE
@@ -191,7 +191,7 @@ QUERY_ME_SCAMPCAT_TEMPLATE_RAZERO = """
          {select_extras}
          cat.FILENAME_SCAMPCAT,
          cat.FILENAME_SCAMPHEAD,
-         cat.PATH, cat.BAND, cat.UNITNAME,cat.EXPNUM
+         cat.PATH, cat.BAND, cat.EXPNUM
      FROM
          felipe.me_scampcat_{tagname} cat
      WHERE

@@ -16,22 +16,21 @@ create table {tablename_root}_{tagname_table} as
      SELECT 
          file_archive_info.FILENAME,
          file_archive_info.PATH,
-         ops_proctag.UNITNAME,
          cat.PFW_ATTEMPT_ID,
          cat.BAND,
          cat.CCDNUM,
          cat.EXPNUM
      FROM
-         ops_proctag, file_archive_info, catalog cat
+         {proctag_table} tag_table, file_archive_info, catalog cat
      WHERE
          file_archive_info.FILENAME  = cat.FILENAME AND
-         cat.PFW_ATTEMPT_ID = ops_proctag.PFW_ATTEMPT_ID AND
+         cat.PFW_ATTEMPT_ID = tag_table.PFW_ATTEMPT_ID AND
          cat.FILETYPE    = '{filetype}' AND
-         ops_proctag.TAG = '{tagname}'
+         tag_table.TAG = '{tagname}'
 """
 
 
-def create_table_from_query(tagname,tagname_table=None,db_section='db-destest',filetype='cat_finalcut',tablename_root='me_catalogs',clobber=False,verb=False):
+def create_table_from_query(tagname,tagname_table=None,db_section='db-destest',filetype='cat_finalcut',tablename_root='me_cats',proctag_table='ops_proctag',clobber=False,verb=False):
 
     # Get the handle
     dbh = desdbi.DesDbi(section=db_section)
@@ -74,6 +73,8 @@ if __name__ == "__main__":
                         help="Name of the TAGNAME used to select inputs")
     parser.add_argument("--tagname_table", action="store",default=None,
                         help="Optiona Name of the TAGNAME for the table naming, defaul=TAGNAME")
+    parser.add_argument("--proctag_table", action="store",default='PROCTAG',
+                        help="Change the proctag table to use (OPS_PROCTAG or PROCTAG)")
     parser.add_argument("--db_section", action="store", default='db-destest',choices=['db-desoper','db-destest'],
                         help="DB Section to query")
     parser.add_argument("--clobber", action="store_true",default=False,
@@ -81,5 +82,5 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     t0 = time.time()
-    create_table_from_query(args.tagname,tagname_table=args.tagname_table,db_section=args.db_section,clobber=args.clobber,verb=True)
+    create_table_from_query(args.tagname,tagname_table=args.tagname_table,db_section=args.db_section,proctag_table=args.proctag_table,clobber=args.clobber,verb=True)
     print "Table Create time: %s" % elapsed_time(t0)

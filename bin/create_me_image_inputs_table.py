@@ -23,8 +23,7 @@ create table {tablename_root}_{tagname_table} as
 	 image_seg.FILENAME as FILENAME_SEG,
          fai_seg.PATH as PATH_SEG,
          fai_seg.COMPRESSION as COMPRESSION_SEG,
-         ops_proctag.PFW_ATTEMPT_ID,
-         ops_proctag.UNITNAME,
+         tag_table.PFW_ATTEMPT_ID,
          image_red.BAND,
          image_red.CCDNUM,
          image_red.EXPNUM,
@@ -37,23 +36,23 @@ create table {tablename_root}_{tagname_table} as
          (case when image_red.CROSSRA0='Y' THEN abs(image_red.RACMAX - (image_red.RACMIN-360)) ELSE abs(image_red.RACMAX - image_red.RACMIN) END) as RA_SIZE,
          abs(image_red.DECCMAX - image_red.DECCMIN) as DEC_SIZE
      FROM
-         ops_proctag, image image_red, image image_bkg, miscfile image_seg, file_archive_info fai_red, file_archive_info fai_bkg, file_archive_info fai_seg
+         {proctag_table} tag_table, image image_red, image image_bkg, miscfile image_seg, file_archive_info fai_red, file_archive_info fai_bkg, file_archive_info fai_seg
      WHERE
          fai_red.FILENAME  = image_red.FILENAME AND
          fai_bkg.FILENAME  = image_bkg.FILENAME AND	
          fai_seg.FILENAME  = image_seg.FILENAME AND	
-	 image_red.PFW_ATTEMPT_ID = ops_proctag.PFW_ATTEMPT_ID AND
-	 image_bkg.PFW_ATTEMPT_ID = ops_proctag.PFW_ATTEMPT_ID AND	
-	 image_seg.PFW_ATTEMPT_ID = ops_proctag.PFW_ATTEMPT_ID AND		
+	 image_red.PFW_ATTEMPT_ID = tag_table.PFW_ATTEMPT_ID AND
+	 image_bkg.PFW_ATTEMPT_ID = tag_table.PFW_ATTEMPT_ID AND	
+	 image_seg.PFW_ATTEMPT_ID = tag_table.PFW_ATTEMPT_ID AND		
          image_red.FILETYPE  = '{filetype}' AND
 	 image_bkg.FILETYPE  = 'red_bkg' AND
 	 image_seg.FILETYPE  = 'red_segmap' AND
 	 image_red.CCDNUM = image_bkg.CCDNUM AND
 	 image_bkg.CCDNUM = image_seg.CCDNUM AND
-         ops_proctag.TAG = '{tagname}'
+         tag_table.TAG = '{tagname}'
 """
 
-def create_table_from_query(tagname,tagname_table=None,db_section='db-destest',filetype='red_immask',tablename_root='me_images',clobber=False,verb=False):
+def create_table_from_query(tagname,tagname_table=None,db_section='db-destest',filetype='red_immask',tablename_root='me_images',proctag_table='ops_proctag',clobber=False,verb=False):
 
     # Get the handle
     dbh = desdbi.DesDbi(section=db_section)
@@ -95,7 +94,9 @@ if __name__ == "__main__":
     parser.add_argument("tagname", action="store",default=None,
                         help="Name of the TAGNAME used to select inputs")
     parser.add_argument("--tagname_table", action="store",default=None,
-                        help="Optiona Name of the TAGNAME for the table naming, defaul=TAGNAME")
+                        help="Optional Name of the TAGNAME for the table naming, defaul=TAGNAME")
+    parser.add_argument("--proctag_table", action="store",default='PROCTAG',
+                        help="Change the proctag table to use (OPS_PROCTAG or PROCTAG)")
     parser.add_argument("--db_section", action="store", default='db-destest',choices=['db-desoper','db-destest'],
                         help="DB Section to query")
     parser.add_argument("--clobber", action="store_true",default=False,
@@ -103,6 +104,6 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     t0 = time.time()
-    create_table_from_query(args.tagname,tagname_table=args.tagname_table,db_section=args.db_section,clobber=args.clobber,verb=True)
+    create_table_from_query(args.tagname,tagname_table=args.tagname_table,db_section=args.db_section,proctag_table=args.proctag_table,clobber=args.clobber,verb=True)
     print "Table Create time: %s" % elapsed_time(t0)
     

@@ -139,8 +139,8 @@ class Job(BaseJob):
         # 0. Prepare the context
         self.prewash_scamp()
 
-        # 1. Get the unitnames for the doBANDS selection
-        self.ctx.unitnames = contextDefs.get_scamp_unitnames(self.ctx)
+        # 1. Get the expnums for the doBANDS selection
+        self.ctx.expnums = contextDefs.get_scamp_expnums(self.ctx)
 
         # 2. Write the scamp input list of expcats
         self.write_scamp_input_list_file()
@@ -175,9 +175,9 @@ class Job(BaseJob):
         self.logger.info('Writing scamp input file list')
         expcats = []
         exphead = []
-        for UNITNAME in self.ctx.unitnames:
-            expcats.append(fh.get_expcat_file(tiledir, tilename_fh, UNITNAME))
-            exphead.append(fh.get_exphead_file(tiledir, tilename_fh, UNITNAME))
+        for EXPNUM in self.ctx.expnums:
+            expcats.append(fh.get_expcat_file(tiledir, tilename_fh, EXPNUM))
+            exphead.append(fh.get_exphead_file(tiledir, tilename_fh, EXPNUM))
 
         # Make sure they are sorted
         expcats.sort()
@@ -195,17 +195,17 @@ class Job(BaseJob):
         tiledir     = self.input.tiledir
         tilename_fh = self.input.tilename_fh
         self.logger.info('Copying scampcat input file list to input folder')
-        for UNITNAME in self.ctx.unitnames:
+        for EXPNUM in self.ctx.expnums:
 
             # Scampcat fits catalogs
-            expcat_name   = fh.get_expcat_file(tiledir, tilename_fh, UNITNAME)
-            scampcat_name = self.ctx.scampcatlist['FILEPATH_LOCAL'][self.ctx.scampcatlist['UNITNAME'] == UNITNAME][0]
+            expcat_name   = fh.get_expcat_file(tiledir, tilename_fh, EXPNUM)
+            scampcat_name = self.ctx.scampcatlist['FILEPATH_LOCAL'][self.ctx.scampcatlist['EXPNUM'] == EXPNUM][0]
             self.logger.debug("Linking:%s --> %s" % (scampcat_name,expcat_name))
             utils.symlink_force(scampcat_name,expcat_name)
 
             # Scampcat head catalogs --> ahead catalogs
-            exphead_name   = fh.get_expahead_file(tiledir, tilename_fh, UNITNAME)
-            scamphead_name = self.ctx.scampheadlist['FILEPATH_LOCAL'][self.ctx.scampheadlist['UNITNAME'] == UNITNAME][0]
+            exphead_name   = fh.get_expahead_file(tiledir, tilename_fh, EXPNUM)
+            scamphead_name = self.ctx.scampheadlist['FILEPATH_LOCAL'][self.ctx.scampheadlist['EXPNUM'] == EXPNUM][0]
             self.logger.debug("Linking:%s --> %s" % (scamphead_name,exphead_name))
             utils.symlink_force(scamphead_name,exphead_name)
             
