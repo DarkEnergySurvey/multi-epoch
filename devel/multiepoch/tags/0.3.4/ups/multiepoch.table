@@ -1,0 +1,44 @@
+# Mojo
+setupRequired(mojo       0.2.6+1)
+
+# DESDM python
+setupRequired(despydb    2.0.1+1)
+setupRequired(despyfitsutils 1.0.1+5)
+
+# Pixcorrect -- loads despyfits/fitsio/imsupport
+setupRequired(pixcorrect 0.5.3+3)
+
+# Python core
+setupRequired(matplotlib 1.3.1+6)
+setupRequired(pandas 0.15.2+3)
+
+# Astromatic stuff
+setupRequired(sextractor 2.23.2+2)
+setupRequired(stiff 2.7.0+0)
+setupRequired(swarp 2.40.0+1)
+setupRequired(psfex 3.17.3+3)
+setupRequired(scamp 2.4.2+3)
+
+# Extintion correction
+setupRequired(extinction 1.2.2+4)
+
+# Healpix
+setupRequired(hpixDB 1.0.2+2)
+
+# Mangle
+setupRequired(despymangle 2.1.1+3)
+
+# MEDS
+setupRequired(desmeds 0.9.0+0)
+setupRequired(MEPipelineAppIntg 1.0.5+0)
+
+# draDECam
+setupRequired(drawDECam 0.3.0+2)
+
+envAppend(PYTHONPATH, ${PRODUCT_DIR}/python)
+envAppend(PATH, ${PRODUCT_DIR}/bin)
+# Add the tasks to the path
+envAppend(PATH, ${PRODUCT_DIR}/python/multiepoch/tasks)
+
+# Config date for Astromatic files
+envSet(MULTIEPOCH_CONFIG_DATE,"20160629")
