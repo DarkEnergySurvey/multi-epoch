@@ -22,7 +22,7 @@ def gethdu(filename, extname='SCI'):
 
 
 
-def addDECamMask(filename,outname,ext=0, plot=False,**kw):
+def addDECamMask(filename,outname,extmask=None,ext=0, plot=False,**kw):
 
     from drawDECam import drawDECam as dDECam
 
@@ -30,6 +30,17 @@ def addDECamMask(filename,outname,ext=0, plot=False,**kw):
     Mask a fitsfile with the DECam shape
     """
     data,header = fitsio.read(filename, ext=ext, header=True)
+
+    # Read and external mask instead of the DECamCCD definitions
+    if extmask:
+        print "# Will use mask %s" % extmask
+        mask = fitsio.read(extmask, ext=0)
+        masked_data = data*mask
+        fitsio.write(outname,masked_data,header=header,clobber=True)
+        return
+
+
+    # Otherwise proceed
     masked_data = numpy.zeros(data.shape,dtype=data.dtype)
 
     # Get the ccds
