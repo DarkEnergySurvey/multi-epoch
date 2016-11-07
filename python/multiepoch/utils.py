@@ -176,20 +176,23 @@ F. Menanteau, NCSA, Dec 2014
 def work_subprocess(cmd):
 
     import subprocess
-    """ Dummy function to call in multiprocess with shell=True """
-    return subprocess.call(cmd,shell=True) 
+    """ Dummy function to call in multiprocess"""
+
+    # Make sure we pass the DYDL Library path for El Capitan and above
+    args = cmd.split()
+    return subprocess.call(args,env=os.environ.copy())
 
 def work_subprocess_logging(tup):
 
     import subprocess
     """
-    Dummy function to call in multiprocess with shell=True and a
+    Dummy function to call in multiprocess and a
     logfile using a tuple as inputs
     """
     cmd,logfile = tup
     log = open(logfile,"w")
     #print "# Will write to logfile: %s" % logfile
-    status = subprocess.call(cmd,shell=True ,stdout=log, stderr=log)
+    status = subprocess.call(cmd,shell=True,stdout=log, stderr=log)
     if status > 0:
         raise RuntimeError("\n***\nERROR while running, check logfile: %s\n***" % logfile)
     return status
@@ -329,8 +332,54 @@ def transfer_input_files(infodict, clobber, section, logger=None):
                 
             logger.info("Getting:  %s (%s/%s)" % (url,k+1,Nfiles))
             sys.stdout.flush()
-            # Get a file using the $HOME/.desservices.ini credentials
-            http_requests.download_file_des(url,localfile,section=section)
+
+            try:
+                # Get a file using the $HOME/.desservices.ini credentials
+                http_requests.download_file_des(url,localfile,section=section)
+            except:
+                warning = """WARNING: could not fetch file: %s using Request class. Will try using old fashion wget now"""  % url
+                logger.info(warning)
+                status = get_file_des_wget(url,localfile,section=section,clobber=clobber)
+                if status > 0:
+                    raise RuntimeError("\n***\nERROR while fetching file: %s\n\n" % url)
+
         else:
             logger.info("Skipping: %s (%s/%s) -- file exists" % (url,k+1,Nfiles))
         
+
+
+def get_file_des_wget(url,localfile,section='http-desarchive',desfile=None,clobber=False):
+
+    from despymisc import http_requests
+
+    """
+    A way to catch errors on http_requests.
+    This whole fuction maybe you should go
+    """
+
+    # Read the credentials for the .desservices file
+    USERNAME, PASSWORD, URLBASE = http_requests.get_credentials(desfile=desfile, section=section)
+    WGET = "wget -q --user {user} --password {password} {url} -O {localfile}"
+    kw = {'user':USERNAME, 'password':PASSWORD, 'url':url, 'localfile':localfile}
+    cmd = WGET.format(**kw)
+    if clobber:
+        os.remove(localfile)
+    
+    status = work_subprocess(cmd)
+    return status
+
+
+#def fix_library_path():
+#    """
+#    we fix the OSX EL Capitan and above
+#    DYLD_LIBRARY_PATH problem, but re-assigning it to DESDM_LIBRARY_PATH
+#    """
+#    
+#    import platform
+#    if platform.system() == 'Darwin' and int(platform.mac_ver()[0].split(".")[1]) >=1:
+#        print "Fixing DYLD_LIBRARY_PATH"
+#        print os.environ['DYLD_LIBRARY_PATH']
+#        os.environ['DYLD_LIBRARY_PATH'] = os.environ['DESDM_LIBRARY_PATH']
+#        print os.environ['DYLD_LIBRARY_PATH']
+#    return
+

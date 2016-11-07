@@ -24,6 +24,8 @@ import pandas as pd
 from multiepoch import file_handler as fh
 from despymisc.miscutils import elapsed_time
 
+
+
 COADD_NWGINT_EXE = 'coadd_nwgint'
 #COADD_NWGINT_OPTIONS = "--max_cols 50 -v --add_noise --block_size 5"
 #COADD_NWGINT_OPTIONS = "--max_cols 50 -v --block_size 5"
@@ -210,7 +212,10 @@ class Job(BaseJob):
                 t1 = time.time()
                 cmd  = ' '.join(cmd_list[k])
                 self.logger.info("Preparing:  %s (%s/%s)" % (cmd_list[k][1].split()[1],k+1,N))
-                status = subprocess.call(cmd,shell=True,stdout=log, stderr=log)
+                
+                # Make sure we pass the DYDL Library path for El Capitan and above
+                args = cmd.split()
+                status = subprocess.call(args,stdout=log, stderr=log, env=os.environ.copy())
                 if status != 0:
                     # If failed me_prepare, then remove from the assoc 
                     if self.ctx.ignore_red_corrupt: 

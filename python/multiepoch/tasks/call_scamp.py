@@ -237,7 +237,10 @@ class Job(BaseJob):
         cmd  = ' '.join(cmd_list)
         self.logger.info("Executing scamp super-alignment for tile:%s" % self.ctx.tilename_fh)
         self.logger.info("%s " % cmd)
-        status = subprocess.call(cmd,shell=True,stdout=log, stderr=log)
+
+        # Make sure we pass the DYDL Library path for El Capitan and above
+        args = cmd.split()
+        status = subprocess.call(args,stdout=log, stderr=log, env=os.environ.copy())
         # Move back to current dir
         self.logger.info("Moving back to current dir")
         os.chdir(current_cwd)
