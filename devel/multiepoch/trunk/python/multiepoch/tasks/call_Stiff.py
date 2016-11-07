@@ -147,6 +147,8 @@ class Job(BaseJob):
             cmd  = ' '.join(cmd_list)
             self.logger.info("Executing stiff for tile:%s " % self.input.tilename_fh)
             self.logger.info("%s " % cmd)
+
+            # We can get away using shell=True on OSX
             status = subprocess.call(cmd,shell=True,stdout=log, stderr=log)
             if status != 0:
                 raise ValueError(" ERROR while running Stiff, check logfile: %s " % logfile)

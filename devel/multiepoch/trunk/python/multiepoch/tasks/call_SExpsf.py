@@ -154,7 +154,13 @@ class Job(BaseJob):
                 cmd  = ' '.join(cmd_list[band])
                 self.logger.info("Executing SEx/psf for BAND:%s" % band)
                 self.logger.info("%s " % cmd)
-                status = subprocess.call(cmd,shell=True,stdout=log, stderr=log)
+
+                # Make sure we pass the DYDL Library path for El Capitan and above
+                args = cmd.split()
+                print args
+                exit()
+                #status = subprocess.call(args,stdout=log, stderr=log, env=os.environ.copy())
+                #status = subprocess.call(cmd,shell=True,stdout=log, stderr=log)
                 if status != 0:
                     raise RuntimeError("\n***\nERROR while running SExpsf, check logfile: %s\n***" % logfile)
                 self.logger.info("Done band %s in %s\n" % (band,elapsed_time(t1)))

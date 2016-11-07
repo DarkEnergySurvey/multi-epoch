@@ -336,7 +336,10 @@ class Job(BaseJob):
             cmd  = ' '.join(cmd_list[band])
             self.logger.info("Executing SWarp SCI for tile:%s, BAND:%s" % (self.ctx.tilename_fh,band))
             self.logger.info("%s " % cmd)
-            status = subprocess.call(cmd,shell=True,stdout=log, stderr=log)
+
+            # Make sure we pass the DYDL Library path for El Capitan and above
+            args = cmd.split()
+            status = subprocess.call(args,stdout=log, stderr=log, env=os.environ.copy())
             if status != 0:
                 raise RuntimeError("\n***\nERROR while running SWarp, check logfile: %s\n***" % logfile)
             self.logger.info("Done in %s" % elapsed_time(t1))

@@ -24,7 +24,7 @@ class my_install_lib(install_lib):
 
 
 ## -------------
-bin_files = glob.glob("bin/*") 
+bin_files = glob.glob("bin/*")
 etc_files = glob.glob("etc/*.*")
 sql_files = glob.glob("example_queries/*")
 pipe_files = glob.glob("example_pipes/*")
@@ -39,7 +39,8 @@ setup(name='multiepoch',
                 'multiepoch.tasks',],
       package_dir = {'': 'python'},
       scripts    = bin_files,           
-      data_files = [('etc',etc_files),
+      data_files = [('ups',['ups/multiepoch.table']),
+                    ('etc',etc_files),
                     ('example_queries',sql_files),
                     ('example_pipes',pipe_files),
                     ('', ['README']),
